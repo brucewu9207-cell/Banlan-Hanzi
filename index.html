@@ -3146,24 +3146,41 @@
         const w = writers[idx];
         if (!w) return;
         strokeIndexMap[idx] = -1; // 重置下一笔计数
-        w.hideCharacter();
-        w.animateCharacter();
+        w.hideCharacter();        // 先隐藏静止汉字
+        w.animateCharacter({
+            onComplete: () => w.showCharacter() // 动画结束后显示静止汉字
+        });
     }
 
-    // 仅播放下一笔
+    // 仅演示下一笔
     function nextStroke(idx) {
         const w = writers[idx];
         const item = charDataArray[idx];
         if (!w || !item) return;
         if (strokeIndexMap[idx] === undefined) strokeIndexMap[idx] = -1;
-        strokeIndexMap[idx]++;
+
         const total = item.data.strokes.length;
-        if (strokeIndexMap[idx] >= total) {
+
+        // 如果已经是最后一笔，重置回静止状态
+        if (strokeIndexMap[idx] >= total - 1) {
             strokeIndexMap[idx] = -1;
-            w.hideCharacter();
+            w.showCharacter();
             return;
         }
-        w.animateStroke(strokeIndexMap[idx]);
+
+        strokeIndexMap[idx]++;
+        const current = strokeIndexMap[idx];
+
+        // 隐藏整字，逐笔显示：先显示前 current 笔（已完成），再动画演示第 current 笔
+        w.hideCharacter();
+
+        // 显示前 current 笔（已写完的）
+        for (let s = 0; s < current; s++) {
+            w.showStroke(s);
+        }
+
+        // 动画演示当前这笔
+        w.animateStroke(current);
     }
 
     // --- 字典 ---
@@ -3414,7 +3431,7 @@
                 const w = HanziWriter.create(tAnim, char, {
                     width: animSize, height: animSize, padding: Math.round(animSize * 0.08),
                     showOutline: true, outlineColor: '#e0e0e0',
-                    showCharacter: false, strokeAnimationSpeed: 0.8, delayBetweenStrokes: 500,
+                    showCharacter: true, strokeAnimationSpeed: 0.8, delayBetweenStrokes: 500,
                     charDataLoader: (c, cb) => cb(data)
                 });
                 writers.push(w);
