@@ -1920,9 +1920,9 @@
             flex-wrap: wrap;
             gap: 8px;
             padding: 6px 12px;
-            border-left: 1px dashed var(--border-light);
+            border: none;
             margin-left: 4px;
-            background: rgba(255, 255, 255, 0.45);
+            background: transparent;
             border-radius: 4px;
             box-sizing: border-box;
         }
@@ -4190,6 +4190,34 @@
 
         // 辅助函数：一页画满后，将内容压入 PDF，并刷新 Canvas 准备画下一页
         const commitPageAndReset = () => {
+            // ── 品牌水印：右下角，logo + 文字 ──
+            const brandText = '斑斓汉字 · Brilliant Hanzi';
+            const logoSize = 60;
+            const brandX = pageCanvasWidth - offset;
+            const brandY = pageCanvasHeight - 24;
+
+            ctx.save();
+            ctx.globalAlpha = 0.35;
+
+            // 文字
+            ctx.fillStyle = '#374a42';
+            ctx.font = 'bold 36px PingFang SC, Microsoft YaHei, sans-serif';
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'bottom';
+            ctx.fillText(brandText, brandX, brandY);
+
+            // logo 图标（在文字左侧）
+            const textWidth = ctx.measureText(brandText).width;
+            const logoX = brandX - textWidth - logoSize - 12;
+            const logoY = brandY - logoSize;
+            const logoImg = new Image();
+            logoImg.src = document.querySelector('.header-title img').src;
+            if (logoImg.complete) {
+                ctx.drawImage(logoImg, logoX, logoY, logoSize, logoSize);
+            }
+
+            ctx.restore();
+
             const imgData = currentPageCanvas.toDataURL('image/jpeg', 1.0);
             if (pageIndex > 0) pdf.addPage();
             pdf.addImage(imgData, 'JPEG', margin, margin, drawWidth, drawHeight);
