@@ -3146,7 +3146,6 @@
         const w = writers[idx];
         if (!w) return;
         strokeIndexMap[idx] = -1; // 重置下一笔计数
-        w.cancelAnimation();
         w.hideCharacter();
         w.animateCharacter();
     }
@@ -3156,12 +3155,11 @@
         const w = writers[idx];
         const item = charDataArray[idx];
         if (!w || !item) return;
-        w.cancelAnimation();
         if (strokeIndexMap[idx] === undefined) strokeIndexMap[idx] = -1;
         strokeIndexMap[idx]++;
         const total = item.data.strokes.length;
         if (strokeIndexMap[idx] >= total) {
-            strokeIndexMap[idx] = -1; // 全部播放完，重置
+            strokeIndexMap[idx] = -1;
             w.hideCharacter();
             return;
         }
