@@ -3141,32 +3141,37 @@
     // 每个字当前播放到第几笔（用于"下一笔"功能）
     const strokeIndexMap = {};
 
+    // 每个字的播放状态 flag
+    const playingMap = {};
+
     // 播放/停止 切换
     function playAnim(idx) {
         const w = writers[idx];
         if (!w) return;
         const btn = document.getElementById(`btn_play_${idx}`);
-        const isPlaying = btn && btn.dataset.playing === '1';
 
-        if (isPlaying) {
-            // 停止：恢复静止汉字
-            btn.dataset.playing = '0';
-            if (btn) { btn.innerHTML = '▶ 播放<span style="font-size:9px;display:block;opacity:0.7;">Play</span>'; }
-            strokeIndexMap[idx] = -1;
-            w.showCharacter();
+        if (playingMap[idx]) {
+            // ── 停止：清除 flag，停在当前帧 ──
+            playingMap[idx] = false;
+            if (btn) btn.innerHTML = '▶ 播放<span style="font-size:9px;display:block;opacity:0.7;">Play</span>';
         } else {
-            // 播放：隐藏静止字，开始动画
-            btn.dataset.playing = '1';
-            if (btn) { btn.innerHTML = '⏹ 停止<span style="font-size:9px;display:block;opacity:0.7;">Stop</span>'; }
+            // ── 开始无限循环播放 ──
+            playingMap[idx] = true;
             strokeIndexMap[idx] = -1;
+            if (btn) btn.innerHTML = '⏹ 停止<span style="font-size:9px;display:block;opacity:0.7;">Stop</span>';
             w.hideCharacter();
-            w.animateCharacter({
-                onComplete: () => {
-                    // 动画结束，恢复静止并重置按钮
-                    if (btn) { btn.dataset.playing = '0'; btn.innerHTML = '▶ 播放<span style="font-size:9px;display:block;opacity:0.7;">Play</span>'; }
-                    w.showCharacter();
-                }
-            });
+
+            const loopOnce = () => {
+                if (!playingMap[idx]) return; // flag 已清除，停止
+                w.animateCharacter({
+                    onComplete: () => {
+                        if (!playingMap[idx]) return; // 停止时不再重启
+                        w.hideCharacter();
+                        setTimeout(() => loopOnce(), 800);
+                    }
+                });
+            };
+            loopOnce();
         }
     }
 
