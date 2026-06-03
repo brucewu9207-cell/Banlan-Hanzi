@@ -3141,15 +3141,33 @@
     // 每个字当前播放到第几笔（用于"下一笔"功能）
     const strokeIndexMap = {};
 
-    // 播放完整动态笔顺
+    // 播放/停止 切换
     function playAnim(idx) {
         const w = writers[idx];
         if (!w) return;
-        strokeIndexMap[idx] = -1; // 重置下一笔计数
-        w.hideCharacter();        // 先隐藏静止汉字
-        w.animateCharacter({
-            onComplete: () => w.showCharacter() // 动画结束后显示静止汉字
-        });
+        const btn = document.getElementById(`btn_play_${idx}`);
+        const isPlaying = btn && btn.dataset.playing === '1';
+
+        if (isPlaying) {
+            // 停止：恢复静止汉字
+            btn.dataset.playing = '0';
+            if (btn) { btn.innerHTML = '▶ 播放<span style="font-size:9px;display:block;opacity:0.7;">Play</span>'; }
+            strokeIndexMap[idx] = -1;
+            w.showCharacter();
+        } else {
+            // 播放：隐藏静止字，开始动画
+            btn.dataset.playing = '1';
+            if (btn) { btn.innerHTML = '⏹ 停止<span style="font-size:9px;display:block;opacity:0.7;">Stop</span>'; }
+            strokeIndexMap[idx] = -1;
+            w.hideCharacter();
+            w.animateCharacter({
+                onComplete: () => {
+                    // 动画结束，恢复静止并重置按钮
+                    if (btn) { btn.dataset.playing = '0'; btn.innerHTML = '▶ 播放<span style="font-size:9px;display:block;opacity:0.7;">Play</span>'; }
+                    w.showCharacter();
+                }
+            });
+        }
     }
 
     // 仅演示下一笔
@@ -3467,8 +3485,8 @@
             } catch (e) { console.error(e); }
         }
 
-        isLooping = true;
-        runInfiniteAnimation();
+        isLooping = false;
+        // 不自动播放，等用户点击播放按钮
         buildIsolatedStrokes(chars, charDataArray);
         buildUnifiedWorksheet(rawInput, charDataArray);
 
