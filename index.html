@@ -3151,22 +3151,41 @@
         const btn = document.getElementById(`btn_play_${idx}`);
 
         if (playingMap[idx]) {
-            // ── 停止：清除 flag，停在当前帧 ──
+            // ── 立即停止：销毁并重建 writer，停在当前帧 ──
             playingMap[idx] = false;
             if (btn) btn.innerHTML = '▶ 播放<span style="font-size:9px;display:block;opacity:0.7;">Play</span>';
+
+            // 重建 writer 显示静止汉字
+            const item = charDataArray[idx];
+            const tAnim = document.getElementById(`target_anim_${idx}`);
+            if (item && tAnim) {
+                // 清空容器（移除旧 SVG，但保留笔顺数字层）
+                const numbersSvg = tAnim.querySelector('svg.stroke-numbers');
+                tAnim.innerHTML = '';
+                const animSize = tAnim.offsetWidth || 240;
+                const newW = HanziWriter.create(tAnim, item.char, {
+                    width: animSize, height: animSize, padding: Math.round(animSize * 0.08),
+                    showOutline: true, outlineColor: '#e0e0e0',
+                    showCharacter: true, strokeAnimationSpeed: 0.8, delayBetweenStrokes: 500,
+                    charDataLoader: (c, cb) => cb(item.data)
+                });
+                writers[idx] = newW;
+                if (numbersSvg) tAnim.appendChild(numbersSvg);
+                else tAnim.appendChild(generateNumbersSvg(item.data.medians));
+            }
         } else {
             // ── 开始无限循环播放 ──
             playingMap[idx] = true;
             strokeIndexMap[idx] = -1;
             if (btn) btn.innerHTML = '⏹ 停止<span style="font-size:9px;display:block;opacity:0.7;">Stop</span>';
-            w.hideCharacter();
+            writers[idx].hideCharacter();
 
             const loopOnce = () => {
-                if (!playingMap[idx]) return; // flag 已清除，停止
-                w.animateCharacter({
+                if (!playingMap[idx]) return;
+                writers[idx].animateCharacter({
                     onComplete: () => {
-                        if (!playingMap[idx]) return; // 停止时不再重启
-                        w.hideCharacter();
+                        if (!playingMap[idx]) return;
+                        writers[idx].hideCharacter();
                         setTimeout(() => loopOnce(), 800);
                     }
                 });
