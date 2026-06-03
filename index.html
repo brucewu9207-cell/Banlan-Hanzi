@@ -3170,16 +3170,17 @@
         }
     }
 
-    // 仅演示下一笔
+    // 仅演示下一笔（每次只播当前笔的动画，之前的笔保持可见）
     function nextStroke(idx) {
         const w = writers[idx];
         const item = charDataArray[idx];
         if (!w || !item) return;
+
         if (strokeIndexMap[idx] === undefined) strokeIndexMap[idx] = -1;
 
         const total = item.data.strokes.length;
 
-        // 如果已经是最后一笔，重置回静止状态
+        // 全部笔画演示完后，重置为静止整字
         if (strokeIndexMap[idx] >= total - 1) {
             strokeIndexMap[idx] = -1;
             w.showCharacter();
@@ -3189,16 +3190,22 @@
         strokeIndexMap[idx]++;
         const current = strokeIndexMap[idx];
 
-        // 隐藏整字，逐笔显示：先显示前 current 笔（已完成），再动画演示第 current 笔
-        w.hideCharacter();
-
-        // 显示前 current 笔（已写完的）
-        for (let s = 0; s < current; s++) {
-            w.showStroke(s);
+        // 第一笔：先隐藏整字
+        if (current === 0) {
+            w.hideCharacter();
         }
 
-        // 动画演示当前这笔
-        w.animateStroke(current);
+        // 动画演示当前笔，完成后该笔留在画面（通过 showCharacter 会把所有笔显示）
+        // 用 onComplete 在动画结束后把前 current+1 笔显示出来
+        w.animateStroke(current, {
+            onComplete: () => {
+                // 重新显示字，再把 current+1 笔之后的全部隐藏
+                w.showCharacter();
+                for (let s = current + 1; s < total; s++) {
+                    w.hideStroke(s);
+                }
+            }
+        });
     }
 
     // --- 字典 ---
