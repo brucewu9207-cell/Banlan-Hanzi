@@ -3138,6 +3138,36 @@
     let currentStrokeMode = 'rainbow';
     let availableVoices = [];
 
+    // 每个字当前播放到第几笔（用于"下一笔"功能）
+    const strokeIndexMap = {};
+
+    // 播放完整动态笔顺
+    function playAnim(idx) {
+        const w = writers[idx];
+        if (!w) return;
+        strokeIndexMap[idx] = -1; // 重置下一笔计数
+        w.cancelAnimation();
+        w.hideCharacter();
+        w.animateCharacter();
+    }
+
+    // 仅播放下一笔
+    function nextStroke(idx) {
+        const w = writers[idx];
+        const item = charDataArray[idx];
+        if (!w || !item) return;
+        w.cancelAnimation();
+        if (strokeIndexMap[idx] === undefined) strokeIndexMap[idx] = -1;
+        strokeIndexMap[idx]++;
+        const total = item.data.strokes.length;
+        if (strokeIndexMap[idx] >= total) {
+            strokeIndexMap[idx] = -1; // 全部播放完，重置
+            w.hideCharacter();
+            return;
+        }
+        w.animateStroke(strokeIndexMap[idx]);
+    }
+
     // --- 字典 ---
     const CHAR_DICT = {
         '笔': { en: 'pen', ar: 'قلم' }, '墨': { en: 'ink', ar: 'حبر' }, 
@@ -3337,6 +3367,10 @@
                     <div style="display:flex; flex-direction:column; align-items:center;">
                         <div class="section-label">动态笔顺 <span style="font-weight:normal;font-size:10px;opacity:0.75;">Animated Strokes · رسوم الضربات</span></div>
                         <div id="target_anim_${charIdx}" class="grid-container"></div>
+                        <div style="display:flex;gap:8px;margin-top:8px;width:100%;">
+                            <button class="stroke-mode-btn" onclick="playAnim(${charIdx})" id="btn_play_${charIdx}" style="flex:1;border:1px solid #ddd;">▶ 播放<span style="font-size:9px;display:block;opacity:0.7;">Play</span></button>
+                            <button class="stroke-mode-btn" onclick="nextStroke(${charIdx})" id="btn_next_${charIdx}" style="flex:1;border:1px solid #ddd;">→ 下一笔<span style="font-size:9px;display:block;opacity:0.7;">Next Stroke</span></button>
+                        </div>
                     </div>
                     <!-- 彩虹笔顺 -->
                     <div style="display:flex; flex-direction:column; align-items:center;">
