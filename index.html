@@ -4200,10 +4200,10 @@
         const commitPageAndReset = () => {
             // ── 品牌水印：右下角，嵌入品牌横幅图片 ──
             if (logoImg.complete && logoImg.naturalWidth > 0) {
-                const logoW = 1100;
+                const logoW = 1320;
                 const logoH = Math.round(logoW * 224 / 788);
                 const logoX = pageCanvasWidth - offset - logoW;
-                const logoY = pageCanvasHeight - logoH - 10;
+                const logoY = pageCanvasHeight - logoH + 20;
                 ctx.save();
                 ctx.globalAlpha = 0.5;
                 ctx.drawImage(logoImg, logoX, logoY, logoW, logoH);
