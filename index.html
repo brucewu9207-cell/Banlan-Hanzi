@@ -4199,9 +4199,10 @@
         // 辅助函数：一页画满后，将内容压入 PDF，并刷新 Canvas 准备画下一页
         const commitPageAndReset = () => {
             // ── 品牌水印：右下角，logo + 文字 ──
-            const logoSize = 80;
+            const logoSize = 260;
+            const fontSize = 130;
             const brandText = '斑斓汉字  BRILLIANT HANZI';
-            const brandY = pageCanvasHeight - 30;
+            const brandY = pageCanvasHeight - 60;
             const brandX = pageCanvasWidth - offset;
 
             ctx.save();
@@ -4209,7 +4210,7 @@
 
             // 文字
             ctx.fillStyle = '#374a42';
-            ctx.font = 'bold 38px PingFang SC, Microsoft YaHei, sans-serif';
+            ctx.font = `bold ${fontSize}px PingFang SC, Microsoft YaHei, sans-serif`;
             ctx.textAlign = 'right';
             ctx.textBaseline = 'bottom';
             ctx.fillText(brandText, brandX, brandY);
@@ -4217,7 +4218,7 @@
             // logo 图标（在文字左侧）
             if (logoImg.complete && logoImg.naturalWidth > 0) {
                 const textWidth = ctx.measureText(brandText).width;
-                const logoX = brandX - textWidth - logoSize - 16;
+                const logoX = brandX - textWidth - logoSize - 30;
                 const logoY = brandY - logoSize;
                 ctx.drawImage(logoImg, logoX, logoY, logoSize, logoSize);
             }
