@@ -596,6 +596,22 @@
         .stroke-mode-btn { padding: 6px 12px; border: none; cursor: pointer; font-size: 12px; font-weight: 500; background: transparent; color: var(--mo-mid); transition: 0.3s; box-shadow: none; border-radius: 2px; }
         .stroke-mode-btn.active { background: #fff; color: var(--ink-green); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
+        /* 视频播放器风格的圆形播放/停止按钮 */
+        .stroke-play-btn {
+            width: 36px; height: 36px; border-radius: 50%;
+            border: none; cursor: pointer; outline: none;
+            background: var(--ink-green, #2c3330); color: #fcf9f2;
+            font-size: 14px; line-height: 1;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.18);
+            transition: transform .15s ease, background .2s ease;
+            margin-top: 10px;
+            padding: 0; /* 关键: 重置浏览器默认 padding 让图标真正居中 */
+        }
+        .stroke-play-btn:hover { background: #8e2127; transform: scale(1.08); }
+        .stroke-play-btn:active { transform: scale(0.94); }
+        .stroke-play-btn .play-icon { display: inline-block; transform: translateX(1px); /* ▶ 视觉居中微调 */ }
+
         /* ============================================
            整句展示卡片：参考截图 — 米字格 + 翻译合一
            ============================================ */
@@ -3328,12 +3344,10 @@
                     </div>
                     <div class="card-three-cols" style="display:flex; flex-wrap:wrap; gap:16px; justify-content:center; align-items:flex-start; width:100%;">
                     <!-- 动态笔顺 -->
-                    <div style="display:flex; flex-direction:column; align-items:center; width:240px;">
+                    <div style="display:flex; flex-direction:column; align-items:center;">
                         <div class="section-label">动态笔顺 <span style="font-weight:normal;font-size:10px;opacity:0.75;">Animated Strokes · رسوم الضربات</span></div>
                         <div id="target_anim_${charIdx}" class="grid-container"></div>
-                        <div style="display:flex; gap:8px; margin-top:6px; width:100%;">
-                            <button class="stroke-mode-btn" id="strokePlayBtn_${charIdx}" onclick="toggleStrokeAnim(${charIdx})" style="flex:1; border:1px solid #ddd;">⏸ 停止 Stop · إيقاف</button>
-                        </div>
+                        <button class="stroke-play-btn" id="strokePlayBtn_${charIdx}" onclick="toggleStrokeAnim(${charIdx})" aria-label="播放或停止笔顺动画" title="停止"><span aria-hidden="true">⏸</span></button>
                     </div>
                     <!-- 彩虹笔顺 -->
                     <div style="display:flex; flex-direction:column; align-items:center;">
@@ -3704,7 +3718,11 @@
     function updateStrokePlayBtn(idx, isPlaying) {
         const btn = document.getElementById(`strokePlayBtn_${idx}`);
         if (!btn) return;
-        btn.innerHTML = isPlaying ? '⏸ 停止 Stop · إيقاف' : '▶ 播放 Play · تشغيل';
+        // 视频播放器风格: 仅图标, 用 title 显示 tooltip
+        btn.innerHTML = isPlaying
+            ? '<span aria-hidden="true">⏸</span>'
+            : '<span class="play-icon" aria-hidden="true">▶</span>';
+        btn.title = isPlaying ? '停止' : '播放';
     }
     function applyAnimColors() {
         writers.forEach((w, idx) => {
