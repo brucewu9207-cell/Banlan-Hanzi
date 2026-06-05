@@ -3144,53 +3144,69 @@
     // 每个字的播放状态 flag
     const playingMap = {};
 
+    // 立即冻结容器内所有 SVG 动画
+    function freezeAnim(idx) {
+        const tAnim = document.getElementById(`target_anim_${idx}`);
+        if (!tAnim) return;
+        // 把容器内所有 SVG 元素的 animation-play-state 设为 paused
+        tAnim.querySelectorAll('*').forEach(el => {
+            el.style.animationPlayState = 'paused';
+            el.style.transition = 'none';
+        });
+        // 同时把 SVG 本身 pause
+        const svgs = tAnim.querySelectorAll('svg');
+        svgs.forEach(svg => {
+            try { svg.pauseAnimations && svg.pauseAnimations(); } catch(e) {}
+        });
+    }
+
+    // 解冻（恢复播放）
+    function unfreezeAnim(idx) {
+        const tAnim = document.getElementById(`target_anim_${idx}`);
+        if (!tAnim) return;
+        tAnim.querySelectorAll('*').forEach(el => {
+            el.style.animationPlayState = '';
+            el.style.transition = '';
+        });
+        const svgs = tAnim.querySelectorAll('svg');
+        svgs.forEach(svg => {
+            try { svg.unpauseAnimations && svg.unpauseAnimations(); } catch(e) {}
+        });
+    }
+
     // 播放/停止 切换
     function playAnim(idx) {
-        const w = writers[idx];
-        if (!w) return;
         const btn = document.getElementById(`btn_play_${idx}`);
 
         if (playingMap[idx]) {
-            // ── 立即停止：销毁并重建 writer，停在当前帧 ──
+            // ── 立即冻结当前帧 ──
             playingMap[idx] = false;
+            freezeAnim(idx);
             if (btn) btn.innerHTML = '▶ 播放<span style="font-size:9px;display:block;opacity:0.7;">Play</span>';
-
-            // 重建 writer 显示静止汉字
-            const item = charDataArray[idx];
-            const tAnim = document.getElementById(`target_anim_${idx}`);
-            if (item && tAnim) {
-                // 清空容器（移除旧 SVG，但保留笔顺数字层）
-                const numbersSvg = tAnim.querySelector('svg.stroke-numbers');
-                tAnim.innerHTML = '';
-                const animSize = tAnim.offsetWidth || 240;
-                const newW = HanziWriter.create(tAnim, item.char, {
-                    width: animSize, height: animSize, padding: Math.round(animSize * 0.08),
-                    showOutline: true, outlineColor: '#e0e0e0',
-                    showCharacter: true, strokeAnimationSpeed: 0.8, delayBetweenStrokes: 500,
-                    charDataLoader: (c, cb) => cb(item.data)
-                });
-                writers[idx] = newW;
-                if (numbersSvg) tAnim.appendChild(numbersSvg);
-                else tAnim.appendChild(generateNumbersSvg(item.data.medians));
-            }
         } else {
-            // ── 开始无限循环播放 ──
             playingMap[idx] = true;
-            strokeIndexMap[idx] = -1;
             if (btn) btn.innerHTML = '⏹ 停止<span style="font-size:9px;display:block;opacity:0.7;">Stop</span>';
-            writers[idx].hideCharacter();
 
-            const loopOnce = () => {
-                if (!playingMap[idx]) return;
-                writers[idx].animateCharacter({
-                    onComplete: () => {
-                        if (!playingMap[idx]) return;
-                        writers[idx].hideCharacter();
-                        setTimeout(() => loopOnce(), 800);
-                    }
-                });
-            };
-            loopOnce();
+            // 如果是从冻结恢复，直接解冻继续当前动画
+            const wasFrozen = strokeIndexMap[idx] !== undefined && strokeIndexMap[idx] !== -2;
+            unfreezeAnim(idx);
+
+            // 只有第一次（从未开始）才启动循环
+            if (!wasFrozen || strokeIndexMap[idx] === -1) {
+                strokeIndexMap[idx] = 0;
+                writers[idx].hideCharacter();
+                const loopOnce = () => {
+                    if (!playingMap[idx]) return;
+                    writers[idx].animateCharacter({
+                        onComplete: () => {
+                            if (!playingMap[idx]) return;
+                            writers[idx].hideCharacter();
+                            setTimeout(() => loopOnce(), 800);
+                        }
+                    });
+                };
+                loopOnce();
+            }
         }
     }
 
