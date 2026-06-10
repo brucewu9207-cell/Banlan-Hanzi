@@ -1665,7 +1665,20 @@
             .download-group button { flex: 1 1 100%; }
             .download-group { padding: 12px; }
             .card { padding: 14px 8px; }
-            .hsk-badge { font-size: 16px; padding: 7px 16px; }
+            /* 【v54】手机端：三个 HSK 徽章强制压在一行 */
+            .hsk-badges-row { flex-wrap: nowrap; gap: 6px; width: 100%; }
+            .hsk-badge {
+                flex: 1 1 0;          /* 三个均分宽度 */
+                min-width: 0;          /* 允许收缩到内容以下，避免溢出 */
+                height: auto;
+                min-height: 44px;
+                padding: 6px 6px;
+                font-size: 13px;
+                letter-spacing: 0;
+                line-height: 1.25;     /* 文字过长时在徽章内换行，不挤到第二行 */
+            }
+            /* 级别徽章里的大号数字同步缩小，防止撑破方框 */
+            .hsk-badge.req-level span { font-size: 20px !important; margin-left: 2px !important; }
             .meta-pinyin-box { font-size: 16px; padding: 7px 16px; }
             .grid-container { width: 180px; height: 180px; }
             /* 手机端笔顺规则卡片单列滑动 */
