@@ -1057,40 +1057,35 @@
         .btn-cancel { background: #c8d0cc; color: var(--ink-green); border: none; box-shadow: none; font-weight: 500; }
         .btn-cancel:hover { background: #b0bab5; box-shadow: none; transform: none; }
 
-        .qr-float-btn {
+        /* 【v54】二维码折叠 dock：默认贴边收起，点击拉手展开 */
+        .qr-dock {
             position: fixed;
-            left: max(3%, env(safe-area-inset-left));
+            left: 0;
             bottom: max(3%, env(safe-area-inset-bottom));
             z-index: 900;
+            display: flex;
+            align-items: flex-end;
+            /* 收起：把方框推出屏幕左侧，只露出右侧拉手 */
+            transform: translateX(-96px);
+            transition: transform 0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
+        }
+        .qr-dock.open {
+            transform: translateX(0); /* 展开：方框滑入视野 */
+        }
+        /* 二维码方框（沿用原悬浮按钮的深墨绿外观） */
+        .qr-panel {
+            position: relative;
+            flex: 0 0 auto;
             width: 96px;
             height: 96px;
-            padding: 0;
-            border-radius: 8px;
+            border: none;
+            border-radius: 0 8px 8px 0;
             background: rgba(55, 74, 66, 0.94);
-            border: 1px solid rgba(255, 255, 255, 0.45);
-            color: #fff;
             box-shadow: 0 12px 28px rgba(35, 42, 39, 0.24);
-            font-size: 30px;
-            line-height: 1;
             backdrop-filter: blur(8px);
+            cursor: pointer;
         }
-        .qr-float-btn strong {
-            display: block;
-            color: #fff;
-            font-size: 18px;
-            letter-spacing: 1px;
-        }
-        .qr-float-btn span {
-            display: block;
-            margin-top: 4px;
-            color: #fff;
-            font-size: 12px;
-            letter-spacing: 0;
-            opacity: 0.78;
-        }
-        .qr-float-btn:hover { transform: translateY(-2px); filter: brightness(1.08); }
-        /* 【v30】二维码常驻显示在方框内，深墨绿色作为外框 */
-        .qr-float-btn .qr-preview {
+        .qr-panel .qr-preview {
             position: absolute;
             inset: 5px;
             width: calc(100% - 10px);
@@ -1099,11 +1094,42 @@
             background: #fff;
             pointer-events: none;
         }
-        /* 隐藏「扫码 QR」文字，让二维码独占方框 */
-        .qr-float-btn strong,
-        .qr-float-btn span {
-            display: none;
+        /* 竖条拉手（贴边把手） */
+        .qr-tab {
+            flex: 0 0 auto;
+            align-self: flex-end;
+            width: 26px;
+            min-height: 72px;
+            padding: 10px 0;
+            border: none;
+            border-radius: 0 8px 8px 0;
+            background: rgba(55, 74, 66, 0.94);
+            color: #fff;
+            box-shadow: 4px 8px 18px rgba(35, 42, 39, 0.22);
+            backdrop-filter: blur(8px);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: filter 0.15s;
         }
+        .qr-tab:hover { filter: brightness(1.1); }
+        .qr-tab-icon { font-size: 16px; line-height: 1; }
+        .qr-tab-label {
+            writing-mode: vertical-rl;
+            font-size: 12px;
+            letter-spacing: 2px;
+            opacity: 0.9;
+        }
+        .qr-tab-arrow {
+            font-size: 12px;
+            line-height: 1;
+            transition: transform 0.32s;
+        }
+        /* 展开时箭头翻转，提示「点此收起」 */
+        .qr-dock.open .qr-tab-arrow { transform: rotate(180deg); }
         .qr-image-box {
             width: min(320px, 76vw);
             aspect-ratio: 1 / 1;
@@ -1130,14 +1156,14 @@
         }
         .qr-link-text:hover { color: var(--zhusha); text-decoration: underline; }
         @media (max-width: 768px) {
-            .qr-float-btn {
-                left: max(2%, env(safe-area-inset-left));
+            .qr-dock {
                 bottom: max(2%, env(safe-area-inset-bottom));
-                width: 78px;
-                height: 78px;
+                transform: translateX(-78px);
             }
-            .qr-float-btn strong { font-size: 15px; }
-            .qr-float-btn span { font-size: 10px; }
+            .qr-dock.open { transform: translateX(0); }
+            .qr-panel { width: 78px; height: 78px; }
+            .qr-tab { width: 22px; min-height: 60px; }
+            .qr-tab-label { font-size: 11px; }
         }
 
         .seal-modal { padding: 0; text-align: left; }
@@ -2512,11 +2538,18 @@
     <div class="ink-dot-zhusha" style="top:8%; left:22%; width:6px; height:6px; animation-delay:-4s;"></div>
 </div>
 
-<button class="qr-float-btn no-print" type="button" onclick="openPageQr()" title="扫码打开当前页面" aria-label="扫码打开当前页面">
-    <strong>扫码</strong>
-    <span>QR</span>
-    <img class="qr-preview" id="qrFloatPreview" alt=""/>
-</button>
+<div class="qr-dock no-print" id="qrDock">
+    <!-- 二维码方框：点击弹大图 -->
+    <div class="qr-panel" onclick="openPageQr()" role="button" tabindex="0" title="扫码打开当前页面" aria-label="扫码打开当前页面">
+        <img class="qr-preview" id="qrFloatPreview" alt=""/>
+    </div>
+    <!-- 竖条拉手：点击展开 / 收起 -->
+    <button class="qr-tab" type="button" onclick="toggleQrDock()" aria-expanded="false" aria-controls="qrDock" title="展开 / 收起二维码" aria-label="展开或收起二维码">
+        <span class="qr-tab-icon" aria-hidden="true">▦</span>
+        <span class="qr-tab-label">码</span>
+        <span class="qr-tab-arrow" aria-hidden="true">❯</span>
+    </button>
+</div>
 
 <!-- 环境插画层：全局引用库 & 背景印章承载区 -->
 <div class="scenery-layer no-print">
@@ -5512,6 +5545,15 @@
             setSrc();
         }
     })();
+
+    // 【v54】点击拉手展开 / 收起二维码 dock
+    function toggleQrDock() {
+        const dock = document.getElementById('qrDock');
+        if (!dock) return;
+        const opened = dock.classList.toggle('open');
+        const tabBtn = dock.querySelector('.qr-tab');
+        if (tabBtn) tabBtn.setAttribute('aria-expanded', opened ? 'true' : 'false');
+    }
 
     // ==========================================
     // 用户反馈系统
