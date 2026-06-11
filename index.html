@@ -1668,17 +1668,18 @@
             /* 【v54】手机端：三个 HSK 徽章强制压在一行 */
             .hsk-badges-row { flex-wrap: nowrap; gap: 6px; width: 100%; }
             .hsk-badge {
-                flex: 1 1 0;          /* 三个均分宽度 */
+                flex: 1 1 0;            /* 三个均分宽度 */
                 min-width: 0;          /* 允许收缩到内容以下，避免溢出 */
                 height: auto;
                 min-height: 44px;
-                padding: 6px 6px;
-                font-size: 13px;
+                padding: 6px 4px;      /* 【v56】横向内边距收紧，给单行文字让位 */
+                font-size: 12px;       /* 【v56】微缩字号，保证最窄容器也能单行 */
                 letter-spacing: 0;
-                line-height: 1.25;     /* 文字过长时在徽章内换行，不挤到第二行 */
+                line-height: 1;        /* 【v56】单行高度 */
+                white-space: nowrap;   /* 【v56】禁止框内折行 → 统一为截图1单行样式 */
             }
             /* 级别徽章里的大号数字同步缩小，防止撑破方框 */
-            .hsk-badge.req-level span { font-size: 20px !important; margin-left: 2px !important; }
+            .hsk-badge.req-level span { font-size: 18px !important; margin-left: 2px !important; }
             .meta-pinyin-box { font-size: 16px; padding: 7px 16px; }
             .grid-container { width: 180px; height: 180px; }
             /* 手机端笔顺规则卡片单列滑动 */
@@ -1690,9 +1691,13 @@
             .modal h3.title-scaled .lang-en,
             .modal h3.title-scaled .lang-ar { font-size: 19.5px; }
             .modal-btns button { padding: 10px; font-size: 13px; }
-            .sentence-translation-block { padding: 15.6px 19.5px 19.5px; font-size: 23.4px; }
-            .sentence-translation-block .trans-en-target { font-size: 25.35px; }
-            .sentence-translation-block .trans-ar-target { font-size: 27.3px; }
+            .sentence-translation-block { padding: 15.6px 12px 19.5px; font-size: 23.4px; }
+            /* 【v56】翻译块手机端：强制单行 + 居中（缩小标签与译文字号，关闭折行） */
+            .sentence-translation-block .trans-line { gap: 10px; flex-wrap: nowrap; white-space: nowrap; }
+            .sentence-translation-block .trans-label-zh { font-size: 17px; letter-spacing: 0; min-width: 0; }
+            .sentence-translation-block .trans-label-ar { font-size: 17px; }
+            .sentence-translation-block .trans-en-target { font-size: 18px; }
+            .sentence-translation-block .trans-ar-target { font-size: 19px; }
             .struct-explanation { font-size: 12px; }
             /* 更大笔顺格方便阅读 */
             .sg-anim-box { width: 80px !important; height: 80px !important; }
