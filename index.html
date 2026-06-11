@@ -4066,7 +4066,7 @@
             // 【多音字】用 DOM 方式构建卡片，拼音框支持点击切换
             card.innerHTML = `
                 <div style="display:flex; flex-direction:column; align-items:center; width:100%; margin-top:8px;">
-                    <div class="meta-info-row" id="metaInfoRow_${charIdx}">
+                    <div style="text-align:center;margin-bottom:6px;">
                         ${hskBoxHtml}
                     </div>
                     <div class="card-three-cols" style="display:flex; flex-wrap:wrap; gap:40px; justify-content:center; align-items:flex-start; width:100%;">
@@ -4602,7 +4602,7 @@
             : (typeof pinyinPro !== 'undefined' ? pinyinPro.pinyin(char) : char);
         const metaRow = document.createElement('div');
         metaRow.className = 'meta-info-row';
-        metaRow.style.cssText = 'margin-bottom:14px;padding-bottom:10px;border-bottom:1px dashed #ddd;width:100%;';
+        metaRow.style.cssText = 'margin-bottom:14px;width:100%;';
         // 【部件视图】拼音框搬到下方箭头里，metaRow 仅保留 HSK 徽章
         const hskHtml = getHskBadgeHtml(char);
         if (hskHtml) {
