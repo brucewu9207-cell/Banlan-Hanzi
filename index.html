@@ -1665,21 +1665,26 @@
             .download-group button { flex: 1 1 100%; }
             .download-group { padding: 12px; }
             .card { padding: 14px 8px; }
-            /* 【v54】手机端：三个 HSK 徽章强制压在一行 */
-            .hsk-badges-row { flex-wrap: nowrap; gap: 6px; width: 100%; }
+            /* 【v58】手机端：三档徽章固定尺寸 → 所有区块完全一致，整体放大到截图2面板大小 */
+            .hsk-badges-row { flex-wrap: nowrap; gap: 8px; width: 100%; justify-content: center; }
+            .meta-info-row  { gap: 0; width: 100%; }   /* 顶部多包的一层不再额外加间距，统一交给 badges-row */
             .hsk-badge {
-                flex: 1 1 0;            /* 三个均分宽度 */
-                min-width: 0;          /* 允许收缩到内容以下，避免溢出 */
-                height: auto;
-                min-height: 44px;
-                padding: 6px 4px;      /* 【v56】横向内边距收紧，给单行文字让位 */
-                font-size: 12px;       /* 【v56】微缩字号，保证最窄容器也能单行 */
+                flex: 0 1 auto;        /* 以固定 width 为基准，仅在极窄屏才收缩 */
+                min-width: 0;
+                height: 56px;          /* 【v58】盒高放大 50→56 */
+                padding: 0 6px;
+                font-size: 15px;       /* 【v58】字号放大 13→15 */
                 letter-spacing: 0;
-                line-height: 1;        /* 【v56】单行高度 */
-                white-space: nowrap;   /* 【v56】禁止框内折行 → 统一为截图1单行样式 */
+                line-height: 1;
+                white-space: nowrap;   /* 单行不折行 */
+                margin-bottom: 0;
             }
-            /* 级别徽章里的大号数字同步缩小，防止撑破方框 */
-            .hsk-badge.req-level span { font-size: 18px !important; margin-left: 2px !important; }
+            /* 三档固定宽度（放大到截图2尺寸；390px+ 机型上任何区块都不收缩，确保完全一致） */
+            .hsk-badge.req-level { width: 104px; }   /* 【v58】90→104 */
+            .hsk-badge.req-read  { width: 116px; }   /* 【v58】104→116 */
+            .hsk-badge.req-write { width: 116px; }   /* 【v58】104→116 */
+            /* 级别徽章里的大号数字 */
+            .hsk-badge.req-level span { font-size: 22px !important; margin-left: 2px !important; }
             .meta-pinyin-box { font-size: 16px; padding: 7px 16px; }
             .grid-container { width: 180px; height: 180px; }
             /* 手机端笔顺规则卡片单列滑动 */
@@ -1709,6 +1714,13 @@
             .header-title > h1 { font-size: 19px !important; letter-spacing: 2px !important; }
             .title-icon { width: 32px !important; height: 28px !important; }
             .grid-container { width: 150px; height: 150px; }
+            /* 【v58】超小屏徽章整体略缩，避免溢出（各区块仍一致） */
+            .hsk-badges-row { gap: 5px; }
+            .hsk-badge { font-size: 13px; height: 50px; padding: 0 4px; }
+            .hsk-badge.req-level { width: 90px; }
+            .hsk-badge.req-read  { width: 102px; }
+            .hsk-badge.req-write { width: 102px; }
+            .hsk-badge.req-level span { font-size: 19px !important; }
         }
 
         /* ── sg-swipe-hint 默认隐藏（只在手机端由上面媒体查询显示）── */
