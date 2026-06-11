@@ -1057,80 +1057,113 @@
         .btn-cancel { background: #c8d0cc; color: var(--ink-green); border: none; box-shadow: none; font-weight: 500; }
         .btn-cancel:hover { background: #b0bab5; box-shadow: none; transform: none; }
 
-        /* 【v54】二维码折叠 dock：默认贴边收起，点击拉手展开 */
-        .qr-dock {
+        /* 【v60】左上角二维码挂件：参考「斑斓部件」同款，与右上角语言按钮对称 */
+        .qr-corner {
             position: fixed;
-            left: 0;
-            bottom: max(3%, env(safe-area-inset-bottom));
-            z-index: 900;
-            display: flex;
-            align-items: flex-end;
-            /* 收起：把方框推出屏幕左侧，只露出右侧拉手 */
-            transform: translateX(-96px);
-            transition: transform 0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
-        }
-        .qr-dock.open {
-            transform: translateX(0); /* 展开：方框滑入视野 */
-        }
-        /* 二维码方框（沿用原悬浮按钮的深墨绿外观） */
-        .qr-panel {
-            position: relative;
-            flex: 0 0 auto;
-            width: 96px;
-            height: 96px;
-            border: none;
-            border-radius: 0 8px 8px 0;
-            background: rgba(55, 74, 66, 0.94);
-            box-shadow: 0 12px 28px rgba(35, 42, 39, 0.24);
-            backdrop-filter: blur(8px);
-            cursor: pointer;
-        }
-        .qr-panel .qr-preview {
-            position: absolute;
-            inset: 5px;
-            width: calc(100% - 10px);
-            height: calc(100% - 10px);
-            border-radius: 4px;
-            background: #fff;
-            pointer-events: none;
-        }
-        /* 竖条拉手（贴边把手） */
-        .qr-tab {
-            flex: 0 0 auto;
-            align-self: flex-end;
-            width: 26px;
-            min-height: 72px;
-            padding: 10px 0;
-            border: none;
-            border-radius: 0 8px 8px 0;
-            background: rgba(55, 74, 66, 0.94);
-            color: #fff;
-            box-shadow: 4px 8px 18px rgba(35, 42, 39, 0.22);
-            backdrop-filter: blur(8px);
-            cursor: pointer;
+            top: 12px;                      /* 与右上角 lang-switcher top:12px 对称 */
+            left: 18px;                     /* 镜像 lang-switcher 的 right:18px */
+            z-index: 9000;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            transition: filter 0.15s;
+            align-items: flex-start;
         }
-        .qr-tab:hover { filter: brightness(1.1); }
-        .qr-tab-icon { font-size: 16px; line-height: 1; }
-        .qr-tab-label {
-            writing-mode: vertical-rl;
-            font-size: 12px;
-            letter-spacing: 2px;
-            opacity: 0.9;
+        /* 【v60.1】白色胶囊切换按钮：与右上角语言/BGM 控件同款外观 */
+        .qr-corner-toggle {
+            display: inline-flex;
+            flex-direction: row;                       /* 覆盖全局 button 的 column，横向排列 */
+            flex-wrap: nowrap;                         /* 文字与箭头强制同一行 */
+            align-items: center;                       /* 垂直居中 */
+            gap: 9px;
+            width: auto;                               /* 贴合内容自适应，箭头永在右侧 */
+            height: 46px;                              /* 【v66】高度与右侧 BGM/语言控件一致 */
+            white-space: nowrap;
+            padding: 0 20px;                           /* 【v66】高度由 height 决定，左右留白放大 */
+            box-sizing: border-box;
+            border: 1px solid var(--border);
+            border-radius: 23px;                       /* 圆角随高度同步 */
+            background: rgba(255, 255, 255, 0.85);
+            color: #2a3832;                            /* 【v66】深墨绿文字（更深一档） */
+            font-family: var(--font-main);
+            font-size: 16px;                           /* 【v66】放大字号 14→16 */
+            font-weight: 700;                          /* 【v66】加粗，墨绿更醒目 */
+            letter-spacing: 0.5px;
+            line-height: 1;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
-        .qr-tab-arrow {
-            font-size: 12px;
+        /* 【v67】显式字号覆盖全局 button span{font-size:10px}，让「二维码」与「已暂停」等大 */
+        .qr-corner-toggle .qr-corner-label { line-height: 1; flex: 0 0 auto; font-size: 14px; font-weight: 700; }
+        .qr-corner-toggle:hover { background: rgba(255, 255, 255, 0.95); box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12); }
+        .qr-corner-arrow {
+            flex: 0 0 auto;                            /* 固定在最右，不被压缩 */
+            font-size: 16px;                           /* 【v66】随按钮放大 */
+            color: #2a3832;                            /* 深墨绿 */
             line-height: 1;
             transition: transform 0.32s;
         }
-        /* 展开时箭头翻转，提示「点此收起」 */
-        .qr-dock.open .qr-tab-arrow { transform: rotate(180deg); }
+        /* 米色圆角卡片：默认收起，点按钮展开 */
+        .qr-corner-card {
+            display: none;
+            margin-top: 10px;
+            width: 240px;
+            padding: 16px 18px 12px;
+            background: #faf5e9;
+            border-radius: 18px;
+            box-shadow: 0 14px 32px rgba(35, 42, 39, 0.26);
+            text-align: center;
+            box-sizing: border-box;
+            animation: fadeInDown 0.28s ease;
+        }
+        .qr-corner.open .qr-corner-card { display: block; }
+        .qr-corner.open .qr-corner-arrow { transform: rotate(180deg); }
+        .qr-corner-title {
+            color: var(--zhusha);           /* 猪肝红标题，同参考样式 */
+            font-weight: bold;
+            font-size: 15px;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+        /* 二维码白底容器：position:relative 容纳中央 logo */
+        .qr-corner-imgwrap {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            background: #fff;
+            border-radius: 10px;
+            padding: 8px;
+            box-sizing: border-box;
+            cursor: pointer;
+        }
+        .qr-corner-imgwrap .qr-preview { display: block; width: 100%; height: 100%; object-fit: contain; }
+        /* 二维码中央产品 logo：白色圆角衬底似印章；配合 ecc=H(30%容错) 不影响扫码 */
+        .qr-center-logo {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 23%;
+            background: #fff;
+            border-radius: 6px;
+            padding: 3px;
+            box-sizing: border-box;
+            box-shadow: 0 0 0 2px #fff;
+            pointer-events: none;
+        }
+        .qr-corner-link {
+            display: inline-block;
+            margin-top: 10px;
+            color: var(--ink-green);
+            font-size: 12px;
+            word-break: break-all;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            transition: color 0.15s;
+        }
+        .qr-corner-link:hover { color: var(--zhusha); }
         .qr-image-box {
+            position: relative;             /* 【v60】容纳中央 logo */
             width: min(320px, 76vw);
             aspect-ratio: 1 / 1;
             margin: 10px auto 14px;
@@ -1156,14 +1189,9 @@
         }
         .qr-link-text:hover { color: var(--zhusha); text-decoration: underline; }
         @media (max-width: 768px) {
-            .qr-dock {
-                bottom: max(2%, env(safe-area-inset-bottom));
-                transform: translateX(-78px);
-            }
-            .qr-dock.open { transform: translateX(0); }
-            .qr-panel { width: 78px; height: 78px; }
-            .qr-tab { width: 22px; min-height: 60px; }
-            .qr-tab-label { font-size: 11px; }
+            .qr-corner { left: 10px; }
+            .qr-corner-toggle { width: auto; height: 42px; padding: 0 16px; font-size: 14px; gap: 7px; }
+            .qr-corner-card { width: min(220px, 62vw); }
         }
 
         .seal-modal { padding: 0; text-align: left; }
@@ -2568,17 +2596,21 @@
     <div class="ink-dot-zhusha" style="top:8%; left:22%; width:6px; height:6px; animation-delay:-4s;"></div>
 </div>
 
-<div class="qr-dock no-print" id="qrDock">
-    <!-- 二维码方框：点击弹大图 -->
-    <div class="qr-panel" onclick="openPageQr()" role="button" tabindex="0" title="扫码打开当前页面" aria-label="扫码打开当前页面">
-        <img class="qr-preview" id="qrFloatPreview" alt=""/>
-    </div>
-    <!-- 竖条拉手：点击展开 / 收起 -->
-    <button class="qr-tab" type="button" onclick="toggleQrDock()" aria-expanded="false" aria-controls="qrDock" title="展开 / 收起二维码" aria-label="展开或收起二维码">
-        <span class="qr-tab-icon" aria-hidden="true">▦</span>
-        <span class="qr-tab-label">码</span>
-        <span class="qr-tab-arrow" aria-hidden="true">❯</span>
+<div class="qr-corner no-print" id="qrCorner">
+    <!-- 切换按钮：深墨绿胶囊，同「斑斓部件」 -->
+    <button class="qr-corner-toggle" type="button" onclick="toggleQrCorner()" aria-expanded="false" aria-controls="qrCornerCard" title="展开 / 收起二维码" aria-label="展开或收起二维码">
+        <span class="qr-corner-label">二维码 / QR Code</span>
+        <span class="qr-corner-arrow" aria-hidden="true">⌄</span>
     </button>
+    <!-- 米色卡片：标题 + 带 logo 的二维码 + 链接 -->
+    <div class="qr-corner-card" id="qrCornerCard">
+        <div class="qr-corner-title">扫码访问 · Scan to open</div>
+        <div class="qr-corner-imgwrap" onclick="openPageQr()" role="button" tabindex="0" title="点击放大" aria-label="点击查看大图二维码">
+            <img class="qr-preview" id="qrFloatPreview" alt="当前页面二维码"/>
+            <img class="qr-center-logo" alt="" aria-hidden="true"/>
+        </div>
+        <a class="qr-corner-link" id="qrCornerLink" target="_blank" rel="noopener"></a>
+    </div>
 </div>
 
 <!-- 环境插画层：全局引用库 & 背景印章承载区 -->
@@ -3143,7 +3175,7 @@
                 <div class="sub-title" style="margin:0;">笔墨纸砚，传统人文雅致</div>
                 <div style="font-size:12px;font-weight:bold;letter-spacing:2px;-webkit-text-fill-color:var(--zhusha);color:var(--zhusha);">BASED ON HSK3.0</div>
             </div>
-            <div class="credit-line">Created &amp; Designed ： Mozhou</div>
+            <div class="credit-line">Created &amp; Designed ： Wu Junhua</div>
             </div>
             <div class="title-icons title-icons-right">
                 <div class="title-icon" aria-hidden="true">
@@ -3385,6 +3417,7 @@
         </h3>
         <div class="qr-image-box">
             <img id="pageQrImage" src="" alt="当前页面二维码" crossorigin="anonymous">
+            <img class="qr-center-logo" alt="" aria-hidden="true">
         </div>
         <a class="qr-link-text" id="pageQrLinkText" target="_blank" rel="noopener"></a>
         <button class="btn-cancel" style="width:100%;" onclick="closePageQr()">关闭<span class="lang-en"> / Close</span><span class="lang-ar"> / إغلاق</span></button>
@@ -5542,7 +5575,7 @@
         if (e.key === 'Enter') { e.preventDefault(); initAll(); }
     });
 
-    const PAGE_QR_FALLBACK_URL = 'https://banlanhanzi.vercel.app/234.html';
+    const PAGE_QR_FALLBACK_URL = 'https://banlan-hanzi.vercel.app/';  // 【v67】修正：带连字符的正确站点
 
     function getPageQrTargetUrl() {
         const currentUrl = window.location.href.split('#')[0];
@@ -5553,7 +5586,7 @@
         const url = getPageQrTargetUrl();
         const qrImg = document.getElementById('pageQrImage');
         const linkText = document.getElementById('pageQrLinkText');
-        qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=360x360&margin=20&data=' + encodeURIComponent(url);
+        qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=360x360&margin=20&ecc=H&data=' + encodeURIComponent(url); // 【v60】ecc=H 容许中央 logo
         linkText.textContent = url;
         linkText.href = url;
         document.getElementById('pageQrModal').style.display = 'flex';
@@ -5561,13 +5594,27 @@
     function closePageQr() {
         document.getElementById('pageQrModal').style.display = 'none';
     }
-    // 【v30】页面加载时预生成悬停预览二维码，鼠标划过即可看到
-    (function initQrFloatPreview() {
+    // 【v60】页面加载时初始化左上角二维码：生成码图(ecc=H) + 注入中央 logo + 填充链接
+    (function initQrCorner() {
         const setSrc = () => {
-            const preview = document.getElementById('qrFloatPreview');
-            if (!preview) return;
             const url = getPageQrTargetUrl();
-            preview.src = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=10&data=' + encodeURIComponent(url);
+            const preview = document.getElementById('qrFloatPreview');
+            if (preview) {
+                // ecc=H：30% 容错，中央 logo 遮挡不影响扫码
+                preview.src = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=10&ecc=H&data=' + encodeURIComponent(url);
+            }
+            // 复用页面标题区的产品 logo（base64 已内嵌，不重复存储）
+            const brandLogo = document.querySelector('.header-title img[alt="斑斓汉字图标"]');
+            if (brandLogo) {
+                document.querySelectorAll('.qr-center-logo').forEach(el => { el.src = brandLogo.src; });
+            }
+            // 卡片底部链接：只显示主机名，同「斑斓部件」样式
+            const link = document.getElementById('qrCornerLink');
+            if (link) {
+                link.href = url;
+                try { link.textContent = new URL(url).host; }
+                catch (e) { link.textContent = url; }
+            }
         };
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', setSrc);
@@ -5576,14 +5623,23 @@
         }
     })();
 
-    // 【v54】点击拉手展开 / 收起二维码 dock
-    function toggleQrDock() {
-        const dock = document.getElementById('qrDock');
-        if (!dock) return;
-        const opened = dock.classList.toggle('open');
-        const tabBtn = dock.querySelector('.qr-tab');
-        if (tabBtn) tabBtn.setAttribute('aria-expanded', opened ? 'true' : 'false');
+    // 【v60】点击胶囊按钮展开 / 收起左上角二维码卡片
+    function toggleQrCorner() {
+        const corner = document.getElementById('qrCorner');
+        if (!corner) return;
+        const opened = corner.classList.toggle('open');
+        const btn = corner.querySelector('.qr-corner-toggle');
+        if (btn) btn.setAttribute('aria-expanded', opened ? 'true' : 'false');
     }
+    // 【v67】展开后点击二维码区域以外的任何地方，自动收起
+    document.addEventListener('click', function (e) {
+        const corner = document.getElementById('qrCorner');
+        if (!corner || !corner.classList.contains('open')) return;
+        if (corner.contains(e.target)) return;   // 点在二维码组件内部，不收起
+        corner.classList.remove('open');
+        const btn = corner.querySelector('.qr-corner-toggle');
+        if (btn) btn.setAttribute('aria-expanded', 'false');
+    });
 
     // ==========================================
     // 用户反馈系统
