@@ -493,6 +493,298 @@
         .btn-feedback { background: #7a9e8e; border: 1px solid #668a7a; }
 
         /* ====================================================
+           【联动模块 / Banlan Linkage】v2A 新增
+           ---- "📚 班级与任务" 按钮（默认隐藏，feature flag 控制显示）
+           ==================================================== */
+        .btn-linkage {
+            background: #5a7d8c;
+            border: 1px solid #486674;
+            display: none; /* 默认隐藏，feature flag 控制显示 */
+        }
+        .btn-linkage.bl-visible { display: inline-flex; }
+
+        /* 测试者模式徽章：仅你自己可见时显示 */
+        .bl-tester-badge {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: var(--zhusha);
+            color: #fff;
+            font-size: 9px;
+            padding: 1px 5px;
+            border-radius: 3px;
+            letter-spacing: 0.5px;
+            font-weight: bold;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            line-height: 1.4;
+            max-width: 70px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* 联动弹窗外层 */
+        .bl-overlay {
+            position: fixed; inset: 0; z-index: 1100;
+            background: rgba(228, 238, 233, 0.85);
+            backdrop-filter: blur(5px);
+            display: none; justify-content: center; align-items: center;
+            padding: 16px;
+        }
+        .bl-overlay.bl-show { display: flex; }
+
+        /* 联动弹窗主体 */
+        .bl-modal {
+            background: #fff;
+            width: 100%;
+            max-width: 720px;
+            max-height: 90vh;
+            border-radius: 10px;
+            border: 1px solid var(--border-light, #d0d7d3);
+            box-shadow: 0 24px 60px rgba(55, 74, 66, 0.2);
+            display: flex; flex-direction: column;
+            overflow: hidden; position: relative;
+        }
+        .bl-modal::before {
+            content: ''; position: absolute; top: 0; left: 24px; right: 24px;
+            height: 3px; background: var(--ink-green);
+            border-radius: 0 0 4px 4px; opacity: 0.85;
+        }
+
+        /* 弹窗头部 */
+        .bl-header {
+            padding: 20px 24px 14px;
+            border-bottom: 1px solid #eef1ef;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .bl-header h3 {
+            margin: 0; font-size: 20px; color: var(--ink-green);
+            letter-spacing: 2px; font-weight: bold;
+            font-family: var(--font-main, 'Noto Sans CJK SC', sans-serif);
+        }
+        .bl-close {
+            background: none; border: none; cursor: pointer;
+            color: var(--mo-mid); font-size: 22px; padding: 4px 10px;
+            border-radius: 4px; box-shadow: none;
+        }
+        .bl-close:hover {
+            background: #f0f4f1; color: var(--zhusha);
+            transform: none; box-shadow: none; filter: none;
+        }
+
+        /* Tab 栏 */
+        .bl-tabs {
+            display: flex; gap: 4px;
+            padding: 8px 24px 0;
+            border-bottom: 1px solid #eef1ef;
+        }
+        .bl-tab {
+            padding: 10px 18px;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: var(--mo-mid);
+            font-size: 14px;
+            cursor: pointer;
+            font-family: inherit;
+            box-shadow: none;
+            border-radius: 4px 4px 0 0;
+            letter-spacing: 1px;
+        }
+        .bl-tab:hover {
+            background: #f7faf8;
+            color: var(--ink-green);
+            transform: none; box-shadow: none; filter: none;
+        }
+        .bl-tab.bl-active {
+            color: var(--ink-green);
+            border-bottom-color: var(--ink-green);
+            font-weight: bold;
+            background: #f0f7f3;
+        }
+
+        /* 内容区 */
+        .bl-body {
+            padding: 22px 24px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        /* 表单 */
+        .bl-form-group { margin-bottom: 14px; }
+        .bl-label {
+            display: block; font-size: 13px; color: var(--mo-dark);
+            margin-bottom: 6px; letter-spacing: 0.5px;
+        }
+        .bl-input, .bl-textarea {
+            width: 100%; padding: 10px 12px;
+            border: 1px solid #d0d7d3;
+            border-bottom: 2px solid #b8c5be;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+            color: var(--ink-green);
+            background: #fafbfa;
+            box-sizing: border-box;
+            transition: all 0.2s;
+        }
+        .bl-input:focus, .bl-textarea:focus {
+            outline: none;
+            border-color: var(--ink-green);
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(55, 74, 66, 0.08);
+        }
+        .bl-textarea { resize: vertical; min-height: 80px; }
+        .bl-hint {
+            font-size: 11px; color: var(--ink-gray);
+            margin-top: 4px; letter-spacing: 0.3px;
+        }
+
+        /* 按钮 */
+        .bl-btn {
+            padding: 10px 18px;
+            background: var(--ink-green);
+            color: #fff;
+            border: 1px solid #2a3832;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            font-family: inherit;
+            letter-spacing: 1px;
+            box-shadow: 0 3px 8px rgba(55, 74, 66, 0.15);
+            transition: all 0.2s;
+        }
+        .bl-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 12px rgba(55, 74, 66, 0.25);
+            filter: brightness(1.08);
+        }
+        .bl-btn.bl-secondary {
+            background: #fff;
+            color: var(--ink-green);
+            border-color: #c8d0cb;
+            box-shadow: none;
+        }
+        .bl-btn.bl-secondary:hover {
+            background: #f0f7f3;
+            border-color: var(--ink-green);
+        }
+        .bl-btn.bl-danger { background: var(--zhusha); border-color: var(--zhusha-hover); }
+        .bl-btn-row {
+            display: flex; gap: 10px; justify-content: flex-end;
+            padding-top: 8px;
+            border-top: 1px solid #eef1ef;
+            margin-top: 14px;
+        }
+
+        /* 班级卡片 */
+        .bl-class-list { display: flex; flex-direction: column; gap: 10px; }
+        .bl-class-card {
+            border: 1px solid #d0d7d3;
+            border-left: 4px solid var(--ink-green);
+            border-radius: 4px;
+            padding: 14px 16px;
+            background: #fafbfa;
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 12px;
+            transition: all 0.2s;
+        }
+        .bl-class-card:hover { background: #f0f7f3; border-left-color: var(--zhusha); }
+        .bl-class-info { flex: 1; min-width: 0; }
+        .bl-class-code {
+            display: inline-block;
+            background: var(--ink-green); color: #fff;
+            padding: 2px 8px; border-radius: 3px;
+            font-size: 12px; letter-spacing: 1px;
+            font-family: monospace; margin-right: 8px;
+        }
+        .bl-class-name { font-size: 15px; color: var(--mo-dark); font-weight: 500; }
+        .bl-class-meta {
+            font-size: 12px; color: var(--ink-gray);
+            margin-top: 4px; letter-spacing: 0.3px;
+        }
+        .bl-class-actions { display: flex; gap: 6px; }
+        .bl-icon-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--mo-mid);
+            padding: 6px 10px; font-size: 13px;
+            cursor: pointer; border-radius: 4px;
+            box-shadow: none;
+        }
+        .bl-icon-btn:hover {
+            background: #fff; border-color: #d0d7d3;
+            color: var(--ink-green);
+            transform: none; box-shadow: none; filter: none;
+        }
+        .bl-icon-btn.bl-danger-icon:hover { color: var(--zhusha); border-color: #e8c8c8; }
+
+        /* 空状态 */
+        .bl-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--ink-gray);
+        }
+        .bl-empty-icon { font-size: 36px; opacity: 0.4; margin-bottom: 10px; }
+        .bl-empty-text { font-size: 14px; letter-spacing: 0.5px; }
+
+        /* 消息提示 */
+        .bl-toast {
+            position: fixed;
+            bottom: 24px; left: 50%; transform: translateX(-50%);
+            background: var(--ink-green); color: #fff;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            z-index: 2000;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        .bl-toast.bl-toast-show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .bl-toast.bl-toast-error { background: var(--zhusha); }
+        .bl-toast.bl-toast-success { background: #4a8b6f; }
+
+        /* 用户状态条 */
+        .bl-user-bar {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 8px 16px;
+            background: #f0f7f3;
+            border-radius: 4px;
+            margin-bottom: 16px;
+            font-size: 13px;
+        }
+        .bl-user-name { color: var(--ink-green); font-weight: 500; }
+        .bl-user-name::before { content: '👤 '; opacity: 0.6; }
+        .bl-logout-btn {
+            background: transparent; border: 1px solid #d0d7d3;
+            color: var(--mo-mid); padding: 4px 10px;
+            font-size: 12px; border-radius: 3px;
+            cursor: pointer; box-shadow: none;
+        }
+        .bl-logout-btn:hover {
+            background: #fff; color: var(--zhusha);
+            transform: none; box-shadow: none; filter: none;
+        }
+
+        /* 手机端适配 */
+        @media (max-width: 600px) {
+            .bl-modal { max-height: 95vh; max-width: 100%; border-radius: 8px; }
+            .bl-header { padding: 14px 16px 10px; }
+            .bl-header h3 { font-size: 17px; letter-spacing: 1.5px; }
+            .bl-tabs { padding: 6px 12px 0; }
+            .bl-tab { padding: 8px 12px; font-size: 13px; }
+            .bl-body { padding: 16px; }
+            .bl-class-card { padding: 12px; flex-wrap: wrap; }
+            .bl-btn-row { flex-direction: column-reverse; }
+            .bl-btn-row .bl-btn { width: 100%; }
+
+            /* 手机端按钮栏：联动按钮加入网格 */
+            .btn-linkage.bl-visible { display: flex !important; }
+        }
+
+        /* ====================================================
            【主控制台五大功能按钮】整体放大 + 尺寸锁定
            - 桌面端按英文最长文案 (Character Generation) 设定 min-width
            - 切换中英 / 中阿时方框大小保持不变
@@ -3207,6 +3499,7 @@
             <button class="btn-seal" onclick="openSealStudio()">❒ 印章生成<span class="btn-en">Seal Generation</span><span class="btn-ar">توليد الختم</span></button>
             <button class="btn-toggle-dl" onclick="toggleDownloadMenu()" id="btnToggleDl">⬇ 下载中心<span class="btn-en">Download Center</span><span class="btn-ar">مركز التنزيل</span></button>
             <button class="btn-feedback" onclick="openFeedback()">💬 用户反馈<span class="btn-en">Feedback</span><span class="btn-ar">التغذية الراجعة</span></button>
+            <button class="btn-linkage" id="btnLinkage" onclick="BL.openPanel()" style="position:relative;">📚 班级与任务<span class="btn-en">Classes &amp; Tasks</span><span class="btn-ar">الفصول والمهام</span><span class="bl-tester-badge" id="blTesterBadge" style="display:none;">测试</span></button>
             
             <!-- 背景音乐控件已搬至 <body> 顶部 (#bgmControls)，详见 lang-switcher 旁 -->
 
@@ -7047,5 +7340,599 @@
     };
 
 </script>
+
+<!-- ════════════════════════════════════════════════════════════════
+     【斑斓联动模块 / Banlan Linkage Module】v2A
+     - 由 feature flag 控制显示
+     - 完全独立，对原工具零侵入
+     - 关闭时整个模块隐藏，工具表现等同 v1
+     ════════════════════════════════════════════════════════════════ -->
+
+<!-- 联动主弹窗 -->
+<div class="bl-overlay" id="blOverlay">
+    <div class="bl-modal">
+        <div class="bl-header">
+            <h3 id="blTitle">📚 班级与任务</h3>
+            <button class="bl-close" onclick="BL.closePanel()">×</button>
+        </div>
+
+        <!-- 已登录状态下显示 Tab -->
+        <div class="bl-tabs" id="blTabs" style="display:none;">
+            <button class="bl-tab bl-active" data-tab="classes" onclick="BL.switchTab('classes')">我的班级</button>
+            <button class="bl-tab" data-tab="account" onclick="BL.switchTab('account')">账号</button>
+        </div>
+
+        <div class="bl-body">
+            <!-- 未登录视图 -->
+            <div id="blViewAuth">
+                <p style="text-align:center; color:var(--mo-mid); font-size:13px; margin:8px 0 18px;">
+                    使用班级管理功能，请先登录或注册
+                </p>
+                <div class="bl-form-group">
+                    <label class="bl-label">用户名</label>
+                    <input type="text" class="bl-input" id="blAuthUsername" placeholder="3-32 位字母数字下划线" autocomplete="username">
+                </div>
+                <div class="bl-form-group">
+                    <label class="bl-label">密码</label>
+                    <input type="password" class="bl-input" id="blAuthPassword" placeholder="至少 6 位" autocomplete="current-password">
+                </div>
+                <div class="bl-form-group" id="blAuthDisplayNameGroup" style="display:none;">
+                    <label class="bl-label">显示名（可选）</label>
+                    <input type="text" class="bl-input" id="blAuthDisplayName" placeholder="如：墨舟老师">
+                </div>
+                <p class="bl-hint" style="margin-top:14px;">
+                    ⓘ 账号信息仅用于身份识别，不收集隐私数据
+                </p>
+                <div class="bl-btn-row">
+                    <button class="bl-btn bl-secondary" onclick="BL.toggleAuthMode()" id="blAuthToggleBtn">注册新账号</button>
+                    <button class="bl-btn" onclick="BL.submitAuth()" id="blAuthSubmitBtn">登录</button>
+                </div>
+            </div>
+
+            <!-- 班级列表视图 -->
+            <div id="blViewClasses" style="display:none;">
+                <div class="bl-user-bar">
+                    <span class="bl-user-name" id="blUserDisplayName">—</span>
+                    <button class="bl-logout-btn" onclick="BL.logout()">退出</button>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                    <div style="font-size:14px; color:var(--ink-green); font-weight:500;">
+                        我的班级（<span id="blClassCount">0</span>）
+                    </div>
+                    <button class="bl-btn" onclick="BL.openClassEditor()">+ 新建班级</button>
+                </div>
+                <div class="bl-class-list" id="blClassList">
+                    <!-- 动态生成 -->
+                </div>
+            </div>
+
+            <!-- 账号视图 -->
+            <div id="blViewAccount" style="display:none;">
+                <div class="bl-user-bar">
+                    <span class="bl-user-name" id="blAccountDisplayName">—</span>
+                </div>
+                <div class="bl-form-group">
+                    <label class="bl-label">用户名</label>
+                    <input type="text" class="bl-input" id="blAccountUsername" disabled style="background:#f0f4f1;">
+                </div>
+                <div class="bl-form-group">
+                    <label class="bl-label">账号 ID</label>
+                    <input type="text" class="bl-input" id="blAccountId" disabled style="background:#f0f4f1; font-family:monospace; font-size:12px;">
+                </div>
+                <div class="bl-form-group">
+                    <label class="bl-label">注册时间</label>
+                    <input type="text" class="bl-input" id="blAccountCreated" disabled style="background:#f0f4f1;">
+                </div>
+                <div class="bl-btn-row">
+                    <button class="bl-btn bl-danger" onclick="BL.logout()">退出登录</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 班级编辑器 (创建/编辑) -->
+<div class="bl-overlay" id="blClassEditorOverlay">
+    <div class="bl-modal" style="max-width:520px;">
+        <div class="bl-header">
+            <h3 id="blClassEditorTitle">+ 新建班级</h3>
+            <button class="bl-close" onclick="BL.closeClassEditor()">×</button>
+        </div>
+        <div class="bl-body">
+            <div class="bl-form-group">
+                <label class="bl-label">班级码 <span style="color:var(--zhusha)">*</span></label>
+                <input type="text" class="bl-input" id="blClassCode" placeholder="如：HSK3A、MyClass2024" maxlength="20">
+                <p class="bl-hint">2-20 位字母数字横线下划线，学生用这个码加入班级</p>
+            </div>
+            <div class="bl-form-group">
+                <label class="bl-label">班级名称 <span style="color:var(--zhusha)">*</span></label>
+                <input type="text" class="bl-input" id="blClassName" placeholder="如：三年级 A 班" maxlength="100">
+            </div>
+            <div class="bl-form-group">
+                <label class="bl-label">备注（可选）</label>
+                <textarea class="bl-textarea" id="blClassDescription" placeholder="如：周二/周四 19:00-20:00" maxlength="500"></textarea>
+            </div>
+            <div class="bl-btn-row">
+                <button class="bl-btn bl-secondary" onclick="BL.closeClassEditor()">取消</button>
+                <button class="bl-btn" onclick="BL.submitClass()" id="blClassSubmitBtn">创建</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast 提示 -->
+<div class="bl-toast" id="blToast"></div>
+
+<script>
+/* ══════════════════════════════════════════════════════════════════
+   斑斓联动模块 v2A · JavaScript
+   - 全部代码命名空间挂在 window.BL 下，避免污染全局
+   - 通过 feature flag 控制 UI 显示
+   ══════════════════════════════════════════════════════════════════ */
+window.BL = (function () {
+    'use strict';
+
+    // === 配置 ===
+    const API_BASE = 'https://banlan-api.bruce-wu9207.workers.dev';
+    const LS_TOKEN_KEY = 'bl_token';
+
+    // === 状态 ===
+    const state = {
+        token: null,
+        teacher: null,
+        classes: [],
+        authMode: 'login',           // 'login' | 'register'
+        editingClassCode: null,      // 编辑模式下的班级码
+        currentTab: 'classes',
+    };
+
+    // ─────────────────────────────────────────
+    // 工具函数
+    // ─────────────────────────────────────────
+    function $(id) { return document.getElementById(id); }
+
+    function toast(msg, type) {
+        const el = $('blToast');
+        el.textContent = msg;
+        el.className = 'bl-toast bl-toast-show' + (type ? ' bl-toast-' + type : '');
+        setTimeout(() => { el.className = 'bl-toast'; }, 2400);
+    }
+
+    async function api(method, path, body) {
+        const headers = { 'Content-Type': 'application/json' };
+        if (state.token) headers['Authorization'] = 'Bearer ' + state.token;
+        const opts = { method, headers };
+        if (body) opts.body = JSON.stringify(body);
+        const res = await fetch(API_BASE + path, opts);
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+            const err = new Error(data.error || ('HTTP ' + res.status));
+            err.status = res.status;
+            throw err;
+        }
+        return data;
+    }
+
+    // ─────────────────────────────────────────
+    // 解锁码处理：检查 URL 参数并验证
+    // ─────────────────────────────────────────
+    const LS_TESTER_KEY = 'bl_tester_unlocked';      // "1" 表示已解锁
+    const LS_TESTER_NAME_KEY = 'bl_tester_name';     // 解锁后的测试者姓名
+    const LS_TESTER_ROLE_KEY = 'bl_tester_role';     // 解锁后的角色 owner|team
+
+    async function handleUnlockUrl() {
+        const params = new URLSearchParams(window.location.search);
+        const unlockCode = params.get('unlock');
+        const lockSignal = params.has('lock');
+
+        // ?lock → 清除测试者解锁
+        if (lockSignal) {
+            localStorage.removeItem(LS_TESTER_KEY);
+            localStorage.removeItem(LS_TESTER_NAME_KEY);
+            localStorage.removeItem(LS_TESTER_ROLE_KEY);
+            cleanUrl(['unlock', 'lock']);
+            toast('测试模式已关闭', 'success');
+            return;
+        }
+
+        // ?unlock=XXX → 验证并解锁
+        if (unlockCode) {
+            try {
+                const res = await api('POST', '/api/feature/verify-tester', { code: unlockCode });
+                if (res.valid) {
+                    localStorage.setItem(LS_TESTER_KEY, '1');
+                    if (res.name) localStorage.setItem(LS_TESTER_NAME_KEY, res.name);
+                    if (res.role) localStorage.setItem(LS_TESTER_ROLE_KEY, res.role);
+                    const roleLabel = res.role === 'owner' ? '主测试者' : '团队成员';
+                    toast('🧪 ' + roleLabel + '模式已激活 · 欢迎 ' + (res.name || ''), 'success');
+                } else {
+                    toast('解锁失败' + (res.hint ? '：' + res.hint : ''), 'error');
+                }
+            } catch (e) {
+                console.warn('[BL] 解锁失败', e);
+                toast('解锁验证失败：' + e.message, 'error');
+            }
+            cleanUrl(['unlock', 'lock']);
+        }
+    }
+
+    function cleanUrl(paramsToRemove) {
+        try {
+            const url = new URL(window.location);
+            paramsToRemove.forEach(p => url.searchParams.delete(p));
+            history.replaceState({}, '', url.pathname + (url.search ? url.search : '') + url.hash);
+        } catch (e) { /* 老浏览器忽略 */ }
+    }
+
+    function isTesterUnlocked() {
+        return localStorage.getItem(LS_TESTER_KEY) === '1';
+    }
+
+    function getTesterName() {
+        return localStorage.getItem(LS_TESTER_NAME_KEY) || '';
+    }
+
+    function getTesterRole() {
+        return localStorage.getItem(LS_TESTER_ROLE_KEY) || '';
+    }
+
+    // ─────────────────────────────────────────
+    // Feature Flag：返回 'off' | 'solo' | 'team' | 'on'
+    // ─────────────────────────────────────────
+    async function checkFeatureFlag() {
+        try {
+            const data = await api('GET', '/api/feature/flags');
+            return data.linkage || 'off';
+        } catch (e) {
+            console.warn('[BL] Feature flag 查询失败，默认 OFF', e);
+            return 'off';
+        }
+    }
+
+    // ─────────────────────────────────────────
+    // 初始化：处理解锁码 + 检查 flag + 决定是否可见
+    // ─────────────────────────────────────────
+    async function init() {
+        // 1) 先处理 URL 解锁参数
+        await handleUnlockUrl();
+
+        // 2) 取全局开关状态
+        const linkage = await checkFeatureFlag();
+        const testerOn = isTesterUnlocked();
+        const role = getTesterRole();
+
+        // 3) 先尝试恢复登录（因为 BETA 阶段要看 betaAccess 字段）
+        const saved = localStorage.getItem(LS_TOKEN_KEY);
+        if (saved) {
+            state.token = saved;
+            try {
+                const data = await api('GET', '/api/teacher/me');
+                state.teacher = data.teacher;
+            } catch (e) {
+                state.token = null;
+                localStorage.removeItem(LS_TOKEN_KEY);
+            }
+        }
+        const hasBetaAccess = !!(state.teacher && state.teacher.betaAccess === true);
+        const regSlot = state.teacher && state.teacher.registrationSlot;
+
+        // 4) 显示规则（六档决策表）：
+        //    off  → 任何人看不到
+        //    solo → 仅 owner 密语
+        //    team → owner / team 密语
+        //    beta → ① owner / team / beta 密语  ② 已登录且 betaAccess=true（前 N 名注册者）
+        //    on   → 所有人都能看到
+        let shouldShow = false;
+        let inTesterMode = false;
+        let badgeText = '';
+        let badgeRole = '';
+
+        if (linkage === 'on') {
+            shouldShow = true;
+            inTesterMode = false;
+            // 老的 testers 在 on 阶段也保留徽章（荣誉感）
+            if (testerOn && ['owner', 'team', 'beta'].includes(role)) {
+                inTesterMode = true;
+                badgeText = getTesterName();
+                badgeRole = role;
+            }
+        } else if (linkage === 'solo' && testerOn && role === 'owner') {
+            shouldShow = true;
+            inTesterMode = true;
+            badgeText = getTesterName();
+            badgeRole = 'owner';
+        } else if (linkage === 'team' && testerOn && ['owner', 'team'].includes(role)) {
+            shouldShow = true;
+            inTesterMode = true;
+            badgeText = getTesterName();
+            badgeRole = role;
+        } else if (linkage === 'beta') {
+            if (testerOn && ['owner', 'team', 'beta'].includes(role)) {
+                shouldShow = true;
+                inTesterMode = true;
+                badgeText = getTesterName();
+                badgeRole = role;
+            } else if (hasBetaAccess) {
+                shouldShow = true;
+                inTesterMode = true;
+                badgeText = regSlot ? ('内测 #' + regSlot) : '内测';
+                badgeRole = 'beta';
+            }
+        }
+
+        if (!shouldShow) return; // 不显示按钮
+
+        // 5) 显示按钮
+        const btn = $('btnLinkage');
+        if (btn) btn.classList.add('bl-visible');
+
+        // 6) 显示徽章（含颜色区分）
+        if (inTesterMode && badgeText) {
+            const badge = $('blTesterBadge');
+            if (badge) {
+                badge.textContent = badgeText;
+                badge.style.display = '';
+                // 三种角色三种颜色
+                const colorMap = {
+                    owner: '#8f2727',  // 深红
+                    team:  '#b33939',  // 朱砂
+                    beta:  '#c89c2e',  // 金黄
+                };
+                badge.style.background = colorMap[badgeRole] || '#b33939';
+            }
+        }
+    }
+
+    // ─────────────────────────────────────────
+    // 面板开关
+    // ─────────────────────────────────────────
+    function openPanel() {
+        $('blOverlay').classList.add('bl-show');
+        if (state.teacher) {
+            showLoggedInView();
+            loadClasses();
+        } else {
+            showAuthView();
+        }
+    }
+
+    function closePanel() {
+        $('blOverlay').classList.remove('bl-show');
+    }
+
+    function showAuthView() {
+        $('blViewAuth').style.display = '';
+        $('blViewClasses').style.display = 'none';
+        $('blViewAccount').style.display = 'none';
+        $('blTabs').style.display = 'none';
+    }
+
+    function showLoggedInView() {
+        $('blViewAuth').style.display = 'none';
+        $('blTabs').style.display = '';
+        switchTab(state.currentTab || 'classes');
+
+        const name = (state.teacher && (state.teacher.displayName || state.teacher.username)) || '老师';
+        $('blUserDisplayName').textContent = name;
+        $('blAccountDisplayName').textContent = name;
+        $('blAccountUsername').value = state.teacher.username || '';
+        $('blAccountId').value = state.teacher.id || '';
+        $('blAccountCreated').value = formatDateTime(state.teacher.createdAt);
+    }
+
+    function switchTab(tab) {
+        state.currentTab = tab;
+        document.querySelectorAll('#blTabs .bl-tab').forEach(b => {
+            b.classList.toggle('bl-active', b.dataset.tab === tab);
+        });
+        $('blViewClasses').style.display = tab === 'classes' ? '' : 'none';
+        $('blViewAccount').style.display = tab === 'account' ? '' : 'none';
+    }
+
+    // ─────────────────────────────────────────
+    // 登录 / 注册
+    // ─────────────────────────────────────────
+    function toggleAuthMode() {
+        state.authMode = state.authMode === 'login' ? 'register' : 'login';
+        const isRegister = state.authMode === 'register';
+        $('blAuthDisplayNameGroup').style.display = isRegister ? '' : 'none';
+        $('blAuthSubmitBtn').textContent = isRegister ? '注册并登录' : '登录';
+        $('blAuthToggleBtn').textContent = isRegister ? '已有账号？去登录' : '注册新账号';
+    }
+
+    async function submitAuth() {
+        const username = $('blAuthUsername').value.trim();
+        const password = $('blAuthPassword').value;
+        if (!username || !password) {
+            toast('请填写用户名和密码', 'error');
+            return;
+        }
+
+        const endpoint = state.authMode === 'register' ? '/api/teacher/register' : '/api/teacher/login';
+        const body = { username, password };
+        if (state.authMode === 'register') {
+            body.displayName = $('blAuthDisplayName').value.trim() || username;
+        }
+
+        try {
+            const data = await api('POST', endpoint, body);
+            state.token = data.token;
+            state.teacher = data.teacher;
+            localStorage.setItem(LS_TOKEN_KEY, data.token);
+
+            toast(state.authMode === 'register' ? '注册成功 ✓' : '登录成功 ✓', 'success');
+
+            // 清空表单
+            $('blAuthUsername').value = '';
+            $('blAuthPassword').value = '';
+            $('blAuthDisplayName').value = '';
+
+            showLoggedInView();
+            loadClasses();
+        } catch (e) {
+            toast(e.message || '操作失败', 'error');
+        }
+    }
+
+    function logout() {
+        if (!confirm('确定要退出登录吗？')) return;
+        api('POST', '/api/teacher/logout').catch(() => {}); // 忽略错误
+        state.token = null;
+        state.teacher = null;
+        state.classes = [];
+        localStorage.removeItem(LS_TOKEN_KEY);
+        showAuthView();
+        toast('已退出登录');
+    }
+
+    // ─────────────────────────────────────────
+    // 班级管理
+    // ─────────────────────────────────────────
+    async function loadClasses() {
+        try {
+            const data = await api('GET', '/api/classes');
+            state.classes = data.classes || [];
+            renderClasses();
+        } catch (e) {
+            toast('加载班级失败：' + e.message, 'error');
+        }
+    }
+
+    function renderClasses() {
+        const list = $('blClassList');
+        $('blClassCount').textContent = state.classes.length;
+
+        if (state.classes.length === 0) {
+            list.innerHTML = `
+                <div class="bl-empty">
+                    <div class="bl-empty-icon">📭</div>
+                    <div class="bl-empty-text">还没有班级，点上方"新建班级"开始</div>
+                </div>
+            `;
+            return;
+        }
+
+        list.innerHTML = state.classes.map(c => `
+            <div class="bl-class-card">
+                <div class="bl-class-info">
+                    <div>
+                        <span class="bl-class-code">${escapeHtml(c.classCode)}</span>
+                        <span class="bl-class-name">${escapeHtml(c.name)}</span>
+                    </div>
+                    <div class="bl-class-meta">
+                        ${c.studentCount || 0} 学生 · ${c.taskCount || 0} 任务${c.description ? ' · ' + escapeHtml(c.description) : ''}
+                    </div>
+                </div>
+                <div class="bl-class-actions">
+                    <button class="bl-icon-btn" onclick="BL.openClassEditor('${escapeAttr(c.classCode)}')" title="编辑">✎</button>
+                    <button class="bl-icon-btn bl-danger-icon" onclick="BL.deleteClass('${escapeAttr(c.classCode)}')" title="删除">🗑</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function openClassEditor(classCode) {
+        state.editingClassCode = classCode || null;
+        const editing = !!classCode;
+        $('blClassEditorTitle').textContent = editing ? '编辑班级' : '+ 新建班级';
+        $('blClassSubmitBtn').textContent = editing ? '保存' : '创建';
+
+        if (editing) {
+            const cls = state.classes.find(c => c.classCode === classCode);
+            $('blClassCode').value = cls.classCode;
+            $('blClassCode').disabled = true; // 班级码不可改
+            $('blClassName').value = cls.name || '';
+            $('blClassDescription').value = cls.description || '';
+        } else {
+            $('blClassCode').value = '';
+            $('blClassCode').disabled = false;
+            $('blClassName').value = '';
+            $('blClassDescription').value = '';
+        }
+        $('blClassEditorOverlay').classList.add('bl-show');
+    }
+
+    function closeClassEditor() {
+        $('blClassEditorOverlay').classList.remove('bl-show');
+        state.editingClassCode = null;
+    }
+
+    async function submitClass() {
+        const code = $('blClassCode').value.trim();
+        const name = $('blClassName').value.trim();
+        const description = $('blClassDescription').value.trim();
+
+        if (!code || !name) {
+            toast('请填写班级码和名称', 'error');
+            return;
+        }
+
+        try {
+            if (state.editingClassCode) {
+                await api('PUT', '/api/classes/' + encodeURIComponent(state.editingClassCode), { name, description });
+                toast('班级已更新 ✓', 'success');
+            } else {
+                await api('POST', '/api/classes', { classCode: code, name, description });
+                toast('班级已创建 ✓', 'success');
+            }
+            closeClassEditor();
+            loadClasses();
+        } catch (e) {
+            toast(e.message || '保存失败', 'error');
+        }
+    }
+
+    async function deleteClass(classCode) {
+        const cls = state.classes.find(c => c.classCode === classCode);
+        if (!cls) return;
+        if (!confirm(`确定删除班级"${cls.name}"吗？\n班级下的所有任务和学生记录也会一起删除，不可恢复！`)) return;
+
+        try {
+            await api('DELETE', '/api/classes/' + encodeURIComponent(classCode));
+            toast('班级已删除', 'success');
+            loadClasses();
+        } catch (e) {
+            toast(e.message || '删除失败', 'error');
+        }
+    }
+
+    // ─────────────────────────────────────────
+    // 辅助
+    // ─────────────────────────────────────────
+    function escapeHtml(s) {
+        if (!s) return '';
+        return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' })[c]);
+    }
+    function escapeAttr(s) {
+        return escapeHtml(s).replace(/`/g, '&#96;');
+    }
+    function formatDateTime(iso) {
+        if (!iso) return '';
+        try {
+            const d = new Date(iso);
+            return d.toLocaleString('zh-CN', { hour12: false });
+        } catch { return iso; }
+    }
+
+    // ─────────────────────────────────────────
+    // 导出公共接口
+    // ─────────────────────────────────────────
+    return {
+        init,
+        openPanel, closePanel,
+        switchTab,
+        toggleAuthMode, submitAuth, logout,
+        openClassEditor, closeClassEditor, submitClass, deleteClass,
+    };
+})();
+
+// 页面加载完成后初始化
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => window.BL.init());
+} else {
+    window.BL.init();
+}
+</script>
+
 </body>
 </html>
