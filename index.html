@@ -493,7 +493,7 @@
         .btn-feedback { background: #7a9e8e; border: 1px solid #668a7a; }
 
         /* ====================================================
-           【联动模块 / Banlan Linkage】v2A 新增
+           【联动模块 / Banlan Linkage】v2B 新增/扩展
            ---- "📚 班级与任务" 按钮（默认隐藏，feature flag 控制显示）
            ==================================================== */
         .btn-linkage {
@@ -782,6 +782,130 @@
 
             /* 手机端按钮栏：联动按钮加入网格 */
             .btn-linkage.bl-visible { display: flex !important; }
+        }
+
+        /* ════════════════════════════════════════════════════════
+           【Phase 2B 任务管理样式】v2B 新增
+           - 任务列表视图 (blViewTasks)
+           - 任务编辑器 (blTaskEditorOverlay)
+           - 三色类型徽章 (字/词/句)
+           ════════════════════════════════════════════════════════ */
+        /* 返回班级列表按钮 */
+        .bl-back-btn {
+            background: transparent; border: none;
+            color: var(--ink-green); cursor: pointer;
+            padding: 4px 8px; font-size: 13px;
+            font-family: inherit; letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        .bl-back-btn:hover { color: var(--zhusha); }
+
+        /* 任务页头部：班级标题 + 新建任务按钮 */
+        .bl-tasks-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 10px; border-bottom: 1px solid #e5ebe7;
+            gap: 8px;
+        }
+        .bl-tasks-title { font-size: 15px; color: var(--ink-green); font-weight: 500; }
+        .bl-tasks-class-tag {
+            display: inline-block;
+            background: var(--ink-green); color: #fff;
+            padding: 2px 8px; border-radius: 3px;
+            font-size: 12px; letter-spacing: 1px;
+            font-family: monospace; margin-right: 8px;
+        }
+
+        /* 任务列表 */
+        .bl-task-list { display: flex; flex-direction: column; gap: 10px; }
+        .bl-task-card {
+            border: 1px solid #d0d7d3;
+            border-left: 4px solid var(--ink-green);
+            border-radius: 4px;
+            padding: 12px 14px;
+            background: #fafbfa;
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 12px;
+            transition: all 0.2s;
+        }
+        .bl-task-card:hover { background: #f0f7f3; }
+        .bl-task-card.bl-archived {
+            border-left-color: var(--ink-gray); opacity: 0.65;
+            background: #f4f5f4;
+        }
+        .bl-task-info { flex: 1; min-width: 0; }
+        .bl-task-title {
+            font-size: 14px; color: var(--mo-dark); font-weight: 500;
+            margin-bottom: 4px;
+            overflow: hidden; text-overflow: ellipsis;
+            display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical;
+        }
+        .bl-task-meta {
+            font-size: 12px; color: var(--ink-gray);
+            letter-spacing: 0.3px;
+            display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+        }
+        .bl-task-actions { display: flex; gap: 4px; flex-shrink: 0; }
+
+        /* 类型徽章：三色 */
+        .bl-type-badge {
+            display: inline-block;
+            padding: 2px 8px; border-radius: 3px;
+            font-size: 11px; letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+        .bl-type-char { background: rgba(143, 39, 39, 0.12); color: #8f2727; }
+        .bl-type-word { background: rgba(202, 138, 4, 0.15); color: #976806; }
+        .bl-type-sentence { background: rgba(74, 139, 111, 0.15); color: #2f6b53; }
+
+        /* 任务编辑器：单选按钮组 (字/词/句) */
+        .bl-radio-group {
+            display: flex; gap: 0;
+            border: 1px solid #d0d7d3; border-radius: 4px;
+            overflow: hidden;
+            background: #fff;
+        }
+        .bl-radio-group label {
+            flex: 1; padding: 10px; text-align: center;
+            cursor: pointer; font-size: 14px;
+            border-right: 1px solid #d0d7d3;
+            transition: all 0.15s;
+            user-select: none;
+        }
+        .bl-radio-group label:last-child { border-right: none; }
+        .bl-radio-group input[type="radio"] { display: none; }
+        .bl-radio-group label:hover { background: #f0f7f3; }
+        .bl-radio-group label.bl-radio-active { background: var(--ink-green); color: #fff; }
+
+        /* 任务内容文本框 (多行) */
+        .bl-task-content-input {
+            width: 100%;
+            min-height: 120px;
+            padding: 10px 12px;
+            border: 1px solid #d0d7d3;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--mo-dark);
+            background: #fff;
+            resize: vertical;
+            transition: border-color 0.15s;
+            box-sizing: border-box;
+        }
+        .bl-task-content-input:focus {
+            outline: none;
+            border-color: var(--ink-green);
+        }
+
+        /* 手机端响应式：任务卡片紧凑化 */
+        @media (max-width: 600px) {
+            .bl-task-card { padding: 10px 12px; }
+            .bl-task-title { font-size: 13px; }
+            .bl-task-meta { font-size: 11px; gap: 6px; }
+            .bl-task-actions { gap: 2px; }
+            .bl-tasks-header { flex-wrap: wrap; gap: 8px; }
+            .bl-radio-group label { padding: 9px 4px; font-size: 13px; }
         }
 
         /* ====================================================
@@ -7342,7 +7466,7 @@
 </script>
 
 <!-- ════════════════════════════════════════════════════════════════
-     【斑斓联动模块 / Banlan Linkage Module】v2A
+     【斑斓联动模块 / Banlan Linkage Module】v2B (Phase 2B 任务管理-第1轮)
      - 由 feature flag 控制显示
      - 完全独立，对原工具零侵入
      - 关闭时整个模块隐藏，工具表现等同 v1
@@ -7406,6 +7530,24 @@
                 </div>
             </div>
 
+            <!-- 任务列表视图 (Phase 2B 新增) -->
+            <div id="blViewTasks" style="display:none;">
+                <button class="bl-back-btn" onclick="BL.backToClassList()">← 返回班级列表</button>
+                <div class="bl-tasks-header">
+                    <div class="bl-tasks-title">
+                        <span class="bl-tasks-class-tag" id="blTasksClassTag">—</span>
+                        <span id="blTasksClassName">—</span>
+                        <span style="color:var(--ink-gray); font-weight:normal; font-size:13px; margin-left:6px;">
+                            （<span id="blTasksCount">0</span> 个任务）
+                        </span>
+                    </div>
+                    <button class="bl-btn" onclick="BL.openTaskEditor()">+ 新建任务</button>
+                </div>
+                <div class="bl-task-list" id="blTaskList">
+                    <!-- 动态生成 -->
+                </div>
+            </div>
+
             <!-- 账号视图 -->
             <div id="blViewAccount" style="display:none;">
                 <div class="bl-user-bar">
@@ -7460,12 +7602,52 @@
     </div>
 </div>
 
+<!-- 任务编辑器 (Phase 2B 新增, 创建/编辑) -->
+<div class="bl-overlay" id="blTaskEditorOverlay">
+    <div class="bl-modal" style="max-width:560px;">
+        <div class="bl-header">
+            <h3 id="blTaskEditorTitle">+ 新建任务</h3>
+            <button class="bl-close" onclick="BL.closeTaskEditor()">×</button>
+        </div>
+        <div class="bl-body">
+            <div class="bl-form-group">
+                <label class="bl-label">任务标题 <span style="color:var(--zhusha)">*</span></label>
+                <input type="text" class="bl-input" id="blTaskTitle" placeholder="如：HSK3 第 5 课字 / 周末作业" maxlength="100">
+            </div>
+            <div class="bl-form-group">
+                <label class="bl-label">任务类型 <span style="color:var(--zhusha)">*</span></label>
+                <div class="bl-radio-group" id="blTaskTypeGroup">
+                    <label data-type="char" onclick="BL.selectTaskType('char')">
+                        <input type="radio" name="blTaskType" value="char"><span>字</span>
+                    </label>
+                    <label data-type="word" onclick="BL.selectTaskType('word')">
+                        <input type="radio" name="blTaskType" value="word"><span>词</span>
+                    </label>
+                    <label data-type="sentence" onclick="BL.selectTaskType('sentence')">
+                        <input type="radio" name="blTaskType" value="sentence"><span>句</span>
+                    </label>
+                </div>
+                <p class="bl-hint">学生端将按字/词/句的形式展示和练习</p>
+            </div>
+            <div class="bl-form-group">
+                <label class="bl-label">任务内容 <span style="color:var(--zhusha)">*</span></label>
+                <textarea class="bl-task-content-input" id="blTaskContent" placeholder="如填字：你好世界&#10;如填词：今天 明天 昨天&#10;如填句：你叫什么名字？" maxlength="5000"></textarea>
+                <p class="bl-hint">最多 5000 字。空格、换行都可以用作分隔。</p>
+            </div>
+            <div class="bl-btn-row">
+                <button class="bl-btn bl-secondary" onclick="BL.closeTaskEditor()">取消</button>
+                <button class="bl-btn" onclick="BL.submitTask()" id="blTaskSubmitBtn">发布</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Toast 提示 -->
 <div class="bl-toast" id="blToast"></div>
 
 <script>
 /* ══════════════════════════════════════════════════════════════════
-   斑斓联动模块 v2A · JavaScript
+   斑斓联动模块 v2B (Phase 2B 第1轮) · JavaScript
    - 全部代码命名空间挂在 window.BL 下，避免污染全局
    - 通过 feature flag 控制 UI 显示
    ══════════════════════════════════════════════════════════════════ */
@@ -7484,6 +7666,12 @@ window.BL = (function () {
         authMode: 'login',           // 'login' | 'register'
         editingClassCode: null,      // 编辑模式下的班级码
         currentTab: 'classes',
+        // —— Phase 2B 新增 ——
+        currentClassCode: null,      // 当前查看任务的班级
+        currentClassInfo: null,      // 当前班级的元信息
+        tasks: [],                   // 当前班级的任务列表
+        editingTaskId: null,         // 编辑模式下的任务 ID
+        taskEditorType: 'char',      // 任务编辑器当前选中的类型 char/word/sentence
     };
 
     // ─────────────────────────────────────────
@@ -7722,10 +7910,13 @@ window.BL = (function () {
 
     function switchTab(tab) {
         state.currentTab = tab;
+        // 切回 Tab 时，从任务视图退出回班级列表
+        state.currentClassCode = null;
         document.querySelectorAll('#blTabs .bl-tab').forEach(b => {
             b.classList.toggle('bl-active', b.dataset.tab === tab);
         });
         $('blViewClasses').style.display = tab === 'classes' ? '' : 'none';
+        $('blViewTasks').style.display = 'none';   // 切 Tab 时强制隐藏任务视图
         $('blViewAccount').style.display = tab === 'account' ? '' : 'none';
     }
 
@@ -7824,6 +8015,7 @@ window.BL = (function () {
                     </div>
                 </div>
                 <div class="bl-class-actions">
+                    <button class="bl-icon-btn" onclick="BL.openTasksView('${escapeAttr(c.classCode)}')" title="任务管理">📋 ${c.taskCount || 0}</button>
                     <button class="bl-icon-btn" onclick="BL.openClassEditor('${escapeAttr(c.classCode)}')" title="编辑">✎</button>
                     <button class="bl-icon-btn bl-danger-icon" onclick="BL.deleteClass('${escapeAttr(c.classCode)}')" title="删除">🗑</button>
                 </div>
@@ -7897,6 +8089,219 @@ window.BL = (function () {
     }
 
     // ─────────────────────────────────────────
+    // 任务管理 (Phase 2B 新增)
+    // ─────────────────────────────────────────
+
+    // 打开班级的任务视图
+    async function openTasksView(classCode) {
+        const cls = state.classes.find(c => c.classCode === classCode);
+        if (!cls) {
+            toast('班级不存在', 'error');
+            return;
+        }
+        state.currentClassCode = classCode;
+        state.currentClassInfo = cls;
+
+        // 切换显示：隐藏班级列表，显示任务视图
+        $('blViewClasses').style.display = 'none';
+        $('blViewAccount').style.display = 'none';
+        $('blViewTasks').style.display = '';
+
+        // 填充头部信息
+        $('blTasksClassTag').textContent = cls.classCode;
+        $('blTasksClassName').textContent = cls.name;
+        $('blTasksCount').textContent = '0';
+
+        await loadTasks();
+    }
+
+    // 从任务视图返回班级列表
+    function backToClassList() {
+        state.currentClassCode = null;
+        state.currentClassInfo = null;
+        state.tasks = [];
+        $('blViewTasks').style.display = 'none';
+        $('blViewClasses').style.display = '';
+        // 顺手刷新一下班级列表（任务数可能变了）
+        loadClasses();
+    }
+
+    // 拉取任务列表
+    async function loadTasks() {
+        if (!state.currentClassCode) return;
+        try {
+            const data = await api('GET', '/api/classes/' + encodeURIComponent(state.currentClassCode) + '/tasks');
+            state.tasks = data.tasks || [];
+            renderTasks();
+        } catch (e) {
+            toast('加载任务失败：' + e.message, 'error');
+        }
+    }
+
+    // 渲染任务列表
+    function renderTasks() {
+        const list = $('blTaskList');
+        $('blTasksCount').textContent = state.tasks.length;
+
+        if (state.tasks.length === 0) {
+            list.innerHTML = `
+                <div class="bl-empty">
+                    <div class="bl-empty-icon">📋</div>
+                    <div class="bl-empty-text">还没有任务，点右上角"+ 新建任务"开始</div>
+                </div>
+            `;
+            return;
+        }
+
+        const typeLabel = { char: '字', word: '词', sentence: '句' };
+
+        list.innerHTML = state.tasks.map(t => {
+            const archivedClass = t.archived ? ' bl-archived' : '';
+            const typeBadge = `<span class="bl-type-badge bl-type-${t.type}">${typeLabel[t.type] || t.type}</span>`;
+            const archiveTitle = t.archived ? '取消归档' : '归档';
+            const archiveIcon = t.archived ? '↺' : '📥';
+            return `
+                <div class="bl-task-card${archivedClass}">
+                    <div class="bl-task-info">
+                        <div class="bl-task-title">${escapeHtml(t.title)}</div>
+                        <div class="bl-task-meta">
+                            ${typeBadge}
+                            <span>${formatDateTime(t.createdAt)}</span>
+                            ${t.archived ? '<span style="color:var(--zhusha);">已归档</span>' : ''}
+                        </div>
+                    </div>
+                    <div class="bl-task-actions">
+                        <button class="bl-icon-btn" onclick="BL.openTaskEditor('${escapeAttr(t.taskId)}')" title="编辑">✎</button>
+                        <button class="bl-icon-btn" onclick="BL.toggleArchiveTask('${escapeAttr(t.taskId)}')" title="${archiveTitle}">${archiveIcon}</button>
+                        <button class="bl-icon-btn bl-danger-icon" onclick="BL.deleteTask('${escapeAttr(t.taskId)}')" title="删除">🗑</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // 打开任务编辑器 (create 或 edit)
+    function openTaskEditor(taskId) {
+        state.editingTaskId = taskId || null;
+        const editing = !!taskId;
+
+        $('blTaskEditorTitle').textContent = editing ? '编辑任务' : '+ 新建任务';
+        $('blTaskSubmitBtn').textContent = editing ? '保存' : '发布';
+
+        if (editing) {
+            const task = state.tasks.find(t => t.taskId === taskId);
+            if (!task) {
+                toast('任务不存在', 'error');
+                return;
+            }
+            $('blTaskTitle').value = task.title || '';
+            $('blTaskContent').value = task.content || '';
+            selectTaskType(task.type || 'char');
+        } else {
+            $('blTaskTitle').value = '';
+            $('blTaskContent').value = '';
+            selectTaskType('char');  // 默认选"字"
+        }
+        $('blTaskEditorOverlay').classList.add('bl-show');
+        // 自动聚焦标题输入框
+        setTimeout(() => { $('blTaskTitle').focus(); }, 100);
+    }
+
+    // 关闭任务编辑器
+    function closeTaskEditor() {
+        $('blTaskEditorOverlay').classList.remove('bl-show');
+        state.editingTaskId = null;
+    }
+
+    // 选中任务类型 (单选按钮的视觉切换)
+    function selectTaskType(type) {
+        if (!['char', 'word', 'sentence'].includes(type)) type = 'char';
+        state.taskEditorType = type;
+        // 视觉激活
+        document.querySelectorAll('#blTaskTypeGroup label').forEach(lab => {
+            lab.classList.toggle('bl-radio-active', lab.dataset.type === type);
+        });
+        // 同步 input radio
+        document.querySelectorAll('#blTaskTypeGroup input[type="radio"]').forEach(r => {
+            r.checked = (r.value === type);
+        });
+    }
+
+    // 提交任务 (创建或修改)
+    async function submitTask() {
+        const title = $('blTaskTitle').value.trim();
+        const content = $('blTaskContent').value.trim();
+        const type = state.taskEditorType;
+
+        if (!title) { toast('请填写任务标题', 'error'); return; }
+        if (!content) { toast('请填写任务内容', 'error'); return; }
+        if (!['char', 'word', 'sentence'].includes(type)) {
+            toast('请选择任务类型', 'error'); return;
+        }
+        if (!state.currentClassCode) {
+            toast('班级信息丢失，请返回重试', 'error'); return;
+        }
+
+        try {
+            if (state.editingTaskId) {
+                // 修改：PUT /api/tasks/:classCode/:taskId
+                await api('PUT',
+                    '/api/tasks/' + encodeURIComponent(state.currentClassCode) +
+                    '/' + encodeURIComponent(state.editingTaskId),
+                    { title, content, type }
+                );
+                toast('任务已更新 ✓', 'success');
+            } else {
+                // 创建：POST /api/tasks/batch-create (第 1 轮只推到当前班)
+                await api('POST', '/api/tasks/batch-create', {
+                    title, content, type,
+                    classCodes: [state.currentClassCode]
+                });
+                toast('任务已发布 ✓', 'success');
+            }
+            closeTaskEditor();
+            loadTasks();
+        } catch (e) {
+            toast(e.message || '操作失败', 'error');
+        }
+    }
+
+    // 单条归档/取消归档
+    async function toggleArchiveTask(taskId) {
+        const task = state.tasks.find(t => t.taskId === taskId);
+        if (!task) return;
+        const newArchived = !task.archived;
+        try {
+            await api('PUT',
+                '/api/tasks/' + encodeURIComponent(state.currentClassCode) +
+                '/' + encodeURIComponent(taskId),
+                { archived: newArchived }
+            );
+            toast(newArchived ? '已归档' : '已取消归档', 'success');
+            loadTasks();
+        } catch (e) {
+            toast(e.message || '操作失败', 'error');
+        }
+    }
+
+    // 单条删除
+    async function deleteTask(taskId) {
+        const task = state.tasks.find(t => t.taskId === taskId);
+        if (!task) return;
+        if (!confirm(`确定删除任务"${task.title}"吗？\n此操作不可恢复。`)) return;
+        try {
+            await api('DELETE',
+                '/api/tasks/' + encodeURIComponent(state.currentClassCode) +
+                '/' + encodeURIComponent(taskId)
+            );
+            toast('任务已删除', 'success');
+            loadTasks();
+        } catch (e) {
+            toast(e.message || '删除失败', 'error');
+        }
+    }
+
+    // ─────────────────────────────────────────
     // 辅助
     // ─────────────────────────────────────────
     function escapeHtml(s) {
@@ -7923,6 +8328,10 @@ window.BL = (function () {
         switchTab,
         toggleAuthMode, submitAuth, logout,
         openClassEditor, closeClassEditor, submitClass, deleteClass,
+        // —— Phase 2B 新增 ——
+        openTasksView, backToClassList,
+        openTaskEditor, closeTaskEditor, selectTaskType, submitTask,
+        toggleArchiveTask, deleteTask,
     };
 })();
 
