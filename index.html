@@ -7466,7 +7466,7 @@
 </script>
 
 <!-- ════════════════════════════════════════════════════════════════
-     【斑斓联动模块 / Banlan Linkage Module】v2B.2 (Phase 2B 任务管理-第1轮 hotfix2)
+     【斑斓联动模块 / Banlan Linkage Module】v2B.3 (Phase 2B 第1轮 hotfix3 - 班级 CRUD 乐观更新)
      - 由 feature flag 控制显示
      - 完全独立，对原工具零侵入
      - 关闭时整个模块隐藏，工具表现等同 v1
@@ -7647,7 +7647,7 @@
 
 <script>
 /* ══════════════════════════════════════════════════════════════════
-   斑斓联动模块 v2B.2 (Phase 2B 第1轮 hotfix2) · JavaScript
+   斑斓联动模块 v2B.3 (Phase 2B 第1轮 hotfix3) · JavaScript
    - 全部代码命名空间挂在 window.BL 下，避免污染全局
    - 通过 feature flag 控制 UI 显示
    ══════════════════════════════════════════════════════════════════ */
@@ -8049,6 +8049,8 @@ window.BL = (function () {
         state.editingClassCode = null;
     }
 
+    // ★ v2B.3 修复: 班级 CRUD 也改用乐观更新,避免 Cloudflare KV list 延迟
+    //   (这个 bug v2A 就有,只是用户感知不强,这一轮一并修掉)
     async function submitClass() {
         const code = $('blClassCode').value.trim();
         const name = $('blClassName').value.trim();
@@ -8061,14 +8063,24 @@ window.BL = (function () {
 
         try {
             if (state.editingClassCode) {
-                await api('PUT', '/api/classes/' + encodeURIComponent(state.editingClassCode), { name, description });
+                // 修改:PUT 返回 { class }
+                const result = await api('PUT',
+                    '/api/classes/' + encodeURIComponent(state.editingClassCode),
+                    { name, description }
+                );
+                // 用返回值更新本地对应那条
+                const idx = state.classes.findIndex(c => c.classCode === state.editingClassCode);
+                if (idx >= 0 && result.class) state.classes[idx] = result.class;
                 toast('班级已更新 ✓', 'success');
             } else {
-                await api('POST', '/api/classes', { classCode: code, name, description });
+                // 创建:POST 返回 { class }
+                const result = await api('POST', '/api/classes', { classCode: code, name, description });
+                // 新班级追加到列表尾部 (loadClasses 默认是按 createdAt 顺序)
+                if (result.class) state.classes.push(result.class);
                 toast('班级已创建 ✓', 'success');
             }
             closeClassEditor();
-            loadClasses();
+            renderClasses();  // 仅重渲染,不重新拉 list
         } catch (e) {
             toast(e.message || '保存失败', 'error');
         }
@@ -8081,8 +8093,10 @@ window.BL = (function () {
 
         try {
             await api('DELETE', '/api/classes/' + encodeURIComponent(classCode));
+            // 从本地数组移除
+            state.classes = state.classes.filter(c => c.classCode !== classCode);
             toast('班级已删除', 'success');
-            loadClasses();
+            renderClasses();
         } catch (e) {
             toast(e.message || '删除失败', 'error');
         }
@@ -8116,14 +8130,15 @@ window.BL = (function () {
     }
 
     // 从任务视图返回班级列表
+    // ★ v2B.3 修复: 不再调 loadClasses (KV list 可能还没同步,会覆盖本地正确的 taskCount)
+    //   本地 taskCount 已在 submitTask/deleteTask 里乐观维护好了
     function backToClassList() {
         state.currentClassCode = null;
         state.currentClassInfo = null;
         state.tasks = [];
         $('blViewTasks').style.display = 'none';
         $('blViewClasses').style.display = '';
-        // 顺手刷新一下班级列表（任务数可能变了）
-        loadClasses();
+        renderClasses();  // 用本地最新数据立即重渲染,看到正确的 📋 N
     }
 
     // 拉取任务列表
@@ -8281,6 +8296,9 @@ window.BL = (function () {
                 // 把新创建的任务插到列表最前（KV 是反向时间戳,最新在最前）
                 if (result.created && result.created.length > 0) {
                     state.tasks.unshift(...result.created);
+                    // ★ v2B.3 同步更新本地 class.taskCount,让返回班级列表立即看到 📋 N+1
+                    const cls = state.classes.find(c => c.classCode === state.currentClassCode);
+                    if (cls) cls.taskCount = (cls.taskCount || 0) + result.created.length;
                 }
                 toast('任务已发布 ✓', 'success');
             }
@@ -8326,6 +8344,9 @@ window.BL = (function () {
             );
             // 从本地数组移除
             state.tasks = state.tasks.filter(t => t.taskId !== taskId);
+            // ★ v2B.3 同步更新本地 class.taskCount,让返回班级列表立即看到 -1
+            const cls = state.classes.find(c => c.classCode === state.currentClassCode);
+            if (cls) cls.taskCount = Math.max(0, (cls.taskCount || 0) - 1);
             toast('任务已删除', 'success');
             renderTasks();
         } catch (e) {
