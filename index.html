@@ -7466,7 +7466,7 @@
 </script>
 
 <!-- ════════════════════════════════════════════════════════════════
-     【斑斓联动模块 / Banlan Linkage Module】v2B.3 (Phase 2B 第1轮 hotfix3 - 班级 CRUD 乐观更新)
+     【斑斓联动模块 / Banlan Linkage Module】v2B.4 (Phase 2B 第1轮 hotfix4 - 自动重试+UX 增强)
      - 由 feature flag 控制显示
      - 完全独立，对原工具零侵入
      - 关闭时整个模块隐藏，工具表现等同 v1
@@ -7584,7 +7584,7 @@
             <div class="bl-form-group">
                 <label class="bl-label">班级码 <span style="color:var(--zhusha)">*</span></label>
                 <input type="text" class="bl-input" id="blClassCode" placeholder="如：HSK3A、MyClass2024" maxlength="20">
-                <p class="bl-hint">2-20 位字母数字横线下划线，学生用这个码加入班级</p>
+                <p class="bl-hint" id="blClassCodeHint">2-20 位字母数字横线下划线，学生用这个码加入班级</p>
             </div>
             <div class="bl-form-group">
                 <label class="bl-label">班级名称 <span style="color:var(--zhusha)">*</span></label>
@@ -7647,7 +7647,7 @@
 
 <script>
 /* ══════════════════════════════════════════════════════════════════
-   斑斓联动模块 v2B.3 (Phase 2B 第1轮 hotfix3) · JavaScript
+   斑斓联动模块 v2B.4 (Phase 2B 第1轮 hotfix4 · 自动重试+UX) · JavaScript
    - 全部代码命名空间挂在 window.BL 下，避免污染全局
    - 通过 feature flag 控制 UI 显示
    ══════════════════════════════════════════════════════════════════ */
@@ -7699,6 +7699,27 @@ window.BL = (function () {
             throw err;
         }
         return data;
+    }
+
+    // ★ v2B.4 新增: 针对 KV list 延迟的自动重试包装
+    //   Worker 内部用 list 找资源时,刚创建/修改的可能找不到(60 秒内可能没同步)
+    //   遇到 404 "不存在"错误时自动等待并重试,用户感知不到延迟
+    async function apiWithRetry(method, path, body, maxRetries = 2) {
+        let lastErr;
+        for (let i = 0; i <= maxRetries; i++) {
+            try {
+                return await api(method, path, body);
+            } catch (e) {
+                lastErr = e;
+                // 只对 404 或"不存在"错误重试,其他错误立即抛
+                const isNotFound = e.status === 404 || /不存在|not found/i.test(e.message);
+                if (!isNotFound || i === maxRetries) throw e;
+                // 递增等待: 800ms → 1200ms
+                await new Promise(r => setTimeout(r, 800 + i * 400));
+                console.log('[BL] KV 同步延迟,自动重试 #' + (i + 1) + ': ' + path);
+            }
+        }
+        throw lastErr;
     }
 
     // ─────────────────────────────────────────
@@ -7781,6 +7802,7 @@ window.BL = (function () {
     // 初始化：处理解锁码 + 检查 flag + 决定是否可见
     // ─────────────────────────────────────────
     async function init() {
+        console.log('%c[斑斓联动] BL v2B.4 已加载', 'color:#8f2727;font-weight:bold;');
         // 1) 先处理 URL 解锁参数
         await handleUnlockUrl();
 
@@ -8033,11 +8055,14 @@ window.BL = (function () {
             const cls = state.classes.find(c => c.classCode === classCode);
             $('blClassCode').value = cls.classCode;
             $('blClassCode').disabled = true; // 班级码不可改
+            // ★ v2B.4: 给"不可改"一个更醒目的解释
+            $('blClassCodeHint').innerHTML = '🔒 <span style="color:var(--zhusha);">班级码创建后不可修改</span> · 学生用它加入班级，改了会让已加入的学生失联';
             $('blClassName').value = cls.name || '';
             $('blClassDescription').value = cls.description || '';
         } else {
             $('blClassCode').value = '';
             $('blClassCode').disabled = false;
+            $('blClassCodeHint').textContent = '2-20 位字母数字横线下划线，学生用这个码加入班级';
             $('blClassName').value = '';
             $('blClassDescription').value = '';
         }
@@ -8063,8 +8088,8 @@ window.BL = (function () {
 
         try {
             if (state.editingClassCode) {
-                // 修改:PUT 返回 { class }
-                const result = await api('PUT',
+                // 修改:PUT 返回 { class } - 用 retry 容忍 KV 延迟
+                const result = await apiWithRetry('PUT',
                     '/api/classes/' + encodeURIComponent(state.editingClassCode),
                     { name, description }
                 );
@@ -8092,7 +8117,7 @@ window.BL = (function () {
         if (!confirm(`确定删除班级"${cls.name}"吗？\n班级下的所有任务和学生记录也会一起删除，不可恢复！`)) return;
 
         try {
-            await api('DELETE', '/api/classes/' + encodeURIComponent(classCode));
+            await apiWithRetry('DELETE', '/api/classes/' + encodeURIComponent(classCode));
             // 从本地数组移除
             state.classes = state.classes.filter(c => c.classCode !== classCode);
             toast('班级已删除', 'success');
@@ -8277,8 +8302,8 @@ window.BL = (function () {
 
         try {
             if (state.editingTaskId) {
-                // 修改：PUT 返回 { task }
-                const result = await api('PUT',
+                // 修改：PUT 返回 { task } - 用 retry 容忍 KV list 延迟
+                const result = await apiWithRetry('PUT',
                     '/api/tasks/' + encodeURIComponent(state.currentClassCode) +
                     '/' + encodeURIComponent(state.editingTaskId),
                     { title, content, type }
@@ -8310,13 +8335,13 @@ window.BL = (function () {
     }
 
     // 单条归档/取消归档
-    // ★ v2B.2 修复: 用 API 返回值更新本地状态,避免 KV list 延迟
+    // ★ v2B.4 修复: 用 apiWithRetry 容忍 KV list 延迟,失败自动重试
     async function toggleArchiveTask(taskId) {
         const task = state.tasks.find(t => t.taskId === taskId);
         if (!task) return;
         const newArchived = !task.archived;
         try {
-            const result = await api('PUT',
+            const result = await apiWithRetry('PUT',
                 '/api/tasks/' + encodeURIComponent(state.currentClassCode) +
                 '/' + encodeURIComponent(taskId),
                 { archived: newArchived }
@@ -8332,13 +8357,13 @@ window.BL = (function () {
     }
 
     // 单条删除
-    // ★ v2B.2 修复: 删除成功后直接从本地数组过滤,避免 KV list 延迟
+    // ★ v2B.4 修复: 用 apiWithRetry,失败自动重试 - 解决"任务不存在,多试几次才行"
     async function deleteTask(taskId) {
         const task = state.tasks.find(t => t.taskId === taskId);
         if (!task) return;
         if (!confirm(`确定删除任务"${task.title}"吗？\n此操作不可恢复。`)) return;
         try {
-            await api('DELETE',
+            await apiWithRetry('DELETE',
                 '/api/tasks/' + encodeURIComponent(state.currentClassCode) +
                 '/' + encodeURIComponent(taskId)
             );
