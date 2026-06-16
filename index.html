@@ -7789,7 +7789,7 @@
 </script>
 
 <!-- ════════════════════════════════════════════════════════════════
-     【斑斓联动模块 / Banlan Linkage Module】v2D.6 (Phase 2B 双语化 hotfix6 - 三重锁定弹窗宽度)
+     【斑斓联动模块 / Banlan Linkage Module】v2D.7 (Phase 2B 双语化 hotfix7 - JS 强制锁死弹窗宽度)
      - 由 feature flag 控制显示
      - 完全独立，对原工具零侵入
      - 关闭时整个模块隐藏，工具表现等同 v1
@@ -7995,7 +7995,7 @@
 
 <script>
 /* ══════════════════════════════════════════════════════════════════
-   斑斓联动模块 v2D.6 (Phase 2B 双语化 hotfix6) · JavaScript
+   斑斓联动模块 v2D.7 (Phase 2B 双语化 hotfix7) · JavaScript
    - 全部代码命名空间挂在 window.BL 下，避免污染全局
    - 通过 feature flag 控制 UI 显示
    ══════════════════════════════════════════════════════════════════ */
@@ -8233,6 +8233,9 @@ window.BL = (function () {
                     document.getElementById('blClassCodeHint').textContent = tt('2-20 位字母数字横线下划线，学生用这个码加入班级', '2-20 chars (letters/digits/-/_); students use this code to join', '2-20 حرف (أحرف/أرقام/-/_)؛ يستخدمه الطلاب للانضمام');
                 }
             }
+
+            // ★ v2D.7: 切换语言后强制重新锁定弹窗宽度,防止任何因素引起的宽度跳变
+            lockBlModalWidth();
         });
 
         // 1) 先处理 URL 解锁参数
@@ -8328,8 +8331,43 @@ window.BL = (function () {
     // ─────────────────────────────────────────
     // 面板开关
     // ─────────────────────────────────────────
+    // ═════════════════════════════════════════════════════════════
+    // ★ v2D.7 弹窗宽度强制锁定 (JS 兜底, 比 CSS 优先级更高)
+    // 用 setProperty(..., 'important') 给 inline style 加 !important,
+    // 确保切换语言/视口变化时弹窗宽度绝对不变
+    // ═════════════════════════════════════════════════════════════
+    function lockBlModalWidth() {
+        const isMobile = window.innerWidth < 600;
+        const targets = [
+            ['#blOverlay .bl-modal', 720],
+            ['#blClassEditorOverlay .bl-modal', 520],
+            ['#blTaskEditorOverlay .bl-modal', 560]
+        ];
+        targets.forEach(function(item) {
+            const m = document.querySelector(item[0]);
+            if (!m) return;
+            if (isMobile) {
+                m.style.removeProperty('min-width');
+                m.style.removeProperty('width');
+                m.style.removeProperty('max-width');
+            } else {
+                m.style.setProperty('min-width', item[1] + 'px', 'important');
+                m.style.setProperty('width', item[1] + 'px', 'important');
+                m.style.setProperty('max-width', item[1] + 'px', 'important');
+            }
+        });
+    }
+
+    // 监听窗口大小变化,在桌面端 <-> 手机端切换时重设
+    let blResizeTimer = null;
+    window.addEventListener('resize', function() {
+        clearTimeout(blResizeTimer);
+        blResizeTimer = setTimeout(lockBlModalWidth, 150);
+    });
+
     function openPanel() {
         $('blOverlay').classList.add('bl-show');
+        lockBlModalWidth();
         if (state.teacher) {
             showLoggedInView();
             loadClasses();
@@ -8525,6 +8563,7 @@ window.BL = (function () {
             $('blClassDescription').value = '';
         }
         $('blClassEditorOverlay').classList.add('bl-show');
+        lockBlModalWidth();
     }
 
     function closeClassEditor() {
@@ -8823,6 +8862,7 @@ window.BL = (function () {
         }
 
         $('blTaskEditorOverlay').classList.add('bl-show');
+        lockBlModalWidth();
         // 自动聚焦标题输入框
         setTimeout(() => { $('blTaskTitle').focus(); }, 100);
     }
