@@ -7466,7 +7466,7 @@
 </script>
 
 <!-- ════════════════════════════════════════════════════════════════
-     【斑斓联动模块 / Banlan Linkage Module】v2B.1 (Phase 2B 任务管理-第1轮 hotfix)
+     【斑斓联动模块 / Banlan Linkage Module】v2B.2 (Phase 2B 任务管理-第1轮 hotfix2)
      - 由 feature flag 控制显示
      - 完全独立，对原工具零侵入
      - 关闭时整个模块隐藏，工具表现等同 v1
@@ -7537,8 +7537,8 @@
                     <div class="bl-tasks-title">
                         <span class="bl-tasks-class-tag" id="blTasksClassTag">—</span>
                         <span id="blTasksClassName">—</span>
-                        <span style="color:var(--ink-gray); font-weight:normal; font-size:13px; margin-left:6px;">
-                            （<span id="blTasksCount">0</span> 个任务）
+                        <span style="color:var(--ink-gray); font-weight:normal; font-size:13px; margin-left:8px;" id="blTasksCount">
+                            —
                         </span>
                     </div>
                     <button class="bl-btn" onclick="BL.openTaskEditor()">+ 新建任务</button>
@@ -7647,7 +7647,7 @@
 
 <script>
 /* ══════════════════════════════════════════════════════════════════
-   斑斓联动模块 v2B.1 (Phase 2B 第1轮 hotfix) · JavaScript
+   斑斓联动模块 v2B.2 (Phase 2B 第1轮 hotfix2) · JavaScript
    - 全部代码命名空间挂在 window.BL 下，避免污染全局
    - 通过 feature flag 控制 UI 显示
    ══════════════════════════════════════════════════════════════════ */
@@ -8146,7 +8146,17 @@ window.BL = (function () {
     // 渲染任务列表
     function renderTasks() {
         const list = $('blTaskList');
-        $('blTasksCount').textContent = state.tasks.length;
+        // ★ v2B.2 修复: 分别显示活跃数 + 归档数,语义更清晰
+        const activeCount = state.tasks.filter(t => !t.archived).length;
+        const archivedCount = state.tasks.filter(t => t.archived).length;
+        const countEl = $('blTasksCount');
+        if (countEl) {
+            if (archivedCount > 0) {
+                countEl.innerHTML = `${activeCount} 个任务 · <span style="color:var(--ink-gray);">${archivedCount} 已归档</span>`;
+            } else {
+                countEl.textContent = `${activeCount} 个任务`;
+            }
+        }
 
         if (state.tasks.length === 0) {
             list.innerHTML = `
@@ -8233,6 +8243,9 @@ window.BL = (function () {
     }
 
     // 提交任务 (创建或修改)
+    // ★ v2B.2 修复: 用 API 返回值直接更新本地 state.tasks,不再调 loadTasks()
+    //   原因: Cloudflare KV 的 list 操作有最长 60 秒一致性延迟,
+    //   刚写入的任务用 list 拉不回来 → 用户感觉"新任务消失了"
     async function submitTask() {
         const title = $('blTaskTitle').value.trim();
         const content = $('blTaskContent').value.trim();
@@ -8249,47 +8262,59 @@ window.BL = (function () {
 
         try {
             if (state.editingTaskId) {
-                // 修改：PUT /api/tasks/:classCode/:taskId
-                await api('PUT',
+                // 修改：PUT 返回 { task }
+                const result = await api('PUT',
                     '/api/tasks/' + encodeURIComponent(state.currentClassCode) +
                     '/' + encodeURIComponent(state.editingTaskId),
                     { title, content, type }
                 );
+                // 用返回的 task 替换 state.tasks 里对应那条
+                const idx = state.tasks.findIndex(t => t.taskId === state.editingTaskId);
+                if (idx >= 0 && result.task) state.tasks[idx] = result.task;
                 toast('任务已更新 ✓', 'success');
             } else {
-                // 创建：POST /api/tasks/batch-create (第 1 轮只推到当前班)
-                await api('POST', '/api/tasks/batch-create', {
+                // 创建：batch-create 返回 { created: [...], count }
+                const result = await api('POST', '/api/tasks/batch-create', {
                     title, content, type,
                     classCodes: [state.currentClassCode]
                 });
+                // 把新创建的任务插到列表最前（KV 是反向时间戳,最新在最前）
+                if (result.created && result.created.length > 0) {
+                    state.tasks.unshift(...result.created);
+                }
                 toast('任务已发布 ✓', 'success');
             }
             closeTaskEditor();
-            loadTasks();
+            renderTasks();  // 仅重渲染,不重新拉数据
         } catch (e) {
             toast(e.message || '操作失败', 'error');
         }
     }
 
     // 单条归档/取消归档
+    // ★ v2B.2 修复: 用 API 返回值更新本地状态,避免 KV list 延迟
     async function toggleArchiveTask(taskId) {
         const task = state.tasks.find(t => t.taskId === taskId);
         if (!task) return;
         const newArchived = !task.archived;
         try {
-            await api('PUT',
+            const result = await api('PUT',
                 '/api/tasks/' + encodeURIComponent(state.currentClassCode) +
                 '/' + encodeURIComponent(taskId),
                 { archived: newArchived }
             );
+            // 用返回的 task 替换本地对应那条
+            const idx = state.tasks.findIndex(t => t.taskId === taskId);
+            if (idx >= 0 && result.task) state.tasks[idx] = result.task;
             toast(newArchived ? '已归档' : '已取消归档', 'success');
-            loadTasks();
+            renderTasks();
         } catch (e) {
             toast(e.message || '操作失败', 'error');
         }
     }
 
     // 单条删除
+    // ★ v2B.2 修复: 删除成功后直接从本地数组过滤,避免 KV list 延迟
     async function deleteTask(taskId) {
         const task = state.tasks.find(t => t.taskId === taskId);
         if (!task) return;
@@ -8299,8 +8324,10 @@ window.BL = (function () {
                 '/api/tasks/' + encodeURIComponent(state.currentClassCode) +
                 '/' + encodeURIComponent(taskId)
             );
+            // 从本地数组移除
+            state.tasks = state.tasks.filter(t => t.taskId !== taskId);
             toast('任务已删除', 'success');
-            loadTasks();
+            renderTasks();
         } catch (e) {
             toast(e.message || '删除失败', 'error');
         }
