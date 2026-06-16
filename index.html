@@ -708,6 +708,62 @@
             transition: all 0.2s;
         }
         .bl-class-card:hover { background: #d4e6dc; border-left-color: var(--zhusha); }
+
+        /* —— Phase 4-1 (v2D-8): 学生卡片样式 —— */
+        .bl-student-card {
+            background: #fff;
+            border: 1px solid #e0e7ee;
+            border-left: 4px solid #5b8db8;
+            border-radius: 8px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            transition: all 0.2s;
+        }
+        .bl-student-card:hover {
+            background: #f5f9fc;
+            border-left-color: var(--zhusha);
+        }
+        .bl-student-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .bl-student-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--ink-green);
+            margin-bottom: 4px;
+        }
+        .bl-student-meta {
+            font-size: 13px;
+            color: var(--ink-gray);
+        }
+        .bl-student-kick-btn {
+            background: none;
+            border: 1px solid #dc3545;
+            color: #dc3545;
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .bl-student-kick-btn:hover {
+            background: #dc3545;
+            color: white;
+        }
+        @media (max-width: 768px) {
+            .bl-student-card { padding: 12px; }
+            .bl-student-name { font-size: 15px; }
+            .bl-student-meta { font-size: 12px; }
+            .bl-student-kick-btn { padding: 5px 10px; font-size: 12px; }
+        }
         .bl-class-info { flex: 1; min-width: 0; }
         .bl-class-code {
             display: inline-block;
@@ -7886,6 +7942,23 @@
                 </div>
             </div>
 
+            <!-- Phase 4-1 (v2D-8): 学生列表视图 -->
+            <div id="blViewStudents" style="display:none;">
+                <button class="bl-back-btn" onclick="BL.backToClassList()">← 返回班级列表<span class="lang-en">Back to Classes</span><span class="lang-ar">العودة</span></button>
+                <div class="bl-tasks-header">
+                    <div class="bl-tasks-title">
+                        <span class="bl-tasks-class-tag" id="blStudentsClassTag">—</span>
+                        <span id="blStudentsClassName">—</span>
+                        <span style="color:var(--ink-gray); font-weight:normal; font-size:13px; margin-left:8px;" id="blStudentsCount">
+                            —
+                        </span>
+                    </div>
+                </div>
+                <div class="bl-task-list" id="blStudentList">
+                    <!-- 动态生成 -->
+                </div>
+            </div>
+
             <!-- 账号视图 -->
             <div id="blViewAccount" style="display:none;">
                 <div class="bl-user-bar">
@@ -8025,6 +8098,8 @@ window.BL = (function () {
         selectedClasses: [],         // 多班推送时勾选的班级码数组
         showArchived: false,         // 是否在列表中显示归档任务
         selectedTaskIds: [],         // 批量选中的任务 ID 数组
+        // —— Phase 4-1 (v2D-8) ——
+        students: [],                // 当前班级的学生列表
     };
 
     // ─────────────────────────────────────────
@@ -8502,6 +8577,7 @@ window.BL = (function () {
         }
 
         // ★ v2D.3: 按钮 title (单词级 tt 没问题,因为是 title 属性,不竖排显示)
+        const titleStudents = tt('学生管理', 'Students', 'الطلاب');
         const titleTasks = tt('任务管理', 'Tasks', 'المهام');
         const titleEdit = tt('编辑', 'Edit', 'تعديل');
         const titleDelete = tt('删除', 'Delete', 'حذف');
@@ -8526,6 +8602,7 @@ window.BL = (function () {
                     <div class="bl-class-meta">${escapeHtml(metaText)}${escapeHtml(descLine)}</div>
                 </div>
                 <div class="bl-class-actions">
+                    <button class="bl-icon-btn" onclick="BL.openStudentsView('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleStudents)}">👥 ${c.studentCount || 0}</button>
                     <button class="bl-icon-btn" onclick="BL.openTasksView('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleTasks)}">📋 ${c.taskCount || 0}</button>
                     <button class="bl-icon-btn" onclick="BL.openClassEditor('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleEdit)}">✎</button>
                     <button class="bl-icon-btn bl-danger-icon" onclick="BL.deleteClass('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleDelete)}">🗑</button>
@@ -8668,9 +8745,121 @@ window.BL = (function () {
         state.currentClassCode = null;
         state.currentClassInfo = null;
         state.tasks = [];
+        state.students = [];                          // ★ v2D-8
         $('blViewTasks').style.display = 'none';
+        $('blViewStudents').style.display = 'none';   // ★ v2D-8
         $('blViewClasses').style.display = '';
         renderClasses();  // 用本地最新数据立即重渲染,看到正确的 📋 N
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // Phase 4-1 (v2D-8) · 学生管理:查看学生列表 + 踢出学生
+    // ═══════════════════════════════════════════════════════════════
+    async function openStudentsView(classCode) {
+        const cls = state.classes.find(c => c.classCode === classCode);
+        if (!cls) {
+            toast(tt('班级不存在', 'Class not found', 'الفصل غير موجود'), 'error');
+            return;
+        }
+        state.currentClassCode = classCode;
+        state.currentClassInfo = cls;
+        state.students = [];
+
+        // 切换显示
+        $('blViewClasses').style.display = 'none';
+        $('blViewAccount').style.display = 'none';
+        $('blViewTasks').style.display = 'none';
+        $('blViewStudents').style.display = '';
+
+        // 填充头部
+        $('blStudentsClassTag').textContent = cls.classCode;
+        $('blStudentsClassName').textContent = cls.name;
+        $('blStudentsCount').textContent = '...';
+        $('blStudentList').innerHTML = '<div class="bl-empty"><div class="bl-empty-text" style="color:var(--ink-gray);">' + escapeHtml(tt('加载中...', 'Loading...', 'جاري التحميل...')) + '</div></div>';
+
+        await loadStudents();
+    }
+
+    async function loadStudents() {
+        if (!state.currentClassCode) return;
+        try {
+            const data = await api('GET',
+                '/api/classes/' + encodeURIComponent(state.currentClassCode) + '/students');
+            state.students = data.students || [];
+            renderStudents();
+        } catch (e) {
+            toast(tt('加载学生失败', 'Failed to load students', 'فشل تحميل الطلاب') + '：' + e.message, 'error');
+            $('blStudentList').innerHTML = '<div class="bl-empty"><div class="bl-empty-text" style="color:var(--ink-gray);">' + escapeHtml(tt('加载失败,请重试', 'Failed to load, retry', 'فشل، حاول مرة أخرى')) + '</div></div>';
+        }
+    }
+
+    function renderStudents() {
+        const list = $('blStudentList');
+        const n = state.students.length;
+        $('blStudentsCount').textContent = tt(
+            `${n} 学生`,
+            `${n} student${n === 1 ? '' : 's'}`,
+            `${n} طلاب`
+        );
+
+        if (n === 0) {
+            list.innerHTML = `
+                <div class="bl-empty">
+                    <div class="bl-empty-icon">👥</div>
+                    <div class="bl-empty-text">${escapeHtml(tt('还没有学生加入', 'No students joined yet', 'لا يوجد طلاب بعد'))}</div>
+                </div>
+            `;
+            return;
+        }
+
+        const taskTotal = state.currentClassInfo.taskCount || 0;
+        const txtKick = tt('踢出', 'Kick', 'إخراج');
+        const titleKick = tt('踢出学生', 'Kick Student', 'إخراج الطالب');
+
+        list.innerHTML = state.students.map(s => {
+            const completed = (s.completedTasks || []).length;
+            const meta = tt(
+                `已完成 ${completed} / ${taskTotal} 任务`,
+                `Completed ${completed} / ${taskTotal} tasks`,
+                `أكمل ${completed} / ${taskTotal} مهام`
+            );
+            return `
+            <div class="bl-student-card">
+                <div class="bl-student-info">
+                    <div class="bl-student-name">${escapeHtml(s.name || s.studentCode)}</div>
+                    <div class="bl-student-meta">${escapeHtml(meta)}</div>
+                </div>
+                <button class="bl-student-kick-btn" onclick="BL.kickStudent('${escapeAttr(s.studentCode)}', '${escapeAttr(s.name || s.studentCode)}')" title="${escapeAttr(titleKick)}">✗ ${escapeHtml(txtKick)}</button>
+            </div>
+            `;
+        }).join('');
+    }
+
+    async function kickStudent(studentCode, studentName) {
+        if (!state.currentClassCode) return;
+
+        const ok = confirm(tt(
+            `确定踢出学生「${studentName}」?\n\n该学生将退出班级,不再看到本班任务。`,
+            `Kick student "${studentName}"?\n\nStudent will leave the class.`,
+            `إخراج الطالب "${studentName}"؟`
+        ));
+        if (!ok) return;
+
+        try {
+            await api('DELETE',
+                '/api/classes/' + encodeURIComponent(state.currentClassCode) +
+                '/students/' + encodeURIComponent(studentCode));
+            toast(tt(`已踢出 ${studentName}`, `Kicked ${studentName}`, `تم الإخراج`), 'success');
+            // 本地移除
+            state.students = state.students.filter(s => s.studentCode !== studentCode);
+            // 本地维护 classes 的 studentCount
+            if (state.currentClassInfo) {
+                state.currentClassInfo.studentCount = Math.max(0, (state.currentClassInfo.studentCount || 1) - 1);
+            }
+            renderStudents();
+        } catch (e) {
+            toast(tt('踢出失败', 'Failed to kick', 'فشل الإخراج') + '：' + e.message, 'error');
+        }
     }
 
     // 拉取任务列表
@@ -9172,6 +9361,8 @@ window.BL = (function () {
         openClassEditor, closeClassEditor, submitClass, deleteClass,
         // —— Phase 2B 第 1 轮 ——
         openTasksView, backToClassList,
+        // —— Phase 4-1 (v2D-8): 学生管理 ——
+        openStudentsView, kickStudent,
         openTaskEditor, closeTaskEditor, selectTaskType, submitTask,
         toggleArchiveTask, deleteTask,
         // —— Phase 2B 第 2 轮 (v2B-r2) ——
