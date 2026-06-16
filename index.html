@@ -697,7 +697,7 @@
             gap: 12px;
             transition: all 0.2s;
         }
-        .bl-class-card:hover { background: #f0f7f3; border-left-color: var(--zhusha); }
+        .bl-class-card:hover { background: #d4e6dc; border-left-color: var(--zhusha); }
         .bl-class-info { flex: 1; min-width: 0; }
         .bl-class-code {
             display: inline-block;
@@ -836,7 +836,45 @@
             gap: 12px;
             transition: all 0.2s;
         }
-        .bl-task-card:hover { background: #f0f7f3; }
+        .bl-task-card:hover { background: #d4e6dc; }
+        /* ★ v2D.2 双语竖排规则 (仅限 BL 模块,v2A 现有横排不动)
+           - BL 内的 .lang-en/.lang-ar 改为 block 显示,在中文下方独立成行
+           - BL 容器允许 \n 换行(用于 JS textContent 动态文字) */
+        .bl-overlay .lang-en,
+        .bl-overlay .lang-ar {
+            display: block;
+            font-size: 0.78em;
+            opacity: 0.78;
+            margin-top: 2px;
+            font-weight: normal;
+            letter-spacing: 0.3px;
+        }
+        .bl-overlay,
+        .bl-overlay .bl-btn,
+        .bl-overlay .bl-icon-btn,
+        .bl-overlay .bl-tab,
+        .bl-overlay .bl-back-btn,
+        .bl-overlay .bl-empty-text,
+        .bl-overlay .bl-task-meta,
+        .bl-overlay .bl-class-meta,
+        .bl-overlay .bl-bulk-count,
+        .bl-overlay .bl-multi-class-info,
+        .bl-overlay .bl-multi-class-name,
+        .bl-overlay .bl-multi-class-divider,
+        .bl-overlay .bl-hint,
+        .bl-overlay .bl-bulk-btn,
+        .bl-overlay .bl-archived-toggle,
+        .bl-overlay .bl-logout-btn,
+        .bl-overlay #blTasksCount,
+        .bl-overlay h3 {
+            white-space: pre-line;
+        }
+        .bl-toast {
+            white-space: pre-line;
+            text-align: center;
+        }
+        /* 按钮稍微加高,容纳两行文字 */
+        .bl-overlay .bl-btn { line-height: 1.35; }
         .bl-task-card.bl-archived {
             border-left-color: var(--ink-gray); opacity: 0.65;
             background: #f4f5f4;
@@ -3839,7 +3877,7 @@
                 <button class="mic-btn" id="micBtn" onclick="startDictation()" title="语音输入">🎤</button>
             </div>
 
-            <button class="btn-gen" onclick="initAll()">☯ 挥毫生成<span class="btn-en">Character Generation</span><span class="btn-ar">توليد الحروف</span></button>
+            <button class="btn-gen" onclick="initAll()">☯ 挥毫生成<span class="btn-en">Char Generation</span><span class="btn-ar">توليد الحروف</span></button>
             <button class="btn-tts-studio" onclick="openTtsStudio()">♪ 音频生成<span class="btn-en">Audio Generation</span><span class="btn-ar">توليد الصوت</span></button>
             <button class="btn-seal" onclick="openSealStudio()">❒ 印章生成<span class="btn-en">Seal Generation</span><span class="btn-ar">توليد الختم</span></button>
             <button class="btn-toggle-dl" onclick="toggleDownloadMenu()" id="btnToggleDl">⬇ 下载中心<span class="btn-en">Download Center</span><span class="btn-ar">مركز التنزيل</span></button>
@@ -4330,16 +4368,16 @@
                 ar: '如：三年级 A 班 / مثل: الصف الثالث أ'
             },
             blClassDescription: {
-                en: '如：周二/周四 19:00-20:00 / e.g. Tue/Thu 19:00-20:00',
-                ar: '如：周二/周四 19:00-20:00 / مثل: الثلاثاء/الخميس 19:00-20:00'
+                en: '如：周二/周四 19:00-20:00\ne.g. Tue/Thu 19:00-20:00',
+                ar: '如：周二/周四 19:00-20:00\nمثل: الثلاثاء/الخميس 19:00-20:00'
             },
             blTaskTitle: {
                 en: '如：HSK3 第 5 课字 / e.g. HSK3 Lesson 5 / Weekend HW',
                 ar: '如：HSK3 第 5 课字 / مثل: HSK3 الدرس 5'
             },
             blTaskContent: {
-                en: '如填字：你好世界\n如填词：今天 明天 昨天\n如填句：你叫什么名字？\nFor chars/words/sentences as content',
-                ar: '如填字：你好世界\n如填词：今天 明天 昨天\n如填句：你叫什么名字？\nمحتوى الحروف/الكلمات/الجمل'
+                en: '如填字：你好世界\n如填词：今天 明天 昨天\n如填句：你叫什么名字？\n\nFor chars / words / sentences as content',
+                ar: '如填字：你好世界\n如填词：今天 明天 昨天\n如填句：你叫什么名字？\n\nمحتوى الحروف / الكلمات / الجمل'
             }
         };
         Object.keys(map).forEach(function(id) {
@@ -7729,7 +7767,7 @@
 </script>
 
 <!-- ════════════════════════════════════════════════════════════════
-     【斑斓联动模块 / Banlan Linkage Module】v2D.1 (Phase 2B 双语化 hotfix1 - 5 项 UI 调优)
+     【斑斓联动模块 / Banlan Linkage Module】v2D.2 (Phase 2B 双语化 hotfix2 - 4 项 UI 调优 + 双语竖排)
      - 由 feature flag 控制显示
      - 完全独立，对原工具零侵入
      - 关闭时整个模块隐藏，工具表现等同 v1
@@ -7739,14 +7777,14 @@
 <div class="bl-overlay" id="blOverlay">
     <div class="bl-modal">
         <div class="bl-header">
-            <h3 id="blTitle">📚 班级与任务<span class="lang-en"> / Classes &amp; Tasks</span><span class="lang-ar"> / الفصول والمهام</span></h3>
+            <h3 id="blTitle">📚 班级与任务<span class="lang-en">Classes &amp; Tasks</span><span class="lang-ar">الفصول والمهام</span></h3>
             <button class="bl-close" onclick="BL.closePanel()">×</button>
         </div>
 
         <!-- 已登录状态下显示 Tab -->
         <div class="bl-tabs" id="blTabs" style="display:none;">
-            <button class="bl-tab bl-active" data-tab="classes" onclick="BL.switchTab('classes')">我的班级<span class="lang-en"> / My Classes</span><span class="lang-ar"> / فصولي</span></button>
-            <button class="bl-tab" data-tab="account" onclick="BL.switchTab('account')">账号<span class="lang-en"> / Account</span><span class="lang-ar"> / الحساب</span></button>
+            <button class="bl-tab bl-active" data-tab="classes" onclick="BL.switchTab('classes')">我的班级<span class="lang-en">My Classes</span><span class="lang-ar">فصولي</span></button>
+            <button class="bl-tab" data-tab="account" onclick="BL.switchTab('account')">账号<span class="lang-en">Account</span><span class="lang-ar">الحساب</span></button>
         </div>
 
         <div class="bl-body">
@@ -7756,23 +7794,23 @@
                     使用班级管理功能，请先登录或注册<span class="lang-en"><br>Login or sign up to use class management</span><span class="lang-ar"><br>سجل دخول أو سجل لاستخدام إدارة الفصول</span>
                 </p>
                 <div class="bl-form-group">
-                    <label class="bl-label">用户名<span class="lang-en"> / Username</span><span class="lang-ar"> / اسم المستخدم</span></label>
+                    <label class="bl-label">用户名<span class="lang-en">Username</span><span class="lang-ar">اسم المستخدم</span></label>
                     <input type="text" class="bl-input" id="blAuthUsername" placeholder="3-32 位字母数字下划线" autocomplete="username">
                 </div>
                 <div class="bl-form-group">
-                    <label class="bl-label">密码<span class="lang-en"> / Password</span><span class="lang-ar"> / كلمة المرور</span></label>
+                    <label class="bl-label">密码<span class="lang-en">Password</span><span class="lang-ar">كلمة المرور</span></label>
                     <input type="password" class="bl-input" id="blAuthPassword" placeholder="至少 6 位" autocomplete="current-password">
                 </div>
                 <div class="bl-form-group" id="blAuthDisplayNameGroup" style="display:none;">
-                    <label class="bl-label">显示名（可选）<span class="lang-en"> / Display Name (Optional)</span><span class="lang-ar"> / الاسم المعروض (اختياري)</span></label>
+                    <label class="bl-label">显示名（可选）<span class="lang-en">Display Name (Optional)</span><span class="lang-ar">الاسم المعروض (اختياري)</span></label>
                     <input type="text" class="bl-input" id="blAuthDisplayName" placeholder="如：墨舟老师">
                 </div>
                 <p class="bl-hint" style="margin-top:14px;">
                     ⓘ 账号信息仅用于身份识别，不收集隐私数据<span class="lang-en"><br>ⓘ Account info is for identification only, no privacy data collected</span><span class="lang-ar"><br>ⓘ معلومات الحساب لتحديد الهوية فقط، لا تُجمع بيانات خاصة</span>
                 </p>
                 <div class="bl-btn-row">
-                    <button class="bl-btn bl-secondary" onclick="BL.toggleAuthMode()" id="blAuthToggleBtn">注册新账号<span class="lang-en"> / Sign Up</span><span class="lang-ar"> / تسجيل جديد</span></button>
-                    <button class="bl-btn" onclick="BL.submitAuth()" id="blAuthSubmitBtn">登录<span class="lang-en"> / Login</span><span class="lang-ar"> / دخول</span></button>
+                    <button class="bl-btn bl-secondary" onclick="BL.toggleAuthMode()" id="blAuthToggleBtn">注册新账号<span class="lang-en">Sign Up</span><span class="lang-ar">تسجيل جديد</span></button>
+                    <button class="bl-btn" onclick="BL.submitAuth()" id="blAuthSubmitBtn">登录<span class="lang-en">Login</span><span class="lang-ar">دخول</span></button>
                 </div>
             </div>
 
@@ -7780,13 +7818,13 @@
             <div id="blViewClasses" style="display:none;">
                 <div class="bl-user-bar">
                     <span class="bl-user-name" id="blUserDisplayName">—</span>
-                    <button class="bl-logout-btn" onclick="BL.logout()">退出<span class="lang-en"> / Logout</span><span class="lang-ar"> / خروج</span></button>
+                    <button class="bl-logout-btn" onclick="BL.logout()">退出<span class="lang-en">Logout</span><span class="lang-ar">خروج</span></button>
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
                     <div style="font-size:14px; color:var(--ink-green); font-weight:500;">
-                        我的班级<span class="lang-en"> / My Classes</span><span class="lang-ar"> / فصولي</span>（<span id="blClassCount">0</span>）
+                        我的班级<span class="lang-en">My Classes</span><span class="lang-ar">فصولي</span>（<span id="blClassCount">0</span>）
                     </div>
-                    <button class="bl-btn" onclick="BL.openClassEditor()">+ 新建班级<span class="lang-en"> / New</span><span class="lang-ar"> / جديد</span></button>
+                    <button class="bl-btn" onclick="BL.openClassEditor()">+ 新建班级<span class="lang-en">New</span><span class="lang-ar">جديد</span></button>
                 </div>
                 <div class="bl-class-list" id="blClassList">
                     <!-- 动态生成 -->
@@ -7795,7 +7833,7 @@
 
             <!-- 任务列表视图 (Phase 2B 新增) -->
             <div id="blViewTasks" style="display:none;">
-                <button class="bl-back-btn" onclick="BL.backToClassList()">← 返回班级列表<span class="lang-en"> / Back to Classes</span><span class="lang-ar"> / العودة</span></button>
+                <button class="bl-back-btn" onclick="BL.backToClassList()">← 返回班级列表<span class="lang-en">Back to Classes</span><span class="lang-ar">العودة</span></button>
                 <div class="bl-tasks-header">
                     <div class="bl-tasks-title">
                         <span class="bl-tasks-class-tag" id="blTasksClassTag">—</span>
@@ -7806,19 +7844,19 @@
                     </div>
                     <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
                         <label class="bl-archived-toggle" id="blArchivedToggle" onclick="BL.toggleShowArchived()">
-                            <span class="bl-archived-check"></span>显示归档<span class="lang-en"> / Show Archived</span><span class="lang-ar"> / عرض المؤرشفة</span>
+                            <span class="bl-archived-check"></span>显示归档<span class="lang-en">Show Archived</span><span class="lang-ar">عرض المؤرشفة</span>
                         </label>
-                        <button class="bl-btn" onclick="BL.openTaskEditor()">+ 新建任务<span class="lang-en"> / New</span><span class="lang-ar"> / جديد</span></button>
+                        <button class="bl-btn" onclick="BL.openTaskEditor()">+ 新建任务<span class="lang-en">New</span><span class="lang-ar">جديد</span></button>
                     </div>
                 </div>
                 <!-- v2B-r2 批量操作栏 (任务选中后显示) -->
                 <div class="bl-task-bulk-bar" id="blTaskBulkBar">
-                    <span class="bl-bulk-count">已选 <span id="blBulkCount">0</span> 项<span class="lang-en"> / Selected</span><span class="lang-ar"> / محدد</span></span>
+                    <span class="bl-bulk-count">已选 <span id="blBulkCount">0</span> 项<span class="lang-en">Selected</span><span class="lang-ar">محدد</span></span>
                     <div class="bl-bulk-actions">
-                        <button class="bl-bulk-btn" id="blBulkArchiveBtn" onclick="BL.batchArchive()">📥 归档<span class="lang-en"> / Archive</span><span class="lang-ar"> / أرشفة</span></button>
-                        <button class="bl-bulk-btn" id="blBulkUnarchiveBtn" onclick="BL.batchUnarchive()">↺ 取消归档<span class="lang-en"> / Unarchive</span><span class="lang-ar"> / إلغاء الأرشفة</span></button>
-                        <button class="bl-bulk-btn bl-bulk-danger" onclick="BL.batchDelete()">🗑 删除<span class="lang-en"> / Delete</span><span class="lang-ar"> / حذف</span></button>
-                        <button class="bl-bulk-btn bl-bulk-cancel" onclick="BL.clearTaskSelection()">✕ 取消<span class="lang-en"> / Cancel</span><span class="lang-ar"> / إلغاء</span></button>
+                        <button class="bl-bulk-btn" id="blBulkArchiveBtn" onclick="BL.batchArchive()">📥 归档<span class="lang-en">Archive</span><span class="lang-ar">أرشفة</span></button>
+                        <button class="bl-bulk-btn" id="blBulkUnarchiveBtn" onclick="BL.batchUnarchive()">↺ 取消归档<span class="lang-en">Unarchive</span><span class="lang-ar">إلغاء الأرشفة</span></button>
+                        <button class="bl-bulk-btn bl-bulk-danger" onclick="BL.batchDelete()">🗑 删除<span class="lang-en">Delete</span><span class="lang-ar">حذف</span></button>
+                        <button class="bl-bulk-btn bl-bulk-cancel" onclick="BL.clearTaskSelection()">✕ 取消<span class="lang-en">Cancel</span><span class="lang-ar">إلغاء</span></button>
                     </div>
                 </div>
                 <div class="bl-task-list" id="blTaskList">
@@ -7832,19 +7870,19 @@
                     <span class="bl-user-name" id="blAccountDisplayName">—</span>
                 </div>
                 <div class="bl-form-group">
-                    <label class="bl-label">用户名<span class="lang-en"> / Username</span><span class="lang-ar"> / اسم المستخدم</span></label>
+                    <label class="bl-label">用户名<span class="lang-en">Username</span><span class="lang-ar">اسم المستخدم</span></label>
                     <input type="text" class="bl-input" id="blAccountUsername" disabled style="background:#f0f4f1;">
                 </div>
                 <div class="bl-form-group">
-                    <label class="bl-label">账号 ID<span class="lang-en"> / Account ID</span><span class="lang-ar"> / معرف الحساب</span></label>
+                    <label class="bl-label">账号 ID<span class="lang-en">Account ID</span><span class="lang-ar">معرف الحساب</span></label>
                     <input type="text" class="bl-input" id="blAccountId" disabled style="background:#f0f4f1; font-family:monospace; font-size:12px;">
                 </div>
                 <div class="bl-form-group">
-                    <label class="bl-label">注册时间<span class="lang-en"> / Registered</span><span class="lang-ar"> / تاريخ التسجيل</span></label>
+                    <label class="bl-label">注册时间<span class="lang-en">Registered</span><span class="lang-ar">تاريخ التسجيل</span></label>
                     <input type="text" class="bl-input" id="blAccountCreated" disabled style="background:#f0f4f1;">
                 </div>
                 <div class="bl-btn-row">
-                    <button class="bl-btn bl-danger" onclick="BL.logout()">退出登录<span class="lang-en"> / Logout</span><span class="lang-ar"> / تسجيل خروج</span></button>
+                    <button class="bl-btn bl-danger" onclick="BL.logout()">退出登录<span class="lang-en">Logout</span><span class="lang-ar">تسجيل خروج</span></button>
                 </div>
             </div>
         </div>
@@ -7860,20 +7898,20 @@
         </div>
         <div class="bl-body">
             <div class="bl-form-group">
-                <label class="bl-label">班级码<span class="lang-en"> / Class Code</span><span class="lang-ar"> / رمز الفصل</span> <span style="color:var(--zhusha)">*</span></label>
+                <label class="bl-label">班级码<span class="lang-en">Class Code</span><span class="lang-ar">رمز الفصل</span> <span style="color:var(--zhusha)">*</span></label>
                 <input type="text" class="bl-input" id="blClassCode" placeholder="如：HSK3A、MyClass2024" maxlength="20">
                 <p class="bl-hint" id="blClassCodeHint">2-20 位字母数字横线下划线，学生用这个码加入班级</p>
             </div>
             <div class="bl-form-group">
-                <label class="bl-label">班级名称<span class="lang-en"> / Class Name</span><span class="lang-ar"> / اسم الفصل</span> <span style="color:var(--zhusha)">*</span></label>
+                <label class="bl-label">班级名称<span class="lang-en">Class Name</span><span class="lang-ar">اسم الفصل</span> <span style="color:var(--zhusha)">*</span></label>
                 <input type="text" class="bl-input" id="blClassName" placeholder="如：三年级 A 班" maxlength="100">
             </div>
             <div class="bl-form-group">
-                <label class="bl-label">备注（可选）<span class="lang-en"> / Notes (Optional)</span><span class="lang-ar"> / ملاحظات (اختياري)</span></label>
+                <label class="bl-label">备注（可选）<span class="lang-en">Notes (Optional)</span><span class="lang-ar">ملاحظات (اختياري)</span></label>
                 <textarea class="bl-textarea" id="blClassDescription" placeholder="如：周二/周四 19:00-20:00" maxlength="500"></textarea>
             </div>
             <div class="bl-btn-row">
-                <button class="bl-btn bl-secondary" onclick="BL.closeClassEditor()">取消<span class="lang-en"> / Cancel</span><span class="lang-ar"> / إلغاء</span></button>
+                <button class="bl-btn bl-secondary" onclick="BL.closeClassEditor()">取消<span class="lang-en">Cancel</span><span class="lang-ar">إلغاء</span></button>
                 <button class="bl-btn" onclick="BL.submitClass()" id="blClassSubmitBtn">创建</button>
             </div>
         </div>
@@ -7889,26 +7927,26 @@
         </div>
         <div class="bl-body">
             <div class="bl-form-group">
-                <label class="bl-label">任务标题<span class="lang-en"> / Title</span><span class="lang-ar"> / العنوان</span> <span style="color:var(--zhusha)">*</span></label>
+                <label class="bl-label">任务标题<span class="lang-en">Title</span><span class="lang-ar">العنوان</span> <span style="color:var(--zhusha)">*</span></label>
                 <input type="text" class="bl-input" id="blTaskTitle" placeholder="如：HSK3 第 5 课字 / 周末作业" maxlength="100">
             </div>
             <div class="bl-form-group">
-                <label class="bl-label">任务类型<span class="lang-en"> / Type</span><span class="lang-ar"> / النوع</span> <span style="color:var(--zhusha)">*</span></label>
+                <label class="bl-label">任务类型<span class="lang-en">Type</span><span class="lang-ar">النوع</span> <span style="color:var(--zhusha)">*</span></label>
                 <div class="bl-radio-group" id="blTaskTypeGroup">
                     <label data-type="char" onclick="BL.selectTaskType('char')">
-                        <input type="radio" name="blTaskType" value="char"><span>字<span class="lang-en"> / Char</span><span class="lang-ar"> / حرف</span></span>
+                        <input type="radio" name="blTaskType" value="char"><span>字<span class="lang-en">Char</span><span class="lang-ar">حرف</span></span>
                     </label>
                     <label data-type="word" onclick="BL.selectTaskType('word')">
-                        <input type="radio" name="blTaskType" value="word"><span>词<span class="lang-en"> / Word</span><span class="lang-ar"> / كلمة</span></span>
+                        <input type="radio" name="blTaskType" value="word"><span>词<span class="lang-en">Word</span><span class="lang-ar">كلمة</span></span>
                     </label>
                     <label data-type="sentence" onclick="BL.selectTaskType('sentence')">
-                        <input type="radio" name="blTaskType" value="sentence"><span>句<span class="lang-en"> / Sentence</span><span class="lang-ar"> / جملة</span></span>
+                        <input type="radio" name="blTaskType" value="sentence"><span>句<span class="lang-en">Sentence</span><span class="lang-ar">جملة</span></span>
                     </label>
                 </div>
                 <p class="bl-hint">学生端将按字/词/句的形式展示和练习<span class="lang-en"><br>Students will see and practice as Char/Word/Sentence</span><span class="lang-ar"><br>سيراها الطلاب ويتدربون كحرف/كلمة/جملة</span></p>
             </div>
             <div class="bl-form-group">
-                <label class="bl-label">任务内容<span class="lang-en"> / Content</span><span class="lang-ar"> / المحتوى</span> <span style="color:var(--zhusha)">*</span></label>
+                <label class="bl-label">任务内容<span class="lang-en">Content</span><span class="lang-ar">المحتوى</span> <span style="color:var(--zhusha)">*</span></label>
                 <textarea class="bl-task-content-input" id="blTaskContent" placeholder="如填字：你好世界&#10;如填词：今天 明天 昨天&#10;如填句：你叫什么名字？" maxlength="5000"></textarea>
                 <p class="bl-hint">最多 5000 字。空格、换行都可以用作分隔。<span class="lang-en"><br>Up to 5000 chars. Spaces and line breaks work as separators.</span><span class="lang-ar"><br>حتى 5000 حرف. المسافات والأسطر كفواصل.</span></p>
             </div>
@@ -7923,7 +7961,7 @@
                 </div>
             </div>
             <div class="bl-btn-row">
-                <button class="bl-btn bl-secondary" onclick="BL.closeTaskEditor()">取消<span class="lang-en"> / Cancel</span><span class="lang-ar"> / إلغاء</span></button>
+                <button class="bl-btn bl-secondary" onclick="BL.closeTaskEditor()">取消<span class="lang-en">Cancel</span><span class="lang-ar">إلغاء</span></button>
                 <button class="bl-btn" onclick="BL.submitTask()" id="blTaskSubmitBtn">发布</button>
             </div>
         </div>
@@ -7935,7 +7973,7 @@
 
 <script>
 /* ══════════════════════════════════════════════════════════════════
-   斑斓联动模块 v2D.1 (Phase 2B 双语化 hotfix1) · JavaScript
+   斑斓联动模块 v2D.2 (Phase 2B 双语化 hotfix2 - 双语竖排) · JavaScript
    - 全部代码命名空间挂在 window.BL 下，避免污染全局
    - 通过 feature flag 控制 UI 显示
    ══════════════════════════════════════════════════════════════════ */
@@ -7980,7 +8018,7 @@ window.BL = (function () {
     // ═════════════════════════════════════════════════════════════
     function tt(zh, en, ar) {
         const isAr = document.body.classList.contains('lang-mode-ar');
-        return zh + ' / ' + (isAr ? ar : en);
+        return zh + '\n' + (isAr ? ar : en);
     }
 
     // 长文本(confirm 多行)使用换行分隔
