@@ -536,7 +536,11 @@
         /* 联动弹窗主体 */
         .bl-modal {
             background: #fff;
-            width: 100%;
+            /* ★ v2D.6: 三重锁定 720px,完全消除任何宽度变化可能性
+               (min-width + width + max-width 同值,无视 viewport 变化、
+                滚动条出现/消失、字体渲染差异) */
+            min-width: 720px;
+            width: 720px;
             max-width: 720px;
             max-height: 92vh;
             border-radius: 10px;
@@ -544,7 +548,12 @@
             box-shadow: 0 24px 60px rgba(55, 74, 66, 0.2);
             display: flex; flex-direction: column;
             overflow: hidden; position: relative;
+            box-sizing: border-box;
         }
+        /* ★ v2D.6: 班级编辑器锁死 520px */
+        .bl-modal-w520 { min-width: 520px; width: 520px; max-width: 520px; }
+        /* ★ v2D.6: 任务编辑器锁死 560px */
+        .bl-modal-w560 { min-width: 560px; width: 560px; max-width: 560px; }
         .bl-modal::before {
             content: ''; position: absolute; top: 0; left: 24px; right: 24px;
             height: 3px; background: var(--ink-green);
@@ -779,7 +788,13 @@
 
         /* 手机端适配 */
         @media (max-width: 600px) {
-            .bl-modal { max-height: 95vh; max-width: 100%; border-radius: 8px; }
+            /* ★ v2D.6: 手机端撤销三重锁定,改 100% 撑满 */
+            .bl-modal,
+            .bl-modal-w520,
+            .bl-modal-w560 {
+                min-width: 0; width: 100%; max-width: 100%;
+                max-height: 95vh; border-radius: 8px;
+            }
             .bl-header { padding: 14px 16px 10px; }
             .bl-header h3 { font-size: 17px; letter-spacing: 1.5px; }
             .bl-tabs { padding: 6px 12px 0; }
@@ -7774,7 +7789,7 @@
 </script>
 
 <!-- ════════════════════════════════════════════════════════════════
-     【斑斓联动模块 / Banlan Linkage Module】v2D.4 (Phase 2B 双语化 hotfix4 - 修复 pre-line 继承 bug + 账号栏加深)
+     【斑斓联动模块 / Banlan Linkage Module】v2D.6 (Phase 2B 双语化 hotfix6 - 三重锁定弹窗宽度)
      - 由 feature flag 控制显示
      - 完全独立，对原工具零侵入
      - 关闭时整个模块隐藏，工具表现等同 v1
@@ -7898,7 +7913,7 @@
 
 <!-- 班级编辑器 (创建/编辑) -->
 <div class="bl-overlay" id="blClassEditorOverlay">
-    <div class="bl-modal" style="max-width:520px;">
+    <div class="bl-modal bl-modal-w520">
         <div class="bl-header">
             <h3 id="blClassEditorTitle">+ 新建班级</h3>
             <button class="bl-close" onclick="BL.closeClassEditor()">×</button>
@@ -7927,7 +7942,7 @@
 
 <!-- 任务编辑器 (Phase 2B 新增, 创建/编辑) -->
 <div class="bl-overlay" id="blTaskEditorOverlay">
-    <div class="bl-modal" style="max-width:560px;">
+    <div class="bl-modal bl-modal-w560">
         <div class="bl-header">
             <h3 id="blTaskEditorTitle">+ 新建任务</h3>
             <button class="bl-close" onclick="BL.closeTaskEditor()">×</button>
@@ -7980,7 +7995,7 @@
 
 <script>
 /* ══════════════════════════════════════════════════════════════════
-   斑斓联动模块 v2D.4 (Phase 2B 双语化 hotfix4) · JavaScript
+   斑斓联动模块 v2D.6 (Phase 2B 双语化 hotfix6) · JavaScript
    - 全部代码命名空间挂在 window.BL 下，避免污染全局
    - 通过 feature flag 控制 UI 显示
    ══════════════════════════════════════════════════════════════════ */
