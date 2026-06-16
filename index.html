@@ -529,7 +529,7 @@
             background: rgba(228, 238, 233, 0.85);
             backdrop-filter: blur(5px);
             display: none; justify-content: center; align-items: center;
-            padding: 16px;
+            padding: 8px;
         }
         .bl-overlay.bl-show { display: flex; }
 
@@ -538,7 +538,7 @@
             background: #fff;
             width: 100%;
             max-width: 720px;
-            max-height: 90vh;
+            max-height: 92vh;
             border-radius: 10px;
             border: 1px solid var(--border-light, #d0d7d3);
             box-shadow: 0 24px 60px rgba(55, 74, 66, 0.2);
@@ -551,17 +551,17 @@
             border-radius: 0 0 4px 4px; opacity: 0.85;
         }
 
-        /* 弹窗头部 */
+        /* 弹窗头部 — ★ v2D.3: 缩小间距 */
         .bl-header {
-            padding: 20px 24px 14px;
+            padding: 12px 20px 8px;
             border-bottom: 1px solid #eef1ef;
             /* ★ v2D.1 标题居中: 用 relative + h3 占满 + 关闭按钮 absolute */
             position: relative;
             text-align: center;
         }
         .bl-header h3 {
-            margin: 0; font-size: 20px; color: var(--ink-green);
-            letter-spacing: 2px; font-weight: bold;
+            margin: 0; font-size: 17px; color: var(--ink-green);
+            letter-spacing: 1.5px; font-weight: bold;
             font-family: var(--font-main, 'Noto Sans CJK SC', sans-serif);
             text-align: center;
         }
@@ -576,31 +576,32 @@
             transform: translateY(-50%);
         }
         .bl-close:hover {
-            background: #f0f4f1; color: var(--zhusha);
+            background: #d4e6dc; color: var(--zhusha);
             transform: translateY(-50%); box-shadow: none; filter: none;
         }
 
-        /* Tab 栏 */
+        /* Tab 栏 — ★ v2D.3: 缩小间距 */
         .bl-tabs {
-            display: flex; gap: 4px;
-            padding: 8px 24px 0;
+            display: flex; gap: 2px;
+            padding: 4px 20px 0;
             border-bottom: 1px solid #eef1ef;
         }
         .bl-tab {
-            padding: 10px 18px;
+            padding: 6px 14px;
             background: transparent;
             border: none;
             border-bottom: 2px solid transparent;
             color: var(--mo-mid);
-            font-size: 14px;
+            font-size: 13px;
             cursor: pointer;
             font-family: inherit;
             box-shadow: none;
             border-radius: 4px 4px 0 0;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
+            line-height: 1.3;
         }
         .bl-tab:hover {
-            background: #f7faf8;
+            background: #d4e6dc;
             color: var(--ink-green);
             transform: none; box-shadow: none; filter: none;
         }
@@ -608,12 +609,12 @@
             color: var(--ink-green);
             border-bottom-color: var(--ink-green);
             font-weight: bold;
-            background: #f0f7f3;
+            background: #d4e6dc;
         }
 
-        /* 内容区 */
+        /* 内容区 — ★ v2D.3: 缩小间距 */
         .bl-body {
-            padding: 22px 24px;
+            padding: 12px 20px 14px;
             overflow-y: auto;
             flex: 1;
         }
@@ -685,16 +686,16 @@
             margin-top: 14px;
         }
 
-        /* 班级卡片 */
-        .bl-class-list { display: flex; flex-direction: column; gap: 10px; }
+        /* 班级卡片 — ★ v2D.3: 缩小间距 */
+        .bl-class-list { display: flex; flex-direction: column; gap: 6px; }
         .bl-class-card {
             border: 1px solid #d0d7d3;
             border-left: 4px solid var(--ink-green);
             border-radius: 4px;
-            padding: 14px 16px;
+            padding: 8px 12px;
             background: #fafbfa;
             display: flex; align-items: center; justify-content: space-between;
-            gap: 12px;
+            gap: 10px;
             transition: all 0.2s;
         }
         .bl-class-card:hover { background: #d4e6dc; border-left-color: var(--zhusha); }
@@ -824,16 +825,16 @@
             font-family: monospace; margin-right: 8px;
         }
 
-        /* 任务列表 */
-        .bl-task-list { display: flex; flex-direction: column; gap: 10px; }
+        /* 任务列表 — ★ v2D.3: 缩小间距 */
+        .bl-task-list { display: flex; flex-direction: column; gap: 6px; }
         .bl-task-card {
             border: 1px solid #d0d7d3;
             border-left: 4px solid var(--ink-green);
             border-radius: 4px;
-            padding: 12px 14px;
+            padding: 8px 12px;
             background: #fafbfa;
             display: flex; align-items: center; justify-content: space-between;
-            gap: 12px;
+            gap: 10px;
             transition: all 0.2s;
         }
         .bl-task-card:hover { background: #d4e6dc; }
@@ -845,9 +846,10 @@
             display: block;
             font-size: 0.78em;
             opacity: 0.78;
-            margin-top: 2px;
+            margin-top: 1px;
             font-weight: normal;
             letter-spacing: 0.3px;
+            line-height: 1.2;
         }
         .bl-overlay,
         .bl-overlay .bl-btn,
@@ -7767,7 +7769,7 @@
 </script>
 
 <!-- ════════════════════════════════════════════════════════════════
-     【斑斓联动模块 / Banlan Linkage Module】v2D.2 (Phase 2B 双语化 hotfix2 - 4 项 UI 调优 + 双语竖排)
+     【斑斓联动模块 / Banlan Linkage Module】v2D.3 (Phase 2B 双语化 hotfix3 - 缩小间距 + Tab 加深 + 整行竖排)
      - 由 feature flag 控制显示
      - 完全独立，对原工具零侵入
      - 关闭时整个模块隐藏，工具表现等同 v1
@@ -7851,7 +7853,7 @@
                 </div>
                 <!-- v2B-r2 批量操作栏 (任务选中后显示) -->
                 <div class="bl-task-bulk-bar" id="blTaskBulkBar">
-                    <span class="bl-bulk-count">已选 <span id="blBulkCount">0</span> 项<span class="lang-en">Selected</span><span class="lang-ar">محدد</span></span>
+                    <span class="bl-bulk-count" id="blBulkCountText"></span>
                     <div class="bl-bulk-actions">
                         <button class="bl-bulk-btn" id="blBulkArchiveBtn" onclick="BL.batchArchive()">📥 归档<span class="lang-en">Archive</span><span class="lang-ar">أرشفة</span></button>
                         <button class="bl-bulk-btn" id="blBulkUnarchiveBtn" onclick="BL.batchUnarchive()">↺ 取消归档<span class="lang-en">Unarchive</span><span class="lang-ar">إلغاء الأرشفة</span></button>
@@ -7973,7 +7975,7 @@
 
 <script>
 /* ══════════════════════════════════════════════════════════════════
-   斑斓联动模块 v2D.2 (Phase 2B 双语化 hotfix2 - 双语竖排) · JavaScript
+   斑斓联动模块 v2D.3 (Phase 2B 双语化 hotfix3) · JavaScript
    - 全部代码命名空间挂在 window.BL 下，避免污染全局
    - 通过 feature flag 控制 UI 显示
    ══════════════════════════════════════════════════════════════════ */
@@ -8441,23 +8443,29 @@ window.BL = (function () {
             return;
         }
 
-        // ★ v2D 双语化: 动态标签
-        const studentsLabel = tt('学生', 'students', 'طلاب');
-        const tasksLabel = tt('任务', 'tasks', 'مهام');
+        // ★ v2D.3: 按钮 title (单词级 tt 没问题,因为是 title 属性,不竖排显示)
         const titleTasks = tt('任务管理', 'Tasks', 'المهام');
         const titleEdit = tt('编辑', 'Edit', 'تعديل');
         const titleDelete = tt('删除', 'Delete', 'حذف');
 
-        list.innerHTML = state.classes.map(c => `
+        list.innerHTML = state.classes.map(c => {
+            // ★ v2D.3: meta 整行竖排 (修复 tt 拆词导致 3 行的 bug)
+            const studentN = c.studentCount || 0;
+            const taskN = c.taskCount || 0;
+            const metaText = tt(
+                `${studentN} 学生 · ${taskN} 任务`,
+                `${studentN} students · ${taskN} tasks`,
+                `${studentN} طلاب · ${taskN} مهام`
+            );
+            const descLine = c.description ? ' · ' + c.description : '';
+            return `
             <div class="bl-class-card">
                 <div class="bl-class-info">
                     <div>
                         <span class="bl-class-code">${escapeHtml(c.classCode)}</span>
                         <span class="bl-class-name">${escapeHtml(c.name)}</span>
                     </div>
-                    <div class="bl-class-meta">
-                        ${c.studentCount || 0} ${escapeHtml(studentsLabel)} · ${c.taskCount || 0} ${escapeHtml(tasksLabel)}${c.description ? ' · ' + escapeHtml(c.description) : ''}
-                    </div>
+                    <div class="bl-class-meta">${escapeHtml(metaText)}${escapeHtml(descLine)}</div>
                 </div>
                 <div class="bl-class-actions">
                     <button class="bl-icon-btn" onclick="BL.openTasksView('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleTasks)}">📋 ${c.taskCount || 0}</button>
@@ -8465,7 +8473,7 @@ window.BL = (function () {
                     <button class="bl-icon-btn bl-danger-icon" onclick="BL.deleteClass('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleDelete)}">🗑</button>
                 </div>
             </div>
-        `).join('');
+        `;}).join('');
     }
 
     function openClassEditor(classCode) {
@@ -8648,14 +8656,18 @@ window.BL = (function () {
         const activeCount = allValidTasks.filter(t => !t.archived).length;
         const archivedCount = allValidTasks.filter(t => t.archived).length;
         const countEl = $('blTasksCount');
-        // ★ v2D 双语化: 计数文字
-        const tasksWord = tt('个任务', 'tasks', 'مهام');
-        const archivedWord = tt('已归档', 'archived', 'مؤرشفة');
+        // ★ v2D.3: 整行竖排,避免拆词导致多行错乱
         if (countEl) {
             if (archivedCount > 0) {
-                countEl.innerHTML = `${activeCount} ${escapeHtml(tasksWord)} · <span style="color:var(--ink-gray);">${archivedCount} ${escapeHtml(archivedWord)}</span>`;
+                const zh = `${activeCount} 个任务 · ${archivedCount} 已归档`;
+                const en = `${activeCount} tasks · ${archivedCount} archived`;
+                const ar = `${activeCount} مهام · ${archivedCount} مؤرشفة`;
+                countEl.textContent = tt(zh, en, ar);
             } else {
-                countEl.textContent = `${activeCount} ${tasksWord}`;
+                const zh = `${activeCount} 个任务`;
+                const en = `${activeCount} tasks`;
+                const ar = `${activeCount} مهام`;
+                countEl.textContent = tt(zh, en, ar);
             }
         }
 
@@ -8726,7 +8738,12 @@ window.BL = (function () {
             return;
         }
         bar.classList.add('bl-show');
-        $('blBulkCount').textContent = n;
+        // ★ v2D.3: 整行竖排,避免拆词
+        $('blBulkCountText').textContent = tt(
+            `已选 ${n} 项`,
+            `${n} selected`,
+            `${n} محدد`
+        );
 
         // 智能显示归档/取消归档按钮
         const selectedTasks = state.tasks.filter(t => state.selectedTaskIds.includes(t.taskId));
