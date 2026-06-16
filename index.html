@@ -7675,7 +7675,7 @@
 </script>
 
 <!-- ════════════════════════════════════════════════════════════════
-     【斑斓联动模块 / Banlan Linkage Module】v2C (Phase 2B 第 2 轮 - D3 多班推送+复制+批量+显示归档)
+     【斑斓联动模块 / Banlan Linkage Module】v2C.1 (Phase 2B 第 2 轮 hotfix1 - 修复批量参数格式)
      - 由 feature flag 控制显示
      - 完全独立，对原工具零侵入
      - 关闭时整个模块隐藏，工具表现等同 v1
@@ -7881,7 +7881,7 @@
 
 <script>
 /* ══════════════════════════════════════════════════════════════════
-   斑斓联动模块 v2C (Phase 2B 第 2 轮 · D3 多班推送+批量+复制+归档显示) · JavaScript
+   斑斓联动模块 v2C.1 (Phase 2B 第 2 轮 hotfix1) · JavaScript
    - 全部代码命名空间挂在 window.BL 下，避免污染全局
    - 通过 feature flag 控制 UI 显示
    ══════════════════════════════════════════════════════════════════ */
@@ -8041,7 +8041,7 @@ window.BL = (function () {
     // 初始化：处理解锁码 + 检查 flag + 决定是否可见
     // ─────────────────────────────────────────
     async function init() {
-        console.log('%c[斑斓联动] BL v2C 已加载 (Phase 2B 第 2 轮)', 'color:#8f2727;font-weight:bold;');
+        console.log('%c[斑斓联动] BL v2C.1 已加载 (Phase 2B 第 2 轮 hotfix1)', 'color:#8f2727;font-weight:bold;');
         // 1) 先处理 URL 解锁参数
         await handleUnlockUrl();
 
@@ -8729,13 +8729,16 @@ window.BL = (function () {
         renderTasks();
     }
 
-    // ★ v2B-r2: 批量归档
+    // ★ v2B-r2 / v2C.1 修复: 参数格式 - Worker 期望 taskRefs 数组(每项 {classCode, taskId}),不是 taskIds
     async function batchArchive() {
         if (state.selectedTaskIds.length === 0) return;
         try {
-            const result = await apiWithRetry('POST', '/api/tasks/batch-archive', {
+            const taskRefs = state.selectedTaskIds.map(id => ({
                 classCode: state.currentClassCode,
-                taskIds: state.selectedTaskIds,
+                taskId: id
+            }));
+            const result = await apiWithRetry('POST', '/api/tasks/batch-archive', {
+                taskRefs,
                 archived: true
             });
             // 本地同步: 把选中的任务标记为已归档
@@ -8743,7 +8746,7 @@ window.BL = (function () {
                 const t = state.tasks.find(t => t.taskId === id);
                 if (t) t.archived = true;
             });
-            const count = result.updated || state.selectedTaskIds.length;
+            const count = (result.updated && result.updated.length) || result.count || state.selectedTaskIds.length;
             state.selectedTaskIds = [];
             toast(`已归档 ${count} 条任务`, 'success');
             renderTasks();
@@ -8752,20 +8755,23 @@ window.BL = (function () {
         }
     }
 
-    // ★ v2B-r2: 批量取消归档
+    // ★ v2B-r2 / v2C.1 修复: 同 batchArchive
     async function batchUnarchive() {
         if (state.selectedTaskIds.length === 0) return;
         try {
-            const result = await apiWithRetry('POST', '/api/tasks/batch-archive', {
+            const taskRefs = state.selectedTaskIds.map(id => ({
                 classCode: state.currentClassCode,
-                taskIds: state.selectedTaskIds,
+                taskId: id
+            }));
+            const result = await apiWithRetry('POST', '/api/tasks/batch-archive', {
+                taskRefs,
                 archived: false
             });
             state.selectedTaskIds.forEach(id => {
                 const t = state.tasks.find(t => t.taskId === id);
                 if (t) t.archived = false;
             });
-            const count = result.updated || state.selectedTaskIds.length;
+            const count = (result.updated && result.updated.length) || result.count || state.selectedTaskIds.length;
             state.selectedTaskIds = [];
             toast(`已取消归档 ${count} 条任务`, 'success');
             renderTasks();
@@ -8774,15 +8780,18 @@ window.BL = (function () {
         }
     }
 
-    // ★ v2B-r2: 批量删除
+    // ★ v2B-r2 / v2C.1 修复: taskRefs 格式
     async function batchDelete() {
         const n = state.selectedTaskIds.length;
         if (n === 0) return;
         if (!confirm(`确定删除选中的 ${n} 条任务吗？\n此操作不可恢复。`)) return;
         try {
-            const result = await apiWithRetry('POST', '/api/tasks/batch-delete', {
+            const taskRefs = state.selectedTaskIds.map(id => ({
                 classCode: state.currentClassCode,
-                taskIds: state.selectedTaskIds
+                taskId: id
+            }));
+            const result = await apiWithRetry('POST', '/api/tasks/batch-delete', {
+                taskRefs
             });
             const deletedIds = new Set(state.selectedTaskIds);
             state.tasks = state.tasks.filter(t => !deletedIds.has(t.taskId));
