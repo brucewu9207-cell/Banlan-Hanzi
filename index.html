@@ -555,21 +555,29 @@
         .bl-header {
             padding: 20px 24px 14px;
             border-bottom: 1px solid #eef1ef;
-            display: flex; align-items: center; justify-content: space-between;
+            /* ★ v2D.1 标题居中: 用 relative + h3 占满 + 关闭按钮 absolute */
+            position: relative;
+            text-align: center;
         }
         .bl-header h3 {
             margin: 0; font-size: 20px; color: var(--ink-green);
             letter-spacing: 2px; font-weight: bold;
             font-family: var(--font-main, 'Noto Sans CJK SC', sans-serif);
+            text-align: center;
         }
         .bl-close {
             background: none; border: none; cursor: pointer;
             color: var(--mo-mid); font-size: 22px; padding: 4px 10px;
             border-radius: 4px; box-shadow: none;
+            /* ★ v2D.1 标题居中: × 按钮绝对定位到右上角,不挤占居中的 h3 */
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
         }
         .bl-close:hover {
             background: #f0f4f1; color: var(--zhusha);
-            transform: none; box-shadow: none; filter: none;
+            transform: translateY(-50%); box-shadow: none; filter: none;
         }
 
         /* Tab 栏 */
@@ -1128,12 +1136,14 @@
             .controls-bar > .btn-tts-studio,
             .controls-bar > .btn-seal,
             .controls-bar > .btn-toggle-dl,
-            .controls-bar > .btn-feedback {
+            .controls-bar > .btn-feedback,
+            .controls-bar > .btn-linkage {
                 padding: 14px 20px;
                 font-size: 17px;
                 letter-spacing: 1.5px;
-                /* 【v44】缩到 195×80：5 个按钮 + 输入框可在 1366px 视口一行排下 */
-                width: 195px;
+                /* ★ v2D.1: 195 → 220,容纳"班级与任务 / Classes & Tasks"双语单行;
+                   并把 .btn-linkage 加进锁定区,切换语言时不再移动 */
+                width: 220px;
                 height: 80px;
                 box-sizing: border-box;
             }
@@ -1151,11 +1161,13 @@
             .controls-bar > .btn-seal .btn-en,
             .controls-bar > .btn-toggle-dl .btn-en,
             .controls-bar > .btn-feedback .btn-en,
+            .controls-bar > .btn-linkage .btn-en,
             .controls-bar > .btn-gen .btn-ar,
             .controls-bar > .btn-tts-studio .btn-ar,
             .controls-bar > .btn-seal .btn-ar,
             .controls-bar > .btn-toggle-dl .btn-ar,
-            .controls-bar > .btn-feedback .btn-ar {
+            .controls-bar > .btn-feedback .btn-ar,
+            .controls-bar > .btn-linkage .btn-ar {
                 font-size: 12px;
                 margin-top: 5px;
             }
@@ -5681,8 +5693,13 @@
     
     async function exportSingleSvg(svg, filename, mode = 'none', transparent = false) {
         return new Promise(resolve => {
-            const canvas = document.getElementById('exportCanvas'); const ctx = canvas.getContext('2d');
-            canvas.width = 1024; canvas.height = 1024; ctx.clearRect(0,0,1024,1024);
+            // ★ v2D.1: 每次新建独立 canvas + 显式 alpha:true,
+            //   确保 Windows 系统下载的 PNG 真正透明(方便插入 PPT)
+            //   不复用 #exportCanvas 是因为复用 canvas 在某些浏览器残留 alpha 状态
+            const canvas = document.createElement('canvas');
+            canvas.width = 1024; canvas.height = 1024;
+            const ctx = canvas.getContext('2d', { alpha: true });
+            ctx.clearRect(0, 0, 1024, 1024);
             if (!transparent) { ctx.fillStyle = "white"; ctx.fillRect(0,0,1024,1024); }
             drawSvgToCanvas(svg, ctx, 0, 0, 1024).then(() => {
                 const link = document.createElement("a"); link.href = canvas.toDataURL("image/png"); link.download = filename; link.click(); resolve();
@@ -7712,7 +7729,7 @@
 </script>
 
 <!-- ════════════════════════════════════════════════════════════════
-     【斑斓联动模块 / Banlan Linkage Module】v2D (Phase 2B 全量双语化 - 中英阿三语)
+     【斑斓联动模块 / Banlan Linkage Module】v2D.1 (Phase 2B 双语化 hotfix1 - 5 项 UI 调优)
      - 由 feature flag 控制显示
      - 完全独立，对原工具零侵入
      - 关闭时整个模块隐藏，工具表现等同 v1
@@ -7918,7 +7935,7 @@
 
 <script>
 /* ══════════════════════════════════════════════════════════════════
-   斑斓联动模块 v2D (Phase 2B 全量双语化) · JavaScript
+   斑斓联动模块 v2D.1 (Phase 2B 双语化 hotfix1) · JavaScript
    - 全部代码命名空间挂在 window.BL 下，避免污染全局
    - 通过 feature flag 控制 UI 显示
    ══════════════════════════════════════════════════════════════════ */
@@ -8117,6 +8134,44 @@ window.BL = (function () {
                 if (toggleBtn) toggleBtn.textContent = isRegister
                     ? tt('已有账号？去登录', 'Have account? Login', 'لديك حساب؟ تسجيل دخول')
                     : tt('注册新账号', 'Sign Up', 'تسجيل جديد');
+            }
+
+            // ★ v2D.1: 如果任务编辑器打开,刷新标题 + 发布/保存按钮文字
+            const taskEditorOpen = document.getElementById('blTaskEditorOverlay').classList.contains('bl-show');
+            if (taskEditorOpen) {
+                const mode = state.taskEditorMode;
+                if (mode === 'edit') {
+                    document.getElementById('blTaskEditorTitle').textContent = tt('编辑任务', 'Edit Task', 'تعديل المهمة');
+                    document.getElementById('blTaskSubmitBtn').textContent = tt('保存', 'Save', 'حفظ');
+                } else if (mode === 'duplicate') {
+                    document.getElementById('blTaskEditorTitle').textContent = tt('📑 复制任务', '📑 Duplicate Task', '📑 نسخ المهمة');
+                    updateSubmitButtonText();
+                    renderMultiClassPicker();
+                } else {
+                    document.getElementById('blTaskEditorTitle').textContent = tt('+ 新建任务', '+ New Task', '+ مهمة جديدة');
+                    updateSubmitButtonText();
+                    renderMultiClassPicker();
+                }
+            }
+
+            // ★ v2D.1: 如果班级编辑器打开,刷新标题 + 创建/保存按钮 + hint
+            const classEditorOpen = document.getElementById('blClassEditorOverlay').classList.contains('bl-show');
+            if (classEditorOpen) {
+                const editing = !!state.editingClassCode;
+                document.getElementById('blClassEditorTitle').textContent = editing
+                    ? tt('编辑班级', 'Edit Class', 'تعديل الفصل')
+                    : tt('+ 新建班级', '+ New Class', '+ فصل جديد');
+                document.getElementById('blClassSubmitBtn').textContent = editing
+                    ? tt('保存', 'Save', 'حفظ')
+                    : tt('创建', 'Create', 'إنشاء');
+                if (editing) {
+                    document.getElementById('blClassCodeHint').innerHTML = '🔒 <span style="color:var(--zhusha);">' +
+                        escapeHtml(tt('班级码创建后不可修改', 'Class code cannot be modified after creation', 'لا يمكن تعديل رمز الفصل بعد الإنشاء')) +
+                        '</span> · ' +
+                        escapeHtml(tt('学生用它加入班级，改了会让已加入的学生失联', 'Students join with this code; changing it will disconnect them', 'يستخدمه الطلاب للانضمام؛ تغييره سيفصلهم'));
+                } else {
+                    document.getElementById('blClassCodeHint').textContent = tt('2-20 位字母数字横线下划线，学生用这个码加入班级', '2-20 chars (letters/digits/-/_); students use this code to join', '2-20 حرف (أحرف/أرقام/-/_)؛ يستخدمه الطلاب للانضمام');
+                }
             }
         });
 
