@@ -4295,12 +4295,49 @@
             adminPwd: {
                 en: '密码 / Password',
                 ar: '密码 / كلمة المرور'
+            },
+            // ★ v2D 双语化: BL 模块所有输入框
+            blAuthUsername: {
+                en: '用户名 / Username',
+                ar: '用户名 / اسم المستخدم'
+            },
+            blAuthPassword: {
+                en: '密码 / Password',
+                ar: '密码 / كلمة المرور'
+            },
+            blAuthName: {
+                en: '姓名 / Name',
+                ar: '姓名 / الاسم'
+            },
+            blClassCode: {
+                en: '如：HSK3A、MyClass2024 / e.g. HSK3A, MyClass2024',
+                ar: '如：HSK3A、MyClass2024 / مثل: HSK3A, MyClass2024'
+            },
+            blClassName: {
+                en: '如：三年级 A 班 / e.g. Grade 3 Class A',
+                ar: '如：三年级 A 班 / مثل: الصف الثالث أ'
+            },
+            blClassDescription: {
+                en: '如：周二/周四 19:00-20:00 / e.g. Tue/Thu 19:00-20:00',
+                ar: '如：周二/周四 19:00-20:00 / مثل: الثلاثاء/الخميس 19:00-20:00'
+            },
+            blTaskTitle: {
+                en: '如：HSK3 第 5 课字 / e.g. HSK3 Lesson 5 / Weekend HW',
+                ar: '如：HSK3 第 5 课字 / مثل: HSK3 الدرس 5'
+            },
+            blTaskContent: {
+                en: '如填字：你好世界\n如填词：今天 明天 昨天\n如填句：你叫什么名字？\nFor chars/words/sentences as content',
+                ar: '如填字：你好世界\n如填词：今天 明天 昨天\n如填句：你叫什么名字？\nمحتوى الحروف/الكلمات/الجمل'
             }
         };
         Object.keys(map).forEach(function(id) {
             var el = document.getElementById(id);
             if (el && map[id][lang]) el.placeholder = map[id][lang];
         });
+        // ★ v2D 双语化: 派发语言切换事件,让 BL 模块重渲染动态内容
+        try {
+            window.dispatchEvent(new CustomEvent('banlan-lang-changed', { detail: { lang: lang } }));
+        } catch (e) {}
     }
 
     // 绑定点击事件（事件委托，兼容动态注入的按钮）
@@ -7675,7 +7712,7 @@
 </script>
 
 <!-- ════════════════════════════════════════════════════════════════
-     【斑斓联动模块 / Banlan Linkage Module】v2C.1 (Phase 2B 第 2 轮 hotfix1 - 修复批量参数格式)
+     【斑斓联动模块 / Banlan Linkage Module】v2D (Phase 2B 全量双语化 - 中英阿三语)
      - 由 feature flag 控制显示
      - 完全独立，对原工具零侵入
      - 关闭时整个模块隐藏，工具表现等同 v1
@@ -7685,40 +7722,40 @@
 <div class="bl-overlay" id="blOverlay">
     <div class="bl-modal">
         <div class="bl-header">
-            <h3 id="blTitle">📚 班级与任务</h3>
+            <h3 id="blTitle">📚 班级与任务<span class="lang-en"> / Classes &amp; Tasks</span><span class="lang-ar"> / الفصول والمهام</span></h3>
             <button class="bl-close" onclick="BL.closePanel()">×</button>
         </div>
 
         <!-- 已登录状态下显示 Tab -->
         <div class="bl-tabs" id="blTabs" style="display:none;">
-            <button class="bl-tab bl-active" data-tab="classes" onclick="BL.switchTab('classes')">我的班级</button>
-            <button class="bl-tab" data-tab="account" onclick="BL.switchTab('account')">账号</button>
+            <button class="bl-tab bl-active" data-tab="classes" onclick="BL.switchTab('classes')">我的班级<span class="lang-en"> / My Classes</span><span class="lang-ar"> / فصولي</span></button>
+            <button class="bl-tab" data-tab="account" onclick="BL.switchTab('account')">账号<span class="lang-en"> / Account</span><span class="lang-ar"> / الحساب</span></button>
         </div>
 
         <div class="bl-body">
             <!-- 未登录视图 -->
             <div id="blViewAuth">
                 <p style="text-align:center; color:var(--mo-mid); font-size:13px; margin:8px 0 18px;">
-                    使用班级管理功能，请先登录或注册
+                    使用班级管理功能，请先登录或注册<span class="lang-en"><br>Login or sign up to use class management</span><span class="lang-ar"><br>سجل دخول أو سجل لاستخدام إدارة الفصول</span>
                 </p>
                 <div class="bl-form-group">
-                    <label class="bl-label">用户名</label>
+                    <label class="bl-label">用户名<span class="lang-en"> / Username</span><span class="lang-ar"> / اسم المستخدم</span></label>
                     <input type="text" class="bl-input" id="blAuthUsername" placeholder="3-32 位字母数字下划线" autocomplete="username">
                 </div>
                 <div class="bl-form-group">
-                    <label class="bl-label">密码</label>
+                    <label class="bl-label">密码<span class="lang-en"> / Password</span><span class="lang-ar"> / كلمة المرور</span></label>
                     <input type="password" class="bl-input" id="blAuthPassword" placeholder="至少 6 位" autocomplete="current-password">
                 </div>
                 <div class="bl-form-group" id="blAuthDisplayNameGroup" style="display:none;">
-                    <label class="bl-label">显示名（可选）</label>
+                    <label class="bl-label">显示名（可选）<span class="lang-en"> / Display Name (Optional)</span><span class="lang-ar"> / الاسم المعروض (اختياري)</span></label>
                     <input type="text" class="bl-input" id="blAuthDisplayName" placeholder="如：墨舟老师">
                 </div>
                 <p class="bl-hint" style="margin-top:14px;">
-                    ⓘ 账号信息仅用于身份识别，不收集隐私数据
+                    ⓘ 账号信息仅用于身份识别，不收集隐私数据<span class="lang-en"><br>ⓘ Account info is for identification only, no privacy data collected</span><span class="lang-ar"><br>ⓘ معلومات الحساب لتحديد الهوية فقط، لا تُجمع بيانات خاصة</span>
                 </p>
                 <div class="bl-btn-row">
-                    <button class="bl-btn bl-secondary" onclick="BL.toggleAuthMode()" id="blAuthToggleBtn">注册新账号</button>
-                    <button class="bl-btn" onclick="BL.submitAuth()" id="blAuthSubmitBtn">登录</button>
+                    <button class="bl-btn bl-secondary" onclick="BL.toggleAuthMode()" id="blAuthToggleBtn">注册新账号<span class="lang-en"> / Sign Up</span><span class="lang-ar"> / تسجيل جديد</span></button>
+                    <button class="bl-btn" onclick="BL.submitAuth()" id="blAuthSubmitBtn">登录<span class="lang-en"> / Login</span><span class="lang-ar"> / دخول</span></button>
                 </div>
             </div>
 
@@ -7726,13 +7763,13 @@
             <div id="blViewClasses" style="display:none;">
                 <div class="bl-user-bar">
                     <span class="bl-user-name" id="blUserDisplayName">—</span>
-                    <button class="bl-logout-btn" onclick="BL.logout()">退出</button>
+                    <button class="bl-logout-btn" onclick="BL.logout()">退出<span class="lang-en"> / Logout</span><span class="lang-ar"> / خروج</span></button>
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
                     <div style="font-size:14px; color:var(--ink-green); font-weight:500;">
-                        我的班级（<span id="blClassCount">0</span>）
+                        我的班级<span class="lang-en"> / My Classes</span><span class="lang-ar"> / فصولي</span>（<span id="blClassCount">0</span>）
                     </div>
-                    <button class="bl-btn" onclick="BL.openClassEditor()">+ 新建班级</button>
+                    <button class="bl-btn" onclick="BL.openClassEditor()">+ 新建班级<span class="lang-en"> / New</span><span class="lang-ar"> / جديد</span></button>
                 </div>
                 <div class="bl-class-list" id="blClassList">
                     <!-- 动态生成 -->
@@ -7741,7 +7778,7 @@
 
             <!-- 任务列表视图 (Phase 2B 新增) -->
             <div id="blViewTasks" style="display:none;">
-                <button class="bl-back-btn" onclick="BL.backToClassList()">← 返回班级列表</button>
+                <button class="bl-back-btn" onclick="BL.backToClassList()">← 返回班级列表<span class="lang-en"> / Back to Classes</span><span class="lang-ar"> / العودة</span></button>
                 <div class="bl-tasks-header">
                     <div class="bl-tasks-title">
                         <span class="bl-tasks-class-tag" id="blTasksClassTag">—</span>
@@ -7752,19 +7789,19 @@
                     </div>
                     <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
                         <label class="bl-archived-toggle" id="blArchivedToggle" onclick="BL.toggleShowArchived()">
-                            <span class="bl-archived-check"></span>显示归档
+                            <span class="bl-archived-check"></span>显示归档<span class="lang-en"> / Show Archived</span><span class="lang-ar"> / عرض المؤرشفة</span>
                         </label>
-                        <button class="bl-btn" onclick="BL.openTaskEditor()">+ 新建任务</button>
+                        <button class="bl-btn" onclick="BL.openTaskEditor()">+ 新建任务<span class="lang-en"> / New</span><span class="lang-ar"> / جديد</span></button>
                     </div>
                 </div>
                 <!-- v2B-r2 批量操作栏 (任务选中后显示) -->
                 <div class="bl-task-bulk-bar" id="blTaskBulkBar">
-                    <span class="bl-bulk-count">已选 <span id="blBulkCount">0</span> 项</span>
+                    <span class="bl-bulk-count">已选 <span id="blBulkCount">0</span> 项<span class="lang-en"> / Selected</span><span class="lang-ar"> / محدد</span></span>
                     <div class="bl-bulk-actions">
-                        <button class="bl-bulk-btn" id="blBulkArchiveBtn" onclick="BL.batchArchive()">📥 归档</button>
-                        <button class="bl-bulk-btn" id="blBulkUnarchiveBtn" onclick="BL.batchUnarchive()">↺ 取消归档</button>
-                        <button class="bl-bulk-btn bl-bulk-danger" onclick="BL.batchDelete()">🗑 删除</button>
-                        <button class="bl-bulk-btn bl-bulk-cancel" onclick="BL.clearTaskSelection()">✕ 取消</button>
+                        <button class="bl-bulk-btn" id="blBulkArchiveBtn" onclick="BL.batchArchive()">📥 归档<span class="lang-en"> / Archive</span><span class="lang-ar"> / أرشفة</span></button>
+                        <button class="bl-bulk-btn" id="blBulkUnarchiveBtn" onclick="BL.batchUnarchive()">↺ 取消归档<span class="lang-en"> / Unarchive</span><span class="lang-ar"> / إلغاء الأرشفة</span></button>
+                        <button class="bl-bulk-btn bl-bulk-danger" onclick="BL.batchDelete()">🗑 删除<span class="lang-en"> / Delete</span><span class="lang-ar"> / حذف</span></button>
+                        <button class="bl-bulk-btn bl-bulk-cancel" onclick="BL.clearTaskSelection()">✕ 取消<span class="lang-en"> / Cancel</span><span class="lang-ar"> / إلغاء</span></button>
                     </div>
                 </div>
                 <div class="bl-task-list" id="blTaskList">
@@ -7778,19 +7815,19 @@
                     <span class="bl-user-name" id="blAccountDisplayName">—</span>
                 </div>
                 <div class="bl-form-group">
-                    <label class="bl-label">用户名</label>
+                    <label class="bl-label">用户名<span class="lang-en"> / Username</span><span class="lang-ar"> / اسم المستخدم</span></label>
                     <input type="text" class="bl-input" id="blAccountUsername" disabled style="background:#f0f4f1;">
                 </div>
                 <div class="bl-form-group">
-                    <label class="bl-label">账号 ID</label>
+                    <label class="bl-label">账号 ID<span class="lang-en"> / Account ID</span><span class="lang-ar"> / معرف الحساب</span></label>
                     <input type="text" class="bl-input" id="blAccountId" disabled style="background:#f0f4f1; font-family:monospace; font-size:12px;">
                 </div>
                 <div class="bl-form-group">
-                    <label class="bl-label">注册时间</label>
+                    <label class="bl-label">注册时间<span class="lang-en"> / Registered</span><span class="lang-ar"> / تاريخ التسجيل</span></label>
                     <input type="text" class="bl-input" id="blAccountCreated" disabled style="background:#f0f4f1;">
                 </div>
                 <div class="bl-btn-row">
-                    <button class="bl-btn bl-danger" onclick="BL.logout()">退出登录</button>
+                    <button class="bl-btn bl-danger" onclick="BL.logout()">退出登录<span class="lang-en"> / Logout</span><span class="lang-ar"> / تسجيل خروج</span></button>
                 </div>
             </div>
         </div>
@@ -7806,20 +7843,20 @@
         </div>
         <div class="bl-body">
             <div class="bl-form-group">
-                <label class="bl-label">班级码 <span style="color:var(--zhusha)">*</span></label>
+                <label class="bl-label">班级码<span class="lang-en"> / Class Code</span><span class="lang-ar"> / رمز الفصل</span> <span style="color:var(--zhusha)">*</span></label>
                 <input type="text" class="bl-input" id="blClassCode" placeholder="如：HSK3A、MyClass2024" maxlength="20">
                 <p class="bl-hint" id="blClassCodeHint">2-20 位字母数字横线下划线，学生用这个码加入班级</p>
             </div>
             <div class="bl-form-group">
-                <label class="bl-label">班级名称 <span style="color:var(--zhusha)">*</span></label>
+                <label class="bl-label">班级名称<span class="lang-en"> / Class Name</span><span class="lang-ar"> / اسم الفصل</span> <span style="color:var(--zhusha)">*</span></label>
                 <input type="text" class="bl-input" id="blClassName" placeholder="如：三年级 A 班" maxlength="100">
             </div>
             <div class="bl-form-group">
-                <label class="bl-label">备注（可选）</label>
+                <label class="bl-label">备注（可选）<span class="lang-en"> / Notes (Optional)</span><span class="lang-ar"> / ملاحظات (اختياري)</span></label>
                 <textarea class="bl-textarea" id="blClassDescription" placeholder="如：周二/周四 19:00-20:00" maxlength="500"></textarea>
             </div>
             <div class="bl-btn-row">
-                <button class="bl-btn bl-secondary" onclick="BL.closeClassEditor()">取消</button>
+                <button class="bl-btn bl-secondary" onclick="BL.closeClassEditor()">取消<span class="lang-en"> / Cancel</span><span class="lang-ar"> / إلغاء</span></button>
                 <button class="bl-btn" onclick="BL.submitClass()" id="blClassSubmitBtn">创建</button>
             </div>
         </div>
@@ -7835,41 +7872,41 @@
         </div>
         <div class="bl-body">
             <div class="bl-form-group">
-                <label class="bl-label">任务标题 <span style="color:var(--zhusha)">*</span></label>
+                <label class="bl-label">任务标题<span class="lang-en"> / Title</span><span class="lang-ar"> / العنوان</span> <span style="color:var(--zhusha)">*</span></label>
                 <input type="text" class="bl-input" id="blTaskTitle" placeholder="如：HSK3 第 5 课字 / 周末作业" maxlength="100">
             </div>
             <div class="bl-form-group">
-                <label class="bl-label">任务类型 <span style="color:var(--zhusha)">*</span></label>
+                <label class="bl-label">任务类型<span class="lang-en"> / Type</span><span class="lang-ar"> / النوع</span> <span style="color:var(--zhusha)">*</span></label>
                 <div class="bl-radio-group" id="blTaskTypeGroup">
                     <label data-type="char" onclick="BL.selectTaskType('char')">
-                        <input type="radio" name="blTaskType" value="char"><span>字</span>
+                        <input type="radio" name="blTaskType" value="char"><span>字<span class="lang-en"> / Char</span><span class="lang-ar"> / حرف</span></span>
                     </label>
                     <label data-type="word" onclick="BL.selectTaskType('word')">
-                        <input type="radio" name="blTaskType" value="word"><span>词</span>
+                        <input type="radio" name="blTaskType" value="word"><span>词<span class="lang-en"> / Word</span><span class="lang-ar"> / كلمة</span></span>
                     </label>
                     <label data-type="sentence" onclick="BL.selectTaskType('sentence')">
-                        <input type="radio" name="blTaskType" value="sentence"><span>句</span>
+                        <input type="radio" name="blTaskType" value="sentence"><span>句<span class="lang-en"> / Sentence</span><span class="lang-ar"> / جملة</span></span>
                     </label>
                 </div>
-                <p class="bl-hint">学生端将按字/词/句的形式展示和练习</p>
+                <p class="bl-hint">学生端将按字/词/句的形式展示和练习<span class="lang-en"><br>Students will see and practice as Char/Word/Sentence</span><span class="lang-ar"><br>سيراها الطلاب ويتدربون كحرف/كلمة/جملة</span></p>
             </div>
             <div class="bl-form-group">
-                <label class="bl-label">任务内容 <span style="color:var(--zhusha)">*</span></label>
+                <label class="bl-label">任务内容<span class="lang-en"> / Content</span><span class="lang-ar"> / المحتوى</span> <span style="color:var(--zhusha)">*</span></label>
                 <textarea class="bl-task-content-input" id="blTaskContent" placeholder="如填字：你好世界&#10;如填词：今天 明天 昨天&#10;如填句：你叫什么名字？" maxlength="5000"></textarea>
-                <p class="bl-hint">最多 5000 字。空格、换行都可以用作分隔。</p>
+                <p class="bl-hint">最多 5000 字。空格、换行都可以用作分隔。<span class="lang-en"><br>Up to 5000 chars. Spaces and line breaks work as separators.</span><span class="lang-ar"><br>حتى 5000 حرف. المسافات والأسطر كفواصل.</span></p>
             </div>
             <!-- v2B-r2 多班推送(D3 升级版核心): 创建/复制模式显示,编辑模式隐藏 -->
             <div class="bl-form-group" id="blMultiClassGroup">
                 <div class="bl-multi-class-picker">
-                    <div class="bl-multi-class-divider">─── 同时推送到这些班级 ───</div>
+                    <div class="bl-multi-class-divider">─── 同时推送到这些班级<span class="lang-en"> · Also push to these classes</span><span class="lang-ar"> · أرسل أيضاً إلى هذه الفصول</span> ───</div>
                     <div id="blMultiClassList"></div>
                     <p class="bl-multi-class-info">
-                        ℹ️ 推送到 N 个班 = 创建 N 条独立任务记录
+                        ℹ️ 推送到 N 个班 = 创建 N 条独立任务记录<span class="lang-en"><br>ℹ️ Push to N classes = N independent task records</span><span class="lang-ar"><br>ℹ️ إلى N فصول = N سجلات مستقلة</span>
                     </p>
                 </div>
             </div>
             <div class="bl-btn-row">
-                <button class="bl-btn bl-secondary" onclick="BL.closeTaskEditor()">取消</button>
+                <button class="bl-btn bl-secondary" onclick="BL.closeTaskEditor()">取消<span class="lang-en"> / Cancel</span><span class="lang-ar"> / إلغاء</span></button>
                 <button class="bl-btn" onclick="BL.submitTask()" id="blTaskSubmitBtn">发布</button>
             </div>
         </div>
@@ -7881,7 +7918,7 @@
 
 <script>
 /* ══════════════════════════════════════════════════════════════════
-   斑斓联动模块 v2C.1 (Phase 2B 第 2 轮 hotfix1) · JavaScript
+   斑斓联动模块 v2D (Phase 2B 全量双语化) · JavaScript
    - 全部代码命名空间挂在 window.BL 下，避免污染全局
    - 通过 feature flag 控制 UI 显示
    ══════════════════════════════════════════════════════════════════ */
@@ -7917,6 +7954,23 @@ window.BL = (function () {
     // 工具函数
     // ─────────────────────────────────────────
     function $(id) { return document.getElementById(id); }
+
+    // ═════════════════════════════════════════════════════════════
+    // ★ v2D 双语化: 翻译辅助函数
+    // 用法: tt('任务已发布 ✓', 'Task published ✓', 'تم نشر المهمة ✓')
+    // 返回: "任务已发布 ✓ / Task published ✓" 或 "任务已发布 ✓ / تم نشر المهمة ✓"
+    // 设计理念: 跟随 v2A 双语风格 — 中文始终显示,叠加当前语言的译文
+    // ═════════════════════════════════════════════════════════════
+    function tt(zh, en, ar) {
+        const isAr = document.body.classList.contains('lang-mode-ar');
+        return zh + ' / ' + (isAr ? ar : en);
+    }
+
+    // 长文本(confirm 多行)使用换行分隔
+    function ttBlock(zh, en, ar) {
+        const isAr = document.body.classList.contains('lang-mode-ar');
+        return zh + '\n' + (isAr ? ar : en);
+    }
 
     function toast(msg, type) {
         const el = $('blToast');
@@ -7979,7 +8033,7 @@ window.BL = (function () {
             localStorage.removeItem(LS_TESTER_NAME_KEY);
             localStorage.removeItem(LS_TESTER_ROLE_KEY);
             cleanUrl(['unlock', 'lock']);
-            toast('测试模式已关闭', 'success');
+            toast(tt('测试模式已关闭', 'Tester mode off', 'تم إيقاف وضع المختبر'), 'success');
             return;
         }
 
@@ -7992,13 +8046,13 @@ window.BL = (function () {
                     if (res.name) localStorage.setItem(LS_TESTER_NAME_KEY, res.name);
                     if (res.role) localStorage.setItem(LS_TESTER_ROLE_KEY, res.role);
                     const roleLabel = res.role === 'owner' ? '主测试者' : '团队成员';
-                    toast('🧪 ' + roleLabel + '模式已激活 · 欢迎 ' + (res.name || ''), 'success');
+                    toast('🧪 ' + roleLabel + tt('模式已激活 · 欢迎 ', ' mode activated · Welcome ', ' وضع مفعّل · أهلاً ') + (res.name || ''), 'success');
                 } else {
-                    toast('解锁失败' + (res.hint ? '：' + res.hint : ''), 'error');
+                    toast(tt('解锁失败', 'Unlock failed', 'فشل فتح القفل') + (res.hint ? '：' + res.hint : ''), 'error');
                 }
             } catch (e) {
                 console.warn('[BL] 解锁失败', e);
-                toast('解锁验证失败：' + e.message, 'error');
+                toast(tt('解锁验证失败', 'Unlock verification failed', 'فشل التحقق') + '：' + e.message, 'error');
             }
             cleanUrl(['unlock', 'lock']);
         }
@@ -8041,7 +8095,31 @@ window.BL = (function () {
     // 初始化：处理解锁码 + 检查 flag + 决定是否可见
     // ─────────────────────────────────────────
     async function init() {
-        console.log('%c[斑斓联动] BL v2C.1 已加载 (Phase 2B 第 2 轮 hotfix1)', 'color:#8f2727;font-weight:bold;');
+        console.log('%c[斑斓联动] BL v2D 已加载 (Phase 2B 全量双语化)', 'color:#8f2727;font-weight:bold;');
+
+        // ★ v2D 双语化: 监听语言切换事件,重渲染已展示的动态内容
+        window.addEventListener('banlan-lang-changed', function() {
+            // 已登录: 重渲染当前视图 (班级列表 / 任务列表)
+            if (state.token) {
+                if (state.currentClassCode) {
+                    renderTasks();
+                } else if (state.currentTab === 'classes') {
+                    renderClasses();
+                }
+            } else {
+                // 未登录: 登录视图的按钮文字(toggleAuthMode 改过的) 需重刷
+                const isRegister = state.authMode === 'register';
+                const submitBtn = document.getElementById('blAuthSubmitBtn');
+                const toggleBtn = document.getElementById('blAuthToggleBtn');
+                if (submitBtn) submitBtn.textContent = isRegister
+                    ? tt('注册并登录', 'Sign Up & Login', 'تسجيل ودخول')
+                    : tt('登录', 'Login', 'دخول');
+                if (toggleBtn) toggleBtn.textContent = isRegister
+                    ? tt('已有账号？去登录', 'Have account? Login', 'لديك حساب؟ تسجيل دخول')
+                    : tt('注册新账号', 'Sign Up', 'تسجيل جديد');
+            }
+        });
+
         // 1) 先处理 URL 解锁参数
         await handleUnlockUrl();
 
@@ -8188,15 +8266,19 @@ window.BL = (function () {
         state.authMode = state.authMode === 'login' ? 'register' : 'login';
         const isRegister = state.authMode === 'register';
         $('blAuthDisplayNameGroup').style.display = isRegister ? '' : 'none';
-        $('blAuthSubmitBtn').textContent = isRegister ? '注册并登录' : '登录';
-        $('blAuthToggleBtn').textContent = isRegister ? '已有账号？去登录' : '注册新账号';
+        $('blAuthSubmitBtn').textContent = isRegister
+            ? tt('注册并登录', 'Sign Up & Login', 'تسجيل ودخول')
+            : tt('登录', 'Login', 'دخول');
+        $('blAuthToggleBtn').textContent = isRegister
+            ? tt('已有账号？去登录', 'Have account? Login', 'لديك حساب؟ تسجيل دخول')
+            : tt('注册新账号', 'Sign Up', 'تسجيل جديد');
     }
 
     async function submitAuth() {
         const username = $('blAuthUsername').value.trim();
         const password = $('blAuthPassword').value;
         if (!username || !password) {
-            toast('请填写用户名和密码', 'error');
+            toast(tt('请填写用户名和密码', 'Please fill in username and password', 'الرجاء ملء اسم المستخدم وكلمة المرور'), 'error');
             return;
         }
 
@@ -8212,7 +8294,9 @@ window.BL = (function () {
             state.teacher = data.teacher;
             localStorage.setItem(LS_TOKEN_KEY, data.token);
 
-            toast(state.authMode === 'register' ? '注册成功 ✓' : '登录成功 ✓', 'success');
+            toast(state.authMode === 'register'
+                ? tt('注册成功 ✓', 'Registered ✓', 'تم التسجيل ✓')
+                : tt('登录成功 ✓', 'Logged in ✓', 'تم تسجيل الدخول ✓'), 'success');
 
             // 清空表单
             $('blAuthUsername').value = '';
@@ -8222,7 +8306,7 @@ window.BL = (function () {
             showLoggedInView();
             loadClasses();
         } catch (e) {
-            toast(e.message || '操作失败', 'error');
+            toast(e.message || tt('操作失败', 'Operation failed', 'فشل العملية'), 'error');
         }
     }
 
@@ -8234,7 +8318,7 @@ window.BL = (function () {
         state.classes = [];
         localStorage.removeItem(LS_TOKEN_KEY);
         showAuthView();
-        toast('已退出登录');
+        toast(tt('已退出登录', 'Logged out', 'تم تسجيل الخروج'));
     }
 
     // ─────────────────────────────────────────
@@ -8246,7 +8330,7 @@ window.BL = (function () {
             state.classes = data.classes || [];
             renderClasses();
         } catch (e) {
-            toast('加载班级失败：' + e.message, 'error');
+            toast(tt('加载班级失败', 'Failed to load classes', 'فشل تحميل الفصول') + '：' + e.message, 'error');
         }
     }
 
@@ -8258,11 +8342,18 @@ window.BL = (function () {
             list.innerHTML = `
                 <div class="bl-empty">
                     <div class="bl-empty-icon">📭</div>
-                    <div class="bl-empty-text">还没有班级，点上方"新建班级"开始</div>
+                    <div class="bl-empty-text">${escapeHtml(tt('还没有班级，点上方"新建班级"开始', 'No classes yet. Click "+ New Class" above.', 'لا توجد فصول بعد. انقر "+ إنشاء فصل" أعلاه.'))}</div>
                 </div>
             `;
             return;
         }
+
+        // ★ v2D 双语化: 动态标签
+        const studentsLabel = tt('学生', 'students', 'طلاب');
+        const tasksLabel = tt('任务', 'tasks', 'مهام');
+        const titleTasks = tt('任务管理', 'Tasks', 'المهام');
+        const titleEdit = tt('编辑', 'Edit', 'تعديل');
+        const titleDelete = tt('删除', 'Delete', 'حذف');
 
         list.innerHTML = state.classes.map(c => `
             <div class="bl-class-card">
@@ -8272,13 +8363,13 @@ window.BL = (function () {
                         <span class="bl-class-name">${escapeHtml(c.name)}</span>
                     </div>
                     <div class="bl-class-meta">
-                        ${c.studentCount || 0} 学生 · ${c.taskCount || 0} 任务${c.description ? ' · ' + escapeHtml(c.description) : ''}
+                        ${c.studentCount || 0} ${escapeHtml(studentsLabel)} · ${c.taskCount || 0} ${escapeHtml(tasksLabel)}${c.description ? ' · ' + escapeHtml(c.description) : ''}
                     </div>
                 </div>
                 <div class="bl-class-actions">
-                    <button class="bl-icon-btn" onclick="BL.openTasksView('${escapeAttr(c.classCode)}')" title="任务管理">📋 ${c.taskCount || 0}</button>
-                    <button class="bl-icon-btn" onclick="BL.openClassEditor('${escapeAttr(c.classCode)}')" title="编辑">✎</button>
-                    <button class="bl-icon-btn bl-danger-icon" onclick="BL.deleteClass('${escapeAttr(c.classCode)}')" title="删除">🗑</button>
+                    <button class="bl-icon-btn" onclick="BL.openTasksView('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleTasks)}">📋 ${c.taskCount || 0}</button>
+                    <button class="bl-icon-btn" onclick="BL.openClassEditor('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleEdit)}">✎</button>
+                    <button class="bl-icon-btn bl-danger-icon" onclick="BL.deleteClass('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleDelete)}">🗑</button>
                 </div>
             </div>
         `).join('');
@@ -8287,21 +8378,28 @@ window.BL = (function () {
     function openClassEditor(classCode) {
         state.editingClassCode = classCode || null;
         const editing = !!classCode;
-        $('blClassEditorTitle').textContent = editing ? '编辑班级' : '+ 新建班级';
-        $('blClassSubmitBtn').textContent = editing ? '保存' : '创建';
+        $('blClassEditorTitle').textContent = editing
+            ? tt('编辑班级', 'Edit Class', 'تعديل الفصل')
+            : tt('+ 新建班级', '+ New Class', '+ فصل جديد');
+        $('blClassSubmitBtn').textContent = editing
+            ? tt('保存', 'Save', 'حفظ')
+            : tt('创建', 'Create', 'إنشاء');
 
         if (editing) {
             const cls = state.classes.find(c => c.classCode === classCode);
             $('blClassCode').value = cls.classCode;
             $('blClassCode').disabled = true; // 班级码不可改
-            // ★ v2B.4: 给"不可改"一个更醒目的解释
-            $('blClassCodeHint').innerHTML = '🔒 <span style="color:var(--zhusha);">班级码创建后不可修改</span> · 学生用它加入班级，改了会让已加入的学生失联';
+            // ★ v2B.4: 给"不可改"一个更醒目的解释 + v2D 双语化
+            $('blClassCodeHint').innerHTML = '🔒 <span style="color:var(--zhusha);">' +
+                escapeHtml(tt('班级码创建后不可修改', 'Class code cannot be modified after creation', 'لا يمكن تعديل رمز الفصل بعد الإنشاء')) +
+                '</span> · ' +
+                escapeHtml(tt('学生用它加入班级，改了会让已加入的学生失联', 'Students join with this code; changing it will disconnect them', 'يستخدمه الطلاب للانضمام؛ تغييره سيفصلهم'));
             $('blClassName').value = cls.name || '';
             $('blClassDescription').value = cls.description || '';
         } else {
             $('blClassCode').value = '';
             $('blClassCode').disabled = false;
-            $('blClassCodeHint').textContent = '2-20 位字母数字横线下划线，学生用这个码加入班级';
+            $('blClassCodeHint').textContent = tt('2-20 位字母数字横线下划线，学生用这个码加入班级', '2-20 chars (letters/digits/-/_); students use this code to join', '2-20 حرف (أحرف/أرقام/-/_)؛ يستخدمه الطلاب للانضمام');
             $('blClassName').value = '';
             $('blClassDescription').value = '';
         }
@@ -8321,7 +8419,7 @@ window.BL = (function () {
         const description = $('blClassDescription').value.trim();
 
         if (!code || !name) {
-            toast('请填写班级码和名称', 'error');
+            toast(tt('请填写班级码和名称', 'Please fill in class code and name', 'الرجاء ملء رمز الفصل والاسم'), 'error');
             return;
         }
 
@@ -8335,34 +8433,34 @@ window.BL = (function () {
                 // 用返回值更新本地对应那条
                 const idx = state.classes.findIndex(c => c.classCode === state.editingClassCode);
                 if (idx >= 0 && result.class) state.classes[idx] = result.class;
-                toast('班级已更新 ✓', 'success');
+                toast(tt('班级已更新 ✓', 'Class updated ✓', 'تم تحديث الفصل ✓'), 'success');
             } else {
                 // 创建:POST 返回 { class }
                 const result = await api('POST', '/api/classes', { classCode: code, name, description });
                 // 新班级追加到列表尾部 (loadClasses 默认是按 createdAt 顺序)
                 if (result.class) state.classes.push(result.class);
-                toast('班级已创建 ✓', 'success');
+                toast(tt('班级已创建 ✓', 'Class created ✓', 'تم إنشاء الفصل ✓'), 'success');
             }
             closeClassEditor();
             renderClasses();  // 仅重渲染,不重新拉 list
         } catch (e) {
-            toast(e.message || '保存失败', 'error');
+            toast(e.message || tt('保存失败', 'Save failed', 'فشل الحفظ'), 'error');
         }
     }
 
     async function deleteClass(classCode) {
         const cls = state.classes.find(c => c.classCode === classCode);
         if (!cls) return;
-        if (!confirm(`确定删除班级"${cls.name}"吗？\n班级下的所有任务和学生记录也会一起删除，不可恢复！`)) return;
+        if (!confirm(ttBlock('确定删除班级"' + cls.name + '"吗？班级下的所有任务和学生记录也会一起删除，不可恢复！', 'Delete class "' + cls.name + '"? All tasks and students records will be permanently deleted!', 'حذف الفصل "' + cls.name + '"؟ ستحذف جميع المهام وسجلات الطلاب نهائياً!'))) return;
 
         try {
             await apiWithRetry('DELETE', '/api/classes/' + encodeURIComponent(classCode));
             // 从本地数组移除
             state.classes = state.classes.filter(c => c.classCode !== classCode);
-            toast('班级已删除', 'success');
+            toast(tt('班级已删除', 'Class deleted', 'تم حذف الفصل'), 'success');
             renderClasses();
         } catch (e) {
-            toast(e.message || '删除失败', 'error');
+            toast(e.message || tt('删除失败', 'Delete failed', 'فشل الحذف'), 'error');
         }
     }
 
@@ -8374,7 +8472,7 @@ window.BL = (function () {
     async function openTasksView(classCode) {
         const cls = state.classes.find(c => c.classCode === classCode);
         if (!cls) {
-            toast('班级不存在', 'error');
+            toast(tt('班级不存在', 'Class not found', 'الفصل غير موجود'), 'error');
             return;
         }
         state.currentClassCode = classCode;
@@ -8396,7 +8494,7 @@ window.BL = (function () {
         $('blTasksClassName').textContent = cls.name;
         $('blTasksCount').textContent = '...';
         // 立刻显示加载占位,避免上次班级的任务 HTML 闪现
-        $('blTaskList').innerHTML = '<div class="bl-empty"><div class="bl-empty-text" style="color:var(--ink-gray);">加载中...</div></div>';
+        $('blTaskList').innerHTML = '<div class="bl-empty"><div class="bl-empty-text" style="color:var(--ink-gray);">' + escapeHtml(tt('加载中...', 'Loading...', 'جاري التحميل...')) + '</div></div>';
         // 隐藏批量栏
         $('blTaskBulkBar').classList.remove('bl-show');
 
@@ -8428,7 +8526,7 @@ window.BL = (function () {
             state.tasks = data.tasks || [];
             renderTasks();
         } catch (e) {
-            toast('加载任务失败：' + e.message, 'error');
+            toast(tt('加载任务失败', 'Failed to load tasks', 'فشل تحميل المهام') + '：' + e.message, 'error');
         }
     }
 
@@ -8457,11 +8555,14 @@ window.BL = (function () {
         const activeCount = allValidTasks.filter(t => !t.archived).length;
         const archivedCount = allValidTasks.filter(t => t.archived).length;
         const countEl = $('blTasksCount');
+        // ★ v2D 双语化: 计数文字
+        const tasksWord = tt('个任务', 'tasks', 'مهام');
+        const archivedWord = tt('已归档', 'archived', 'مؤرشفة');
         if (countEl) {
             if (archivedCount > 0) {
-                countEl.innerHTML = `${activeCount} 个任务 · <span style="color:var(--ink-gray);">${archivedCount} 已归档</span>`;
+                countEl.innerHTML = `${activeCount} ${escapeHtml(tasksWord)} · <span style="color:var(--ink-gray);">${archivedCount} ${escapeHtml(archivedWord)}</span>`;
             } else {
-                countEl.textContent = `${activeCount} 个任务`;
+                countEl.textContent = `${activeCount} ${tasksWord}`;
             }
         }
 
@@ -8470,41 +8571,53 @@ window.BL = (function () {
 
         if (visibleTasks.length === 0) {
             const msg = state.showArchived
-                ? '还没有任务，点右上角"+ 新建任务"开始'
-                : (archivedCount > 0 ? '没有活跃任务（勾选"显示归档"看归档的任务）' : '还没有任务，点右上角"+ 新建任务"开始');
+                ? tt('还没有任务，点右上角"+ 新建任务"开始', 'No tasks yet. Click "+ New Task" at top right.', 'لا توجد مهام بعد. انقر "+ مهمة جديدة" أعلى اليمين.')
+                : (archivedCount > 0 ? tt('没有活跃任务（勾选"显示归档"看归档的任务）', 'No active tasks (check "Show Archived" to see archived)', 'لا توجد مهام نشطة (حدد "عرض المؤرشفة")') : tt('还没有任务，点右上角"+ 新建任务"开始', 'No tasks yet. Click "+ New Task" at top right.', 'لا توجد مهام بعد. انقر "+ مهمة جديدة"'));
             list.innerHTML = `
                 <div class="bl-empty">
                     <div class="bl-empty-icon">📋</div>
-                    <div class="bl-empty-text">${msg}</div>
+                    <div class="bl-empty-text">${escapeHtml(msg)}</div>
                 </div>
             `;
             return;
         }
 
-        const typeLabel = { char: '字', word: '词', sentence: '句' };
+        // ★ v2D 双语化: 类型徽章 + 按钮 title + "已归档" 标签
+        const typeLabel = {
+            char: tt('字', 'Char', 'حرف'),
+            word: tt('词', 'Word', 'كلمة'),
+            sentence: tt('句', 'Sentence', 'جملة')
+        };
+        const archivedTagLabel = tt('已归档', 'Archived', 'مؤرشف');
+        const titleSelect = tt('选中', 'Select', 'تحديد');
+        const titleEdit = tt('编辑', 'Edit', 'تعديل');
+        const titleDuplicate = tt('复制', 'Duplicate', 'نسخ');
+        const titleArchive = tt('归档', 'Archive', 'أرشفة');
+        const titleUnarchive = tt('取消归档', 'Unarchive', 'إلغاء الأرشفة');
+        const titleDelete = tt('删除', 'Delete', 'حذف');
 
         list.innerHTML = visibleTasks.map(t => {
             const archivedClass = t.archived ? ' bl-archived' : '';
             const selectedClass = state.selectedTaskIds.includes(t.taskId) ? ' bl-selected' : '';
-            const typeBadge = `<span class="bl-type-badge bl-type-${t.type}">${typeLabel[t.type] || t.type}</span>`;
-            const archiveTitle = t.archived ? '取消归档' : '归档';
+            const typeBadge = `<span class="bl-type-badge bl-type-${t.type}">${escapeHtml(typeLabel[t.type] || t.type)}</span>`;
+            const archiveTitle = t.archived ? titleUnarchive : titleArchive;
             const archiveIcon = t.archived ? '↺' : '📥';
             return `
                 <div class="bl-task-card${archivedClass}${selectedClass}">
-                    <span class="bl-task-select" onclick="BL.toggleTaskSelect('${escapeAttr(t.taskId)}')" title="选中"></span>
+                    <span class="bl-task-select" onclick="BL.toggleTaskSelect('${escapeAttr(t.taskId)}')" title="${escapeAttr(titleSelect)}"></span>
                     <div class="bl-task-info">
                         <div class="bl-task-title">${escapeHtml(t.title)}</div>
                         <div class="bl-task-meta">
                             ${typeBadge}
                             <span>${formatDateTime(t.createdAt)}</span>
-                            ${t.archived ? '<span style="color:var(--zhusha);">已归档</span>' : ''}
+                            ${t.archived ? '<span style="color:var(--zhusha);">' + escapeHtml(archivedTagLabel) + '</span>' : ''}
                         </div>
                     </div>
                     <div class="bl-task-actions">
-                        <button class="bl-icon-btn" onclick="BL.openTaskEditor('${escapeAttr(t.taskId)}')" title="编辑">✎</button>
-                        <button class="bl-icon-btn" onclick="BL.duplicateTask('${escapeAttr(t.taskId)}')" title="复制">📑</button>
-                        <button class="bl-icon-btn" onclick="BL.toggleArchiveTask('${escapeAttr(t.taskId)}')" title="${archiveTitle}">${archiveIcon}</button>
-                        <button class="bl-icon-btn bl-danger-icon" onclick="BL.deleteTask('${escapeAttr(t.taskId)}')" title="删除">🗑</button>
+                        <button class="bl-icon-btn" onclick="BL.openTaskEditor('${escapeAttr(t.taskId)}')" title="${escapeAttr(titleEdit)}">✎</button>
+                        <button class="bl-icon-btn" onclick="BL.duplicateTask('${escapeAttr(t.taskId)}')" title="${escapeAttr(titleDuplicate)}">📑</button>
+                        <button class="bl-icon-btn" onclick="BL.toggleArchiveTask('${escapeAttr(t.taskId)}')" title="${escapeAttr(archiveTitle)}">${archiveIcon}</button>
+                        <button class="bl-icon-btn bl-danger-icon" onclick="BL.deleteTask('${escapeAttr(t.taskId)}')" title="${escapeAttr(titleDelete)}">🗑</button>
                     </div>
                 </div>
             `;
@@ -8540,9 +8653,16 @@ window.BL = (function () {
 
         // 标题和按钮文字
         let titleText, btnText;
-        if (mode === 'edit') { titleText = '编辑任务'; btnText = '保存'; }
-        else if (mode === 'duplicate') { titleText = '📑 复制任务'; btnText = '发布'; }
-        else { titleText = '+ 新建任务'; btnText = '发布'; }
+        if (mode === 'edit') {
+            titleText = tt('编辑任务', 'Edit Task', 'تعديل المهمة');
+            btnText = tt('保存', 'Save', 'حفظ');
+        } else if (mode === 'duplicate') {
+            titleText = tt('📑 复制任务', '📑 Duplicate Task', '📑 نسخ المهمة');
+            btnText = tt('发布', 'Publish', 'نشر');
+        } else {
+            titleText = tt('+ 新建任务', '+ New Task', '+ مهمة جديدة');
+            btnText = tt('发布', 'Publish', 'نشر');
+        }
         $('blTaskEditorTitle').textContent = titleText;
         $('blTaskSubmitBtn').textContent = btnText;
 
@@ -8554,7 +8674,7 @@ window.BL = (function () {
         } else {
             // edit 或 duplicate 都需要源任务数据
             const task = state.tasks.find(t => t.taskId === taskId);
-            if (!task) { toast('任务不存在', 'error'); return; }
+            if (!task) { toast(tt('任务不存在', 'Task not found', 'المهمة غير موجودة'), 'error'); return; }
             $('blTaskTitle').value = task.title || '';
             $('blTaskContent').value = task.content || '';
             selectTaskType(task.type || 'char');
@@ -8581,9 +8701,10 @@ window.BL = (function () {
     function renderMultiClassPicker() {
         const list = $('blMultiClassList');
         if (!state.classes || state.classes.length === 0) {
-            list.innerHTML = '<p class="bl-hint" style="text-align:center;">还没有其他班级</p>';
+            list.innerHTML = '<p class="bl-hint" style="text-align:center;">' + escapeHtml(tt('还没有其他班级', 'No other classes yet', 'لا توجد فصول أخرى')) + '</p>';
             return;
         }
+        const currentLabel = tt('（当前班级）', ' (Current Class)', ' (الفصل الحالي)');
         list.innerHTML = state.classes.map(c => {
             const checked = state.selectedClasses.includes(c.classCode);
             const isCurrent = c.classCode === state.currentClassCode;
@@ -8592,7 +8713,7 @@ window.BL = (function () {
                      onclick="BL.toggleClassSelect('${escapeAttr(c.classCode)}')">
                     <span class="bl-multi-class-checkbox"></span>
                     <span class="bl-multi-class-code">${escapeHtml(c.classCode)}</span>
-                    <span class="bl-multi-class-name">${escapeHtml(c.name)}${isCurrent ? ' (当前班级)' : ''}</span>
+                    <span class="bl-multi-class-name">${escapeHtml(c.name)}${isCurrent ? escapeHtml(currentLabel) : ''}</span>
                 </div>
             `;
         }).join('');
@@ -8612,13 +8733,13 @@ window.BL = (function () {
         const n = state.selectedClasses.length;
         const btn = $('blTaskSubmitBtn');
         if (state.taskEditorMode === 'edit') {
-            btn.textContent = '保存';
+            btn.textContent = tt('保存', 'Save', 'حفظ');
         } else if (n === 0) {
-            btn.textContent = '请选择班级';
+            btn.textContent = tt('请选择班级', 'Select Classes', 'اختر الفصول');
         } else if (n === 1) {
-            btn.textContent = '发布';
+            btn.textContent = tt('发布', 'Publish', 'نشر');
         } else {
-            btn.textContent = `发布到 ${n} 个班级`;
+            btn.textContent = tt(`发布到 ${n} 个班级`, `Publish to ${n} Classes`, `نشر إلى ${n} فصول`);
         }
     }
 
@@ -8650,17 +8771,17 @@ window.BL = (function () {
         const type = state.taskEditorType;
         const mode = state.taskEditorMode;
 
-        if (!title) { toast('请填写任务标题', 'error'); return; }
-        if (!content) { toast('请填写任务内容', 'error'); return; }
+        if (!title) { toast(tt('请填写任务标题', 'Please fill in task title', 'الرجاء ملء عنوان المهمة'), 'error'); return; }
+        if (!content) { toast(tt('请填写任务内容', 'Please fill in task content', 'الرجاء ملء محتوى المهمة'), 'error'); return; }
         if (!['char', 'word', 'sentence'].includes(type)) {
-            toast('请选择任务类型', 'error'); return;
+            toast(tt('请选择任务类型', 'Please select task type', 'الرجاء اختيار نوع المهمة'), 'error'); return;
         }
 
         try {
             if (mode === 'edit') {
                 // 编辑模式: PUT 返回 { task } - 用 retry 容忍 KV list 延迟
                 if (!state.currentClassCode) {
-                    toast('班级信息丢失，请返回重试', 'error'); return;
+                    toast(tt('班级信息丢失，请返回重试', 'Class info lost, please retry', 'فُقدت معلومات الفصل'), 'error'); return;
                 }
                 const result = await apiWithRetry('PUT',
                     '/api/tasks/' + encodeURIComponent(state.currentClassCode) +
@@ -8670,11 +8791,11 @@ window.BL = (function () {
                 // 用返回的 task 替换 state.tasks 里对应那条
                 const idx = state.tasks.findIndex(t => t.taskId === state.editingTaskId);
                 if (idx >= 0 && result.task) state.tasks[idx] = result.task;
-                toast('任务已更新 ✓', 'success');
+                toast(tt('任务已更新 ✓', 'Task updated ✓', 'تم تحديث المهمة ✓'), 'success');
             } else {
                 // 创建 / 复制: batch-create 支持多班级
                 if (!state.selectedClasses || state.selectedClasses.length === 0) {
-                    toast('请至少选择一个班级', 'error'); return;
+                    toast(tt('请至少选择一个班级', 'Please select at least one class', 'الرجاء اختيار فصل واحد على الأقل'), 'error'); return;
                 }
                 const result = await api('POST', '/api/tasks/batch-create', {
                     title, content, type,
@@ -8693,12 +8814,12 @@ window.BL = (function () {
                 });
                 // 提示文案: 1 班正常,多班显示数量
                 const n = createdTasks.length;
-                toast(n === 1 ? '任务已发布 ✓' : `已发布到 ${n} 个班级 ✓`, 'success');
+                toast(n === 1 ? tt('任务已发布 ✓', 'Task published ✓', 'تم نشر المهمة ✓') : tt('已发布到 ' + n + ' 个班级 ✓', 'Published to ' + n + ' classes ✓', 'تم النشر إلى ' + n + ' فصول ✓'), 'success');
             }
             closeTaskEditor();
             renderTasks();
         } catch (e) {
-            toast(e.message || '操作失败', 'error');
+            toast(e.message || tt('操作失败', 'Operation failed', 'فشل العملية'), 'error');
         }
     }
 
@@ -8748,10 +8869,10 @@ window.BL = (function () {
             });
             const count = (result.updated && result.updated.length) || result.count || state.selectedTaskIds.length;
             state.selectedTaskIds = [];
-            toast(`已归档 ${count} 条任务`, 'success');
+            toast(tt('已归档 ' + count + ' 条任务', count + ' tasks archived', 'تمت أرشفة ' + count + ' مهام'), 'success');
             renderTasks();
         } catch (e) {
-            toast(e.message || '批量归档失败', 'error');
+            toast(e.message || tt('批量归档失败', 'Bulk archive failed', 'فشل الأرشفة الجماعية'), 'error');
         }
     }
 
@@ -8773,10 +8894,10 @@ window.BL = (function () {
             });
             const count = (result.updated && result.updated.length) || result.count || state.selectedTaskIds.length;
             state.selectedTaskIds = [];
-            toast(`已取消归档 ${count} 条任务`, 'success');
+            toast(tt('已取消归档 ' + count + ' 条任务', count + ' tasks unarchived', 'تم إلغاء أرشفة ' + count + ' مهام'), 'success');
             renderTasks();
         } catch (e) {
-            toast(e.message || '批量操作失败', 'error');
+            toast(e.message || tt('批量操作失败', 'Bulk operation failed', 'فشل العملية الجماعية'), 'error');
         }
     }
 
@@ -8784,7 +8905,7 @@ window.BL = (function () {
     async function batchDelete() {
         const n = state.selectedTaskIds.length;
         if (n === 0) return;
-        if (!confirm(`确定删除选中的 ${n} 条任务吗？\n此操作不可恢复。`)) return;
+        if (!confirm(ttBlock('确定删除选中的 ' + n + ' 条任务吗？此操作不可恢复。', 'Delete ' + n + ' selected tasks? This cannot be undone.', 'حذف ' + n + ' مهام محددة؟ لا يمكن التراجع.'))) return;
         try {
             const taskRefs = state.selectedTaskIds.map(id => ({
                 classCode: state.currentClassCode,
@@ -8800,10 +8921,10 @@ window.BL = (function () {
             if (cls) cls.taskCount = Math.max(0, (cls.taskCount || 0) - deletedIds.size);
             const count = result.deleted || n;
             state.selectedTaskIds = [];
-            toast(`已删除 ${count} 条任务`, 'success');
+            toast(tt('已删除 ' + count + ' 条任务', count + ' tasks deleted', 'تم حذف ' + count + ' مهام'), 'success');
             renderTasks();
         } catch (e) {
-            toast(e.message || '批量删除失败', 'error');
+            toast(e.message || tt('批量删除失败', 'Bulk delete failed', 'فشل الحذف الجماعي'), 'error');
         }
     }
 
@@ -8822,10 +8943,10 @@ window.BL = (function () {
             // 用返回的 task 替换本地对应那条
             const idx = state.tasks.findIndex(t => t.taskId === taskId);
             if (idx >= 0 && result.task) state.tasks[idx] = result.task;
-            toast(newArchived ? '已归档' : '已取消归档', 'success');
+            toast(newArchived ? tt('已归档', 'Archived', 'تمت الأرشفة') : tt('已取消归档', 'Unarchived', 'تم إلغاء الأرشفة'), 'success');
             renderTasks();
         } catch (e) {
-            toast(e.message || '操作失败', 'error');
+            toast(e.message || tt('操作失败', 'Operation failed', 'فشل العملية'), 'error');
         }
     }
 
@@ -8834,7 +8955,7 @@ window.BL = (function () {
     async function deleteTask(taskId) {
         const task = state.tasks.find(t => t.taskId === taskId);
         if (!task) return;
-        if (!confirm(`确定删除任务"${task.title}"吗？\n此操作不可恢复。`)) return;
+        if (!confirm(ttBlock('确定删除任务"' + task.title + '"吗？此操作不可恢复。', 'Delete task "' + task.title + '"? This cannot be undone.', 'حذف المهمة "' + task.title + '"؟ لا يمكن التراجع.'))) return;
         try {
             await apiWithRetry('DELETE',
                 '/api/tasks/' + encodeURIComponent(state.currentClassCode) +
@@ -8845,10 +8966,10 @@ window.BL = (function () {
             // ★ v2B.3 同步更新本地 class.taskCount,让返回班级列表立即看到 -1
             const cls = state.classes.find(c => c.classCode === state.currentClassCode);
             if (cls) cls.taskCount = Math.max(0, (cls.taskCount || 0) - 1);
-            toast('任务已删除', 'success');
+            toast(tt('任务已删除', 'Task deleted', 'تم حذف المهمة'), 'success');
             renderTasks();
         } catch (e) {
-            toast(e.message || '删除失败', 'error');
+            toast(e.message || tt('删除失败', 'Delete failed', 'فشل الحذف'), 'error');
         }
     }
 
