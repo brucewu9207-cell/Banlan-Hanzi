@@ -908,6 +908,215 @@
             .bl-radio-group label { padding: 9px 4px; font-size: 13px; }
         }
 
+        /* ════════════════════════════════════════════════════════
+           【Phase 2B 第 2 轮 - D3 升级版】v2B-r2 新增
+           - 多班推送选择器
+           - 显示/隐藏归档开关
+           - 任务批量选择 + 批量操作栏
+           - 复制任务
+           ════════════════════════════════════════════════════════ */
+        /* 多班勾选选择器 */
+        .bl-multi-class-picker {
+            border-top: 1px dashed #d0d7d3;
+            border-bottom: 1px dashed #d0d7d3;
+            padding: 10px 0;
+            margin-top: 10px;
+            max-height: 220px;
+            overflow-y: auto;
+        }
+        .bl-multi-class-divider {
+            text-align: center;
+            color: var(--ink-gray);
+            font-size: 12px;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+        .bl-multi-class-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 8px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background 0.15s;
+            user-select: none;
+        }
+        .bl-multi-class-item:hover { background: #f0f7f3; }
+        .bl-multi-class-item.bl-current-class { background: rgba(74, 139, 111, 0.06); }
+        .bl-multi-class-checkbox {
+            width: 18px;
+            height: 18px;
+            border: 1.5px solid #b0b8b3;
+            border-radius: 3px;
+            margin-right: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            background: #fff;
+            transition: all 0.15s;
+            position: relative;
+        }
+        .bl-multi-class-item.bl-checked .bl-multi-class-checkbox {
+            background: var(--ink-green);
+            border-color: var(--ink-green);
+        }
+        .bl-multi-class-checkbox::after {
+            content: '✓';
+            color: #fff;
+            font-weight: bold;
+            font-size: 13px;
+            line-height: 1;
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+        .bl-multi-class-item.bl-checked .bl-multi-class-checkbox::after { opacity: 1; }
+        .bl-multi-class-code {
+            display: inline-block;
+            background: var(--ink-green);
+            color: #fff;
+            padding: 2px 7px;
+            border-radius: 3px;
+            font-size: 11px;
+            letter-spacing: 1px;
+            font-family: monospace;
+            margin-right: 8px;
+        }
+        .bl-multi-class-name { font-size: 14px; color: var(--mo-dark); }
+        .bl-multi-class-info {
+            font-size: 12px;
+            color: var(--ink-gray);
+            margin-top: 8px;
+            padding: 6px;
+            text-align: center;
+            letter-spacing: 0.3px;
+            background: rgba(143, 39, 39, 0.04);
+            border-radius: 3px;
+        }
+
+        /* 显示归档开关 */
+        .bl-archived-toggle {
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+            font-size: 13px;
+            color: var(--ink-gray);
+            user-select: none;
+            padding: 5px 9px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            transition: all 0.15s;
+        }
+        .bl-archived-toggle:hover { background: #f0f7f3; color: var(--ink-green); }
+        .bl-archived-toggle.bl-on { color: var(--ink-green); }
+        .bl-archived-check {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 1.5px solid #b0b8b3;
+            border-radius: 2px;
+            margin-right: 6px;
+            position: relative;
+            background: #fff;
+            flex-shrink: 0;
+        }
+        .bl-archived-toggle.bl-on .bl-archived-check {
+            background: var(--ink-green);
+            border-color: var(--ink-green);
+        }
+        .bl-archived-toggle.bl-on .bl-archived-check::after {
+            content: '✓';
+            position: absolute;
+            color: #fff;
+            font-size: 11px;
+            font-weight: bold;
+            line-height: 1;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* 任务卡片复选框 (批量操作) */
+        .bl-task-select {
+            width: 18px;
+            height: 18px;
+            border: 1.5px solid #b0b8b3;
+            border-radius: 3px;
+            margin-right: 10px;
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background: #fff;
+            transition: all 0.15s;
+            position: relative;
+        }
+        .bl-task-card.bl-selected .bl-task-select {
+            background: var(--ink-green);
+            border-color: var(--ink-green);
+        }
+        .bl-task-select::after {
+            content: '✓';
+            color: #fff;
+            font-weight: bold;
+            font-size: 12px;
+            line-height: 1;
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+        .bl-task-card.bl-selected .bl-task-select::after { opacity: 1; }
+        .bl-task-card.bl-selected {
+            background: rgba(74, 139, 111, 0.06);
+            border-color: var(--ink-green);
+        }
+
+        /* 批量操作栏 (sticky 顶部) */
+        .bl-task-bulk-bar {
+            background: var(--ink-green);
+            color: #fff;
+            padding: 10px 14px;
+            border-radius: 4px;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }
+        .bl-task-bulk-bar.bl-show { display: flex; }
+        .bl-bulk-count { font-size: 14px; font-weight: 500; }
+        .bl-bulk-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+        .bl-bulk-btn {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 5px 11px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 12px;
+            transition: all 0.15s;
+        }
+        .bl-bulk-btn:hover { background: rgba(255, 255, 255, 0.25); }
+        .bl-bulk-btn.bl-bulk-danger { background: rgba(255, 100, 100, 0.2); }
+        .bl-bulk-btn.bl-bulk-danger:hover { background: rgba(255, 100, 100, 0.35); }
+        .bl-bulk-cancel {
+            background: transparent !important;
+            border-color: rgba(255, 255, 255, 0.5) !important;
+        }
+
+        /* 手机端适配第 2 轮新元素 */
+        @media (max-width: 600px) {
+            .bl-task-bulk-bar { padding: 8px 10px; }
+            .bl-bulk-count { font-size: 13px; }
+            .bl-bulk-btn { padding: 4px 8px; font-size: 11px; }
+            .bl-multi-class-picker { max-height: 160px; }
+        }
+
         /* ====================================================
            【主控制台五大功能按钮】整体放大 + 尺寸锁定
            - 桌面端按英文最长文案 (Character Generation) 设定 min-width
@@ -7466,7 +7675,7 @@
 </script>
 
 <!-- ════════════════════════════════════════════════════════════════
-     【斑斓联动模块 / Banlan Linkage Module】v2B.5 (Phase 2B 第1轮 hotfix5 - 修复班级码重用残留)
+     【斑斓联动模块 / Banlan Linkage Module】v2C (Phase 2B 第 2 轮 - D3 多班推送+复制+批量+显示归档)
      - 由 feature flag 控制显示
      - 完全独立，对原工具零侵入
      - 关闭时整个模块隐藏，工具表现等同 v1
@@ -7541,7 +7750,22 @@
                             —
                         </span>
                     </div>
-                    <button class="bl-btn" onclick="BL.openTaskEditor()">+ 新建任务</button>
+                    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                        <label class="bl-archived-toggle" id="blArchivedToggle" onclick="BL.toggleShowArchived()">
+                            <span class="bl-archived-check"></span>显示归档
+                        </label>
+                        <button class="bl-btn" onclick="BL.openTaskEditor()">+ 新建任务</button>
+                    </div>
+                </div>
+                <!-- v2B-r2 批量操作栏 (任务选中后显示) -->
+                <div class="bl-task-bulk-bar" id="blTaskBulkBar">
+                    <span class="bl-bulk-count">已选 <span id="blBulkCount">0</span> 项</span>
+                    <div class="bl-bulk-actions">
+                        <button class="bl-bulk-btn" id="blBulkArchiveBtn" onclick="BL.batchArchive()">📥 归档</button>
+                        <button class="bl-bulk-btn" id="blBulkUnarchiveBtn" onclick="BL.batchUnarchive()">↺ 取消归档</button>
+                        <button class="bl-bulk-btn bl-bulk-danger" onclick="BL.batchDelete()">🗑 删除</button>
+                        <button class="bl-bulk-btn bl-bulk-cancel" onclick="BL.clearTaskSelection()">✕ 取消</button>
+                    </div>
                 </div>
                 <div class="bl-task-list" id="blTaskList">
                     <!-- 动态生成 -->
@@ -7634,6 +7858,16 @@
                 <textarea class="bl-task-content-input" id="blTaskContent" placeholder="如填字：你好世界&#10;如填词：今天 明天 昨天&#10;如填句：你叫什么名字？" maxlength="5000"></textarea>
                 <p class="bl-hint">最多 5000 字。空格、换行都可以用作分隔。</p>
             </div>
+            <!-- v2B-r2 多班推送(D3 升级版核心): 创建/复制模式显示,编辑模式隐藏 -->
+            <div class="bl-form-group" id="blMultiClassGroup">
+                <div class="bl-multi-class-picker">
+                    <div class="bl-multi-class-divider">─── 同时推送到这些班级 ───</div>
+                    <div id="blMultiClassList"></div>
+                    <p class="bl-multi-class-info">
+                        ℹ️ 推送到 N 个班 = 创建 N 条独立任务记录
+                    </p>
+                </div>
+            </div>
             <div class="bl-btn-row">
                 <button class="bl-btn bl-secondary" onclick="BL.closeTaskEditor()">取消</button>
                 <button class="bl-btn" onclick="BL.submitTask()" id="blTaskSubmitBtn">发布</button>
@@ -7647,7 +7881,7 @@
 
 <script>
 /* ══════════════════════════════════════════════════════════════════
-   斑斓联动模块 v2B.5 (Phase 2B 第1轮 hotfix5 · 残留任务过滤) · JavaScript
+   斑斓联动模块 v2C (Phase 2B 第 2 轮 · D3 多班推送+批量+复制+归档显示) · JavaScript
    - 全部代码命名空间挂在 window.BL 下，避免污染全局
    - 通过 feature flag 控制 UI 显示
    ══════════════════════════════════════════════════════════════════ */
@@ -7666,12 +7900,17 @@ window.BL = (function () {
         authMode: 'login',           // 'login' | 'register'
         editingClassCode: null,      // 编辑模式下的班级码
         currentTab: 'classes',
-        // —— Phase 2B 新增 ——
+        // —— Phase 2B 第 1 轮 ——
         currentClassCode: null,      // 当前查看任务的班级
         currentClassInfo: null,      // 当前班级的元信息
         tasks: [],                   // 当前班级的任务列表
         editingTaskId: null,         // 编辑模式下的任务 ID
         taskEditorType: 'char',      // 任务编辑器当前选中的类型 char/word/sentence
+        // —— Phase 2B 第 2 轮 (v2B-r2) ——
+        taskEditorMode: 'create',    // 'create' | 'edit' | 'duplicate'
+        selectedClasses: [],         // 多班推送时勾选的班级码数组
+        showArchived: false,         // 是否在列表中显示归档任务
+        selectedTaskIds: [],         // 批量选中的任务 ID 数组
     };
 
     // ─────────────────────────────────────────
@@ -7802,7 +8041,7 @@ window.BL = (function () {
     // 初始化：处理解锁码 + 检查 flag + 决定是否可见
     // ─────────────────────────────────────────
     async function init() {
-        console.log('%c[斑斓联动] BL v2B.5 已加载', 'color:#8f2727;font-weight:bold;');
+        console.log('%c[斑斓联动] BL v2C 已加载 (Phase 2B 第 2 轮)', 'color:#8f2727;font-weight:bold;');
         // 1) 先处理 URL 解锁参数
         await handleUnlockUrl();
 
@@ -8142,6 +8381,10 @@ window.BL = (function () {
         state.currentClassInfo = cls;
         // ★ v2B.5 修复: 立刻清空 state.tasks 和 DOM,避免上次班级的任务 HTML 残留闪现
         state.tasks = [];
+        // ★ v2B-r2: 进新班级时清空批量选中状态,重置归档显示
+        state.selectedTaskIds = [];
+        state.showArchived = false;
+        $('blArchivedToggle').classList.remove('bl-on');
 
         // 切换显示：隐藏班级列表，显示任务视图
         $('blViewClasses').style.display = 'none';
@@ -8154,6 +8397,8 @@ window.BL = (function () {
         $('blTasksCount').textContent = '...';
         // 立刻显示加载占位,避免上次班级的任务 HTML 闪现
         $('blTaskList').innerHTML = '<div class="bl-empty"><div class="bl-empty-text" style="color:var(--ink-gray);">加载中...</div></div>';
+        // 隐藏批量栏
+        $('blTaskBulkBar').classList.remove('bl-show');
 
         await loadTasks();
     }
@@ -8196,13 +8441,21 @@ window.BL = (function () {
         // 方案: 任务的 createdAt 早于班级的 createdAt,说明是上次的残留,前端过滤掉
         // (Phase 3 时一并修 Worker,加任务索引彻底解决)
         const classCreatedAt = state.currentClassInfo && state.currentClassInfo.createdAt;
-        const visibleTasks = classCreatedAt
+        let visibleTasks = classCreatedAt
             ? state.tasks.filter(t => !t.createdAt || t.createdAt >= classCreatedAt)
             : state.tasks;
 
-        // 分别显示活跃数 + 归档数,语义更清晰
-        const activeCount = visibleTasks.filter(t => !t.archived).length;
-        const archivedCount = visibleTasks.filter(t => t.archived).length;
+        // ★ v2B-r2: 按"显示归档"开关过滤归档任务
+        if (!state.showArchived) {
+            visibleTasks = visibleTasks.filter(t => !t.archived);
+        }
+
+        // 分别显示活跃数 + 归档数 (统计基于过滤前的 + 班级残留过滤后的)
+        const allValidTasks = classCreatedAt
+            ? state.tasks.filter(t => !t.createdAt || t.createdAt >= classCreatedAt)
+            : state.tasks;
+        const activeCount = allValidTasks.filter(t => !t.archived).length;
+        const archivedCount = allValidTasks.filter(t => t.archived).length;
         const countEl = $('blTasksCount');
         if (countEl) {
             if (archivedCount > 0) {
@@ -8212,11 +8465,17 @@ window.BL = (function () {
             }
         }
 
+        // ★ v2B-r2: 渲染批量操作栏 (有选中项才显示)
+        renderBulkBar();
+
         if (visibleTasks.length === 0) {
+            const msg = state.showArchived
+                ? '还没有任务，点右上角"+ 新建任务"开始'
+                : (archivedCount > 0 ? '没有活跃任务（勾选"显示归档"看归档的任务）' : '还没有任务，点右上角"+ 新建任务"开始');
             list.innerHTML = `
                 <div class="bl-empty">
                     <div class="bl-empty-icon">📋</div>
-                    <div class="bl-empty-text">还没有任务，点右上角"+ 新建任务"开始</div>
+                    <div class="bl-empty-text">${msg}</div>
                 </div>
             `;
             return;
@@ -8226,11 +8485,13 @@ window.BL = (function () {
 
         list.innerHTML = visibleTasks.map(t => {
             const archivedClass = t.archived ? ' bl-archived' : '';
+            const selectedClass = state.selectedTaskIds.includes(t.taskId) ? ' bl-selected' : '';
             const typeBadge = `<span class="bl-type-badge bl-type-${t.type}">${typeLabel[t.type] || t.type}</span>`;
             const archiveTitle = t.archived ? '取消归档' : '归档';
             const archiveIcon = t.archived ? '↺' : '📥';
             return `
-                <div class="bl-task-card${archivedClass}">
+                <div class="bl-task-card${archivedClass}${selectedClass}">
+                    <span class="bl-task-select" onclick="BL.toggleTaskSelect('${escapeAttr(t.taskId)}')" title="选中"></span>
                     <div class="bl-task-info">
                         <div class="bl-task-title">${escapeHtml(t.title)}</div>
                         <div class="bl-task-meta">
@@ -8241,6 +8502,7 @@ window.BL = (function () {
                     </div>
                     <div class="bl-task-actions">
                         <button class="bl-icon-btn" onclick="BL.openTaskEditor('${escapeAttr(t.taskId)}')" title="编辑">✎</button>
+                        <button class="bl-icon-btn" onclick="BL.duplicateTask('${escapeAttr(t.taskId)}')" title="复制">📑</button>
                         <button class="bl-icon-btn" onclick="BL.toggleArchiveTask('${escapeAttr(t.taskId)}')" title="${archiveTitle}">${archiveIcon}</button>
                         <button class="bl-icon-btn bl-danger-icon" onclick="BL.deleteTask('${escapeAttr(t.taskId)}')" title="删除">🗑</button>
                     </div>
@@ -8249,31 +8511,115 @@ window.BL = (function () {
         }).join('');
     }
 
-    // 打开任务编辑器 (create 或 edit)
-    function openTaskEditor(taskId) {
-        state.editingTaskId = taskId || null;
-        const editing = !!taskId;
+    // ★ v2B-r2: 渲染批量操作栏 (根据选中任务状态智能显示按钮)
+    function renderBulkBar() {
+        const bar = $('blTaskBulkBar');
+        const n = state.selectedTaskIds.length;
+        if (n === 0) {
+            bar.classList.remove('bl-show');
+            return;
+        }
+        bar.classList.add('bl-show');
+        $('blBulkCount').textContent = n;
 
-        $('blTaskEditorTitle').textContent = editing ? '编辑任务' : '+ 新建任务';
-        $('blTaskSubmitBtn').textContent = editing ? '保存' : '发布';
+        // 智能显示归档/取消归档按钮
+        const selectedTasks = state.tasks.filter(t => state.selectedTaskIds.includes(t.taskId));
+        const hasActive = selectedTasks.some(t => !t.archived);
+        const hasArchived = selectedTasks.some(t => t.archived);
+        $('blBulkArchiveBtn').style.display = hasActive ? '' : 'none';
+        $('blBulkUnarchiveBtn').style.display = hasArchived ? '' : 'none';
+    }
 
-        if (editing) {
+    // 打开任务编辑器 (create / edit / duplicate)
+    // ★ v2B-r2: 支持 duplicate 模式 + 多班勾选
+    function openTaskEditor(taskId, mode) {
+        // 自动判断 mode: 没传 taskId → create; 显式传 'duplicate' → duplicate; 否则 edit
+        mode = mode || (taskId ? 'edit' : 'create');
+        state.taskEditorMode = mode;
+        state.editingTaskId = mode === 'edit' ? taskId : null;
+
+        // 标题和按钮文字
+        let titleText, btnText;
+        if (mode === 'edit') { titleText = '编辑任务'; btnText = '保存'; }
+        else if (mode === 'duplicate') { titleText = '📑 复制任务'; btnText = '发布'; }
+        else { titleText = '+ 新建任务'; btnText = '发布'; }
+        $('blTaskEditorTitle').textContent = titleText;
+        $('blTaskSubmitBtn').textContent = btnText;
+
+        // 填表单
+        if (mode === 'create') {
+            $('blTaskTitle').value = '';
+            $('blTaskContent').value = '';
+            selectTaskType('char');
+        } else {
+            // edit 或 duplicate 都需要源任务数据
             const task = state.tasks.find(t => t.taskId === taskId);
-            if (!task) {
-                toast('任务不存在', 'error');
-                return;
-            }
+            if (!task) { toast('任务不存在', 'error'); return; }
             $('blTaskTitle').value = task.title || '';
             $('blTaskContent').value = task.content || '';
             selectTaskType(task.type || 'char');
-        } else {
-            $('blTaskTitle').value = '';
-            $('blTaskContent').value = '';
-            selectTaskType('char');  // 默认选"字"
         }
+
+        // 多班勾选区: 编辑模式隐藏(只能改单条任务); 创建/复制模式显示
+        const multiGroup = $('blMultiClassGroup');
+        if (mode === 'edit') {
+            multiGroup.style.display = 'none';
+        } else {
+            multiGroup.style.display = '';
+            // 默认勾选当前班级
+            state.selectedClasses = state.currentClassCode ? [state.currentClassCode] : [];
+            renderMultiClassPicker();
+            updateSubmitButtonText();
+        }
+
         $('blTaskEditorOverlay').classList.add('bl-show');
         // 自动聚焦标题输入框
         setTimeout(() => { $('blTaskTitle').focus(); }, 100);
+    }
+
+    // ★ v2B-r2: 渲染多班勾选区
+    function renderMultiClassPicker() {
+        const list = $('blMultiClassList');
+        if (!state.classes || state.classes.length === 0) {
+            list.innerHTML = '<p class="bl-hint" style="text-align:center;">还没有其他班级</p>';
+            return;
+        }
+        list.innerHTML = state.classes.map(c => {
+            const checked = state.selectedClasses.includes(c.classCode);
+            const isCurrent = c.classCode === state.currentClassCode;
+            return `
+                <div class="bl-multi-class-item${checked ? ' bl-checked' : ''}${isCurrent ? ' bl-current-class' : ''}"
+                     onclick="BL.toggleClassSelect('${escapeAttr(c.classCode)}')">
+                    <span class="bl-multi-class-checkbox"></span>
+                    <span class="bl-multi-class-code">${escapeHtml(c.classCode)}</span>
+                    <span class="bl-multi-class-name">${escapeHtml(c.name)}${isCurrent ? ' (当前班级)' : ''}</span>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // ★ v2B-r2: 切换班级勾选
+    function toggleClassSelect(classCode) {
+        const idx = state.selectedClasses.indexOf(classCode);
+        if (idx >= 0) state.selectedClasses.splice(idx, 1);
+        else state.selectedClasses.push(classCode);
+        renderMultiClassPicker();
+        updateSubmitButtonText();
+    }
+
+    // ★ v2B-r2: 更新"发布"按钮文字(根据勾选班级数)
+    function updateSubmitButtonText() {
+        const n = state.selectedClasses.length;
+        const btn = $('blTaskSubmitBtn');
+        if (state.taskEditorMode === 'edit') {
+            btn.textContent = '保存';
+        } else if (n === 0) {
+            btn.textContent = '请选择班级';
+        } else if (n === 1) {
+            btn.textContent = '发布';
+        } else {
+            btn.textContent = `发布到 ${n} 个班级`;
+        }
     }
 
     // 关闭任务编辑器
@@ -8296,27 +8642,26 @@ window.BL = (function () {
         });
     }
 
-    // 提交任务 (创建或修改)
-    // ★ v2B.2 修复: 用 API 返回值直接更新本地 state.tasks,不再调 loadTasks()
-    //   原因: Cloudflare KV 的 list 操作有最长 60 秒一致性延迟,
-    //   刚写入的任务用 list 拉不回来 → 用户感觉"新任务消失了"
+    // 提交任务 (创建 / 编辑 / 复制)
+    // ★ v2B-r2: 创建/复制时支持多班推送 (D3 升级版核心)
     async function submitTask() {
         const title = $('blTaskTitle').value.trim();
         const content = $('blTaskContent').value.trim();
         const type = state.taskEditorType;
+        const mode = state.taskEditorMode;
 
         if (!title) { toast('请填写任务标题', 'error'); return; }
         if (!content) { toast('请填写任务内容', 'error'); return; }
         if (!['char', 'word', 'sentence'].includes(type)) {
             toast('请选择任务类型', 'error'); return;
         }
-        if (!state.currentClassCode) {
-            toast('班级信息丢失，请返回重试', 'error'); return;
-        }
 
         try {
-            if (state.editingTaskId) {
-                // 修改：PUT 返回 { task } - 用 retry 容忍 KV list 延迟
+            if (mode === 'edit') {
+                // 编辑模式: PUT 返回 { task } - 用 retry 容忍 KV list 延迟
+                if (!state.currentClassCode) {
+                    toast('班级信息丢失，请返回重试', 'error'); return;
+                }
                 const result = await apiWithRetry('PUT',
                     '/api/tasks/' + encodeURIComponent(state.currentClassCode) +
                     '/' + encodeURIComponent(state.editingTaskId),
@@ -8327,24 +8672,129 @@ window.BL = (function () {
                 if (idx >= 0 && result.task) state.tasks[idx] = result.task;
                 toast('任务已更新 ✓', 'success');
             } else {
-                // 创建：batch-create 返回 { created: [...], count }
+                // 创建 / 复制: batch-create 支持多班级
+                if (!state.selectedClasses || state.selectedClasses.length === 0) {
+                    toast('请至少选择一个班级', 'error'); return;
+                }
                 const result = await api('POST', '/api/tasks/batch-create', {
                     title, content, type,
-                    classCodes: [state.currentClassCode]
+                    classCodes: state.selectedClasses
                 });
-                // 把新创建的任务插到列表最前（KV 是反向时间戳,最新在最前）
-                if (result.created && result.created.length > 0) {
-                    state.tasks.unshift(...result.created);
-                    // ★ v2B.3 同步更新本地 class.taskCount,让返回班级列表立即看到 📋 N+1
-                    const cls = state.classes.find(c => c.classCode === state.currentClassCode);
-                    if (cls) cls.taskCount = (cls.taskCount || 0) + result.created.length;
+                const createdTasks = result.created || [];
+                // 把推送到当前班级的那条插到列表最前
+                const myTask = createdTasks.find(t => t.classCode === state.currentClassCode);
+                if (myTask) {
+                    state.tasks.unshift(myTask);
                 }
-                toast('任务已发布 ✓', 'success');
+                // 同步更新所有目标班级的本地 taskCount
+                createdTasks.forEach(t => {
+                    const cls = state.classes.find(c => c.classCode === t.classCode);
+                    if (cls) cls.taskCount = (cls.taskCount || 0) + 1;
+                });
+                // 提示文案: 1 班正常,多班显示数量
+                const n = createdTasks.length;
+                toast(n === 1 ? '任务已发布 ✓' : `已发布到 ${n} 个班级 ✓`, 'success');
             }
             closeTaskEditor();
-            renderTasks();  // 仅重渲染,不重新拉数据
+            renderTasks();
         } catch (e) {
             toast(e.message || '操作失败', 'error');
+        }
+    }
+
+    // ★ v2B-r2: 复制任务入口
+    function duplicateTask(taskId) {
+        openTaskEditor(taskId, 'duplicate');
+    }
+
+    // ★ v2B-r2: 切换"显示归档"
+    function toggleShowArchived() {
+        state.showArchived = !state.showArchived;
+        const toggle = $('blArchivedToggle');
+        toggle.classList.toggle('bl-on', state.showArchived);
+        renderTasks();
+    }
+
+    // ★ v2B-r2: 切换任务选中态 (批量操作用)
+    function toggleTaskSelect(taskId) {
+        const idx = state.selectedTaskIds.indexOf(taskId);
+        if (idx >= 0) state.selectedTaskIds.splice(idx, 1);
+        else state.selectedTaskIds.push(taskId);
+        renderTasks();
+    }
+
+    // ★ v2B-r2: 清空选择
+    function clearTaskSelection() {
+        state.selectedTaskIds = [];
+        renderTasks();
+    }
+
+    // ★ v2B-r2: 批量归档
+    async function batchArchive() {
+        if (state.selectedTaskIds.length === 0) return;
+        try {
+            const result = await apiWithRetry('POST', '/api/tasks/batch-archive', {
+                classCode: state.currentClassCode,
+                taskIds: state.selectedTaskIds,
+                archived: true
+            });
+            // 本地同步: 把选中的任务标记为已归档
+            state.selectedTaskIds.forEach(id => {
+                const t = state.tasks.find(t => t.taskId === id);
+                if (t) t.archived = true;
+            });
+            const count = result.updated || state.selectedTaskIds.length;
+            state.selectedTaskIds = [];
+            toast(`已归档 ${count} 条任务`, 'success');
+            renderTasks();
+        } catch (e) {
+            toast(e.message || '批量归档失败', 'error');
+        }
+    }
+
+    // ★ v2B-r2: 批量取消归档
+    async function batchUnarchive() {
+        if (state.selectedTaskIds.length === 0) return;
+        try {
+            const result = await apiWithRetry('POST', '/api/tasks/batch-archive', {
+                classCode: state.currentClassCode,
+                taskIds: state.selectedTaskIds,
+                archived: false
+            });
+            state.selectedTaskIds.forEach(id => {
+                const t = state.tasks.find(t => t.taskId === id);
+                if (t) t.archived = false;
+            });
+            const count = result.updated || state.selectedTaskIds.length;
+            state.selectedTaskIds = [];
+            toast(`已取消归档 ${count} 条任务`, 'success');
+            renderTasks();
+        } catch (e) {
+            toast(e.message || '批量操作失败', 'error');
+        }
+    }
+
+    // ★ v2B-r2: 批量删除
+    async function batchDelete() {
+        const n = state.selectedTaskIds.length;
+        if (n === 0) return;
+        if (!confirm(`确定删除选中的 ${n} 条任务吗？\n此操作不可恢复。`)) return;
+        try {
+            const result = await apiWithRetry('POST', '/api/tasks/batch-delete', {
+                classCode: state.currentClassCode,
+                taskIds: state.selectedTaskIds
+            });
+            const deletedIds = new Set(state.selectedTaskIds);
+            state.tasks = state.tasks.filter(t => !deletedIds.has(t.taskId));
+            // 同步更新本地 class.taskCount
+            const cls = state.classes.find(c => c.classCode === state.currentClassCode);
+            if (cls) cls.taskCount = Math.max(0, (cls.taskCount || 0) - deletedIds.size);
+            const count = result.deleted || n;
+            state.selectedTaskIds = [];
+            toast(`已删除 ${count} 条任务`, 'success');
+            renderTasks();
+        } catch (e) {
+            toast(e.message || '批量删除失败', 'error');
         }
     }
 
@@ -8420,10 +8870,16 @@ window.BL = (function () {
         switchTab,
         toggleAuthMode, submitAuth, logout,
         openClassEditor, closeClassEditor, submitClass, deleteClass,
-        // —— Phase 2B 新增 ——
+        // —— Phase 2B 第 1 轮 ——
         openTasksView, backToClassList,
         openTaskEditor, closeTaskEditor, selectTaskType, submitTask,
         toggleArchiveTask, deleteTask,
+        // —— Phase 2B 第 2 轮 (v2B-r2) ——
+        toggleClassSelect,
+        duplicateTask,
+        toggleShowArchived,
+        toggleTaskSelect, clearTaskSelection,
+        batchArchive, batchUnarchive, batchDelete,
     };
 })();
 
