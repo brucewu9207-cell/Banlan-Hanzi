@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-2 (2026-06-17) — UI细化②: 桌面横排让输入框 flex 撑满, 顶栏整体宽度 = 下载框(.download-group)宽度, 左右缘精确对齐(承 UI-1 的按钮 200→170); 仅改桌面 ≥769px, 手机端不动 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-3 (2026-06-17) — UI细化③: 消除加载跳动 —— 「班级与任务」按钮原需等后端 API 才显示(冒出来时挤窄输入框), 现凭本地解锁记录在首屏绘制前抢先显示, 后端异步核对无权限才撤下; 仅此一处, 副标语言不动 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -8,7 +8,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-    console.log('%c[斑斓汉字] 汉字UI-2 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+    console.log('%c[斑斓汉字] 汉字UI-3 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -4213,6 +4213,28 @@
                 <input type="range" id="rateSelect" class="rate-slider" min="0.5" max="1.5" step="0.1" value="0.8">
             </div>
         </div>
+
+        <!-- ★ 汉字UI-3: 抢先显示「班级与任务」按钮 —— 该按钮默认 display:none, 原本要等 ?unlock 调后端 API
+             验证后才显示, 导致它加载完才冒出来、把 flex 输入框挤窄(可见的"加载跳动")。
+             这里在首屏绘制前、凭本地已存的解锁记录(bl_tester_unlocked)先把按钮+徽章显示出来;
+             BL.init() 仍会异步向后端核对, 若无权限则在 !shouldShow 分支撤下(见 init 内)。 -->
+        <script>
+        (function showLinkageEarly() {
+            try {
+                if (localStorage.getItem('bl_tester_unlocked') !== '1') return;
+                var btn = document.getElementById('btnLinkage');
+                if (btn) btn.classList.add('bl-visible');
+                var badge = document.getElementById('blTesterBadge');
+                var name = localStorage.getItem('bl_tester_name') || '';
+                var role = localStorage.getItem('bl_tester_role') || '';
+                if (badge && name) {
+                    badge.textContent = name;
+                    badge.style.display = '';
+                    badge.style.background = ({ owner: '#8f2727', team: '#b33939', beta: '#c89c2e' })[role] || '#b33939';
+                }
+            } catch (e) { /* localStorage 不可用则忽略, 退回原异步显示 */ }
+        })();
+        </script>
 
         <!-- 展开的下载工具箱 (恢复为 30.html 的版本) -->
         <div class="download-group" id="downloadGroup">
@@ -8634,7 +8656,14 @@ window.BL = (function () {
             }
         }
 
-        if (!shouldShow) return; // 不显示按钮
+        if (!shouldShow) {
+            // ★ 汉字UI-3: 后端核对结果为"不显示" → 撤下抢先显示脚本可能已加上的按钮/徽章
+            const btnHide = $('btnLinkage');
+            if (btnHide) btnHide.classList.remove('bl-visible');
+            const badgeHide = $('blTesterBadge');
+            if (badgeHide) badgeHide.style.display = 'none';
+            return;
+        }
 
         // 5) 显示按钮
         const btn = $('btnLinkage');
