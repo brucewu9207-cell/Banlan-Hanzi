@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字联动-v4-2 (2026-06-17) — Phase 4-2 阶段③: 学生名单每个学生加"查看作答"按钮, 展开看该生每任务每字对错(承 v4-1 答对率) -->
+<!-- 斑斓汉字(老师端) · 汉字联动-v4-3 (2026-06-17) — Phase 4-2 阶段④: 新增"明细表"标签, 按任务展示拼音表+部件表(学生×字对错 + 行末该生% + 列底每字% + 右下任务%) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -901,6 +901,71 @@
         @media (max-width: 768px) {
             .bl-student-actions { flex-direction: column; gap: 6px; }
             .bl-stu-detail-char { gap: 12px; }
+        }
+
+        /* ═══ Phase 4-2 阶段④: 明细表(矩阵) ═══ */
+        .bl-matrix-task { margin-bottom: 30px; }
+        .bl-matrix-task:last-child { margin-bottom: 0; }
+        .bl-matrix-task-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--mo-dark);
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 4px;
+        }
+        .bl-matrix-sub {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--ink-green);
+            margin: 16px 0 8px;
+        }
+        .bl-matrix-scroll {
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            -webkit-overflow-scrolling: touch;
+        }
+        .bl-matrix-table {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+        .bl-matrix-table th, .bl-matrix-table td {
+            padding: 9px 12px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .bl-matrix-table thead th {
+            background: var(--bg-paper);
+            color: var(--mo-dark);
+            font-weight: 600;
+        }
+        .bl-matrix-zi { font-family: var(--font-calligraphy); font-size: 18px; }
+        .bl-matrix-name {
+            text-align: left;
+            font-weight: 500;
+            color: var(--mo-dark);
+            position: sticky;
+            left: 0;
+            background: #f4f8f5;
+            z-index: 1;
+        }
+        .bl-matrix-table thead .bl-matrix-name { background: var(--bg-paper); }
+        .bl-matrix-rowend { font-weight: 700; }
+        .bl-matrix-footer td {
+            background: var(--bg-paper);
+            font-weight: 600;
+            border-top: 2px solid var(--border);
+        }
+        .bl-matrix-corner { font-weight: 700; }
+        .bl-matrix-ok { color: var(--ink-green); font-weight: 700; font-size: 15px; }
+        .bl-matrix-no { color: var(--zhusha); font-weight: 700; font-size: 15px; }
+        .bl-matrix-na { color: var(--ink-gray); }
+        @media (max-width: 768px) {
+            .bl-matrix-table th, .bl-matrix-table td { padding: 7px 9px; }
+            .bl-matrix-zi { font-size: 16px; }
         }
         @media (max-width: 768px) {
             .bl-student-card { padding: 12px; }
@@ -8098,16 +8163,20 @@
                         </span>
                     </div>
                 </div>
-                <!-- Phase 4-2: 学生名单 / 答对率 标签 -->
+                <!-- Phase 4-2: 学生名单 / 答对率 / 明细表 标签 -->
                 <div class="bl-stu-tabs">
                     <button class="bl-stu-tab bl-stu-tab-active" id="blStuTabList" onclick="BL.switchStudentTab('list')">学生名单<span class="lang-en">Students</span><span class="lang-ar">الطلاب</span></button>
                     <button class="bl-stu-tab" id="blStuTabRate" onclick="BL.switchStudentTab('rate')">答对率<span class="lang-en">Accuracy</span><span class="lang-ar">معدل الدقة</span></button>
+                    <button class="bl-stu-tab" id="blStuTabMatrix" onclick="BL.switchStudentTab('matrix')">明细表<span class="lang-en">Table</span><span class="lang-ar">الجدول</span></button>
                 </div>
                 <div class="bl-task-list" id="blStudentList">
                     <!-- 动态生成 -->
                 </div>
                 <div id="blAnswerRate" style="display:none;">
                     <!-- Phase 4-2 答对率,动态生成 -->
+                </div>
+                <div id="blMatrix" style="display:none;">
+                    <!-- Phase 4-2 阶段④ 明细表,动态生成 -->
                 </div>
             </div>
 
@@ -9011,12 +9080,13 @@ window.BL = (function () {
     }
 
     function switchStudentTab(tab) {
-        const isList = (tab !== 'rate');
-        if ($('blStudentList')) $('blStudentList').style.display = isList ? '' : 'none';
-        if ($('blAnswerRate')) $('blAnswerRate').style.display = isList ? 'none' : '';
-        if ($('blStuTabList')) $('blStuTabList').classList.toggle('bl-stu-tab-active', isList);
-        if ($('blStuTabRate')) $('blStuTabRate').classList.toggle('bl-stu-tab-active', !isList);
-        if (!isList) renderAnswerRate();
+        const panels = { list: 'blStudentList', rate: 'blAnswerRate', matrix: 'blMatrix' };
+        const tabBtns = { list: 'blStuTabList', rate: 'blStuTabRate', matrix: 'blStuTabMatrix' };
+        if (!panels[tab]) tab = 'list';
+        Object.entries(panels).forEach(([k, id]) => { if ($(id)) $(id).style.display = (k === tab) ? '' : 'none'; });
+        Object.entries(tabBtns).forEach(([k, id]) => { if ($(id)) $(id).classList.toggle('bl-stu-tab-active', k === tab); });
+        if (tab === 'rate') renderAnswerRate();
+        if (tab === 'matrix') renderMatrix();
     }
 
     function renderAnswerRate() {
@@ -9156,6 +9226,117 @@ window.BL = (function () {
                     <div class="bl-stu-detail-chars">${rows}</div>
                 </div>`;
         }).join('');
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // Phase 4-2 阶段④ · 明细表(矩阵):按任务,拼音表+部件表
+    // 每张表: 学生×字对错 + 行末该生% + 列底每字% + 右下任务%
+    // ═══════════════════════════════════════════════════════════════
+    function renderMatrix() {
+        const box = $('blMatrix');
+        if (!box) return;
+
+        // 收集有学生做过的任务
+        const taskIds = [];
+        state.students.forEach(s => {
+            if (s.taskResults) Object.keys(s.taskResults).forEach(tid => {
+                if (!taskIds.includes(tid)) taskIds.push(tid);
+            });
+        });
+
+        if (taskIds.length === 0) {
+            box.innerHTML = `
+                <div class="bl-empty">
+                    <div class="bl-empty-icon">📋</div>
+                    <div class="bl-empty-text">${escapeHtml(tt('还没有学生完成任务，暂无明细', 'No completed tasks yet', 'لا توجد بيانات بعد'))}</div>
+                </div>`;
+            return;
+        }
+
+        let html = '';
+        taskIds.forEach(taskId => {
+            const task = (state.tasks || []).find(t => t.taskId === taskId);
+            const title = task ? task.title : tt('(已删除的任务)', '(deleted task)', '(مهمة محذوفة)');
+
+            // 做过该任务的学生
+            const doneStudents = state.students.filter(s =>
+                s.taskResults && s.taskResults[taskId] && s.taskResults[taskId].chars);
+
+            // 字序(按出现顺序)
+            const charOrder = [];
+            doneStudents.forEach(s => {
+                Object.keys(s.taskResults[taskId].chars).forEach(ch => {
+                    if (!charOrder.includes(ch)) charOrder.push(ch);
+                });
+            });
+
+            const doneText = tt(`${doneStudents.length} 人做过`, `${doneStudents.length} done`, `${doneStudents.length} أكملوا`);
+
+            html += `
+                <div class="bl-matrix-task">
+                    <div class="bl-matrix-task-title">${escapeHtml(title)} <span style="font-size:13px;font-weight:normal;color:var(--ink-gray);">· ${escapeHtml(doneText)}</span></div>
+                    ${buildOneMatrix(tt('拼音', 'Pinyin', 'بينيين'), taskId, doneStudents, charOrder, 'py')}
+                    ${buildOneMatrix(tt('部件', 'Parts', 'مكوّنات'), taskId, doneStudents, charOrder, 'comp')}
+                </div>`;
+        });
+
+        box.innerHTML = html;
+    }
+
+    // 生成单张矩阵(dim='py' 或 'comp')
+    function buildOneMatrix(label, taskId, students, charOrder, dim) {
+        const pctColor = p => p >= 80 ? 'var(--ink-green)' : (p >= 60 ? 'var(--gold-accent)' : 'var(--zhusha)');
+        const mark = v => (v === null || v === undefined)
+            ? '<span class="bl-matrix-na">—</span>'
+            : (v ? '<span class="bl-matrix-ok">✓</span>' : '<span class="bl-matrix-no">✗</span>');
+        const pctCell = (c, t) => {
+            if (t === 0) return '<span class="bl-matrix-na">—</span>';
+            const p = Math.round(c / t * 100);
+            return `<span style="color:${pctColor(p)};">${p}%</span>`;
+        };
+
+        // 表头
+        let thead = `<th class="bl-matrix-name">${escapeHtml(tt('学生', 'Student', 'الطالب'))}</th>`;
+        charOrder.forEach(ch => { thead += `<th class="bl-matrix-zi">${escapeHtml(ch)}</th>`; });
+        thead += `<th>${escapeHtml(tt('该生', 'Student', 'الطالب'))}</th>`;
+
+        // 列统计累加器
+        const colC = {}, colT = {};
+        charOrder.forEach(ch => { colC[ch] = 0; colT[ch] = 0; });
+
+        // 每个学生一行
+        let rows = '';
+        students.forEach(s => {
+            const chars = s.taskResults[taskId].chars;
+            let rowC = 0, rowT = 0, cells = '';
+            charOrder.forEach(ch => {
+                const r = chars[ch];
+                const v = r ? r[dim] : undefined;
+                cells += `<td>${mark(v)}</td>`;
+                if (v !== null && v !== undefined) {
+                    rowT++; colT[ch]++;
+                    if (v) { rowC++; colC[ch]++; }
+                }
+            });
+            rows += `<tr><td class="bl-matrix-name">${escapeHtml(s.name || s.studentCode)}</td>${cells}<td class="bl-matrix-rowend">${pctCell(rowC, rowT)}</td></tr>`;
+        });
+
+        // 列底统计 + 右下角
+        let footCells = '', totalC = 0, totalT = 0;
+        charOrder.forEach(ch => {
+            footCells += `<td>${pctCell(colC[ch], colT[ch])}</td>`;
+            totalC += colC[ch]; totalT += colT[ch];
+        });
+        const footer = `<tr class="bl-matrix-footer"><td class="bl-matrix-name">${escapeHtml(tt('每字答对率', 'Per char', 'لكل حرف'))}</td>${footCells}<td class="bl-matrix-corner">${pctCell(totalC, totalT)}</td></tr>`;
+
+        return `
+            <div class="bl-matrix-sub">${escapeHtml(label)}</div>
+            <div class="bl-matrix-scroll">
+                <table class="bl-matrix-table">
+                    <thead><tr>${thead}</tr></thead>
+                    <tbody>${rows}${footer}</tbody>
+                </table>
+            </div>`;
     }
 
     async function kickStudent(studentCode, studentName) {
