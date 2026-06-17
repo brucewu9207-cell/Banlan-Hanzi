@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-4 (2026-06-17) — UI细化④: 4 个面板标题统一"中文在上、翻译换行在下(0.7em副标)"; 音频/印章/反馈去掉行内·与样式, 班级与任务标题 17→26px 与其它三个看齐; 只改这 4 个标题, 各档字号用 em 自动缩放 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-5 (2026-06-17) — UI细化⑤: 标题翻译副标 0.7→0.5em(更小); 带图标的两个标题(用户反馈/班级与任务)用 .t-cn 把中文居中、图标 .t-ico 绝对定位挂左侧, 使副标居中于"中文文字"而非整行; 只动这块 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -8,7 +8,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-    console.log('%c[斑斓汉字] 汉字UI-4 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+    console.log('%c[斑斓汉字] 汉字UI-5 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -578,7 +578,7 @@
         }
         /* ★ 汉字UI-4: 班级与任务标题放大到 26px(与音频/印章/反馈三个 modal 一样大); 翻译副标尺寸也对齐 0.7em */
         .bl-header h3 .lang-en,
-        .bl-header h3 .lang-ar { font-size: 0.7em; }
+        .bl-header h3 .lang-ar { font-size: 0.5em; }
         .bl-close {
             background: none; border: none; cursor: pointer;
             color: var(--mo-mid); font-size: 22px; padding: 4px 10px;
@@ -2051,13 +2051,19 @@
         .modal h3.title-scaled .lang-en,
         .modal h3.title-scaled .lang-ar {
             display: block;
-            font-size: 0.7em;
+            font-size: 0.5em;
             font-weight: normal;
             opacity: 0.82;
             margin-top: 4px;
             letter-spacing: 1px;
         }
         .modal h3.title-scaled .lang-ar { font-family: 'Tahoma','Arial',sans-serif; direction: rtl; }
+        /* ★ 汉字UI-5: 带图标的标题(用户反馈/班级与任务) → 让副标居中于"中文文字"而非整行。
+           中文用 .t-cn 包成 inline-block 居中; 图标 .t-ico 绝对定位挂到中文左侧(不占位、不影响居中) */
+        .modal h3.title-scaled .t-cn,
+        .bl-header h3 .t-cn { display: inline-block; position: relative; }
+        .modal h3.title-scaled .t-ico,
+        .bl-header h3 .t-ico { position: absolute; right: 100%; margin-right: 8px; }
         .modal p { color: var(--mo-mid); font-size: 13px; margin-bottom: 24px; line-height: 1.6;}
         .modal-btns { display: flex; flex-direction: column; gap: 12px; }
         .modal-btns button { width: 100%; padding: 12px; font-size: 14px; }
@@ -4455,7 +4461,7 @@
 <!-- 用户反馈弹窗（Office Forms 嵌入） -->
 <div class="modal-overlay" id="feedbackModal">
     <div class="modal" style="max-width:720px; width:95vw;">
-        <h3 class="title-scaled">💬 用户反馈<span class="lang-en">Feedback</span><span class="lang-ar">التغذية الراجعة</span></h3>
+        <h3 class="title-scaled"><span class="t-cn"><span class="t-ico">💬</span>用户反馈</span><span class="lang-en">Feedback</span><span class="lang-ar">التغذية الراجعة</span></h3>
         <p class="lang-en" style="font-size:15px; color:var(--mo-mid); margin-bottom:10px; text-align:center; font-weight:600; letter-spacing:0.5px;">Your Feedback = Product Upgrading</p>
         <p class="lang-ar" style="font-size:15px; color:var(--mo-mid); margin-bottom:10px; text-align:center; font-weight:600; letter-spacing:0.5px; font-family:'Tahoma','Arial',sans-serif;">ملاحظاتك = تطوير المنتج</p>
         <p style="font-size:14px; color:var(--mo-light); margin-bottom:14px; text-align:center;">
@@ -8119,7 +8125,7 @@
 <div class="bl-overlay" id="blOverlay">
     <div class="bl-modal">
         <div class="bl-header">
-            <h3 id="blTitle">📚 班级与任务<span class="lang-en">Classes &amp; Tasks</span><span class="lang-ar">الفصول والمهام</span></h3>
+            <h3 id="blTitle"><span class="t-cn"><span class="t-ico">📚</span>班级与任务</span><span class="lang-en">Classes &amp; Tasks</span><span class="lang-ar">الفصول والمهام</span></h3>
             <button class="bl-close" onclick="BL.closePanel()">×</button>
         </div>
 
