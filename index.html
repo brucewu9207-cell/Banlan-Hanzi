@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-1 (2026-06-17) — UI细化①: 顶部整行被挤出屏幕(输入框/班级任务被裁), 把 5 个功能按钮 200px→170px(仍固定不压缩), 下载中心单独保持 200px, 输入框不动; 仅改桌面 ≥601px, 手机端两列网格不动 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-2 (2026-06-17) — UI细化②: 桌面横排让输入框 flex 撑满, 顶栏整体宽度 = 下载框(.download-group)宽度, 左右缘精确对齐(承 UI-1 的按钮 200→170); 仅改桌面 ≥769px, 手机端不动 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -8,7 +8,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-    console.log('%c[斑斓汉字] 汉字UI-1 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+    console.log('%c[斑斓汉字] 汉字UI-2 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1516,6 +1516,18 @@
             .controls-bar > .btn-linkage .btn-ar {
                 font-size: 12px;
                 margin-top: 5px;
+            }
+        }
+        /* ★ 汉字UI-2: 桌面横排时让输入框自动撑满顶栏的剩余宽度 →
+           顶栏整体宽度 = 下载框 .download-group(width:100%) 的宽度, 左右缘精确对齐;
+           仅 ≥769px 生效(≤768px 顶栏是竖排, 撑满会变纵向拉伸, 故排除) */
+        @media (min-width: 769px) {
+            .controls-bar > .input-wrapper {
+                flex: 1 1 auto;    /* 吃掉固定按钮之外的全部剩余宽度 */
+                min-width: 200px;  /* 窄桌面下不小于原始宽度 */
+            }
+            .controls-bar > .input-wrapper input[type="text"] {
+                width: 100%;       /* 填满被撑大的 input-wrapper(覆盖原 min(200px,46vw)) */
             }
         }
         .fb-star-btn { background:#f5f5f5; color:#666; border:1px solid #ddd; padding:5px 12px; font-size:13px; border-radius:4px; cursor:pointer; flex:1; }
