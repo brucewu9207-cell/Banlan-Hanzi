@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-6 (2026-06-17) — UI细化⑥: 音频生成(♪)、印章题刻(❒)两个标题补上图标(取自对应按钮), 复用 t-cn/t-ico 结构使副标仍居中于中文; 至此 4 个标题都带图标且副标居中于中文 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-7 (2026-06-17) — UI细化⑦: 弹窗内配色微调 —— ①TTS保存MP3按钮 ink-green→#4f6a5d(调浅); ②TTS发音人/语速区块 #fafafa→#dfe8e3+边框(调深); ③TTS输入文本框(JS样式)加 #e8efeb 底+深边框; ④印章输入框 #fff→#e8efeb+深边框(调深, 保持文字可读) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -8,7 +8,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-    console.log('%c[斑斓汉字] 汉字UI-6 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+    console.log('%c[斑斓汉字] 汉字UI-7 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -2212,7 +2212,7 @@
         .seal-modal-inner h3 { font-size: 20px; margin: 0 0 14px; text-align: center; color: var(--ink-green); letter-spacing: 2px; font-weight: bold; }
         .seal-controls { background: #fafafa; padding: 10px 12px; border-radius: 4px; margin-bottom: 12px; border: 1px solid #f0f0f0; }
         .seal-controls label { display: block; font-size: 12px; color: var(--ink-green); margin-bottom: 6px; font-weight: bold;}
-        .seal-input { width: 100%; padding: 8px; font-size: 18px; text-align: center; font-family: var(--font-main); letter-spacing: 4px; margin-bottom: 10px; border: 1px solid #ddd; background: #fff; box-sizing: border-box;}
+        .seal-input { width: 100%; padding: 8px; font-size: 18px; text-align: center; font-family: var(--font-main); letter-spacing: 4px; margin-bottom: 10px; border: 1px solid #aebfb6; background: #e8efeb; box-sizing: border-box;}
         .seal-style-row { display: flex; gap: 6px; flex-wrap: wrap; }
         .seal-style-btn { flex: 1; min-width: 80px; background: #fff; color: var(--mo-mid); border: 1px solid #ddd; box-shadow: none; padding: 6px 8px; font-size: 12px;}
         .seal-style-btn.active { background: var(--zhusha); color: #fff; border-color: var(--zhusha); }
@@ -4603,7 +4603,7 @@
             <div id="ttsCharLine" style="letter-spacing:12px; font-size:28px; color:#222; font-weight:bold; font-family:'KaiTi','STKaiti','楷体',serif;"></div>
         </div>
         <textarea id="ttsStudioText" rows="2" style="display:none;" placeholder="输入文本..."></textarea>
-        <div style="background:#fafafa; padding:12px; border-radius:4px; text-align:left; margin-bottom:16px;">
+        <div style="background:#dfe8e3; border:1px solid #c1d2c9; padding:12px; border-radius:4px; text-align:left; margin-bottom:16px;">
             <label style="font-size:12px; color:var(--ink-green); font-weight:bold; display:block; margin-bottom:6px;">
                 发音人 <span class="lang-en">Voice</span><span class="lang-ar" style="font-family:'Tahoma','Arial',sans-serif;">الصوت</span>：
             </label>
@@ -4616,7 +4616,7 @@
         </div>
         <div class="modal-btns" style="flex-direction:row; gap:10px;">
             <button style="background:var(--ink-gray); border:none;" onclick="previewTtsStudio()">▶ 试听<span class="btn-en">Play</span><span class="btn-ar">تشغيل</span></button>
-            <button style="background:var(--ink-green); border:none;" onclick="downloadTtsStudio()">💾 保存 MP3<span class="btn-en">Save</span><span class="btn-ar">حفظ</span></button>
+            <button style="background:#4f6a5d; border:none;" onclick="downloadTtsStudio()">💾 保存 MP3<span class="btn-en">Save</span><span class="btn-ar">حفظ</span></button>
         </div>
         <button class="btn-cancel" style="width:100%; margin-top:10px; padding:10px;" onclick="closeTtsStudio()">关闭<span class="lang-en"> / Close</span><span class="lang-ar"> / إغلاق</span></button>
     </div>
@@ -6795,7 +6795,7 @@
             textarea.style.display = 'none';
         } else {
             pinyinRow.style.display = 'none';
-            textarea.style.cssText = 'display:block; width:100%; padding:12px; border:1px solid #ddd; border-radius:4px; font-size:18px; font-family:var(--font-main); box-sizing:border-box; margin-bottom:12px; text-align:center; letter-spacing:6px;';
+            textarea.style.cssText = 'display:block; width:100%; padding:12px; background:#e8efeb; border:1px solid #aebfb6; border-radius:4px; font-size:18px; font-family:var(--font-main); box-sizing:border-box; margin-bottom:12px; text-align:center; letter-spacing:6px;';
         }
         document.getElementById('ttsStudioModal').style.display = 'flex';
         loadVoices();
