@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-3 (2026-06-17) — UI细化③: 消除加载跳动 —— 「班级与任务」按钮原需等后端 API 才显示(冒出来时挤窄输入框), 现凭本地解锁记录在首屏绘制前抢先显示, 后端异步核对无权限才撤下; 仅此一处, 副标语言不动 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-4 (2026-06-17) — UI细化④: 4 个面板标题统一"中文在上、翻译换行在下(0.7em副标)"; 音频/印章/反馈去掉行内·与样式, 班级与任务标题 17→26px 与其它三个看齐; 只改这 4 个标题, 各档字号用 em 自动缩放 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -8,7 +8,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-    console.log('%c[斑斓汉字] 汉字UI-3 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+    console.log('%c[斑斓汉字] 汉字UI-4 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -571,11 +571,14 @@
             text-align: center;
         }
         .bl-header h3 {
-            margin: 0; font-size: 17px; color: var(--ink-green);
-            letter-spacing: 1.5px; font-weight: bold;
+            margin: 0; font-size: 26px; color: var(--ink-green);
+            letter-spacing: 2.6px; font-weight: bold;
             font-family: var(--font-main, 'Noto Sans CJK SC', sans-serif);
             text-align: center;
         }
+        /* ★ 汉字UI-4: 班级与任务标题放大到 26px(与音频/印章/反馈三个 modal 一样大); 翻译副标尺寸也对齐 0.7em */
+        .bl-header h3 .lang-en,
+        .bl-header h3 .lang-ar { font-size: 0.7em; }
         .bl-close {
             background: none; border: none; cursor: pointer;
             color: var(--mo-mid); font-size: 22px; padding: 4px 10px;
@@ -1078,7 +1081,7 @@
                 max-height: 95vh; border-radius: 8px;
             }
             .bl-header { padding: 14px 16px 10px; }
-            .bl-header h3 { font-size: 17px; letter-spacing: 1.5px; }
+            .bl-header h3 { font-size: 22.1px; letter-spacing: 2.6px; }
             .bl-tabs { padding: 6px 12px 0; }
             .bl-tab { padding: 8px 12px; font-size: 13px; }
             .bl-body { padding: 16px; }
@@ -2044,8 +2047,17 @@
         .modal h3 { margin-top: 0; color: var(--ink-green); font-size: 20px; letter-spacing: 2px; font-weight: bold; font-family: var(--font-main); text-align: center; }
         /* 【v38】三个 modal 标题（音频生成/印章题刻/用户反馈）整体放大 1.3 倍 */
         .modal h3.title-scaled { font-size: 26px; letter-spacing: 2.6px; }
+        /* ★ 汉字UI-4: 标题翻译改为换行到中文下方的副标(比中文小, 清晰层级) — 用 em 随各档中文字号自动缩放 */
         .modal h3.title-scaled .lang-en,
-        .modal h3.title-scaled .lang-ar { font-size: 26px; }
+        .modal h3.title-scaled .lang-ar {
+            display: block;
+            font-size: 0.7em;
+            font-weight: normal;
+            opacity: 0.82;
+            margin-top: 4px;
+            letter-spacing: 1px;
+        }
+        .modal h3.title-scaled .lang-ar { font-family: 'Tahoma','Arial',sans-serif; direction: rtl; }
         .modal p { color: var(--mo-mid); font-size: 13px; margin-bottom: 24px; line-height: 1.6;}
         .modal-btns { display: flex; flex-direction: column; gap: 12px; }
         .modal-btns button { width: 100%; padding: 12px; font-size: 14px; }
@@ -2664,8 +2676,7 @@
             .modal { padding: 20px 16px; }
             .modal h3 { font-size: 17px; }
             .modal h3.title-scaled { font-size: 22.1px; }
-            .modal h3.title-scaled .lang-en,
-            .modal h3.title-scaled .lang-ar { font-size: 22.1px; }
+            /* ★ 汉字UI-4: 翻译副标尺寸由基础规则的 0.7em 自动随中文缩放, 此处不再单独覆盖 */
             /* 手机端显示滑动提示 */
             .swipe-hint { display: flex; }
             /* 关于汉字面板滑动提示 */
@@ -2716,8 +2727,7 @@
             .modal { padding: 16px 12px; width: 95vw; }
             .modal h3 { font-size: 15px; letter-spacing: 1px; }
             .modal h3.title-scaled { font-size: 19.5px; letter-spacing: 1.3px; }
-            .modal h3.title-scaled .lang-en,
-            .modal h3.title-scaled .lang-ar { font-size: 19.5px; }
+            /* ★ 汉字UI-4: 同上, 翻译副标由 0.7em 自动缩放 */
             .modal-btns button { padding: 10px; font-size: 13px; }
             .sentence-translation-block { padding: 15.6px 12px 19.5px; font-size: 23.4px; }
             /* 【v56】翻译块手机端：强制单行 + 居中（缩小标签与译文字号，关闭折行） */
@@ -4445,10 +4455,7 @@
 <!-- 用户反馈弹窗（Office Forms 嵌入） -->
 <div class="modal-overlay" id="feedbackModal">
     <div class="modal" style="max-width:720px; width:95vw;">
-        <h3 class="title-scaled">💬 用户反馈
-            <span class="lang-en" style="font-weight:bold; color:var(--ink-green); margin-left:10px;">Feedback</span>
-            <span class="lang-ar" style="font-weight:bold; color:var(--ink-green); margin-left:10px; font-family:'Tahoma','Arial',sans-serif;">· التغذية الراجعة</span>
-        </h3>
+        <h3 class="title-scaled">💬 用户反馈<span class="lang-en">Feedback</span><span class="lang-ar">التغذية الراجعة</span></h3>
         <p class="lang-en" style="font-size:15px; color:var(--mo-mid); margin-bottom:10px; text-align:center; font-weight:600; letter-spacing:0.5px;">Your Feedback = Product Upgrading</p>
         <p class="lang-ar" style="font-size:15px; color:var(--mo-mid); margin-bottom:10px; text-align:center; font-weight:600; letter-spacing:0.5px; font-family:'Tahoma','Arial',sans-serif;">ملاحظاتك = تطوير المنتج</p>
         <p style="font-size:14px; color:var(--mo-light); margin-bottom:14px; text-align:center;">
@@ -4499,11 +4506,7 @@
 <div class="modal-overlay" id="sealModal">
     <div class="modal seal-modal" style="max-width:720px; width:95vw;">
         <div class="seal-modal-inner">
-            <h3 class="title-scaled">
-                印章题刻
-                <span class="lang-en" style="font-weight:bold; color:var(--ink-green); margin-left:10px;">Seal Carving</span>
-                <span class="lang-ar" style="font-weight:bold; color:var(--ink-green); margin-left:10px; font-family:'Tahoma','Arial',sans-serif;">· نقش الختم</span>
-            </h3>
+            <h3 class="title-scaled">印章题刻<span class="lang-en">Seal Carving</span><span class="lang-ar">نقش الختم</span></h3>
             <!-- 横向两栏：左控制区 | 右预览区 -->
             <div style="display:flex; gap:16px; align-items:flex-start;">
                 <!-- 左栏：输入控制 -->
@@ -4587,10 +4590,7 @@
 <!-- 2. 语音合成工作室 -->
 <div class="modal-overlay" id="ttsStudioModal">
     <div class="modal" style="max-width:720px; width:95vw;">
-        <h3 class="title-scaled">音频生成
-            <span class="lang-en" style="font-weight:bold; color:var(--ink-green); margin-left:10px;">Audio Generation</span>
-            <span class="lang-ar" style="font-weight:bold; color:var(--ink-green); margin-left:10px; font-family:'Tahoma','Arial',sans-serif;">· توليد الصوت</span>
-        </h3>
+        <h3 class="title-scaled">音频生成<span class="lang-en">Audio Generation</span><span class="lang-ar">توليد الصوت</span></h3>
         <!-- 拼音+文字合并展示 -->
         <div id="ttsPinyinRow" style="display:none; border:1px solid #ddd; border-radius:4px; padding:16px 18px; margin-bottom:12px; text-align:center; background:#fff;">
             <div id="ttsPinyinLine" style="letter-spacing:6px; font-size:18px; color:#555; font-weight:normal; margin-bottom:10px; font-family:'KaiTi','STKaiti','楷体',serif;"></div>
