@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-5 (2026-06-17) — UI细化⑤: 标题翻译副标 0.7→0.5em(更小); 带图标的两个标题(用户反馈/班级与任务)用 .t-cn 把中文居中、图标 .t-ico 绝对定位挂左侧, 使副标居中于"中文文字"而非整行; 只动这块 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-6 (2026-06-17) — UI细化⑥: 音频生成(♪)、印章题刻(❒)两个标题补上图标(取自对应按钮), 复用 t-cn/t-ico 结构使副标仍居中于中文; 至此 4 个标题都带图标且副标居中于中文 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -8,7 +8,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-    console.log('%c[斑斓汉字] 汉字UI-5 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+    console.log('%c[斑斓汉字] 汉字UI-6 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -4512,7 +4512,7 @@
 <div class="modal-overlay" id="sealModal">
     <div class="modal seal-modal" style="max-width:720px; width:95vw;">
         <div class="seal-modal-inner">
-            <h3 class="title-scaled">印章题刻<span class="lang-en">Seal Carving</span><span class="lang-ar">نقش الختم</span></h3>
+            <h3 class="title-scaled"><span class="t-cn"><span class="t-ico">❒</span>印章题刻</span><span class="lang-en">Seal Carving</span><span class="lang-ar">نقش الختم</span></h3>
             <!-- 横向两栏：左控制区 | 右预览区 -->
             <div style="display:flex; gap:16px; align-items:flex-start;">
                 <!-- 左栏：输入控制 -->
@@ -4596,7 +4596,7 @@
 <!-- 2. 语音合成工作室 -->
 <div class="modal-overlay" id="ttsStudioModal">
     <div class="modal" style="max-width:720px; width:95vw;">
-        <h3 class="title-scaled">音频生成<span class="lang-en">Audio Generation</span><span class="lang-ar">توليد الصوت</span></h3>
+        <h3 class="title-scaled"><span class="t-cn"><span class="t-ico">♪</span>音频生成</span><span class="lang-en">Audio Generation</span><span class="lang-ar">توليد الصوت</span></h3>
         <!-- 拼音+文字合并展示 -->
         <div id="ttsPinyinRow" style="display:none; border:1px solid #ddd; border-radius:4px; padding:16px 18px; margin-bottom:12px; text-align:center; background:#fff;">
             <div id="ttsPinyinLine" style="letter-spacing:6px; font-size:18px; color:#555; font-weight:normal; margin-bottom:10px; font-family:'KaiTi','STKaiti','楷体',serif;"></div>
