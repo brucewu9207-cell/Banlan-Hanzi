@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- 斑斓汉字(老师端) · 汉字联动-v4-1 (2026-06-17) — Phase 4-2 阶段②: 学生管理视图新增"答对率"标签, 按任务展示全班整体+逐字答对率(拼音/部件) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -757,6 +758,96 @@
         .bl-student-kick-btn:hover {
             background: #dc3545;
             color: white;
+        }
+
+        /* ═══ Phase 4-2: 答对率展示 ═══ */
+        .bl-stu-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 18px;
+            border-bottom: 1px solid var(--border);
+        }
+        .bl-stu-tab {
+            padding: 9px 20px;
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--ink-gray);
+            font-family: var(--font-main);
+            transition: all 0.2s;
+        }
+        .bl-stu-tab:hover { color: var(--ink-green-light); }
+        .bl-stu-tab-active {
+            color: var(--ink-green);
+            border-bottom-color: var(--ink-green);
+            font-weight: 600;
+        }
+        .bl-rate-card {
+            background: rgba(255,255,255,0.55);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin-bottom: 16px;
+        }
+        .bl-rate-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 14px;
+            gap: 12px;
+        }
+        .bl-rate-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--mo-dark);
+        }
+        .bl-rate-done {
+            font-size: 12px;
+            color: var(--ink-gray);
+            white-space: nowrap;
+        }
+        .bl-rate-overall {
+            display: flex;
+            gap: 28px;
+            padding: 12px 18px;
+            background: var(--bg-paper);
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+        .bl-rate-overall-item { display: flex; flex-direction: column; gap: 3px; }
+        .bl-rate-overall-label { font-size: 12px; color: var(--ink-gray); }
+        .bl-rate-overall-val { font-size: 22px; font-weight: 700; line-height: 1; }
+        .bl-rate-chars { display: flex; flex-direction: column; gap: 9px; }
+        .bl-rate-char-row { display: flex; align-items: center; gap: 14px; }
+        .bl-rate-char {
+            font-size: 20px;
+            font-family: var(--font-calligraphy);
+            color: var(--mo-dark);
+            min-width: 30px;
+            text-align: center;
+        }
+        .bl-rate-metrics { display: flex; gap: 22px; flex: 1; flex-wrap: wrap; }
+        .bl-rate-metric { display: flex; align-items: center; gap: 8px; min-width: 145px; flex: 1; }
+        .bl-rate-metric-label { font-size: 12px; color: var(--ink-gray); min-width: 30px; }
+        .bl-rate-track {
+            flex: 1;
+            height: 7px;
+            background: var(--border-light);
+            border-radius: 4px;
+            overflow: hidden;
+            min-width: 40px;
+        }
+        .bl-rate-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+        .bl-rate-val { font-size: 13px; font-weight: 600; min-width: 38px; text-align: right; }
+        .bl-rate-na { color: var(--ink-gray); font-size: 12px; font-style: italic; }
+        @media (max-width: 768px) {
+            .bl-rate-metrics { flex-direction: column; gap: 8px; }
+            .bl-rate-metric { min-width: 0; width: 100%; }
+            .bl-rate-overall { gap: 18px; }
+            .bl-stu-tab { padding: 8px 14px; font-size: 13px; }
         }
         @media (max-width: 768px) {
             .bl-student-card { padding: 12px; }
@@ -7954,8 +8045,16 @@
                         </span>
                     </div>
                 </div>
+                <!-- Phase 4-2: 学生名单 / 答对率 标签 -->
+                <div class="bl-stu-tabs">
+                    <button class="bl-stu-tab bl-stu-tab-active" id="blStuTabList" onclick="BL.switchStudentTab('list')">学生名单<span class="lang-en">Students</span><span class="lang-ar">الطلاب</span></button>
+                    <button class="bl-stu-tab" id="blStuTabRate" onclick="BL.switchStudentTab('rate')">答对率<span class="lang-en">Accuracy</span><span class="lang-ar">معدل الدقة</span></button>
+                </div>
                 <div class="bl-task-list" id="blStudentList">
                     <!-- 动态生成 -->
+                </div>
+                <div id="blAnswerRate" style="display:none;">
+                    <!-- Phase 4-2 答对率,动态生成 -->
                 </div>
             </div>
 
@@ -8777,7 +8876,10 @@ window.BL = (function () {
         $('blStudentsCount').textContent = '...';
         $('blStudentList').innerHTML = '<div class="bl-empty"><div class="bl-empty-text" style="color:var(--ink-gray);">' + escapeHtml(tt('加载中...', 'Loading...', 'جاري التحميل...')) + '</div></div>';
 
+        switchStudentTab('list');  // ★ Phase 4-2: 每次打开默认回到"学生名单"标签
+
         await loadStudents();
+        await loadTasksForRate();  // ★ Phase 4-2: 答对率展示需要任务标题
     }
 
     async function loadStudents() {
@@ -8833,6 +8935,122 @@ window.BL = (function () {
             </div>
             `;
         }).join('');
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // Phase 4-2 · 答对率:按任务展示全班整体 + 逐字答对率(拼音/部件)
+    // 数据来自 state.students 里每个学生的 taskResults (后端已存)
+    // ═══════════════════════════════════════════════════════════════
+    async function loadTasksForRate() {
+        if (!state.currentClassCode) return;
+        try {
+            const data = await api('GET',
+                '/api/classes/' + encodeURIComponent(state.currentClassCode) + '/tasks?includeArchived=true');
+            state.tasks = data.tasks || [];
+        } catch (e) { /* 静默:答对率会用 taskId 兜底显示 */ }
+    }
+
+    function switchStudentTab(tab) {
+        const isList = (tab !== 'rate');
+        if ($('blStudentList')) $('blStudentList').style.display = isList ? '' : 'none';
+        if ($('blAnswerRate')) $('blAnswerRate').style.display = isList ? 'none' : '';
+        if ($('blStuTabList')) $('blStuTabList').classList.toggle('bl-stu-tab-active', isList);
+        if ($('blStuTabRate')) $('blStuTabRate').classList.toggle('bl-stu-tab-active', !isList);
+        if (!isList) renderAnswerRate();
+    }
+
+    function renderAnswerRate() {
+        const box = $('blAnswerRate');
+        if (!box) return;
+
+        // 收集所有"有学生做过"的任务 id (保持出现顺序)
+        const taskIds = [];
+        state.students.forEach(s => {
+            if (s.taskResults) Object.keys(s.taskResults).forEach(tid => {
+                if (!taskIds.includes(tid)) taskIds.push(tid);
+            });
+        });
+
+        if (taskIds.length === 0) {
+            box.innerHTML = `
+                <div class="bl-empty">
+                    <div class="bl-empty-icon">📊</div>
+                    <div class="bl-empty-text">${escapeHtml(tt('还没有学生完成任务，暂无答对率数据', 'No completed tasks yet — no accuracy data', 'لا توجد بيانات دقة بعد'))}</div>
+                </div>`;
+            return;
+        }
+
+        const pctColor = p => p >= 80 ? 'var(--ink-green)' : (p >= 60 ? 'var(--gold-accent)' : 'var(--zhusha)');
+        const txtPinyin = tt('拼音', 'Pinyin', 'بينيين');
+        const txtComp = tt('部件', 'Parts', 'مكوّنات');
+        const txtOverall = tt('整体', 'Overall', 'إجمالي');
+        const txtNA = '—';
+
+        // 一个指标(带进度条) 的 HTML
+        const metricBlock = (label, c, t) => {
+            if (t === 0) return `<div class="bl-rate-metric"><span class="bl-rate-metric-label">${escapeHtml(label)}</span><span class="bl-rate-na">${txtNA}</span></div>`;
+            const p = Math.round(c / t * 100);
+            const col = pctColor(p);
+            return `<div class="bl-rate-metric"><span class="bl-rate-metric-label">${escapeHtml(label)}</span><span class="bl-rate-track"><span class="bl-rate-fill" style="width:${p}%;background:${col};"></span></span><span class="bl-rate-val" style="color:${col};">${p}%</span></div>`;
+        };
+        // 整体大数字
+        const overallItem = (label, p) => {
+            if (p === null) return `<div class="bl-rate-overall-item"><span class="bl-rate-overall-label">${escapeHtml(label)}</span><span class="bl-rate-na">${txtNA}</span></div>`;
+            return `<div class="bl-rate-overall-item"><span class="bl-rate-overall-label">${escapeHtml(label)}</span><span class="bl-rate-overall-val" style="color:${pctColor(p)};">${p}%</span></div>`;
+        };
+
+        let html = '';
+        taskIds.forEach(taskId => {
+            const task = (state.tasks || []).find(t => t.taskId === taskId);
+            const title = task ? task.title : tt('(已删除的任务)', '(deleted task)', '(مهمة محذوفة)');
+
+            // 聚合每字成绩
+            const charOrder = [];
+            const stat = {}; // char -> {pyC,pyT,compC,compT}
+            let doneCount = 0;
+            state.students.forEach(s => {
+                const tr = s.taskResults && s.taskResults[taskId];
+                if (!tr || !tr.chars) return;
+                doneCount++;
+                Object.entries(tr.chars).forEach(([ch, r]) => {
+                    if (!stat[ch]) { stat[ch] = { pyC:0, pyT:0, compC:0, compT:0 }; charOrder.push(ch); }
+                    if (r.py !== null && r.py !== undefined) { stat[ch].pyT++; if (r.py) stat[ch].pyC++; }
+                    if (r.comp !== null && r.comp !== undefined) { stat[ch].compT++; if (r.comp) stat[ch].compC++; }
+                });
+            });
+
+            // 任务整体汇总
+            let pyC=0, pyT=0, compC=0, compT=0;
+            charOrder.forEach(ch => { const c = stat[ch]; pyC+=c.pyC; pyT+=c.pyT; compC+=c.compC; compT+=c.compT; });
+            const overallPy = pyT ? Math.round(pyC / pyT * 100) : null;
+            const overallComp = compT ? Math.round(compC / compT * 100) : null;
+
+            const charRows = charOrder.map(ch => `
+                <div class="bl-rate-char-row">
+                    <span class="bl-rate-char">${escapeHtml(ch)}</span>
+                    <div class="bl-rate-metrics">
+                        ${metricBlock(txtPinyin, stat[ch].pyC, stat[ch].pyT)}
+                        ${metricBlock(txtComp, stat[ch].compC, stat[ch].compT)}
+                    </div>
+                </div>`).join('');
+
+            const doneText = tt(`${doneCount} 人做过`, `${doneCount} done`, `${doneCount} أكملوا`);
+
+            html += `
+                <div class="bl-rate-card">
+                    <div class="bl-rate-head">
+                        <span class="bl-rate-title">${escapeHtml(title)}</span>
+                        <span class="bl-rate-done">${escapeHtml(doneText)}</span>
+                    </div>
+                    <div class="bl-rate-overall">
+                        ${overallItem(txtPinyin, overallPy)}
+                        ${overallItem(txtComp, overallComp)}
+                    </div>
+                    <div class="bl-rate-chars">${charRows}</div>
+                </div>`;
+        });
+
+        box.innerHTML = html;
     }
 
     async function kickStudent(studentCode, studentName) {
@@ -9363,6 +9581,8 @@ window.BL = (function () {
         openTasksView, backToClassList,
         // —— Phase 4-1 (v2D-8): 学生管理 ——
         openStudentsView, kickStudent,
+        // —— Phase 4-2: 答对率 ——
+        switchStudentTab,
         openTaskEditor, closeTaskEditor, selectTaskType, submitTask,
         toggleArchiveTask, deleteTask,
         // —— Phase 2B 第 2 轮 (v2B-r2) ——
