@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字联动-v4-6 (2026-06-17) — 精修: 顶部功能按钮栏重新分配宽度(短按钮收窄可压缩,"下载中心"/"班级与任务"加宽不压缩+主标nowrap),切语言不再排两行(承 v4-5) -->
+<!-- 斑斓汉字(老师端) · 汉字联动-v4-7 (2026-06-17) — 精修: 顶部 6 个功能按钮统一固定 200px 且彻底不压缩(切语言/展开下载中心大小都不变), 输入框收窄让出空间(承 v4-6) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -467,7 +467,7 @@
         .input-wrapper { position: relative; display: inline-flex; align-items: center; gap: 6px; }
         
         input[type="text"] {
-            padding: 12px 48px 12px 18px; width: min(280px, 80vw); border-radius: 4px;
+            padding: 12px 44px 12px 14px; width: min(200px, 46vw); border-radius: 4px;
             border: 1px solid var(--border); border-bottom: 2px solid var(--ink-green-light);
             background: rgba(255, 255, 255, 0.85); text-align: center; font-size: 20px;
             font-family: var(--font-main); color: var(--ink-green); outline: none; transition: all 0.3s;
@@ -1484,24 +1484,12 @@
                 letter-spacing: 1.5px;
                 height: 80px;
                 box-sizing: border-box;
-                white-space: nowrap;   /* ★ v4-6: 主标不换行(副标是 block,各自单行) */
-            }
-            /* ★ v4-6: 短文字按钮收窄 + 允许被压缩,把行内空间让给长文字按钮 */
-            .controls-bar > .btn-gen,
-            .controls-bar > .btn-tts-studio,
-            .controls-bar > .btn-seal,
-            .controls-bar > .btn-feedback {
-                width: 185px;
-                flex-shrink: 1;
-            }
-            /* ★ v4-6: 长文字按钮("下载中心"/"班级与任务")给足宽度 + 不被压缩 → 切语言保持单行 */
-            .controls-bar > .btn-toggle-dl {
-                width: 235px;
-                flex-shrink: 0;
-            }
-            .controls-bar > .btn-linkage {
-                width: 230px;
-                flex-shrink: 0;
+                white-space: nowrap;
+                /* ★ v4-7: 6 个按钮统一固定 200px + 彻底不压缩(flex 不增不减) →
+                   切中/英/阿、展开下载中心,每个方框大小都纹丝不动;
+                   200px 已容纳最长的 "Collapse Download Center" 单行 */
+                width: 200px;
+                flex: 0 0 200px;
             }
             .controls-bar > .btn-toggle-dl .btn-en {
                 white-space: nowrap;
