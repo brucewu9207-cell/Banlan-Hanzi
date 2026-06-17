@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字联动-v4-4 (2026-06-17) — 精修: 明细表右下角"任务整体"答对率加标签+高亮(承 v4-3) -->
+<!-- 斑斓汉字(老师端) · 汉字联动-v4-6 (2026-06-17) — 精修: 顶部功能按钮栏重新分配宽度(短按钮收窄可压缩,"下载中心"/"班级与任务"加宽不压缩+主标nowrap),切语言不再排两行(承 v4-5) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -811,15 +811,19 @@
         }
         .bl-rate-overall {
             display: flex;
-            gap: 28px;
-            padding: 12px 18px;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 14px;
             background: var(--bg-paper);
             border-radius: 8px;
             margin-bottom: 16px;
         }
-        .bl-rate-overall-item { display: flex; flex-direction: column; gap: 3px; }
-        .bl-rate-overall-label { font-size: 12px; color: var(--ink-gray); }
-        .bl-rate-overall-val { font-size: 22px; font-weight: 700; line-height: 1; }
+        .bl-rate-ov-lead { min-width: 30px; text-align: center; font-size: 12px; font-weight: 600; color: var(--mo-dark); white-space: nowrap; }
+        .bl-rate-ov-metrics { display: flex; gap: 22px; flex: 1; flex-wrap: wrap; }
+        .bl-rate-ov-cell { display: flex; align-items: center; gap: 8px; min-width: 145px; flex: 1; }
+        .bl-rate-ov-label { font-size: 12px; color: var(--ink-gray); min-width: 30px; }
+        .bl-rate-ov-spacer { flex: 1; min-width: 40px; }
+        .bl-rate-ov-val { font-size: 19px; font-weight: 700; min-width: 38px; text-align: right; }
         .bl-rate-chars { display: flex; flex-direction: column; gap: 9px; }
         .bl-rate-char-row { display: flex; align-items: center; gap: 14px; }
         .bl-rate-char {
@@ -846,7 +850,8 @@
         @media (max-width: 768px) {
             .bl-rate-metrics { flex-direction: column; gap: 8px; }
             .bl-rate-metric { min-width: 0; width: 100%; }
-            .bl-rate-overall { gap: 18px; }
+            .bl-rate-ov-metrics { flex-direction: column; gap: 8px; }
+            .bl-rate-ov-cell { min-width: 0; width: 100%; }
             .bl-stu-tab { padding: 8px 14px; font-size: 13px; }
         }
 
@@ -1477,16 +1482,26 @@
                 padding: 14px 20px;
                 font-size: 17px;
                 letter-spacing: 1.5px;
-                /* ★ v2D.1: 195 → 220,容纳"班级与任务 / Classes & Tasks"双语单行;
-                   并把 .btn-linkage 加进锁定区,切换语言时不再移动 */
-                width: 220px;
                 height: 80px;
                 box-sizing: border-box;
+                white-space: nowrap;   /* ★ v4-6: 主标不换行(副标是 block,各自单行) */
             }
-            /* 【v46】单独加宽"下载中心"按钮：展开状态的 "Collapse Download Center" 需要更多空间，
-               固定宽度保证折叠/展开两态视觉一致 */
+            /* ★ v4-6: 短文字按钮收窄 + 允许被压缩,把行内空间让给长文字按钮 */
+            .controls-bar > .btn-gen,
+            .controls-bar > .btn-tts-studio,
+            .controls-bar > .btn-seal,
+            .controls-bar > .btn-feedback {
+                width: 185px;
+                flex-shrink: 1;
+            }
+            /* ★ v4-6: 长文字按钮("下载中心"/"班级与任务")给足宽度 + 不被压缩 → 切语言保持单行 */
             .controls-bar > .btn-toggle-dl {
                 width: 235px;
+                flex-shrink: 0;
+            }
+            .controls-bar > .btn-linkage {
+                width: 230px;
+                flex-shrink: 0;
             }
             .controls-bar > .btn-toggle-dl .btn-en {
                 white-space: nowrap;
@@ -9134,10 +9149,12 @@ window.BL = (function () {
             const col = pctColor(p);
             return `<div class="bl-rate-metric"><span class="bl-rate-metric-label">${escapeHtml(label)}</span><span class="bl-rate-track"><span class="bl-rate-fill" style="width:${p}%;background:${col};"></span></span><span class="bl-rate-val" style="color:${col};">${p}%</span></div>`;
         };
-        // 整体大数字
-        const overallItem = (label, p) => {
-            if (p === null) return `<div class="bl-rate-overall-item"><span class="bl-rate-overall-label">${escapeHtml(label)}</span><span class="bl-rate-na">${txtNA}</span></div>`;
-            return `<div class="bl-rate-overall-item"><span class="bl-rate-overall-label">${escapeHtml(label)}</span><span class="bl-rate-overall-val" style="color:${pctColor(p)};">${p}%</span></div>`;
+        // 整体大数字 (照搬逐字 metric 的列结构,使其上下对齐)
+        const overallCell = (label, p) => {
+            const valHtml = (p === null)
+                ? `<span class="bl-rate-ov-val bl-rate-na">${txtNA}</span>`
+                : `<span class="bl-rate-ov-val" style="color:${pctColor(p)};">${p}%</span>`;
+            return `<div class="bl-rate-ov-cell"><span class="bl-rate-ov-label">${escapeHtml(label)}</span><span class="bl-rate-ov-spacer"></span>${valHtml}</div>`;
         };
 
         let html = '';
@@ -9184,8 +9201,11 @@ window.BL = (function () {
                         <span class="bl-rate-done">${escapeHtml(doneText)}</span>
                     </div>
                     <div class="bl-rate-overall">
-                        ${overallItem(txtPinyin, overallPy)}
-                        ${overallItem(txtComp, overallComp)}
+                        <span class="bl-rate-ov-lead">${escapeHtml(txtOverall)}</span>
+                        <div class="bl-rate-ov-metrics">
+                            ${overallCell(txtPinyin, overallPy)}
+                            ${overallCell(txtComp, overallComp)}
+                        </div>
                     </div>
                     <div class="bl-rate-chars">${charRows}</div>
                 </div>`;
