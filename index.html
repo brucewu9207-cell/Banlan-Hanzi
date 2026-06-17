@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字联动-v4-7 (2026-06-17) — 精修: 顶部 6 个功能按钮统一固定 200px 且彻底不压缩(切语言/展开下载中心大小都不变), 输入框收窄让出空间(承 v4-6) -->
+<!-- 斑斓汉字(老师端) · 汉字UI-1 (2026-06-17) — UI细化①: 顶部整行被挤出屏幕(输入框/班级任务被裁), 把 5 个功能按钮 200px→170px(仍固定不压缩), 下载中心单独保持 200px, 输入框不动; 仅改桌面 ≥601px, 手机端两列网格不动 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -8,6 +8,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
+    console.log('%c[斑斓汉字] 汉字UI-1 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1485,9 +1486,15 @@
                 height: 80px;
                 box-sizing: border-box;
                 white-space: nowrap;
-                /* ★ v4-7: 6 个按钮统一固定 200px + 彻底不压缩(flex 不增不减) →
-                   切中/英/阿、展开下载中心,每个方框大小都纹丝不动;
-                   200px 已容纳最长的 "Collapse Download Center" 单行 */
+                /* ★ 汉字UI-1: 原 6 按钮统一 200px → 整行被挤出屏幕(输入框/班级任务被裁)。
+                   现把 5 个功能按钮收窄到 170px(仍固定不压缩,切中/英/阿大小不变),
+                   下载中心(btn-toggle-dl)单独保持 200px——它展开成"收起下载中心/Collapse Download Center"最长。
+                   170px 内容区约 130px,最宽的"班级与任务"(中文约117px)/"Audio Generation"仍有余量不切字 */
+                width: 170px;
+                flex: 0 0 170px;
+            }
+            /* 下载中心单独保持 200px(承上,容纳展开态最长英文,不随其它按钮收窄) */
+            .controls-bar > .btn-toggle-dl {
                 width: 200px;
                 flex: 0 0 200px;
             }
