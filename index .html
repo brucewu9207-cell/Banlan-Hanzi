@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- 斑斓汉字(老师端) · 汉字联动-v4-5 (2026-06-17) — 精修: 答对率页"整体"百分比改为与逐字的拼音列/部件列上下对齐(承 v4-4) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -536,11 +537,12 @@
         /* 联动弹窗主体 */
         .bl-modal {
             background: #fff;
-            /* ★ v2D.5: 固定 width 720px,完全消除语言切换时的弹窗尺寸跳变
-               原方案 (width: 100% + max-width: 720px) 在视口宽度变化时不稳定,
-               改用绝对 width + 小屏 calc 兜底 */
+            /* ★ v2D.6: 三重锁定 720px,完全消除任何宽度变化可能性
+               (min-width + width + max-width 同值,无视 viewport 变化、
+                滚动条出现/消失、字体渲染差异) */
+            min-width: 720px;
             width: 720px;
-            max-width: calc(100vw - 16px);
+            max-width: 720px;
             max-height: 92vh;
             border-radius: 10px;
             border: 1px solid var(--border-light, #d0d7d3);
@@ -549,6 +551,10 @@
             overflow: hidden; position: relative;
             box-sizing: border-box;
         }
+        /* ★ v2D.6: 班级编辑器锁死 520px */
+        .bl-modal-w520 { min-width: 520px; width: 520px; max-width: 520px; }
+        /* ★ v2D.6: 任务编辑器锁死 560px */
+        .bl-modal-w560 { min-width: 560px; width: 560px; max-width: 560px; }
         .bl-modal::before {
             content: ''; position: absolute; top: 0; left: 24px; right: 24px;
             height: 3px; background: var(--ink-green);
@@ -703,6 +709,286 @@
             transition: all 0.2s;
         }
         .bl-class-card:hover { background: #d4e6dc; border-left-color: var(--zhusha); }
+
+        /* —— Phase 4-1 (v2D-8): 学生卡片样式 —— */
+        .bl-student-card {
+            background: #fff;
+            border: 1px solid #e0e7ee;
+            border-left: 4px solid #5b8db8;
+            border-radius: 8px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            transition: all 0.2s;
+        }
+        .bl-student-card:hover {
+            background: #f5f9fc;
+            border-left-color: var(--zhusha);
+        }
+        .bl-student-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .bl-student-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--ink-green);
+            margin-bottom: 4px;
+        }
+        .bl-student-meta {
+            font-size: 13px;
+            color: var(--ink-gray);
+        }
+        .bl-student-kick-btn {
+            background: none;
+            border: 1px solid #dc3545;
+            color: #dc3545;
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .bl-student-kick-btn:hover {
+            background: #dc3545;
+            color: white;
+        }
+
+        /* ═══ Phase 4-2: 答对率展示 ═══ */
+        .bl-stu-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 18px;
+            border-bottom: 1px solid var(--border);
+        }
+        .bl-stu-tab {
+            padding: 9px 20px;
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--ink-gray);
+            font-family: var(--font-main);
+            transition: all 0.2s;
+        }
+        .bl-stu-tab:hover { color: var(--ink-green-light); }
+        .bl-stu-tab-active {
+            color: var(--ink-green);
+            border-bottom-color: var(--ink-green);
+            font-weight: 600;
+        }
+        .bl-rate-card {
+            background: rgba(255,255,255,0.55);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin-bottom: 16px;
+        }
+        .bl-rate-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 14px;
+            gap: 12px;
+        }
+        .bl-rate-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--mo-dark);
+        }
+        .bl-rate-done {
+            font-size: 12px;
+            color: var(--ink-gray);
+            white-space: nowrap;
+        }
+        .bl-rate-overall {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 14px;
+            background: var(--bg-paper);
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+        .bl-rate-ov-lead { min-width: 30px; text-align: center; font-size: 12px; font-weight: 600; color: var(--mo-dark); white-space: nowrap; }
+        .bl-rate-ov-metrics { display: flex; gap: 22px; flex: 1; flex-wrap: wrap; }
+        .bl-rate-ov-cell { display: flex; align-items: center; gap: 8px; min-width: 145px; flex: 1; }
+        .bl-rate-ov-label { font-size: 12px; color: var(--ink-gray); min-width: 30px; }
+        .bl-rate-ov-spacer { flex: 1; min-width: 40px; }
+        .bl-rate-ov-val { font-size: 19px; font-weight: 700; min-width: 38px; text-align: right; }
+        .bl-rate-chars { display: flex; flex-direction: column; gap: 9px; }
+        .bl-rate-char-row { display: flex; align-items: center; gap: 14px; }
+        .bl-rate-char {
+            font-size: 20px;
+            font-family: var(--font-calligraphy);
+            color: var(--mo-dark);
+            min-width: 30px;
+            text-align: center;
+        }
+        .bl-rate-metrics { display: flex; gap: 22px; flex: 1; flex-wrap: wrap; }
+        .bl-rate-metric { display: flex; align-items: center; gap: 8px; min-width: 145px; flex: 1; }
+        .bl-rate-metric-label { font-size: 12px; color: var(--ink-gray); min-width: 30px; }
+        .bl-rate-track {
+            flex: 1;
+            height: 7px;
+            background: var(--border-light);
+            border-radius: 4px;
+            overflow: hidden;
+            min-width: 40px;
+        }
+        .bl-rate-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+        .bl-rate-val { font-size: 13px; font-weight: 600; min-width: 38px; text-align: right; }
+        .bl-rate-na { color: var(--ink-gray); font-size: 12px; font-style: italic; }
+        @media (max-width: 768px) {
+            .bl-rate-metrics { flex-direction: column; gap: 8px; }
+            .bl-rate-metric { min-width: 0; width: 100%; }
+            .bl-rate-ov-metrics { flex-direction: column; gap: 8px; }
+            .bl-rate-ov-cell { min-width: 0; width: 100%; }
+            .bl-stu-tab { padding: 8px 14px; font-size: 13px; }
+        }
+
+        /* ═══ Phase 4-2 阶段③: 学生视角(作答详情) ═══ */
+        .bl-student-card-wrap { margin-bottom: 10px; }
+        .bl-student-card-wrap .bl-student-card { margin-bottom: 0; }
+        .bl-student-actions { display: flex; gap: 8px; flex-shrink: 0; }
+        .bl-student-detail-btn {
+            background: none;
+            border: 1px solid var(--ink-green);
+            color: var(--ink-green);
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .bl-student-detail-btn:hover { background: var(--ink-green); color: #fff; }
+        .bl-student-detail {
+            background: rgba(255,255,255,0.5);
+            border: 1px solid var(--border-light);
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            padding: 14px 18px;
+        }
+        .bl-stu-detail-empty { color: var(--ink-gray); font-size: 13px; text-align: center; padding: 8px; }
+        .bl-stu-detail-task { margin-bottom: 16px; }
+        .bl-stu-detail-task:last-child { margin-bottom: 0; }
+        .bl-stu-detail-task-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--mo-dark);
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .bl-stu-detail-chars { display: flex; flex-direction: column; gap: 7px; }
+        .bl-stu-detail-char { display: flex; align-items: center; gap: 18px; font-size: 13px; }
+        .bl-stu-detail-zi {
+            font-size: 18px;
+            font-family: var(--font-calligraphy);
+            color: var(--mo-dark);
+            min-width: 28px;
+            text-align: center;
+        }
+        .bl-stu-detail-mark { display: flex; align-items: center; gap: 6px; color: var(--ink-gray); min-width: 72px; }
+        .bl-mark-ok { color: var(--ink-green); font-weight: 700; font-size: 15px; }
+        .bl-mark-no { color: var(--zhusha); font-weight: 700; font-size: 15px; }
+        .bl-mark-na { color: var(--ink-gray); font-size: 14px; }
+        @media (max-width: 768px) {
+            .bl-student-actions { flex-direction: column; gap: 6px; }
+            .bl-stu-detail-char { gap: 12px; }
+        }
+
+        /* ═══ Phase 4-2 阶段④: 明细表(矩阵) ═══ */
+        .bl-matrix-task { margin-bottom: 30px; }
+        .bl-matrix-task:last-child { margin-bottom: 0; }
+        .bl-matrix-task-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--mo-dark);
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 4px;
+        }
+        .bl-matrix-sub {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--ink-green);
+            margin: 16px 0 8px;
+        }
+        .bl-matrix-scroll {
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            -webkit-overflow-scrolling: touch;
+        }
+        .bl-matrix-table {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+        .bl-matrix-table th, .bl-matrix-table td {
+            padding: 9px 12px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .bl-matrix-table thead th {
+            background: var(--bg-paper);
+            color: var(--mo-dark);
+            font-weight: 600;
+        }
+        .bl-matrix-zi { font-family: var(--font-calligraphy); font-size: 18px; }
+        .bl-matrix-name {
+            text-align: left;
+            font-weight: 500;
+            color: var(--mo-dark);
+            position: sticky;
+            left: 0;
+            background: #f4f8f5;
+            z-index: 1;
+        }
+        .bl-matrix-table thead .bl-matrix-name { background: var(--bg-paper); }
+        .bl-matrix-rowend { font-weight: 700; }
+        .bl-matrix-footer td {
+            background: var(--bg-paper);
+            font-weight: 600;
+            border-top: 2px solid var(--border);
+        }
+        .bl-matrix-footer td.bl-matrix-corner {
+            background: rgba(196,153,98,0.14);
+            font-weight: 700;
+        }
+        .bl-matrix-corner-label {
+            font-size: 10px;
+            color: var(--gold-accent);
+            font-weight: 600;
+            white-space: nowrap;
+            margin-bottom: 1px;
+        }
+        .bl-matrix-corner-val { font-size: 15px; font-weight: 700; line-height: 1.15; }
+        .bl-matrix-ok { color: var(--ink-green); font-weight: 700; font-size: 15px; }
+        .bl-matrix-no { color: var(--zhusha); font-weight: 700; font-size: 15px; }
+        .bl-matrix-na { color: var(--ink-gray); }
+        @media (max-width: 768px) {
+            .bl-matrix-table th, .bl-matrix-table td { padding: 7px 9px; }
+            .bl-matrix-zi { font-size: 16px; }
+        }
+        @media (max-width: 768px) {
+            .bl-student-card { padding: 12px; }
+            .bl-student-name { font-size: 15px; }
+            .bl-student-meta { font-size: 12px; }
+            .bl-student-kick-btn { padding: 5px 10px; font-size: 12px; }
+        }
         .bl-class-info { flex: 1; min-width: 0; }
         .bl-class-code {
             display: inline-block;
@@ -783,7 +1069,13 @@
 
         /* 手机端适配 */
         @media (max-width: 600px) {
-            .bl-modal { width: 100%; max-width: 100%; max-height: 95vh; border-radius: 8px; }
+            /* ★ v2D.6: 手机端撤销三重锁定,改 100% 撑满 */
+            .bl-modal,
+            .bl-modal-w520,
+            .bl-modal-w560 {
+                min-width: 0; width: 100%; max-width: 100%;
+                max-height: 95vh; border-radius: 8px;
+            }
             .bl-header { padding: 14px 16px 10px; }
             .bl-header h3 { font-size: 17px; letter-spacing: 1.5px; }
             .bl-tabs { padding: 6px 12px 0; }
@@ -7778,7 +8070,7 @@
 </script>
 
 <!-- ════════════════════════════════════════════════════════════════
-     【斑斓联动模块 / Banlan Linkage Module】v2D.5 (Phase 2B 双语化 hotfix5 - 固定弹窗宽度,消除语言切换跳变)
+     【斑斓联动模块 / Banlan Linkage Module】v2D.7 (Phase 2B 双语化 hotfix7 - JS 强制锁死弹窗宽度)
      - 由 feature flag 控制显示
      - 完全独立，对原工具零侵入
      - 关闭时整个模块隐藏，工具表现等同 v1
@@ -7875,6 +8167,35 @@
                 </div>
             </div>
 
+            <!-- Phase 4-1 (v2D-8): 学生列表视图 -->
+            <div id="blViewStudents" style="display:none;">
+                <button class="bl-back-btn" onclick="BL.backToClassList()">← 返回班级列表<span class="lang-en">Back to Classes</span><span class="lang-ar">العودة</span></button>
+                <div class="bl-tasks-header">
+                    <div class="bl-tasks-title">
+                        <span class="bl-tasks-class-tag" id="blStudentsClassTag">—</span>
+                        <span id="blStudentsClassName">—</span>
+                        <span style="color:var(--ink-gray); font-weight:normal; font-size:13px; margin-left:8px;" id="blStudentsCount">
+                            —
+                        </span>
+                    </div>
+                </div>
+                <!-- Phase 4-2: 学生名单 / 答对率 / 明细表 标签 -->
+                <div class="bl-stu-tabs">
+                    <button class="bl-stu-tab bl-stu-tab-active" id="blStuTabList" onclick="BL.switchStudentTab('list')">学生名单<span class="lang-en">Students</span><span class="lang-ar">الطلاب</span></button>
+                    <button class="bl-stu-tab" id="blStuTabRate" onclick="BL.switchStudentTab('rate')">答对率<span class="lang-en">Accuracy</span><span class="lang-ar">معدل الدقة</span></button>
+                    <button class="bl-stu-tab" id="blStuTabMatrix" onclick="BL.switchStudentTab('matrix')">明细表<span class="lang-en">Table</span><span class="lang-ar">الجدول</span></button>
+                </div>
+                <div class="bl-task-list" id="blStudentList">
+                    <!-- 动态生成 -->
+                </div>
+                <div id="blAnswerRate" style="display:none;">
+                    <!-- Phase 4-2 答对率,动态生成 -->
+                </div>
+                <div id="blMatrix" style="display:none;">
+                    <!-- Phase 4-2 阶段④ 明细表,动态生成 -->
+                </div>
+            </div>
+
             <!-- 账号视图 -->
             <div id="blViewAccount" style="display:none;">
                 <div class="bl-user-bar">
@@ -7902,7 +8223,7 @@
 
 <!-- 班级编辑器 (创建/编辑) -->
 <div class="bl-overlay" id="blClassEditorOverlay">
-    <div class="bl-modal" style="width:520px; max-width:calc(100vw - 16px);">
+    <div class="bl-modal bl-modal-w520">
         <div class="bl-header">
             <h3 id="blClassEditorTitle">+ 新建班级</h3>
             <button class="bl-close" onclick="BL.closeClassEditor()">×</button>
@@ -7931,7 +8252,7 @@
 
 <!-- 任务编辑器 (Phase 2B 新增, 创建/编辑) -->
 <div class="bl-overlay" id="blTaskEditorOverlay">
-    <div class="bl-modal" style="width:560px; max-width:calc(100vw - 16px);">
+    <div class="bl-modal bl-modal-w560">
         <div class="bl-header">
             <h3 id="blTaskEditorTitle">+ 新建任务</h3>
             <button class="bl-close" onclick="BL.closeTaskEditor()">×</button>
@@ -7984,7 +8305,7 @@
 
 <script>
 /* ══════════════════════════════════════════════════════════════════
-   斑斓联动模块 v2D.5 (Phase 2B 双语化 hotfix5) · JavaScript
+   斑斓联动模块 v2D.7 (Phase 2B 双语化 hotfix7) · JavaScript
    - 全部代码命名空间挂在 window.BL 下，避免污染全局
    - 通过 feature flag 控制 UI 显示
    ══════════════════════════════════════════════════════════════════ */
@@ -8014,6 +8335,8 @@ window.BL = (function () {
         selectedClasses: [],         // 多班推送时勾选的班级码数组
         showArchived: false,         // 是否在列表中显示归档任务
         selectedTaskIds: [],         // 批量选中的任务 ID 数组
+        // —— Phase 4-1 (v2D-8) ——
+        students: [],                // 当前班级的学生列表
     };
 
     // ─────────────────────────────────────────
@@ -8222,6 +8545,9 @@ window.BL = (function () {
                     document.getElementById('blClassCodeHint').textContent = tt('2-20 位字母数字横线下划线，学生用这个码加入班级', '2-20 chars (letters/digits/-/_); students use this code to join', '2-20 حرف (أحرف/أرقام/-/_)؛ يستخدمه الطلاب للانضمام');
                 }
             }
+
+            // ★ v2D.7: 切换语言后强制重新锁定弹窗宽度,防止任何因素引起的宽度跳变
+            lockBlModalWidth();
         });
 
         // 1) 先处理 URL 解锁参数
@@ -8317,8 +8643,43 @@ window.BL = (function () {
     // ─────────────────────────────────────────
     // 面板开关
     // ─────────────────────────────────────────
+    // ═════════════════════════════════════════════════════════════
+    // ★ v2D.7 弹窗宽度强制锁定 (JS 兜底, 比 CSS 优先级更高)
+    // 用 setProperty(..., 'important') 给 inline style 加 !important,
+    // 确保切换语言/视口变化时弹窗宽度绝对不变
+    // ═════════════════════════════════════════════════════════════
+    function lockBlModalWidth() {
+        const isMobile = window.innerWidth < 600;
+        const targets = [
+            ['#blOverlay .bl-modal', 720],
+            ['#blClassEditorOverlay .bl-modal', 520],
+            ['#blTaskEditorOverlay .bl-modal', 560]
+        ];
+        targets.forEach(function(item) {
+            const m = document.querySelector(item[0]);
+            if (!m) return;
+            if (isMobile) {
+                m.style.removeProperty('min-width');
+                m.style.removeProperty('width');
+                m.style.removeProperty('max-width');
+            } else {
+                m.style.setProperty('min-width', item[1] + 'px', 'important');
+                m.style.setProperty('width', item[1] + 'px', 'important');
+                m.style.setProperty('max-width', item[1] + 'px', 'important');
+            }
+        });
+    }
+
+    // 监听窗口大小变化,在桌面端 <-> 手机端切换时重设
+    let blResizeTimer = null;
+    window.addEventListener('resize', function() {
+        clearTimeout(blResizeTimer);
+        blResizeTimer = setTimeout(lockBlModalWidth, 150);
+    });
+
     function openPanel() {
         $('blOverlay').classList.add('bl-show');
+        lockBlModalWidth();
         if (state.teacher) {
             showLoggedInView();
             loadClasses();
@@ -8453,6 +8814,7 @@ window.BL = (function () {
         }
 
         // ★ v2D.3: 按钮 title (单词级 tt 没问题,因为是 title 属性,不竖排显示)
+        const titleStudents = tt('学生管理', 'Students', 'الطلاب');
         const titleTasks = tt('任务管理', 'Tasks', 'المهام');
         const titleEdit = tt('编辑', 'Edit', 'تعديل');
         const titleDelete = tt('删除', 'Delete', 'حذف');
@@ -8477,6 +8839,7 @@ window.BL = (function () {
                     <div class="bl-class-meta">${escapeHtml(metaText)}${escapeHtml(descLine)}</div>
                 </div>
                 <div class="bl-class-actions">
+                    <button class="bl-icon-btn" onclick="BL.openStudentsView('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleStudents)}">👥 ${c.studentCount || 0}</button>
                     <button class="bl-icon-btn" onclick="BL.openTasksView('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleTasks)}">📋 ${c.taskCount || 0}</button>
                     <button class="bl-icon-btn" onclick="BL.openClassEditor('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleEdit)}">✎</button>
                     <button class="bl-icon-btn bl-danger-icon" onclick="BL.deleteClass('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleDelete)}">🗑</button>
@@ -8514,6 +8877,7 @@ window.BL = (function () {
             $('blClassDescription').value = '';
         }
         $('blClassEditorOverlay').classList.add('bl-show');
+        lockBlModalWidth();
     }
 
     function closeClassEditor() {
@@ -8618,9 +8982,413 @@ window.BL = (function () {
         state.currentClassCode = null;
         state.currentClassInfo = null;
         state.tasks = [];
+        state.students = [];                          // ★ v2D-8
         $('blViewTasks').style.display = 'none';
+        $('blViewStudents').style.display = 'none';   // ★ v2D-8
         $('blViewClasses').style.display = '';
         renderClasses();  // 用本地最新数据立即重渲染,看到正确的 📋 N
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // Phase 4-1 (v2D-8) · 学生管理:查看学生列表 + 踢出学生
+    // ═══════════════════════════════════════════════════════════════
+    async function openStudentsView(classCode) {
+        const cls = state.classes.find(c => c.classCode === classCode);
+        if (!cls) {
+            toast(tt('班级不存在', 'Class not found', 'الفصل غير موجود'), 'error');
+            return;
+        }
+        state.currentClassCode = classCode;
+        state.currentClassInfo = cls;
+        state.students = [];
+
+        // 切换显示
+        $('blViewClasses').style.display = 'none';
+        $('blViewAccount').style.display = 'none';
+        $('blViewTasks').style.display = 'none';
+        $('blViewStudents').style.display = '';
+
+        // 填充头部
+        $('blStudentsClassTag').textContent = cls.classCode;
+        $('blStudentsClassName').textContent = cls.name;
+        $('blStudentsCount').textContent = '...';
+        $('blStudentList').innerHTML = '<div class="bl-empty"><div class="bl-empty-text" style="color:var(--ink-gray);">' + escapeHtml(tt('加载中...', 'Loading...', 'جاري التحميل...')) + '</div></div>';
+
+        switchStudentTab('list');  // ★ Phase 4-2: 每次打开默认回到"学生名单"标签
+
+        await loadStudents();
+        await loadTasksForRate();  // ★ Phase 4-2: 答对率展示需要任务标题
+    }
+
+    async function loadStudents() {
+        if (!state.currentClassCode) return;
+        try {
+            const data = await api('GET',
+                '/api/classes/' + encodeURIComponent(state.currentClassCode) + '/students');
+            state.students = data.students || [];
+            renderStudents();
+        } catch (e) {
+            toast(tt('加载学生失败', 'Failed to load students', 'فشل تحميل الطلاب') + '：' + e.message, 'error');
+            $('blStudentList').innerHTML = '<div class="bl-empty"><div class="bl-empty-text" style="color:var(--ink-gray);">' + escapeHtml(tt('加载失败,请重试', 'Failed to load, retry', 'فشل، حاول مرة أخرى')) + '</div></div>';
+        }
+    }
+
+    function renderStudents() {
+        const list = $('blStudentList');
+        const n = state.students.length;
+        $('blStudentsCount').textContent = tt(
+            `${n} 学生`,
+            `${n} student${n === 1 ? '' : 's'}`,
+            `${n} طلاب`
+        );
+
+        if (n === 0) {
+            list.innerHTML = `
+                <div class="bl-empty">
+                    <div class="bl-empty-icon">👥</div>
+                    <div class="bl-empty-text">${escapeHtml(tt('还没有学生加入', 'No students joined yet', 'لا يوجد طلاب بعد'))}</div>
+                </div>
+            `;
+            return;
+        }
+
+        const taskTotal = state.currentClassInfo.taskCount || 0;
+        const txtKick = tt('踢出', 'Kick', 'إخراج');
+        const titleKick = tt('踢出学生', 'Kick Student', 'إخراج الطالب');
+        const txtDetail = tt('查看作答', 'View answers', 'عرض الإجابات');
+
+        list.innerHTML = state.students.map((s, idx) => {
+            const completed = (s.completedTasks || []).length;
+            const meta = tt(
+                `已完成 ${completed} / ${taskTotal} 任务`,
+                `Completed ${completed} / ${taskTotal} tasks`,
+                `أكمل ${completed} / ${taskTotal} مهام`
+            );
+            return `
+            <div class="bl-student-card-wrap">
+              <div class="bl-student-card">
+                <div class="bl-student-info">
+                    <div class="bl-student-name">${escapeHtml(s.name || s.studentCode)}</div>
+                    <div class="bl-student-meta">${escapeHtml(meta)}</div>
+                </div>
+                <div class="bl-student-actions">
+                    <button class="bl-student-detail-btn" onclick="BL.toggleStudentDetail(${idx})">${escapeHtml(txtDetail)}</button>
+                    <button class="bl-student-kick-btn" onclick="BL.kickStudent('${escapeAttr(s.studentCode)}', '${escapeAttr(s.name || s.studentCode)}')" title="${escapeAttr(titleKick)}">✗ ${escapeHtml(txtKick)}</button>
+                </div>
+              </div>
+              <div class="bl-student-detail" id="bl-stu-detail-${idx}" style="display:none;"></div>
+            </div>
+            `;
+        }).join('');
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // Phase 4-2 · 答对率:按任务展示全班整体 + 逐字答对率(拼音/部件)
+    // 数据来自 state.students 里每个学生的 taskResults (后端已存)
+    // ═══════════════════════════════════════════════════════════════
+    async function loadTasksForRate() {
+        if (!state.currentClassCode) return;
+        try {
+            const data = await api('GET',
+                '/api/classes/' + encodeURIComponent(state.currentClassCode) + '/tasks?includeArchived=true');
+            state.tasks = data.tasks || [];
+        } catch (e) { /* 静默:答对率会用 taskId 兜底显示 */ }
+    }
+
+    function switchStudentTab(tab) {
+        const panels = { list: 'blStudentList', rate: 'blAnswerRate', matrix: 'blMatrix' };
+        const tabBtns = { list: 'blStuTabList', rate: 'blStuTabRate', matrix: 'blStuTabMatrix' };
+        if (!panels[tab]) tab = 'list';
+        Object.entries(panels).forEach(([k, id]) => { if ($(id)) $(id).style.display = (k === tab) ? '' : 'none'; });
+        Object.entries(tabBtns).forEach(([k, id]) => { if ($(id)) $(id).classList.toggle('bl-stu-tab-active', k === tab); });
+        if (tab === 'rate') renderAnswerRate();
+        if (tab === 'matrix') renderMatrix();
+    }
+
+    function renderAnswerRate() {
+        const box = $('blAnswerRate');
+        if (!box) return;
+
+        // 收集所有"有学生做过"的任务 id (保持出现顺序)
+        const taskIds = [];
+        state.students.forEach(s => {
+            if (s.taskResults) Object.keys(s.taskResults).forEach(tid => {
+                if (!taskIds.includes(tid)) taskIds.push(tid);
+            });
+        });
+
+        if (taskIds.length === 0) {
+            box.innerHTML = `
+                <div class="bl-empty">
+                    <div class="bl-empty-icon">📊</div>
+                    <div class="bl-empty-text">${escapeHtml(tt('还没有学生完成任务，暂无答对率数据', 'No completed tasks yet — no accuracy data', 'لا توجد بيانات دقة بعد'))}</div>
+                </div>`;
+            return;
+        }
+
+        const pctColor = p => p >= 80 ? 'var(--ink-green)' : (p >= 60 ? 'var(--gold-accent)' : 'var(--zhusha)');
+        const txtPinyin = tt('拼音', 'Pinyin', 'بينيين');
+        const txtComp = tt('部件', 'Parts', 'مكوّنات');
+        const txtOverall = tt('整体', 'Overall', 'إجمالي');
+        const txtNA = '—';
+
+        // 一个指标(带进度条) 的 HTML
+        const metricBlock = (label, c, t) => {
+            if (t === 0) return `<div class="bl-rate-metric"><span class="bl-rate-metric-label">${escapeHtml(label)}</span><span class="bl-rate-na">${txtNA}</span></div>`;
+            const p = Math.round(c / t * 100);
+            const col = pctColor(p);
+            return `<div class="bl-rate-metric"><span class="bl-rate-metric-label">${escapeHtml(label)}</span><span class="bl-rate-track"><span class="bl-rate-fill" style="width:${p}%;background:${col};"></span></span><span class="bl-rate-val" style="color:${col};">${p}%</span></div>`;
+        };
+        // 整体大数字 (照搬逐字 metric 的列结构,使其上下对齐)
+        const overallCell = (label, p) => {
+            const valHtml = (p === null)
+                ? `<span class="bl-rate-ov-val bl-rate-na">${txtNA}</span>`
+                : `<span class="bl-rate-ov-val" style="color:${pctColor(p)};">${p}%</span>`;
+            return `<div class="bl-rate-ov-cell"><span class="bl-rate-ov-label">${escapeHtml(label)}</span><span class="bl-rate-ov-spacer"></span>${valHtml}</div>`;
+        };
+
+        let html = '';
+        taskIds.forEach(taskId => {
+            const task = (state.tasks || []).find(t => t.taskId === taskId);
+            const title = task ? task.title : tt('(已删除的任务)', '(deleted task)', '(مهمة محذوفة)');
+
+            // 聚合每字成绩
+            const charOrder = [];
+            const stat = {}; // char -> {pyC,pyT,compC,compT}
+            let doneCount = 0;
+            state.students.forEach(s => {
+                const tr = s.taskResults && s.taskResults[taskId];
+                if (!tr || !tr.chars) return;
+                doneCount++;
+                Object.entries(tr.chars).forEach(([ch, r]) => {
+                    if (!stat[ch]) { stat[ch] = { pyC:0, pyT:0, compC:0, compT:0 }; charOrder.push(ch); }
+                    if (r.py !== null && r.py !== undefined) { stat[ch].pyT++; if (r.py) stat[ch].pyC++; }
+                    if (r.comp !== null && r.comp !== undefined) { stat[ch].compT++; if (r.comp) stat[ch].compC++; }
+                });
+            });
+
+            // 任务整体汇总
+            let pyC=0, pyT=0, compC=0, compT=0;
+            charOrder.forEach(ch => { const c = stat[ch]; pyC+=c.pyC; pyT+=c.pyT; compC+=c.compC; compT+=c.compT; });
+            const overallPy = pyT ? Math.round(pyC / pyT * 100) : null;
+            const overallComp = compT ? Math.round(compC / compT * 100) : null;
+
+            const charRows = charOrder.map(ch => `
+                <div class="bl-rate-char-row">
+                    <span class="bl-rate-char">${escapeHtml(ch)}</span>
+                    <div class="bl-rate-metrics">
+                        ${metricBlock(txtPinyin, stat[ch].pyC, stat[ch].pyT)}
+                        ${metricBlock(txtComp, stat[ch].compC, stat[ch].compT)}
+                    </div>
+                </div>`).join('');
+
+            const doneText = tt(`${doneCount} 人做过`, `${doneCount} done`, `${doneCount} أكملوا`);
+
+            html += `
+                <div class="bl-rate-card">
+                    <div class="bl-rate-head">
+                        <span class="bl-rate-title">${escapeHtml(title)}</span>
+                        <span class="bl-rate-done">${escapeHtml(doneText)}</span>
+                    </div>
+                    <div class="bl-rate-overall">
+                        <span class="bl-rate-ov-lead">${escapeHtml(txtOverall)}</span>
+                        <div class="bl-rate-ov-metrics">
+                            ${overallCell(txtPinyin, overallPy)}
+                            ${overallCell(txtComp, overallComp)}
+                        </div>
+                    </div>
+                    <div class="bl-rate-chars">${charRows}</div>
+                </div>`;
+        });
+
+        box.innerHTML = html;
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // Phase 4-2 阶段③ · 学生视角:展开看某学生每个任务每个字的对错(✓/✗)
+    // ═══════════════════════════════════════════════════════════════
+    function toggleStudentDetail(idx) {
+        const box = $('bl-stu-detail-' + idx);
+        if (!box) return;
+        if (box.style.display === 'none') {
+            box.innerHTML = renderStudentDetail(state.students[idx]);
+            box.style.display = '';
+        } else {
+            box.style.display = 'none';
+        }
+    }
+
+    function renderStudentDetail(s) {
+        if (!s) return '';
+        const tr = s.taskResults || {};
+        const taskIds = Object.keys(tr);
+        if (taskIds.length === 0) {
+            return `<div class="bl-stu-detail-empty">${escapeHtml(tt('该学生还没完成任何任务', 'No tasks completed yet', 'لم يكمل أي مهمة بعد'))}</div>`;
+        }
+        const mark = v => (v === null || v === undefined)
+            ? `<span class="bl-mark-na">—</span>`
+            : (v ? `<span class="bl-mark-ok">✓</span>` : `<span class="bl-mark-no">✗</span>`);
+        const txtPinyin = tt('拼音', 'Pinyin', 'بينيين');
+        const txtComp = tt('部件', 'Parts', 'مكوّنات');
+
+        return taskIds.map(taskId => {
+            const task = (state.tasks || []).find(t => t.taskId === taskId);
+            const title = task ? task.title : tt('(已删除的任务)', '(deleted task)', '(مهمة محذوفة)');
+            const chars = tr[taskId].chars || {};
+            const rows = Object.entries(chars).map(([ch, r]) => `
+                <div class="bl-stu-detail-char">
+                    <span class="bl-stu-detail-zi">${escapeHtml(ch)}</span>
+                    <span class="bl-stu-detail-mark">${escapeHtml(txtPinyin)} ${mark(r.py)}</span>
+                    <span class="bl-stu-detail-mark">${escapeHtml(txtComp)} ${mark(r.comp)}</span>
+                </div>`).join('');
+            return `
+                <div class="bl-stu-detail-task">
+                    <div class="bl-stu-detail-task-title">${escapeHtml(title)}</div>
+                    <div class="bl-stu-detail-chars">${rows}</div>
+                </div>`;
+        }).join('');
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // Phase 4-2 阶段④ · 明细表(矩阵):按任务,拼音表+部件表
+    // 每张表: 学生×字对错 + 行末该生% + 列底每字% + 右下任务%
+    // ═══════════════════════════════════════════════════════════════
+    function renderMatrix() {
+        const box = $('blMatrix');
+        if (!box) return;
+
+        // 收集有学生做过的任务
+        const taskIds = [];
+        state.students.forEach(s => {
+            if (s.taskResults) Object.keys(s.taskResults).forEach(tid => {
+                if (!taskIds.includes(tid)) taskIds.push(tid);
+            });
+        });
+
+        if (taskIds.length === 0) {
+            box.innerHTML = `
+                <div class="bl-empty">
+                    <div class="bl-empty-icon">📋</div>
+                    <div class="bl-empty-text">${escapeHtml(tt('还没有学生完成任务，暂无明细', 'No completed tasks yet', 'لا توجد بيانات بعد'))}</div>
+                </div>`;
+            return;
+        }
+
+        let html = '';
+        taskIds.forEach(taskId => {
+            const task = (state.tasks || []).find(t => t.taskId === taskId);
+            const title = task ? task.title : tt('(已删除的任务)', '(deleted task)', '(مهمة محذوفة)');
+
+            // 做过该任务的学生
+            const doneStudents = state.students.filter(s =>
+                s.taskResults && s.taskResults[taskId] && s.taskResults[taskId].chars);
+
+            // 字序(按出现顺序)
+            const charOrder = [];
+            doneStudents.forEach(s => {
+                Object.keys(s.taskResults[taskId].chars).forEach(ch => {
+                    if (!charOrder.includes(ch)) charOrder.push(ch);
+                });
+            });
+
+            const doneText = tt(`${doneStudents.length} 人做过`, `${doneStudents.length} done`, `${doneStudents.length} أكملوا`);
+
+            html += `
+                <div class="bl-matrix-task">
+                    <div class="bl-matrix-task-title">${escapeHtml(title)} <span style="font-size:13px;font-weight:normal;color:var(--ink-gray);">· ${escapeHtml(doneText)}</span></div>
+                    ${buildOneMatrix(tt('拼音', 'Pinyin', 'بينيين'), taskId, doneStudents, charOrder, 'py')}
+                    ${buildOneMatrix(tt('部件', 'Parts', 'مكوّنات'), taskId, doneStudents, charOrder, 'comp')}
+                </div>`;
+        });
+
+        box.innerHTML = html;
+    }
+
+    // 生成单张矩阵(dim='py' 或 'comp')
+    function buildOneMatrix(label, taskId, students, charOrder, dim) {
+        const pctColor = p => p >= 80 ? 'var(--ink-green)' : (p >= 60 ? 'var(--gold-accent)' : 'var(--zhusha)');
+        const mark = v => (v === null || v === undefined)
+            ? '<span class="bl-matrix-na">—</span>'
+            : (v ? '<span class="bl-matrix-ok">✓</span>' : '<span class="bl-matrix-no">✗</span>');
+        const pctCell = (c, t) => {
+            if (t === 0) return '<span class="bl-matrix-na">—</span>';
+            const p = Math.round(c / t * 100);
+            return `<span style="color:${pctColor(p)};">${p}%</span>`;
+        };
+
+        // 表头
+        let thead = `<th class="bl-matrix-name">${escapeHtml(tt('学生', 'Student', 'الطالب'))}</th>`;
+        charOrder.forEach(ch => { thead += `<th class="bl-matrix-zi">${escapeHtml(ch)}</th>`; });
+        thead += `<th>${escapeHtml(tt('该生', 'Student', 'الطالب'))}</th>`;
+
+        // 列统计累加器
+        const colC = {}, colT = {};
+        charOrder.forEach(ch => { colC[ch] = 0; colT[ch] = 0; });
+
+        // 每个学生一行
+        let rows = '';
+        students.forEach(s => {
+            const chars = s.taskResults[taskId].chars;
+            let rowC = 0, rowT = 0, cells = '';
+            charOrder.forEach(ch => {
+                const r = chars[ch];
+                const v = r ? r[dim] : undefined;
+                cells += `<td>${mark(v)}</td>`;
+                if (v !== null && v !== undefined) {
+                    rowT++; colT[ch]++;
+                    if (v) { rowC++; colC[ch]++; }
+                }
+            });
+            rows += `<tr><td class="bl-matrix-name">${escapeHtml(s.name || s.studentCode)}</td>${cells}<td class="bl-matrix-rowend">${pctCell(rowC, rowT)}</td></tr>`;
+        });
+
+        // 列底统计 + 右下角
+        let footCells = '', totalC = 0, totalT = 0;
+        charOrder.forEach(ch => {
+            footCells += `<td>${pctCell(colC[ch], colT[ch])}</td>`;
+            totalC += colC[ch]; totalT += colT[ch];
+        });
+        const cornerPct = totalT ? Math.round(totalC / totalT * 100) : null;
+        const cornerInner = (cornerPct === null)
+            ? '<span class="bl-matrix-na">—</span>'
+            : `<div class="bl-matrix-corner-label">${escapeHtml(tt('任务整体', 'Task', 'المهمة'))}</div><div class="bl-matrix-corner-val" style="color:${pctColor(cornerPct)};">${cornerPct}%</div>`;
+        const footer = `<tr class="bl-matrix-footer"><td class="bl-matrix-name">${escapeHtml(tt('每字答对率', 'Per char', 'لكل حرف'))}</td>${footCells}<td class="bl-matrix-corner">${cornerInner}</td></tr>`;
+
+        return `
+            <div class="bl-matrix-sub">${escapeHtml(label)}</div>
+            <div class="bl-matrix-scroll">
+                <table class="bl-matrix-table">
+                    <thead><tr>${thead}</tr></thead>
+                    <tbody>${rows}${footer}</tbody>
+                </table>
+            </div>`;
+    }
+
+    async function kickStudent(studentCode, studentName) {
+        if (!state.currentClassCode) return;
+
+        const ok = confirm(tt(
+            `确定踢出学生「${studentName}」?\n\n该学生将退出班级,不再看到本班任务。`,
+            `Kick student "${studentName}"?\n\nStudent will leave the class.`,
+            `إخراج الطالب "${studentName}"؟`
+        ));
+        if (!ok) return;
+
+        try {
+            await api('DELETE',
+                '/api/classes/' + encodeURIComponent(state.currentClassCode) +
+                '/students/' + encodeURIComponent(studentCode));
+            toast(tt(`已踢出 ${studentName}`, `Kicked ${studentName}`, `تم الإخراج`), 'success');
+            // 本地移除
+            state.students = state.students.filter(s => s.studentCode !== studentCode);
+            // 本地维护 classes 的 studentCount
+            if (state.currentClassInfo) {
+                state.currentClassInfo.studentCount = Math.max(0, (state.currentClassInfo.studentCount || 1) - 1);
+            }
+            renderStudents();
+        } catch (e) {
+            toast(tt('踢出失败', 'Failed to kick', 'فشل الإخراج') + '：' + e.message, 'error');
+        }
     }
 
     // 拉取任务列表
@@ -8812,6 +9580,7 @@ window.BL = (function () {
         }
 
         $('blTaskEditorOverlay').classList.add('bl-show');
+        lockBlModalWidth();
         // 自动聚焦标题输入框
         setTimeout(() => { $('blTaskTitle').focus(); }, 100);
     }
@@ -9121,6 +9890,12 @@ window.BL = (function () {
         openClassEditor, closeClassEditor, submitClass, deleteClass,
         // —— Phase 2B 第 1 轮 ——
         openTasksView, backToClassList,
+        // —— Phase 4-1 (v2D-8): 学生管理 ——
+        openStudentsView, kickStudent,
+        // —— Phase 4-2: 答对率 ——
+        switchStudentTab,
+        // —— Phase 4-2 阶段③: 学生视角 ——
+        toggleStudentDetail,
         openTaskEditor, closeTaskEditor, selectTaskType, submitTask,
         toggleArchiveTask, deleteTask,
         // —— Phase 2B 第 2 轮 (v2B-r2) ——
