@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字联动-v4-3 (2026-06-17) — Phase 4-2 阶段④: 新增"明细表"标签, 按任务展示拼音表+部件表(学生×字对错 + 行末该生% + 列底每字% + 右下任务%) -->
+<!-- 斑斓汉字(老师端) · 汉字联动-v4-4 (2026-06-17) — 精修: 明细表右下角"任务整体"答对率加标签+高亮(承 v4-3) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -959,7 +959,18 @@
             font-weight: 600;
             border-top: 2px solid var(--border);
         }
-        .bl-matrix-corner { font-weight: 700; }
+        .bl-matrix-footer td.bl-matrix-corner {
+            background: rgba(196,153,98,0.14);
+            font-weight: 700;
+        }
+        .bl-matrix-corner-label {
+            font-size: 10px;
+            color: var(--gold-accent);
+            font-weight: 600;
+            white-space: nowrap;
+            margin-bottom: 1px;
+        }
+        .bl-matrix-corner-val { font-size: 15px; font-weight: 700; line-height: 1.15; }
         .bl-matrix-ok { color: var(--ink-green); font-weight: 700; font-size: 15px; }
         .bl-matrix-no { color: var(--zhusha); font-weight: 700; font-size: 15px; }
         .bl-matrix-na { color: var(--ink-gray); }
@@ -9327,7 +9338,11 @@ window.BL = (function () {
             footCells += `<td>${pctCell(colC[ch], colT[ch])}</td>`;
             totalC += colC[ch]; totalT += colT[ch];
         });
-        const footer = `<tr class="bl-matrix-footer"><td class="bl-matrix-name">${escapeHtml(tt('每字答对率', 'Per char', 'لكل حرف'))}</td>${footCells}<td class="bl-matrix-corner">${pctCell(totalC, totalT)}</td></tr>`;
+        const cornerPct = totalT ? Math.round(totalC / totalT * 100) : null;
+        const cornerInner = (cornerPct === null)
+            ? '<span class="bl-matrix-na">—</span>'
+            : `<div class="bl-matrix-corner-label">${escapeHtml(tt('任务整体', 'Task', 'المهمة'))}</div><div class="bl-matrix-corner-val" style="color:${pctColor(cornerPct)};">${cornerPct}%</div>`;
+        const footer = `<tr class="bl-matrix-footer"><td class="bl-matrix-name">${escapeHtml(tt('每字答对率', 'Per char', 'لكل حرف'))}</td>${footCells}<td class="bl-matrix-corner">${cornerInner}</td></tr>`;
 
         return `
             <div class="bl-matrix-sub">${escapeHtml(label)}</div>
