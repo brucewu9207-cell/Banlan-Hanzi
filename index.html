@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字联动-v4-1 (2026-06-17) — Phase 4-2 阶段②: 学生管理视图新增"答对率"标签, 按任务展示全班整体+逐字答对率(拼音/部件) -->
+<!-- 斑斓汉字(老师端) · 汉字联动-v4-2 (2026-06-17) — Phase 4-2 阶段③: 学生名单每个学生加"查看作答"按钮, 展开看该生每任务每字对错(承 v4-1 答对率) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -848,6 +848,59 @@
             .bl-rate-metric { min-width: 0; width: 100%; }
             .bl-rate-overall { gap: 18px; }
             .bl-stu-tab { padding: 8px 14px; font-size: 13px; }
+        }
+
+        /* ═══ Phase 4-2 阶段③: 学生视角(作答详情) ═══ */
+        .bl-student-card-wrap { margin-bottom: 10px; }
+        .bl-student-card-wrap .bl-student-card { margin-bottom: 0; }
+        .bl-student-actions { display: flex; gap: 8px; flex-shrink: 0; }
+        .bl-student-detail-btn {
+            background: none;
+            border: 1px solid var(--ink-green);
+            color: var(--ink-green);
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .bl-student-detail-btn:hover { background: var(--ink-green); color: #fff; }
+        .bl-student-detail {
+            background: rgba(255,255,255,0.5);
+            border: 1px solid var(--border-light);
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            padding: 14px 18px;
+        }
+        .bl-stu-detail-empty { color: var(--ink-gray); font-size: 13px; text-align: center; padding: 8px; }
+        .bl-stu-detail-task { margin-bottom: 16px; }
+        .bl-stu-detail-task:last-child { margin-bottom: 0; }
+        .bl-stu-detail-task-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--mo-dark);
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .bl-stu-detail-chars { display: flex; flex-direction: column; gap: 7px; }
+        .bl-stu-detail-char { display: flex; align-items: center; gap: 18px; font-size: 13px; }
+        .bl-stu-detail-zi {
+            font-size: 18px;
+            font-family: var(--font-calligraphy);
+            color: var(--mo-dark);
+            min-width: 28px;
+            text-align: center;
+        }
+        .bl-stu-detail-mark { display: flex; align-items: center; gap: 6px; color: var(--ink-gray); min-width: 72px; }
+        .bl-mark-ok { color: var(--ink-green); font-weight: 700; font-size: 15px; }
+        .bl-mark-no { color: var(--zhusha); font-weight: 700; font-size: 15px; }
+        .bl-mark-na { color: var(--ink-gray); font-size: 14px; }
+        @media (max-width: 768px) {
+            .bl-student-actions { flex-direction: column; gap: 6px; }
+            .bl-stu-detail-char { gap: 12px; }
         }
         @media (max-width: 768px) {
             .bl-student-card { padding: 12px; }
@@ -8917,8 +8970,9 @@ window.BL = (function () {
         const taskTotal = state.currentClassInfo.taskCount || 0;
         const txtKick = tt('踢出', 'Kick', 'إخراج');
         const titleKick = tt('踢出学生', 'Kick Student', 'إخراج الطالب');
+        const txtDetail = tt('查看作答', 'View answers', 'عرض الإجابات');
 
-        list.innerHTML = state.students.map(s => {
+        list.innerHTML = state.students.map((s, idx) => {
             const completed = (s.completedTasks || []).length;
             const meta = tt(
                 `已完成 ${completed} / ${taskTotal} 任务`,
@@ -8926,12 +8980,18 @@ window.BL = (function () {
                 `أكمل ${completed} / ${taskTotal} مهام`
             );
             return `
-            <div class="bl-student-card">
+            <div class="bl-student-card-wrap">
+              <div class="bl-student-card">
                 <div class="bl-student-info">
                     <div class="bl-student-name">${escapeHtml(s.name || s.studentCode)}</div>
                     <div class="bl-student-meta">${escapeHtml(meta)}</div>
                 </div>
-                <button class="bl-student-kick-btn" onclick="BL.kickStudent('${escapeAttr(s.studentCode)}', '${escapeAttr(s.name || s.studentCode)}')" title="${escapeAttr(titleKick)}">✗ ${escapeHtml(txtKick)}</button>
+                <div class="bl-student-actions">
+                    <button class="bl-student-detail-btn" onclick="BL.toggleStudentDetail(${idx})">${escapeHtml(txtDetail)}</button>
+                    <button class="bl-student-kick-btn" onclick="BL.kickStudent('${escapeAttr(s.studentCode)}', '${escapeAttr(s.name || s.studentCode)}')" title="${escapeAttr(titleKick)}">✗ ${escapeHtml(txtKick)}</button>
+                </div>
+              </div>
+              <div class="bl-student-detail" id="bl-stu-detail-${idx}" style="display:none;"></div>
             </div>
             `;
         }).join('');
@@ -9051,6 +9111,51 @@ window.BL = (function () {
         });
 
         box.innerHTML = html;
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // Phase 4-2 阶段③ · 学生视角:展开看某学生每个任务每个字的对错(✓/✗)
+    // ═══════════════════════════════════════════════════════════════
+    function toggleStudentDetail(idx) {
+        const box = $('bl-stu-detail-' + idx);
+        if (!box) return;
+        if (box.style.display === 'none') {
+            box.innerHTML = renderStudentDetail(state.students[idx]);
+            box.style.display = '';
+        } else {
+            box.style.display = 'none';
+        }
+    }
+
+    function renderStudentDetail(s) {
+        if (!s) return '';
+        const tr = s.taskResults || {};
+        const taskIds = Object.keys(tr);
+        if (taskIds.length === 0) {
+            return `<div class="bl-stu-detail-empty">${escapeHtml(tt('该学生还没完成任何任务', 'No tasks completed yet', 'لم يكمل أي مهمة بعد'))}</div>`;
+        }
+        const mark = v => (v === null || v === undefined)
+            ? `<span class="bl-mark-na">—</span>`
+            : (v ? `<span class="bl-mark-ok">✓</span>` : `<span class="bl-mark-no">✗</span>`);
+        const txtPinyin = tt('拼音', 'Pinyin', 'بينيين');
+        const txtComp = tt('部件', 'Parts', 'مكوّنات');
+
+        return taskIds.map(taskId => {
+            const task = (state.tasks || []).find(t => t.taskId === taskId);
+            const title = task ? task.title : tt('(已删除的任务)', '(deleted task)', '(مهمة محذوفة)');
+            const chars = tr[taskId].chars || {};
+            const rows = Object.entries(chars).map(([ch, r]) => `
+                <div class="bl-stu-detail-char">
+                    <span class="bl-stu-detail-zi">${escapeHtml(ch)}</span>
+                    <span class="bl-stu-detail-mark">${escapeHtml(txtPinyin)} ${mark(r.py)}</span>
+                    <span class="bl-stu-detail-mark">${escapeHtml(txtComp)} ${mark(r.comp)}</span>
+                </div>`).join('');
+            return `
+                <div class="bl-stu-detail-task">
+                    <div class="bl-stu-detail-task-title">${escapeHtml(title)}</div>
+                    <div class="bl-stu-detail-chars">${rows}</div>
+                </div>`;
+        }).join('');
     }
 
     async function kickStudent(studentCode, studentName) {
@@ -9583,6 +9688,8 @@ window.BL = (function () {
         openStudentsView, kickStudent,
         // —— Phase 4-2: 答对率 ——
         switchStudentTab,
+        // —— Phase 4-2 阶段③: 学生视角 ——
+        toggleStudentDetail,
         openTaskEditor, closeTaskEditor, selectTaskType, submitTask,
         toggleArchiveTask, deleteTask,
         // —— Phase 2B 第 2 轮 (v2B-r2) ——
