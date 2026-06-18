@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-18 (2026-06-18) — UI细化⑱: 统一各方框竖直间距=16px(参考3↔4模块间距): glass-panel(功能区)margin-bottom 25→16、stroke-guide-panel(关于汉字)margin-bottom 25→6(+acc-container margin-top10=16) -->
+<!-- 斑斓汉字(老师端) · 汉字UI-20 (2026-06-18) — UI细化⑳: 弹窗颜色统一为图1水墨主题(只调色不动结构): 原生勾选框 accent-color 默认蓝→主题绿(印章modal三个勾选框); 用户反馈modal的teal框+蓝链接在MS Forms跨域iframe内无法改色 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -8,7 +8,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-    console.log('%c[斑斓汉字] 汉字UI-18 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+    console.log('%c[斑斓汉字] 汉字UI-20 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1572,6 +1572,8 @@
         .voice-select { padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border); outline: none; font-size: 13px; background: rgba(255, 255, 255, 0.8); color: var(--mo-dark); transition: 0.3s; }
         .voice-select:focus { border-color: var(--ink-green); }
         .rate-slider { width: 80px; accent-color: var(--ink-green); cursor: pointer; }
+        /* ★ 汉字UI-20: 原生勾选框颜色统一为水墨绿主题(默认浏览器蓝→主题绿), 与图1风格一致 */
+        input[type="checkbox"], input[type="radio"] { accent-color: var(--ink-green); }
 
         .download-group { display: none; flex-wrap: nowrap; gap: 10px; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.5); padding: 16px; border-radius: 4px; border-top: 2px solid var(--ink-green-light); width: 100%; box-sizing: border-box; margin-top: 15px; animation: fadeInDown 0.3s ease; }
         .download-group.show { display: flex; }
@@ -1671,7 +1673,7 @@
         .acc-header:hover::after { color: #fff; }
         
         .acc-content { max-height: 0; overflow: hidden; opacity: 0; padding: 0 24px; transition: max-height 0.45s ease, opacity 0.35s ease, padding 0.35s ease; }
-        .acc-content.active { max-height: 12000px; padding: 11px 2%; opacity: 1; overflow: visible; }
+        .acc-content.active { max-height: 12000px; padding: 12px 2%; opacity: 1; overflow: visible; }
         .acc-header { cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 
         .canvas-area { display: flex; flex-direction: column; gap: 30px; align-items: center; width: 100%; }
@@ -4420,7 +4422,7 @@
                 </div>
             </div>
             <div class="acc-content" id="acc-isolated-strokes">
-                <div id="isolatedStrokesRoot" style="padding-top:4px; width:100%; display:flex; flex-direction:column; align-items:center;"></div>
+                <div id="isolatedStrokesRoot" style="padding-top:0; width:100%; display:flex; flex-direction:column; align-items:center;"></div>
             </div>
         </div>
 
@@ -4434,7 +4436,7 @@
             </div>
             <div class="acc-content" id="acc-comp">
                 <div class="components-panel">
-                    <div id="compDisplayRoot" style="margin-top:4px; width:100%;"></div>
+                    <div id="compDisplayRoot" style="margin-top:0; width:100%;"></div>
                 </div>
             </div>
         </div>
@@ -5175,7 +5177,7 @@
 
             // 【多音字】用 DOM 方式构建卡片，拼音框支持点击切换
             card.innerHTML = `
-                <div style="display:flex; flex-direction:column; align-items:center; width:100%; margin-top:2px;">
+                <div style="display:flex; flex-direction:column; align-items:center; width:100%; margin-top:0;">
                     <div style="text-align:center;margin-bottom:6px;">
                         ${hskBoxHtml}
                     </div>
