@@ -8,7 +8,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-    console.log('%c[斑斓汉字] 汉字UI-27 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+    console.log('%c[斑斓汉字] 汉字UI-28 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -8202,7 +8202,6 @@
 
             <!-- 任务列表视图 (Phase 2B 新增) -->
             <div id="blViewTasks" style="display:none;">
-                <button class="bl-back-btn" onclick="BL.backToClassList()">← 返回班级列表<span class="lang-en">Back to Classes</span><span class="lang-ar">العودة</span></button>
                 <div class="bl-tasks-header">
                     <div class="bl-tasks-title">
                         <span class="bl-tasks-class-tag" id="blTasksClassTag">—</span>
@@ -8235,7 +8234,6 @@
 
             <!-- Phase 4-1 (v2D-8): 学生列表视图 -->
             <div id="blViewStudents" style="display:none;">
-                <button class="bl-back-btn" onclick="BL.backToClassList()">← 返回班级列表<span class="lang-en">Back to Classes</span><span class="lang-ar">العودة</span></button>
                 <div class="bl-tasks-header">
                     <div class="bl-tasks-title">
                         <span class="bl-tasks-class-tag" id="blStudentsClassTag">—</span>
@@ -8802,6 +8800,7 @@ window.BL = (function () {
         });
         $('blViewClasses').style.display = tab === 'classes' ? '' : 'none';
         $('blViewTasks').style.display = 'none';   // 切 Tab 时强制隐藏任务视图
+        $('blViewStudents').style.display = 'none'; // UI-28: 同时隐藏学生视图(原先漏掉,导致账号与学生详情叠显)
         $('blViewAccount').style.display = tab === 'account' ? '' : 'none';
     }
 
@@ -9043,6 +9042,7 @@ window.BL = (function () {
         // 切换显示：隐藏班级列表，显示任务视图
         $('blViewClasses').style.display = 'none';
         $('blViewAccount').style.display = 'none';
+        $('blViewStudents').style.display = 'none'; // UI-28: 防止学生视图残留叠显
         $('blViewTasks').style.display = '';
 
         // 填充头部信息
