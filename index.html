@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-23 (2026-06-18) — UI细化㉓: ①"关于汉字"面板搬到内容区最下方,重命名"6. 关于汉字"(保留英文标签) ②下载按钮"下载关于汉字"重命名"6. 下载关于汉字"并移到末位 ③主输入框默认"你好"+加载即渲染 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-24 (2026-06-18) — UI细化㉔: ①模块6(关于汉字)上边距16px使5↔6间距=3↔4(16px) ②模块1-5中文标题字号15px→16px对齐模块6 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -8,7 +8,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-    console.log('%c[斑斓汉字] 汉字UI-23 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+    console.log('%c[斑斓汉字] 汉字UI-24 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1645,7 +1645,7 @@
 
         /* 手风琴三语标题块 — 单行内联样式（对齐"关于汉字"） */
         .acc-inline-title { display: flex; align-items: center; gap: 10px; }
-        .acc-inline-zh { font-size: 15px; font-weight: 600; color: var(--ink-green); letter-spacing: 1px; white-space: nowrap; }
+        .acc-inline-zh { font-size: 16px; font-weight: 600; color: var(--ink-green); letter-spacing: 1px; white-space: nowrap; }
         .acc-inline-sub { font-size: 12px; color: var(--mo-light); font-weight: normal; letter-spacing: 0.3px; white-space: nowrap; }
         .acc-header:hover .acc-inline-zh,
         .acc-header:hover .acc-inline-sub { color: rgba(255,255,255,0.9) !important; }
@@ -2245,7 +2245,7 @@
         .stroke-guide-panel {
             width: 100%;
             max-width: 1400px;
-            margin: 0 auto 6px auto;
+            margin: 16px auto 6px auto;
             background: var(--glass-bg);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
