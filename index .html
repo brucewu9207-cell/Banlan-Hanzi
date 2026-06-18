@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字联动-v4-5 (2026-06-17) — 精修: 答对率页"整体"百分比改为与逐字的拼音列/部件列上下对齐(承 v4-4) -->
+<!-- 斑斓汉字(老师端) · 汉字UI-9 (2026-06-17) — UI细化⑨(方法B): 桌面头部两侧装饰插画绝对定位、脱离副标行高(向上探进 logo 两侧空白, 不缩尺寸), 副标行高度只剩文字 → 头部明显变紧凑; 仅 ≥901px, 手机端排版(含≤430px换行)完全不动 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -8,6 +8,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
+    console.log('%c[斑斓汉字] 汉字UI-9 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -365,6 +366,20 @@
             text-align: center;
         }
 
+        /* ★ 汉字UI-9 (方法B): 桌面让两侧装饰插画"脱离"副标行高 → 该行高度只由文字决定, 头部变紧凑。
+           插画绝对定位贴左右两侧, 以行底为锚点向上生长(探进 logo 两侧空白, 不向下压内容); 尺寸不缩。
+           仅 ≥901px(插画最大、间距最明显处); ≤900px 维持原排版(含 ≤430px 换行), 不动手机端。 */
+        @media (min-width: 901px) {
+            .title-icons-left,
+            .title-icons-right {
+                position: absolute;
+                bottom: 0;
+                z-index: 1;
+            }
+            .title-icons-left { left: 0; }
+            .title-icons-right { right: 0; }
+        }
+
         @media (max-width: 900px) {
             .title-icon {
                 width: clamp(56px, 14vw, 88px);
@@ -467,7 +482,7 @@
         .input-wrapper { position: relative; display: inline-flex; align-items: center; gap: 6px; }
         
         input[type="text"] {
-            padding: 12px 48px 12px 18px; width: min(280px, 80vw); border-radius: 4px;
+            padding: 12px 44px 12px 14px; width: min(200px, 46vw); border-radius: 4px;
             border: 1px solid var(--border); border-bottom: 2px solid var(--ink-green-light);
             background: rgba(255, 255, 255, 0.85); text-align: center; font-size: 20px;
             font-family: var(--font-main); color: var(--ink-green); outline: none; transition: all 0.3s;
@@ -570,11 +585,14 @@
             text-align: center;
         }
         .bl-header h3 {
-            margin: 0; font-size: 17px; color: var(--ink-green);
-            letter-spacing: 1.5px; font-weight: bold;
+            margin: 0; font-size: 26px; color: var(--ink-green);
+            letter-spacing: 2.6px; font-weight: bold;
             font-family: var(--font-main, 'Noto Sans CJK SC', sans-serif);
             text-align: center;
         }
+        /* ★ 汉字UI-4: 班级与任务标题放大到 26px(与音频/印章/反馈三个 modal 一样大); 翻译副标尺寸也对齐 0.7em */
+        .bl-header h3 .lang-en,
+        .bl-header h3 .lang-ar { font-size: 0.5em; }
         .bl-close {
             background: none; border: none; cursor: pointer;
             color: var(--mo-mid); font-size: 22px; padding: 4px 10px;
@@ -1077,7 +1095,7 @@
                 max-height: 95vh; border-radius: 8px;
             }
             .bl-header { padding: 14px 16px 10px; }
-            .bl-header h3 { font-size: 17px; letter-spacing: 1.5px; }
+            .bl-header h3 { font-size: 22.1px; letter-spacing: 2.6px; }
             .bl-tabs { padding: 6px 12px 0; }
             .bl-tab { padding: 8px 12px; font-size: 13px; }
             .bl-body { padding: 16px; }
@@ -1482,16 +1500,20 @@
                 padding: 14px 20px;
                 font-size: 17px;
                 letter-spacing: 1.5px;
-                /* ★ v2D.1: 195 → 220,容纳"班级与任务 / Classes & Tasks"双语单行;
-                   并把 .btn-linkage 加进锁定区,切换语言时不再移动 */
-                width: 220px;
                 height: 80px;
                 box-sizing: border-box;
+                white-space: nowrap;
+                /* ★ 汉字UI-1: 原 6 按钮统一 200px → 整行被挤出屏幕(输入框/班级任务被裁)。
+                   现把 5 个功能按钮收窄到 170px(仍固定不压缩,切中/英/阿大小不变),
+                   下载中心(btn-toggle-dl)单独保持 200px——它展开成"收起下载中心/Collapse Download Center"最长。
+                   170px 内容区约 130px,最宽的"班级与任务"(中文约117px)/"Audio Generation"仍有余量不切字 */
+                width: 170px;
+                flex: 0 0 170px;
             }
-            /* 【v46】单独加宽"下载中心"按钮：展开状态的 "Collapse Download Center" 需要更多空间，
-               固定宽度保证折叠/展开两态视觉一致 */
+            /* 下载中心单独保持 200px(承上,容纳展开态最长英文,不随其它按钮收窄) */
             .controls-bar > .btn-toggle-dl {
-                width: 235px;
+                width: 200px;
+                flex: 0 0 200px;
             }
             .controls-bar > .btn-toggle-dl .btn-en {
                 white-space: nowrap;
@@ -1511,6 +1533,18 @@
             .controls-bar > .btn-linkage .btn-ar {
                 font-size: 12px;
                 margin-top: 5px;
+            }
+        }
+        /* ★ 汉字UI-2: 桌面横排时让输入框自动撑满顶栏的剩余宽度 →
+           顶栏整体宽度 = 下载框 .download-group(width:100%) 的宽度, 左右缘精确对齐;
+           仅 ≥769px 生效(≤768px 顶栏是竖排, 撑满会变纵向拉伸, 故排除) */
+        @media (min-width: 769px) {
+            .controls-bar > .input-wrapper {
+                flex: 1 1 auto;    /* 吃掉固定按钮之外的全部剩余宽度 */
+                min-width: 200px;  /* 窄桌面下不小于原始宽度 */
+            }
+            .controls-bar > .input-wrapper input[type="text"] {
+                width: 100%;       /* 填满被撑大的 input-wrapper(覆盖原 min(200px,46vw)) */
             }
         }
         .fb-star-btn { background:#f5f5f5; color:#666; border:1px solid #ddd; padding:5px 12px; font-size:13px; border-radius:4px; cursor:pointer; flex:1; }
@@ -2027,8 +2061,23 @@
         .modal h3 { margin-top: 0; color: var(--ink-green); font-size: 20px; letter-spacing: 2px; font-weight: bold; font-family: var(--font-main); text-align: center; }
         /* 【v38】三个 modal 标题（音频生成/印章题刻/用户反馈）整体放大 1.3 倍 */
         .modal h3.title-scaled { font-size: 26px; letter-spacing: 2.6px; }
+        /* ★ 汉字UI-4: 标题翻译改为换行到中文下方的副标(比中文小, 清晰层级) — 用 em 随各档中文字号自动缩放 */
         .modal h3.title-scaled .lang-en,
-        .modal h3.title-scaled .lang-ar { font-size: 26px; }
+        .modal h3.title-scaled .lang-ar {
+            display: block;
+            font-size: 0.5em;
+            font-weight: normal;
+            opacity: 0.82;
+            margin-top: 4px;
+            letter-spacing: 1px;
+        }
+        .modal h3.title-scaled .lang-ar { font-family: 'Tahoma','Arial',sans-serif; direction: rtl; }
+        /* ★ 汉字UI-5: 带图标的标题(用户反馈/班级与任务) → 让副标居中于"中文文字"而非整行。
+           中文用 .t-cn 包成 inline-block 居中; 图标 .t-ico 绝对定位挂到中文左侧(不占位、不影响居中) */
+        .modal h3.title-scaled .t-cn,
+        .bl-header h3 .t-cn { display: inline-block; position: relative; }
+        .modal h3.title-scaled .t-ico,
+        .bl-header h3 .t-ico { position: absolute; right: 100%; margin-right: 8px; }
         .modal p { color: var(--mo-mid); font-size: 13px; margin-bottom: 24px; line-height: 1.6;}
         .modal-btns { display: flex; flex-direction: column; gap: 12px; }
         .modal-btns button { width: 100%; padding: 12px; font-size: 14px; }
@@ -2177,7 +2226,7 @@
         .seal-modal-inner h3 { font-size: 20px; margin: 0 0 14px; text-align: center; color: var(--ink-green); letter-spacing: 2px; font-weight: bold; }
         .seal-controls { background: #fafafa; padding: 10px 12px; border-radius: 4px; margin-bottom: 12px; border: 1px solid #f0f0f0; }
         .seal-controls label { display: block; font-size: 12px; color: var(--ink-green); margin-bottom: 6px; font-weight: bold;}
-        .seal-input { width: 100%; padding: 8px; font-size: 18px; text-align: center; font-family: var(--font-main); letter-spacing: 4px; margin-bottom: 10px; border: 1px solid #ddd; background: #fff; box-sizing: border-box;}
+        .seal-input { width: 100%; padding: 8px; font-size: 18px; text-align: center; font-family: var(--font-main); letter-spacing: 4px; margin-bottom: 10px; border: 1px solid #99b2a6; background: #d3ded7; box-sizing: border-box;}
         .seal-style-row { display: flex; gap: 6px; flex-wrap: wrap; }
         .seal-style-btn { flex: 1; min-width: 80px; background: #fff; color: var(--mo-mid); border: 1px solid #ddd; box-shadow: none; padding: 6px 8px; font-size: 12px;}
         .seal-style-btn.active { background: var(--zhusha); color: #fff; border-color: var(--zhusha); }
@@ -2647,8 +2696,7 @@
             .modal { padding: 20px 16px; }
             .modal h3 { font-size: 17px; }
             .modal h3.title-scaled { font-size: 22.1px; }
-            .modal h3.title-scaled .lang-en,
-            .modal h3.title-scaled .lang-ar { font-size: 22.1px; }
+            /* ★ 汉字UI-4: 翻译副标尺寸由基础规则的 0.7em 自动随中文缩放, 此处不再单独覆盖 */
             /* 手机端显示滑动提示 */
             .swipe-hint { display: flex; }
             /* 关于汉字面板滑动提示 */
@@ -2699,8 +2747,7 @@
             .modal { padding: 16px 12px; width: 95vw; }
             .modal h3 { font-size: 15px; letter-spacing: 1px; }
             .modal h3.title-scaled { font-size: 19.5px; letter-spacing: 1.3px; }
-            .modal h3.title-scaled .lang-en,
-            .modal h3.title-scaled .lang-ar { font-size: 19.5px; }
+            /* ★ 汉字UI-4: 同上, 翻译副标由 0.7em 自动缩放 */
             .modal-btns button { padding: 10px; font-size: 13px; }
             .sentence-translation-block { padding: 15.6px 12px 19.5px; font-size: 23.4px; }
             /* 【v56】翻译块手机端：强制单行 + 居中（缩小标签与译文字号，关闭折行） */
@@ -4197,6 +4244,28 @@
             </div>
         </div>
 
+        <!-- ★ 汉字UI-3: 抢先显示「班级与任务」按钮 —— 该按钮默认 display:none, 原本要等 ?unlock 调后端 API
+             验证后才显示, 导致它加载完才冒出来、把 flex 输入框挤窄(可见的"加载跳动")。
+             这里在首屏绘制前、凭本地已存的解锁记录(bl_tester_unlocked)先把按钮+徽章显示出来;
+             BL.init() 仍会异步向后端核对, 若无权限则在 !shouldShow 分支撤下(见 init 内)。 -->
+        <script>
+        (function showLinkageEarly() {
+            try {
+                if (localStorage.getItem('bl_tester_unlocked') !== '1') return;
+                var btn = document.getElementById('btnLinkage');
+                if (btn) btn.classList.add('bl-visible');
+                var badge = document.getElementById('blTesterBadge');
+                var name = localStorage.getItem('bl_tester_name') || '';
+                var role = localStorage.getItem('bl_tester_role') || '';
+                if (badge && name) {
+                    badge.textContent = name;
+                    badge.style.display = '';
+                    badge.style.background = ({ owner: '#8f2727', team: '#b33939', beta: '#c89c2e' })[role] || '#b33939';
+                }
+            } catch (e) { /* localStorage 不可用则忽略, 退回原异步显示 */ }
+        })();
+        </script>
+
         <!-- 展开的下载工具箱 (恢复为 30.html 的版本) -->
         <div class="download-group" id="downloadGroup">
             <button class="btn-anim-dl" onclick="downloadStrokeGuide()" style="background:#7a9e8e; border:1px solid #668a7a;">⚠️ 下载关于汉字<span class="btn-en">Download: About Characters</span><span class="btn-ar">تنزيل: عن الحروف</span></button>
@@ -4406,10 +4475,7 @@
 <!-- 用户反馈弹窗（Office Forms 嵌入） -->
 <div class="modal-overlay" id="feedbackModal">
     <div class="modal" style="max-width:720px; width:95vw;">
-        <h3 class="title-scaled">💬 用户反馈
-            <span class="lang-en" style="font-weight:bold; color:var(--ink-green); margin-left:10px;">Feedback</span>
-            <span class="lang-ar" style="font-weight:bold; color:var(--ink-green); margin-left:10px; font-family:'Tahoma','Arial',sans-serif;">· التغذية الراجعة</span>
-        </h3>
+        <h3 class="title-scaled"><span class="t-cn"><span class="t-ico">💬</span>用户反馈</span><span class="lang-en">Feedback</span><span class="lang-ar">التغذية الراجعة</span></h3>
         <p class="lang-en" style="font-size:15px; color:var(--mo-mid); margin-bottom:10px; text-align:center; font-weight:600; letter-spacing:0.5px;">Your Feedback = Product Upgrading</p>
         <p class="lang-ar" style="font-size:15px; color:var(--mo-mid); margin-bottom:10px; text-align:center; font-weight:600; letter-spacing:0.5px; font-family:'Tahoma','Arial',sans-serif;">ملاحظاتك = تطوير المنتج</p>
         <p style="font-size:14px; color:var(--mo-light); margin-bottom:14px; text-align:center;">
@@ -4460,11 +4526,7 @@
 <div class="modal-overlay" id="sealModal">
     <div class="modal seal-modal" style="max-width:720px; width:95vw;">
         <div class="seal-modal-inner">
-            <h3 class="title-scaled">
-                印章题刻
-                <span class="lang-en" style="font-weight:bold; color:var(--ink-green); margin-left:10px;">Seal Carving</span>
-                <span class="lang-ar" style="font-weight:bold; color:var(--ink-green); margin-left:10px; font-family:'Tahoma','Arial',sans-serif;">· نقش الختم</span>
-            </h3>
+            <h3 class="title-scaled"><span class="t-cn"><span class="t-ico">❒</span>印章题刻</span><span class="lang-en">Seal Carving</span><span class="lang-ar">نقش الختم</span></h3>
             <!-- 横向两栏：左控制区 | 右预览区 -->
             <div style="display:flex; gap:16px; align-items:flex-start;">
                 <!-- 左栏：输入控制 -->
@@ -4548,17 +4610,14 @@
 <!-- 2. 语音合成工作室 -->
 <div class="modal-overlay" id="ttsStudioModal">
     <div class="modal" style="max-width:720px; width:95vw;">
-        <h3 class="title-scaled">音频生成
-            <span class="lang-en" style="font-weight:bold; color:var(--ink-green); margin-left:10px;">Audio Generation</span>
-            <span class="lang-ar" style="font-weight:bold; color:var(--ink-green); margin-left:10px; font-family:'Tahoma','Arial',sans-serif;">· توليد الصوت</span>
-        </h3>
+        <h3 class="title-scaled"><span class="t-cn"><span class="t-ico">♪</span>音频生成</span><span class="lang-en">Audio Generation</span><span class="lang-ar">توليد الصوت</span></h3>
         <!-- 拼音+文字合并展示 -->
         <div id="ttsPinyinRow" style="display:none; border:1px solid #ddd; border-radius:4px; padding:16px 18px; margin-bottom:12px; text-align:center; background:#fff;">
             <div id="ttsPinyinLine" style="letter-spacing:6px; font-size:18px; color:#555; font-weight:normal; margin-bottom:10px; font-family:'KaiTi','STKaiti','楷体',serif;"></div>
             <div id="ttsCharLine" style="letter-spacing:12px; font-size:28px; color:#222; font-weight:bold; font-family:'KaiTi','STKaiti','楷体',serif;"></div>
         </div>
         <textarea id="ttsStudioText" rows="2" style="display:none;" placeholder="输入文本..."></textarea>
-        <div style="background:#fafafa; padding:12px; border-radius:4px; text-align:left; margin-bottom:16px;">
+        <div style="background:#dfe8e3; border:1px solid #c1d2c9; padding:12px; border-radius:4px; text-align:left; margin-bottom:16px;">
             <label style="font-size:12px; color:var(--ink-green); font-weight:bold; display:block; margin-bottom:6px;">
                 发音人 <span class="lang-en">Voice</span><span class="lang-ar" style="font-family:'Tahoma','Arial',sans-serif;">الصوت</span>：
             </label>
@@ -4571,7 +4630,7 @@
         </div>
         <div class="modal-btns" style="flex-direction:row; gap:10px;">
             <button style="background:var(--ink-gray); border:none;" onclick="previewTtsStudio()">▶ 试听<span class="btn-en">Play</span><span class="btn-ar">تشغيل</span></button>
-            <button style="background:var(--ink-green); border:none;" onclick="downloadTtsStudio()">💾 保存 MP3<span class="btn-en">Save</span><span class="btn-ar">حفظ</span></button>
+            <button style="background:#4f6a5d; border:none;" onclick="downloadTtsStudio()">💾 保存 MP3<span class="btn-en">Save</span><span class="btn-ar">حفظ</span></button>
         </div>
         <button class="btn-cancel" style="width:100%; margin-top:10px; padding:10px;" onclick="closeTtsStudio()">关闭<span class="lang-en"> / Close</span><span class="lang-ar"> / إغلاق</span></button>
     </div>
@@ -6750,7 +6809,7 @@
             textarea.style.display = 'none';
         } else {
             pinyinRow.style.display = 'none';
-            textarea.style.cssText = 'display:block; width:100%; padding:12px; border:1px solid #ddd; border-radius:4px; font-size:18px; font-family:var(--font-main); box-sizing:border-box; margin-bottom:12px; text-align:center; letter-spacing:6px;';
+            textarea.style.cssText = 'display:block; width:100%; padding:12px; background:#e8efeb; border:1px solid #aebfb6; border-radius:4px; font-size:18px; font-family:var(--font-main); box-sizing:border-box; margin-bottom:12px; text-align:center; letter-spacing:6px;';
         }
         document.getElementById('ttsStudioModal').style.display = 'flex';
         loadVoices();
@@ -8080,7 +8139,7 @@
 <div class="bl-overlay" id="blOverlay">
     <div class="bl-modal">
         <div class="bl-header">
-            <h3 id="blTitle">📚 班级与任务<span class="lang-en">Classes &amp; Tasks</span><span class="lang-ar">الفصول والمهام</span></h3>
+            <h3 id="blTitle"><span class="t-cn"><span class="t-ico">📚</span>班级与任务</span><span class="lang-en">Classes &amp; Tasks</span><span class="lang-ar">الفصول والمهام</span></h3>
             <button class="bl-close" onclick="BL.closePanel()">×</button>
         </div>
 
@@ -8617,7 +8676,14 @@ window.BL = (function () {
             }
         }
 
-        if (!shouldShow) return; // 不显示按钮
+        if (!shouldShow) {
+            // ★ 汉字UI-3: 后端核对结果为"不显示" → 撤下抢先显示脚本可能已加上的按钮/徽章
+            const btnHide = $('btnLinkage');
+            if (btnHide) btnHide.classList.remove('bl-visible');
+            const badgeHide = $('blTesterBadge');
+            if (badgeHide) badgeHide.style.display = 'none';
+            return;
+        }
 
         // 5) 显示按钮
         const btn = $('btnLinkage');
