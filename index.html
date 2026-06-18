@@ -8,7 +8,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-    console.log('%c[斑斓汉字] 汉字UI-28 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+    console.log('%c[斑斓汉字] 汉字UI-30 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1166,7 +1166,17 @@
             padding-bottom: 10px; border-bottom: 1px solid #e5ebe7;
             gap: 8px;
         }
-        .bl-tasks-title { font-size: 15px; color: var(--ink-green); font-weight: 500; }
+        .bl-tasks-title {
+            font-size: 15px; color: var(--ink-green); font-weight: 500;
+            /* UI-29: 班级信息做成圆角色块(纯展示,不可点) */
+            display: inline-block;
+            background: #eef4f0;
+            border: 1px solid #d7e4dd;
+            border-radius: 8px;
+            padding: 8px 18px;
+        }
+        /* UI-29: 学生详情头部的班级信息块水平居中(任务详情那边右侧有控件,保留原布局) */
+        #blViewStudents .bl-tasks-header { justify-content: center; }
         .bl-tasks-class-tag {
             display: inline-block;
             background: var(--ink-green); color: #fff;
@@ -9187,6 +9197,39 @@ window.BL = (function () {
         if (tab === 'matrix') renderMatrix();
     }
 
+    // ═══════════════════════════════════════════════════════════════
+    // UI-30 · 字符笔画图形渲染
+    //   系统楷体(STKaiti/KaiTi)跨平台不可靠(安卓等无此字体会退化成宋体),
+    //   改用与"挥毫生成"一致的笔画 SVG(generateSvgGroup + HanziWriter 数据)。
+    //   异步逐字加载,带缓存;加载失败则保留原字体字符兜底。
+    // ═══════════════════════════════════════════════════════════════
+    const _ziGlyphCache = {};  // char -> charData | 'FAIL'
+    async function _paintZiGlyphs(root, color) {
+        if (!root || typeof HanziWriter === 'undefined' || typeof generateSvgGroup !== 'function') return;
+        const els = root.querySelectorAll('[data-zi]:not([data-zi-done])');
+        for (const el of els) {
+            const ch = el.getAttribute('data-zi');
+            // 非汉字(标点/字母)保留原样
+            if (!ch || !/[\u4e00-\u9fff\u3400-\u4dbf]/.test(ch)) { el.dataset.ziDone = '1'; continue; }
+            let data = _ziGlyphCache[ch];
+            if (data === undefined) {
+                try { data = (await HanziWriter.loadCharacterData(ch)) || 'FAIL'; }
+                catch (e) { data = 'FAIL'; }
+                _ziGlyphCache[ch] = data;
+            }
+            el.dataset.ziDone = '1';
+            if (data && data !== 'FAIL' && data.strokes) {
+                try {
+                    const svg = generateSvgGroup(data.strokes, null, false, color || '#232a27');
+                    svg.style.cssText = 'width:1em;height:1em;display:inline-block;vertical-align:-0.15em;';
+                    el.textContent = '';
+                    el.appendChild(svg);
+                } catch (e) { /* 保留字体兜底 */ }
+            }
+            // data==='FAIL' → 保留原字体字符(兜底)
+        }
+    }
+
     function renderAnswerRate() {
         const box = $('blAnswerRate');
         if (!box) return;
@@ -9257,7 +9300,7 @@ window.BL = (function () {
 
             const charRows = charOrder.map(ch => `
                 <div class="bl-rate-char-row">
-                    <span class="bl-rate-char">${escapeHtml(ch)}</span>
+                    <span class="bl-rate-char" data-zi="${escapeHtml(ch)}">${escapeHtml(ch)}</span>
                     <div class="bl-rate-metrics">
                         ${metricBlock(txtPinyin, stat[ch].pyC, stat[ch].pyT)}
                         ${metricBlock(txtComp, stat[ch].compC, stat[ch].compT)}
@@ -9284,6 +9327,7 @@ window.BL = (function () {
         });
 
         box.innerHTML = html;
+        _paintZiGlyphs(box, '#232a27');  // UI-30: 字符改笔画SVG
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -9294,6 +9338,7 @@ window.BL = (function () {
         if (!box) return;
         if (box.style.display === 'none') {
             box.innerHTML = renderStudentDetail(state.students[idx]);
+            _paintZiGlyphs(box, '#232a27');  // UI-30: 字符改笔画SVG
             box.style.display = '';
         } else {
             box.style.display = 'none';
@@ -9319,7 +9364,7 @@ window.BL = (function () {
             const chars = tr[taskId].chars || {};
             const rows = Object.entries(chars).map(([ch, r]) => `
                 <div class="bl-stu-detail-char">
-                    <span class="bl-stu-detail-zi">${escapeHtml(ch)}</span>
+                    <span class="bl-stu-detail-zi" data-zi="${escapeHtml(ch)}">${escapeHtml(ch)}</span>
                     <span class="bl-stu-detail-mark">${escapeHtml(txtPinyin)} ${mark(r.py)}</span>
                     <span class="bl-stu-detail-mark">${escapeHtml(txtComp)} ${mark(r.comp)}</span>
                 </div>`).join('');
@@ -9384,6 +9429,7 @@ window.BL = (function () {
         });
 
         box.innerHTML = html;
+        _paintZiGlyphs(box, '#232a27');  // UI-30: 字符改笔画SVG
     }
 
     // 生成单张矩阵(dim='py' 或 'comp')
@@ -9400,7 +9446,7 @@ window.BL = (function () {
 
         // 表头
         let thead = `<th class="bl-matrix-name">${escapeHtml(tt('学生', 'Student', 'الطالب'))}</th>`;
-        charOrder.forEach(ch => { thead += `<th class="bl-matrix-zi">${escapeHtml(ch)}</th>`; });
+        charOrder.forEach(ch => { thead += `<th class="bl-matrix-zi" data-zi="${escapeHtml(ch)}">${escapeHtml(ch)}</th>`; });
         thead += `<th>${escapeHtml(tt('该生', 'Student', 'الطالب'))}</th>`;
 
         // 列统计累加器
