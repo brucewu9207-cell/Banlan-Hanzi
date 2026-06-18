@@ -8,7 +8,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-    console.log('%c[斑斓汉字] 汉字UI-31 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+    console.log('%c[斑斓汉字] 汉字UI-32 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -8286,7 +8286,7 @@
                     <div class="bl-tasks-title">
                         <span class="bl-tasks-class-tag" id="blStudentsClassTag">—</span>
                         <span id="blStudentsClassName">—</span>
-                        <span style="color:var(--ink-gray); font-weight:normal; font-size:13px; margin-left:8px;" id="blStudentsCount">
+                        <span style="color:var(--ink-gray); font-weight:normal; font-size:13px; margin-left:8px; white-space:pre-line;" id="blStudentsCount">
                             —
                         </span>
                     </div>
@@ -9382,7 +9382,6 @@ window.BL = (function () {
         });
 
         box.innerHTML = html;
-        _paintZiGlyphs(box, '#232a27');  // UI-30: 字符改笔画SVG
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -9393,7 +9392,6 @@ window.BL = (function () {
         if (!box) return;
         if (box.style.display === 'none') {
             box.innerHTML = renderStudentDetail(state.students[idx]);
-            _paintZiGlyphs(box, '#232a27');  // UI-30: 字符改笔画SVG
             box.style.display = '';
         } else {
             box.style.display = 'none';
@@ -9489,7 +9487,6 @@ window.BL = (function () {
         });
 
         box.innerHTML = html;
-        _paintZiGlyphs(box, '#232a27');  // UI-30: 字符改笔画SVG
     }
 
     // 生成单张矩阵(dim='py' 或 'comp')
