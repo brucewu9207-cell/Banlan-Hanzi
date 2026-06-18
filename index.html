@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-10 (2026-06-18) — UI细化⑩(方法B修正): 桌面头部两侧装饰插画改为绝对定位、居中留在原高度(对着标语), 浮于背景不占副标行高 → 头部明显变矮; 同右下角 .bg-seal 背景印章思路; 仅 ≥901px, 手机端完全不动 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-11 (2026-06-18) — UI细化⑪(方法B调整): 桌面头部装饰插画回到flex流贴标语左右(随语言宽度自适应)、图标组高度压0不撑行高、插画以组底为基线向上生长(底边统一对齐)并整体上移离开功能区; 仅≥901px, 手机端不动 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -8,7 +8,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-    console.log('%c[斑斓汉字] 汉字UI-10 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+    console.log('%c[斑斓汉字] 汉字UI-11 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -366,19 +366,17 @@
             text-align: center;
         }
 
-        /* ★ 汉字UI-10 (方法B): 桌面让两侧装饰插画"脱离"副标行高 → 该行高度只由文字决定, 头部变紧凑。
-           插画绝对定位、居中留在原本高度(对着标语), 浮在背景上不占布局高度(同右下角 .bg-seal 的思路); 尺寸不缩。
-           仅 ≥901px; ≤900px 维持原排版(含 ≤430px 换行), 不动手机端。 */
+        /* ★ 汉字UI-11 (方法B调整): 桌面装饰插画——回到 flex 流中紧贴标语左右(贴近, 且随中/英/阿语标语宽度自适应),
+           但把图标组高度压成 0 → 不撑副标行高(头部紧凑); 插画以"组底"为基线、超出部分向上生长
+           → ① 4 副插画底边自动统一对齐; ② 整体再上移一点, 底线贴标语、不挤下方功能区。仅 ≥901px; 手机端不动。 */
         @media (min-width: 901px) {
-            .title-icons-left,
-            .title-icons-right {
-                position: absolute;
-                top: 50%;
-                transform: translateY(-50%);
-                z-index: 1;
+            .title-icons {
+                height: 0;                    /* 不占副标行高度 */
+                align-self: center;           /* 锚点落在副标行垂直中心 */
+                align-items: flex-end;        /* ① 插画底边对齐到组底, 超出部分向上生长 */
+                overflow: visible;
+                transform: translateY(-8px);  /* ② 整体上移, 远离下方功能区 */
             }
-            .title-icons-left { left: 0; }
-            .title-icons-right { right: 0; }
         }
 
         @media (max-width: 900px) {
