@@ -8,7 +8,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-    console.log('%c[斑斓汉字] 汉字UI-25 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+    console.log('%c[斑斓汉字] 汉字UI-26 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -667,6 +667,8 @@
             color: #fff;
             transform: none; box-shadow: none; filter: none;
         }
+        /* UI-26: 三个按钮文字不换行,各自固定 中文1行+副标1行,高度一致 */
+        .bl-tab, .bl-tab-add { white-space: nowrap; }
 
         /* 内容区 — ★ v2D.3: 缩小间距 */
         .bl-body {
@@ -1201,8 +1203,6 @@
         .bl-overlay { white-space: normal; }
         .bl-overlay .bl-btn,
         .bl-overlay .bl-icon-btn,
-        .bl-overlay .bl-tab,
-        .bl-overlay .bl-tab-add,
         .bl-overlay .bl-back-btn,
         .bl-overlay .bl-empty-text,
         .bl-overlay .bl-task-meta,
@@ -8285,7 +8285,7 @@
 <div class="bl-overlay" id="blClassEditorOverlay">
     <div class="bl-modal bl-modal-w520">
         <div class="bl-header">
-            <h3 id="blClassEditorTitle">+ 新建班级</h3>
+            <h3 id="blClassEditorTitle">+ 新建班级<span class="lang-en">+ New Class</span><span class="lang-ar">+ فصل جديد</span></h3>
             <button class="bl-close" onclick="BL.closeClassEditor()">×</button>
         </div>
         <div class="bl-body">
@@ -8419,6 +8419,15 @@ window.BL = (function () {
     function ttBlock(zh, en, ar) {
         const isAr = document.body.classList.contains('lang-mode-ar');
         return zh + '\n' + (isAr ? ar : en);
+    }
+
+    // UI-26: 标题用 span 双语结构(中文 + .lang-en/.lang-ar 副标),
+    // 套用 .bl-header h3 .lang-en/.lang-ar { font-size:0.5em } 缩小规则,
+    // 与"班级与任务"主标题大小风格一致; 语言切换由 CSS 控制显隐
+    function ttTitle(zh, en, ar) {
+        return zh
+            + '<span class="lang-en">' + en + '</span>'
+            + '<span class="lang-ar">' + ar + '</span>';
     }
 
     function toast(msg, type) {
@@ -8590,9 +8599,9 @@ window.BL = (function () {
             const classEditorOpen = document.getElementById('blClassEditorOverlay').classList.contains('bl-show');
             if (classEditorOpen) {
                 const editing = !!state.editingClassCode;
-                document.getElementById('blClassEditorTitle').textContent = editing
-                    ? tt('编辑班级', 'Edit Class', 'تعديل الفصل')
-                    : tt('+ 新建班级', '+ New Class', '+ فصل جديد');
+                document.getElementById('blClassEditorTitle').innerHTML = editing
+                    ? ttTitle('编辑班级', 'Edit Class', 'تعديل الفصل')
+                    : ttTitle('+ 新建班级', '+ New Class', '+ فصل جديد');
                 document.getElementById('blClassSubmitBtn').textContent = editing
                     ? tt('保存', 'Save', 'حفظ')
                     : tt('创建', 'Create', 'إنشاء');
@@ -8917,9 +8926,9 @@ window.BL = (function () {
     function openClassEditor(classCode) {
         state.editingClassCode = classCode || null;
         const editing = !!classCode;
-        $('blClassEditorTitle').textContent = editing
-            ? tt('编辑班级', 'Edit Class', 'تعديل الفصل')
-            : tt('+ 新建班级', '+ New Class', '+ فصل جديد');
+        $('blClassEditorTitle').innerHTML = editing
+            ? ttTitle('编辑班级', 'Edit Class', 'تعديل الفصل')
+            : ttTitle('+ 新建班级', '+ New Class', '+ فصل جديد');
         $('blClassSubmitBtn').textContent = editing
             ? tt('保存', 'Save', 'حفظ')
             : tt('创建', 'Create', 'إنشاء');
