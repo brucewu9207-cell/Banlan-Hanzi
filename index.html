@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-20 (2026-06-18) — UI细化⑳: 弹窗颜色统一为图1水墨主题(只调色不动结构): 原生勾选框 accent-color 默认蓝→主题绿(印章modal三个勾选框); 用户反馈modal的teal框+蓝链接在MS Forms跨域iframe内无法改色 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-21 (2026-06-18) — UI细化㉑: 印章单数字布局改为右起2列、左列(第二列)竖直居中(n=3右2左1居中, n=5右3左2居中, n≥7奇数通用列居中); 偶数布局不变 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -8,7 +8,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-    console.log('%c[斑斓汉字] 汉字UI-20 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+    console.log('%c[斑斓汉字] 汉字UI-21 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -7229,19 +7229,12 @@
             drawChar(chars[1], x + w / 2, y + cellH * 1.5, fs);
 
         } else if (n === 3) {
-            // Layout: top 1 char (full width), bottom 2 chars side by side
-            // Uniform font: size based on the bottom cells (half-width × 58% height)
-            const topH = h * 0.42;
-            const botH = h - topH;
-            const cellW = w / 2;
-            // Compute uniform font size = smallest of top-cell and bottom-cell
-            const fsTop = Math.min(w, topH) * 0.78;
-            const fsBot = Math.min(cellW, botH) * 0.78;
-            const fs = Math.min(fsTop, fsBot); // uniform size
-            drawChar(chars[0], x + w / 2, y + topH * 0.5, fs);
-            // right col = chars[1], left col = chars[2]
-            drawChar(chars[1], x + cellW * 1.5, y + topH + botH / 2, fs);
-            drawChar(chars[2], x + cellW * 0.5, y + topH + botH / 2, fs);
+            // ★ 汉字UI-21 单数: 右起2列, 右列2字(上下), 左列(第二列)1字竖直居中
+            const cellW = w / 2, cellH = h / 2;
+            const fs = Math.min(cellW, cellH) * 0.78;
+            drawChar(chars[0], x + cellW * 1.5, y + cellH * 0.5, fs); // 右列 上
+            drawChar(chars[1], x + cellW * 1.5, y + cellH * 1.5, fs); // 右列 下
+            drawChar(chars[2], x + cellW * 0.5, y + h / 2, fs);       // 左列 竖直居中
 
         } else if (n === 4) {
             // Classic 2×2
@@ -7253,32 +7246,28 @@
             drawChar(chars[3], x + cellW * 0.5, y + cellH * 1.5, fs);
 
         } else if (n === 5) {
-            // Top center: 1 char; bottom 2×2 for remaining 4 chars
-            const topH = h * 0.33;
-            const botH = h - topH;
-            const cellW = w / 2, cellH = botH / 2;
-            // Uniform font size = min of top cell and bottom cell
-            const fsTop = Math.min(w, topH) * 0.78;
-            const fsBot = Math.min(cellW, cellH) * 0.78;
-            const fs = Math.min(fsTop, fsBot);
-            drawChar(chars[0], x + w / 2, y + topH * 0.5, fs);
-            // right col [1,2], left col [3,4]
-            drawChar(chars[1], x + cellW * 1.5, y + topH + cellH * 0.5, fs);
-            drawChar(chars[2], x + cellW * 1.5, y + topH + cellH * 1.5, fs);
-            drawChar(chars[3], x + cellW * 0.5, y + topH + cellH * 0.5, fs);
-            drawChar(chars[4], x + cellW * 0.5, y + topH + cellH * 1.5, fs);
+            // ★ 汉字UI-21 单数: 右起2列, 右列3字(上中下), 左列(第二列)2字竖直居中
+            const cellW = w / 2, rowH = h / 3;
+            const fs = Math.min(cellW, rowH) * 0.78;
+            drawChar(chars[0], x + cellW * 1.5, y + rowH * 0.5, fs); // 右列 上
+            drawChar(chars[1], x + cellW * 1.5, y + rowH * 1.5, fs); // 右列 中
+            drawChar(chars[2], x + cellW * 1.5, y + rowH * 2.5, fs); // 右列 下
+            const leftStartY = y + (h - 2 * rowH) / 2;               // 左列2字竖直居中
+            drawChar(chars[3], x + cellW * 0.5, leftStartY + rowH * 0.5, fs);
+            drawChar(chars[4], x + cellW * 0.5, leftStartY + rowH * 1.5, fs);
 
         } else {
-            // 6+ chars: 2 cols × 3 rows
+            // 6+ chars: 右起2列, 每列字数不足 rows 行时竖直居中(★汉字UI-21 单数第二列居中)
             const cols = 2, rows = Math.ceil(n / 2);
             const cellW = w / cols, cellH = h / rows;
             const fs = Math.min(cellW, cellH) * 0.78;
             let idx = 0;
             for (let col = cols - 1; col >= 0; col--) {
-                for (let row = 0; row < rows; row++) {
-                    if (idx >= n) break;
+                const inThisCol = Math.min(rows, n - idx); // 本列实际字数
+                const colStartY = y + (h - inThisCol * cellH) / 2; // 不足则竖直居中
+                for (let row = 0; row < inThisCol; row++) {
                     const cx = x + col * cellW + cellW / 2;
-                    const cy = y + row * cellH + cellH / 2;
+                    const cy = colStartY + row * cellH + cellH / 2;
                     drawChar(chars[idx], cx, cy, fs);
                     idx++;
                 }
