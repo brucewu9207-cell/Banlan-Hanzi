@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-11 (2026-06-18) — UI细化⑪(方法B调整): 桌面头部装饰插画回到flex流贴标语左右(随语言宽度自适应)、图标组高度压0不撑行高、插画以组底为基线向上生长(底边统一对齐)并整体上移离开功能区; 仅≥901px, 手机端不动 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-12 (2026-06-18) — UI细化⑫(方法B调整): 桌面头部装饰插画缩到0.6×、且不再上探到品牌处, 改为居中落在"笔墨纸砚+署名"文字一带; 图标组仍height:0不撑行高、随语言自适应贴标语左右; 仅≥901px, 手机端不动 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -8,7 +8,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-    console.log('%c[斑斓汉字] 汉字UI-11 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+    console.log('%c[斑斓汉字] 汉字UI-12 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -366,16 +366,19 @@
             text-align: center;
         }
 
-        /* ★ 汉字UI-11 (方法B调整): 桌面装饰插画——回到 flex 流中紧贴标语左右(贴近, 且随中/英/阿语标语宽度自适应),
-           但把图标组高度压成 0 → 不撑副标行高(头部紧凑); 插画以"组底"为基线、超出部分向上生长
-           → ① 4 副插画底边自动统一对齐; ② 整体再上移一点, 底线贴标语、不挤下方功能区。仅 ≥901px; 手机端不动。 */
+        /* ★ 汉字UI-12 (方法B调整): 桌面装饰插画——① 缩到 0.6×; ② 不再向上长到品牌处, 改为居中落在
+           "笔墨纸砚 + 署名"这块文字一带; 图标组仍 height:0 不撑行高(头部紧凑), 随语言宽度自适应贴标语左右。仅 ≥901px。 */
         @media (min-width: 901px) {
             .title-icons {
-                height: 0;                    /* 不占副标行高度 */
-                align-self: center;           /* 锚点落在副标行垂直中心 */
-                align-items: flex-end;        /* ① 插画底边对齐到组底, 超出部分向上生长 */
+                height: 0;                    /* 不占副标行高度 → 头部紧凑 */
+                align-self: center;
+                align-items: center;          /* ② 插画居中落在标语/署名一带, 不再上探到品牌 */
                 overflow: visible;
-                transform: translateY(-8px);  /* ② 整体上移, 远离下方功能区 */
+                transform: translateY(-4px);  /* 略上移, 底边不压到下方功能区 */
+            }
+            .title-icon {
+                width: clamp(43px, 5.4vw, 71px);   /* ① 0.6× 缩小 */
+                height: clamp(37px, 4.5vw, 58px);
             }
         }
 
