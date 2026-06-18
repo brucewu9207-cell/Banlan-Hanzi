@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-13 (2026-06-18) — UI细化⑬: 桌面头部装饰插画尺寸 0.6×→0.7× 原始(略放大); 其余同UI-12; 仅≥901px, 手机端不动 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-15 (2026-06-18) — UI细化⑮(内容区#1): 统一缩小各手风琴模块页边距 -55%(桌面+手机), acc-content 24px4%→11px2%(顶部padding=HSK徽章到卡片顶的间距, 一并缩小)、acc-header 18/24→8/11, 含手机各档; HSK方框更贴近卡片大边框 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -8,7 +8,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-    console.log('%c[斑斓汉字] 汉字UI-13 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+    console.log('%c[斑斓汉字] 汉字UI-15 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1660,7 +1660,7 @@
         .acc-item { background: rgba(240, 248, 244, 0.96); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.7); border-radius: 8px; box-shadow: 0 4px 15px rgba(55, 74, 66, 0.05); overflow: hidden; transition: all 0.3s ease; }
         .acc-item:hover { box-shadow: 0 8px 25px rgba(55, 74, 66, 0.1); }
         
-        .acc-header { padding: 18px 24px; font-size: 16px; font-weight: 500; color: var(--ink-green); background: rgba(255, 255, 255, 0.4); cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; letter-spacing: 1.5px; border-bottom: 1px solid transparent; transition: all 0.4s ease; }
+        .acc-header { padding: 8px 11px; font-size: 16px; font-weight: 500; color: var(--ink-green); background: rgba(255, 255, 255, 0.4); cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; letter-spacing: 1.5px; border-bottom: 1px solid transparent; transition: all 0.4s ease; }
         .acc-header::after { content: "▼"; font-size: 12px; color: var(--ink-gray); transition: all 0.3s; }
         .acc-header.active::after { transform: rotate(180deg); }
         .acc-header.active { border-bottom: 1px solid var(--border-light); background: rgba(255, 255, 255, 0.8); }
@@ -1671,7 +1671,7 @@
         .acc-header:hover::after { color: #fff; }
         
         .acc-content { max-height: 0; overflow: hidden; opacity: 0; padding: 0 24px; transition: max-height 0.45s ease, opacity 0.35s ease, padding 0.35s ease; }
-        .acc-content.active { max-height: 12000px; padding: 24px 4%; opacity: 1; overflow: visible; }
+        .acc-content.active { max-height: 12000px; padding: 11px 2%; opacity: 1; overflow: visible; }
         .acc-header { cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 
         .canvas-area { display: flex; flex-direction: column; gap: 30px; align-items: center; width: 100%; }
@@ -1891,7 +1891,7 @@
         }
         .sentence-translation-block {
             /* 【v30】恢复上一版基准（21/22.5/24），再整体放大 1.3 倍 */
-            padding: 27.3px 42.9px 31.2px 42.9px;
+            padding: 14px 42.9px 16px 42.9px; /* 汉字UI-14: 缩小翻译区上下间距 (上27.3→14 下31.2→16) */
             font-size: 27.3px;
         }
         .sentence-translation-block .trans-line {
@@ -2658,7 +2658,7 @@
         /* ── 平板（≤1024px）── */
         @media (max-width: 1024px) {
             body { padding: 20px 24px; }
-            .acc-content.active { padding: 20px 3%; }
+            .acc-content.active { padding: 9px 1.5%; }
             .controls-bar { gap: 10px; }
             /* 【v42】平板下底部按钮按比例收窄，6 个仍排一行 */
             .download-group button { font-size: 12px; padding: 5px 6px; width: 145px; height: 58px; }
@@ -2670,8 +2670,8 @@
         @media (max-width: 768px) {
             body { padding: 14px 12px; }
             .header-title > h1 { font-size: 28px !important; letter-spacing: 5px !important; }
-            .acc-content.active { padding: 16px 2%; }
-            .acc-header { padding: 14px 16px; font-size: 14px; }
+            .acc-content.active { padding: 7px 1%; }
+            .acc-header { padding: 6px 7px; font-size: 14px; }
             .glass-panel { padding: 16px 14px; }
             .controls-bar { flex-direction: column; align-items: stretch; gap: 10px; }
             /* 【v43】手机端解除顶部按钮的固定宽高，由 flex 接管 */
@@ -2711,8 +2711,8 @@
             .header-title > h1 { font-size: 22px !important; letter-spacing: 3px !important; text-indent: 3px !important; }
             .title-icon { width: 40px !important; height: 36px !important; }
             .header-title .sub-title { font-size: 10px; letter-spacing: 2px; }
-            .acc-header { padding: 12px 14px; font-size: 13px; }
-            .acc-content.active { padding: 12px 1%; }
+            .acc-header { padding: 5px 6px; font-size: 13px; }
+            .acc-content.active { padding: 5px 0.5%; }
             .glass-panel { padding: 12px 10px; border-radius: 6px; }
             input[type="text"] { font-size: 16px; letter-spacing: 2px; }
             button { font-size: 13px; padding: 8px 12px; }
@@ -5829,7 +5829,7 @@
         if (inputText && inputText.length > 0) {
             const sentenceWrapper = document.createElement('div');
             sentenceWrapper.style.cssText = 'margin-bottom:25px; width:100%; box-sizing:border-box; padding:8px 0; display:flex; flex-direction:column; align-items:center;';
-            sentenceWrapper.innerHTML = `<div class="row-label">整句展示 <span style="font-size:11px; color:var(--mo-light); font-weight:normal; margin-left:6px;">Full Sentence Display · عرض الجملة الكاملة</span></div>`;
+            sentenceWrapper.innerHTML = '';  // 汉字UI-14: 删除"整句展示"标题
             
             // 根据屏幕宽度自适应格子尺寸
             const CELL_W = getWorksheetCellWidth();
