@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-21 (2026-06-18) — UI细化㉑: 印章单数字布局改为右起2列、左列(第二列)竖直居中(n=3右2左1居中, n=5右3左2居中, n≥7奇数通用列居中); 偶数布局不变 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-22 (2026-06-18) — UI细化㉒: 印章modal ①印文框回车=刻印 ②n=3/5去掉中间虚线(横分隔+竖中线) ③左右两方框上下对齐(等高,预览标题移入框内)+边框改墨绿色var(--ink-green) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -8,7 +8,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-    console.log('%c[斑斓汉字] 汉字UI-21 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+    console.log('%c[斑斓汉字] 汉字UI-22 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -2228,13 +2228,13 @@
         .seal-modal { padding: 0; text-align: left; }
         .seal-modal-inner { padding: 16px 20px; }
         .seal-modal-inner h3 { font-size: 20px; margin: 0 0 14px; text-align: center; color: var(--ink-green); letter-spacing: 2px; font-weight: bold; }
-        .seal-controls { background: #fafafa; padding: 10px 12px; border-radius: 4px; margin-bottom: 12px; border: 1px solid #f0f0f0; }
+        .seal-controls { background: #fafafa; padding: 10px 12px; border-radius: 4px; margin-bottom: 12px; border: 1px solid var(--ink-green); }
         .seal-controls label { display: block; font-size: 12px; color: var(--ink-green); margin-bottom: 6px; font-weight: bold;}
         .seal-input { width: 100%; padding: 8px; font-size: 18px; text-align: center; font-family: var(--font-main); letter-spacing: 4px; margin-bottom: 10px; border: 1px solid #99b2a6; background: #d3ded7; box-sizing: border-box;}
         .seal-style-row { display: flex; gap: 6px; flex-wrap: wrap; }
         .seal-style-btn { flex: 1; min-width: 80px; background: #fff; color: var(--mo-mid); border: 1px solid #ddd; box-shadow: none; padding: 6px 8px; font-size: 12px;}
         .seal-style-btn.active { background: var(--zhusha); color: #fff; border-color: var(--zhusha); }
-        .seal-preview-wrap { background: radial-gradient(ellipse at center, rgba(0,0,0,0.02) 0%, transparent 70%), #fafafa; border: 1px dashed #ccc; padding: 12px; margin-bottom: 12px; display: flex; justify-content: center; align-items: center; min-height: 160px; border-radius: 4px; }
+        .seal-preview-wrap { background: radial-gradient(ellipse at center, rgba(0,0,0,0.02) 0%, transparent 70%), #fafafa; border: 1px solid var(--ink-green); padding: 12px; margin-bottom: 12px; display: flex; justify-content: center; align-items: center; min-height: 160px; border-radius: 4px; }
         .seal-actions { display: flex; gap: 8px; }
         .seal-actions button { flex: 1; padding: 8px; font-size: 13px; }
 
@@ -4532,16 +4532,16 @@
         <div class="seal-modal-inner">
             <h3 class="title-scaled"><span class="t-cn"><span class="t-ico">❒</span>印章题刻</span><span class="lang-en">Seal Carving</span><span class="lang-ar">نقش الختم</span></h3>
             <!-- 横向两栏：左控制区 | 右预览区 -->
-            <div style="display:flex; gap:16px; align-items:flex-start;">
+            <div style="display:flex; gap:16px; align-items:stretch;">
                 <!-- 左栏：输入控制 -->
-                <div style="flex:1; min-width:0;">
-                    <div class="seal-controls">
+                <div style="flex:1; min-width:0; display:flex;">
+                    <div class="seal-controls" style="flex:1; margin-bottom:0;">
                         <label>
                             印文（1~6字）
                             <span class="lang-en" style="font-weight:normal; font-size:11px; color:var(--mo-light);">Seal Text</span>
                             <span class="lang-ar" style="font-weight:normal; font-size:11px; color:#9b6aaa; font-family:'Tahoma',sans-serif; direction:rtl;">· نص الختم</span>
                         </label>
-                        <input type="text" class="seal-input" id="sealInput" maxlength="6" value="笔墨纸砚" placeholder="请输入...">
+                        <input type="text" class="seal-input" id="sealInput" maxlength="6" value="笔墨纸砚" placeholder="请输入..." onkeydown="if(event.key==='Enter'){event.preventDefault();generateSeal();}">
                         <label style="margin-top:8px;">
                             印章制式
                             <span class="lang-en" style="font-weight:normal; font-size:11px; color:var(--mo-light);">Style</span>
@@ -4595,15 +4595,17 @@
                     </div>
                 </div>
                 <!-- 右栏：印章预览 -->
-                <div style="flex:0 0 260px;">
-                    <div style="font-size:11px; color:var(--mo-light); margin-bottom:6px; text-align:center;">
-                        预览 <span class="lang-en">Preview</span><span class="lang-ar">معاينة</span>
-                    </div>
-                    <div class="seal-preview-wrap" style="min-height:260px; padding:8px;">
-                        <div id="sealEmpty" style="color:var(--mo-light); font-family:var(--font-calligraphy); font-size:14px; text-align:center;">
-                            等待题刻...<br><span style="font-size:11px;"><span class="lang-en">Awaiting</span><span class="lang-ar">في انتظار</span></span>
+                <div style="flex:0 0 260px; display:flex; flex-direction:column;">
+                    <div class="seal-preview-wrap" style="flex:1; min-height:260px; padding:8px; margin-bottom:0; flex-direction:column;">
+                        <div style="font-size:11px; color:var(--mo-light); margin-bottom:6px; text-align:center; width:100%; flex:0 0 auto;">
+                            预览 <span class="lang-en">Preview</span><span class="lang-ar">معاينة</span>
                         </div>
-                        <canvas id="sealCanvas" width="300" height="300" style="display:none; max-width:100%; height:auto;"></canvas>
+                        <div style="flex:1; display:flex; align-items:center; justify-content:center; width:100%; min-height:0;">
+                            <div id="sealEmpty" style="color:var(--mo-light); font-family:var(--font-calligraphy); font-size:14px; text-align:center;">
+                                等待题刻...<br><span style="font-size:11px;"><span class="lang-en">Awaiting</span><span class="lang-ar">في انتظار</span></span>
+                            </div>
+                            <canvas id="sealCanvas" width="300" height="300" style="display:none; max-width:100%; height:auto;"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -7140,19 +7142,12 @@
         drawCornerFlourish(ctx, innerLeft, innerTop, cornerSize, SEAL_RED, 'tl'); drawCornerFlourish(ctx, innerRight, innerTop, cornerSize, SEAL_RED, 'tr'); drawCornerFlourish(ctx, innerLeft, innerBottom, cornerSize, SEAL_RED, 'bl'); drawCornerFlourish(ctx, innerRight, innerBottom, cornerSize, SEAL_RED, 'br');
         const textPad = 50; const tx = margin + textPad, ty = margin + textPad; const tw = innerSize - textPad * 2, th = innerSize - textPad * 2;
         const chars = Array.from(text); const n = chars.length;
-        // Only draw grid dividers for even-count layouts (2,4,6)
+        // Only draw grid dividers for even-count layouts (2,4,6); n=1/3/5 单数布局不画中间虚线(★汉字UI-22)
         if (n === 2 || n === 4 || n === 6) {
             const cols = (n <= 2) ? 1 : 2; const rows = (n === 2 ? 2 : (n <= 4 ? 2 : 3));
             ctx.save(); ctx.strokeStyle = SEAL_RED; ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
             for (let c = 1; c < cols; c++) { const lx = tx + (tw / cols) * c; ctx.beginPath(); ctx.moveTo(lx, ty); ctx.lineTo(lx, ty + th); ctx.stroke(); }
             for (let r = 1; r < rows; r++) { const ly = ty + (th / rows) * r; ctx.beginPath(); ctx.moveTo(tx, ly); ctx.lineTo(tx + tw, ly); ctx.stroke(); }
-            ctx.restore();
-        } else if (n === 3 || n === 5) {
-            // Draw horizontal separator only (between top 1 char and bottom section)
-            const topH = n === 3 ? th * 0.42 : th * 0.33;
-            ctx.save(); ctx.strokeStyle = SEAL_RED; ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
-            ctx.beginPath(); ctx.moveTo(tx, ty + topH); ctx.lineTo(tx + tw, ty + topH); ctx.stroke();
-            const lx = tx + tw / 2; ctx.beginPath(); ctx.moveTo(lx, ty + topH); ctx.lineTo(lx, ty + th); ctx.stroke();
             ctx.restore();
         }
         layoutSealText(ctx, text, tx, ty, tw, th, SEAL_RED, false);
@@ -7187,12 +7182,6 @@
             ctx.save(); ctx.strokeStyle = SEAL_RED; ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
             for (let c = 1; c < cols2; c++) { const lx2 = tx + (innerSide / cols2) * c; ctx.beginPath(); ctx.moveTo(lx2, ty); ctx.lineTo(lx2, ty + innerSide); ctx.stroke(); }
             for (let row2 = 1; row2 < rows2; row2++) { const ly2 = ty + (innerSide / rows2) * row2; ctx.beginPath(); ctx.moveTo(tx, ly2); ctx.lineTo(tx + innerSide, ly2); ctx.stroke(); }
-            ctx.restore();
-        } else if (n2 === 3 || n2 === 5) {
-            const topH2 = n2 === 3 ? innerSide * 0.42 : innerSide * 0.33;
-            ctx.save(); ctx.strokeStyle = SEAL_RED; ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
-            ctx.beginPath(); ctx.moveTo(tx, ty + topH2); ctx.lineTo(tx + innerSide, ty + topH2); ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(tx + innerSide / 2, ty + topH2); ctx.lineTo(tx + innerSide / 2, ty + innerSide); ctx.stroke();
             ctx.restore();
         }
         layoutSealText(ctx, text, tx, ty, innerSide, innerSide, SEAL_RED, false);
