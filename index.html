@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-12 (2026-06-18) — UI细化⑫(方法B调整): 桌面头部装饰插画缩到0.6×、且不再上探到品牌处, 改为居中落在"笔墨纸砚+署名"文字一带; 图标组仍height:0不撑行高、随语言自适应贴标语左右; 仅≥901px, 手机端不动 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-13 (2026-06-18) — UI细化⑬: 桌面头部装饰插画尺寸 0.6×→0.7× 原始(略放大); 其余同UI-12; 仅≥901px, 手机端不动 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -8,7 +8,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-    console.log('%c[斑斓汉字] 汉字UI-12 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+    console.log('%c[斑斓汉字] 汉字UI-13 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -377,8 +377,8 @@
                 transform: translateY(-4px);  /* 略上移, 底边不压到下方功能区 */
             }
             .title-icon {
-                width: clamp(43px, 5.4vw, 71px);   /* ① 0.6× 缩小 */
-                height: clamp(37px, 4.5vw, 58px);
+                width: clamp(50px, 6.3vw, 83px);   /* ① 0.7× 原始尺寸 */
+                height: clamp(43px, 5.25vw, 67px);
             }
         }
 
