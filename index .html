@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-9 (2026-06-17) — UI细化⑨(方法B): 桌面头部两侧装饰插画绝对定位、脱离副标行高(向上探进 logo 两侧空白, 不缩尺寸), 副标行高度只剩文字 → 头部明显变紧凑; 仅 ≥901px, 手机端排版(含≤430px换行)完全不动 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-19 (2026-06-18) — UI细化⑲: 统一所有内容区"内容↔边框"=12px: 模块1卡HSK行去掉额外2px上间距(HSK到顶=按钮到底=12)、acc-content padding 11→12、模块2/3顶部残留4→0 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -8,7 +8,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-    console.log('%c[斑斓汉字] 汉字UI-9 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+    console.log('%c[斑斓汉字] 汉字UI-19 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -366,18 +366,20 @@
             text-align: center;
         }
 
-        /* ★ 汉字UI-9 (方法B): 桌面让两侧装饰插画"脱离"副标行高 → 该行高度只由文字决定, 头部变紧凑。
-           插画绝对定位贴左右两侧, 以行底为锚点向上生长(探进 logo 两侧空白, 不向下压内容); 尺寸不缩。
-           仅 ≥901px(插画最大、间距最明显处); ≤900px 维持原排版(含 ≤430px 换行), 不动手机端。 */
+        /* ★ 汉字UI-12 (方法B调整): 桌面装饰插画——① 缩到 0.6×; ② 不再向上长到品牌处, 改为居中落在
+           "笔墨纸砚 + 署名"这块文字一带; 图标组仍 height:0 不撑行高(头部紧凑), 随语言宽度自适应贴标语左右。仅 ≥901px。 */
         @media (min-width: 901px) {
-            .title-icons-left,
-            .title-icons-right {
-                position: absolute;
-                bottom: 0;
-                z-index: 1;
+            .title-icons {
+                height: 0;                    /* 不占副标行高度 → 头部紧凑 */
+                align-self: center;
+                align-items: center;          /* ② 插画居中落在标语/署名一带, 不再上探到品牌 */
+                overflow: visible;
+                transform: translateY(-4px);  /* 略上移, 底边不压到下方功能区 */
             }
-            .title-icons-left { left: 0; }
-            .title-icons-right { right: 0; }
+            .title-icon {
+                width: clamp(50px, 6.3vw, 83px);   /* ① 0.7× 原始尺寸 */
+                height: clamp(43px, 5.25vw, 67px);
+            }
         }
 
         @media (max-width: 900px) {
@@ -440,7 +442,7 @@
             border: 1px solid rgba(255, 255, 255, 0.6);
             border-radius: 8px;
             box-shadow: 0 10px 30px rgba(55, 74, 66, 0.08), inset 0 0 20px rgba(255, 255, 255, 0.9);
-            padding: 24px; margin-bottom: 25px; position: relative;
+            padding: 24px; margin-bottom: 16px; position: relative;
             overflow: visible;
             isolation: isolate;
         }
@@ -1658,7 +1660,7 @@
         .acc-item { background: rgba(240, 248, 244, 0.96); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.7); border-radius: 8px; box-shadow: 0 4px 15px rgba(55, 74, 66, 0.05); overflow: hidden; transition: all 0.3s ease; }
         .acc-item:hover { box-shadow: 0 8px 25px rgba(55, 74, 66, 0.1); }
         
-        .acc-header { padding: 18px 24px; font-size: 16px; font-weight: 500; color: var(--ink-green); background: rgba(255, 255, 255, 0.4); cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; letter-spacing: 1.5px; border-bottom: 1px solid transparent; transition: all 0.4s ease; }
+        .acc-header { padding: 16px 24px; font-size: 16px; font-weight: 500; color: var(--ink-green); background: rgba(255, 255, 255, 0.4); cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; letter-spacing: 1.5px; border-bottom: 1px solid transparent; transition: all 0.4s ease; }
         .acc-header::after { content: "▼"; font-size: 12px; color: var(--ink-gray); transition: all 0.3s; }
         .acc-header.active::after { transform: rotate(180deg); }
         .acc-header.active { border-bottom: 1px solid var(--border-light); background: rgba(255, 255, 255, 0.8); }
@@ -1669,13 +1671,13 @@
         .acc-header:hover::after { color: #fff; }
         
         .acc-content { max-height: 0; overflow: hidden; opacity: 0; padding: 0 24px; transition: max-height 0.45s ease, opacity 0.35s ease, padding 0.35s ease; }
-        .acc-content.active { max-height: 12000px; padding: 24px 4%; opacity: 1; overflow: visible; }
+        .acc-content.active { max-height: 12000px; padding: 12px 2%; opacity: 1; overflow: visible; }
         .acc-header { cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 
         .canvas-area { display: flex; flex-direction: column; gap: 30px; align-items: center; width: 100%; }
         .word-row-container { display: flex; flex-wrap: wrap; gap: 24px; justify-content: center; width: 100%; }
         /* 单字卡片宽度填满内容区 */
-        .card { background: #fff; padding: 30px; border-radius: 4px; border: 1.5px solid #b0b8b3; box-shadow: 0 4px 12px rgba(0,0,0,0.03); display: flex; flex-direction: column; align-items: center; width: 100%; box-sizing: border-box; position: relative; }
+        .card { background: #fff; padding: 12px 30px; border-radius: 4px; border: 1.5px solid #b0b8b3; box-shadow: 0 4px 12px rgba(0,0,0,0.03); display: flex; flex-direction: column; align-items: center; width: 100%; box-sizing: border-box; position: relative; }
 
         .hsk-badge { display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; height: 60px; font-size: 22px; padding: 0 33px; border-radius: 6px; font-weight: bold; letter-spacing: 0.5px; line-height: 1.4; text-align: center; margin-bottom: 10px; }
         .hsk-badge.req-write { background: rgba(142, 33, 39, 0.08); color: #8e2127; border: 1px solid rgba(142,33,39,0.3); }
@@ -1889,7 +1891,7 @@
         }
         .sentence-translation-block {
             /* 【v30】恢复上一版基准（21/22.5/24），再整体放大 1.3 倍 */
-            padding: 27.3px 42.9px 31.2px 42.9px;
+            padding: 14px 42.9px 16px 42.9px; /* 汉字UI-14: 缩小翻译区上下间距 (上27.3→14 下31.2→16) */
             font-size: 27.3px;
         }
         .sentence-translation-block .trans-line {
@@ -2241,7 +2243,7 @@
         .stroke-guide-panel {
             width: 100%;
             max-width: 1400px;
-            margin: 0 auto 25px auto;
+            margin: 0 auto 6px auto;
             background: var(--glass-bg);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
@@ -2656,7 +2658,7 @@
         /* ── 平板（≤1024px）── */
         @media (max-width: 1024px) {
             body { padding: 20px 24px; }
-            .acc-content.active { padding: 20px 3%; }
+            .acc-content.active { padding: 9px 1.5%; }
             .controls-bar { gap: 10px; }
             /* 【v42】平板下底部按钮按比例收窄，6 个仍排一行 */
             .download-group button { font-size: 12px; padding: 5px 6px; width: 145px; height: 58px; }
@@ -2668,7 +2670,7 @@
         @media (max-width: 768px) {
             body { padding: 14px 12px; }
             .header-title > h1 { font-size: 28px !important; letter-spacing: 5px !important; }
-            .acc-content.active { padding: 16px 2%; }
+            .acc-content.active { padding: 7px 1%; }
             .acc-header { padding: 14px 16px; font-size: 14px; }
             .glass-panel { padding: 16px 14px; }
             .controls-bar { flex-direction: column; align-items: stretch; gap: 10px; }
@@ -2688,7 +2690,7 @@
             .download-group button { flex: 1 1 calc(50% - 8px); min-width: 0; font-size: 14.4px; padding: 9.6px 7.2px; width: auto; height: auto; }
             .download-group .btn-dl-main { width: auto; }
             .divider-vert { display: none !important; }
-            .card { padding: 18px 12px; }
+            .card { padding: 10px 12px; }
             .meta-info-row { gap: 10px; }
             .struct-body { gap: 14px; }
             .struct-comp-block { min-width: 0; }
@@ -2710,7 +2712,7 @@
             .title-icon { width: 40px !important; height: 36px !important; }
             .header-title .sub-title { font-size: 10px; letter-spacing: 2px; }
             .acc-header { padding: 12px 14px; font-size: 13px; }
-            .acc-content.active { padding: 12px 1%; }
+            .acc-content.active { padding: 5px 0.5%; }
             .glass-panel { padding: 12px 10px; border-radius: 6px; }
             input[type="text"] { font-size: 16px; letter-spacing: 2px; }
             button { font-size: 13px; padding: 8px 12px; }
@@ -2718,7 +2720,7 @@
             .controls-bar > .input-wrapper { width: 100%; box-sizing: border-box; }
             .download-group button { flex: 1 1 100%; }
             .download-group { padding: 12px; }
-            .card { padding: 14px 8px; }
+            .card { padding: 8px 8px; }
             /* 【v57】手机端：三档徽章固定尺寸 → 所有区块方框/字体/间距完全一致（对齐截图1） */
             .hsk-badges-row { flex-wrap: nowrap; gap: 6px; width: 100%; justify-content: center; }
             .meta-info-row  { gap: 0; width: 100%; }   /* 顶部多包的一层不再额外加间距，统一交给 badges-row */
@@ -4418,7 +4420,7 @@
                 </div>
             </div>
             <div class="acc-content" id="acc-isolated-strokes">
-                <div id="isolatedStrokesRoot" style="padding-top:15px; width:100%; display:flex; flex-direction:column; align-items:center;"></div>
+                <div id="isolatedStrokesRoot" style="padding-top:0; width:100%; display:flex; flex-direction:column; align-items:center;"></div>
             </div>
         </div>
 
@@ -4432,7 +4434,7 @@
             </div>
             <div class="acc-content" id="acc-comp">
                 <div class="components-panel">
-                    <div id="compDisplayRoot" style="margin-top:15px; width:100%;"></div>
+                    <div id="compDisplayRoot" style="margin-top:0; width:100%;"></div>
                 </div>
             </div>
         </div>
@@ -5173,7 +5175,7 @@
 
             // 【多音字】用 DOM 方式构建卡片，拼音框支持点击切换
             card.innerHTML = `
-                <div style="display:flex; flex-direction:column; align-items:center; width:100%; margin-top:8px;">
+                <div style="display:flex; flex-direction:column; align-items:center; width:100%; margin-top:0;">
                     <div style="text-align:center;margin-bottom:6px;">
                         ${hskBoxHtml}
                     </div>
@@ -5183,16 +5185,16 @@
                         <div class="section-label">彩虹笔顺<span class="lang-en" style="font-weight:normal;font-size:11px;letter-spacing:0.5px;margin-left:6px;opacity:0.75;">Rainbow</span><span class="lang-ar" style="font-weight:normal;font-size:11px;letter-spacing:0.5px;margin-left:6px;opacity:0.75;font-family:'Tahoma','Arial',sans-serif;">ملون</span></div>
                         <div id="target_rb_${charIdx}" class="grid-container"></div>
                         <!-- 占位 spacer：与动态笔顺列结构一致，让拼音框与 ⏸ 同高 -->
-                        <div style="min-height:20px; margin-top:10px; font-size:13px;" aria-hidden="true">&nbsp;</div>
+                        <div style="min-height:16px; margin-top:4px; font-size:13px;" aria-hidden="true">&nbsp;</div>
                         <!-- 拼音框：占位容器，由 JS 注入 -->
-                        <div id="pinyinSlot_${charIdx}" style="margin-top:6px;"></div>
+                        <div id="pinyinSlot_${charIdx}" style="margin-top:3px;"></div>
                     </div>
                     <!-- 动态笔顺（中列，包含播放与下一笔按钮）-->
                     <div style="display:flex; flex-direction:column; align-items:center; width:240px;">
                         <div class="section-label">动态笔顺<span class="lang-en" style="font-weight:normal;font-size:11px;letter-spacing:0.5px;margin-left:6px;opacity:0.75;">Animation</span><span class="lang-ar" style="font-weight:normal;font-size:11px;letter-spacing:0.5px;margin-left:6px;opacity:0.75;font-family:'Tahoma','Arial',sans-serif;">متحركة</span></div>
                         <div id="target_anim_${charIdx}" class="grid-container"></div>
-                        <div style="min-height:20px; margin-top:10px; font-size:13px;" aria-hidden="true">&nbsp;</div>
-                        <div style="display:flex; justify-content:center; gap:10px; margin-top:6px; width:100%; align-items:center;">
+                        <div style="min-height:16px; margin-top:4px; font-size:13px;" aria-hidden="true">&nbsp;</div>
+                        <div style="display:flex; justify-content:center; gap:10px; margin-top:3px; width:100%; align-items:center;">
                             <button class="play-pause-btn" id="strokePlayBtn_${charIdx}" onclick="toggleStrokeAnim(${charIdx})" title="播放/暂停 Play/Pause" aria-label="播放/暂停">⏸</button>
                             <button class="next-stroke-btn" onclick="nextStroke(${charIdx})" title="下一笔 Next Stroke" aria-label="下一笔">下一笔<span class="btn-en" style="margin-left:5px;font-size:13px;opacity:0.9;font-weight:normal;letter-spacing:0.3px;">Next Stroke</span><span class="btn-ar" style="margin-left:5px;font-size:14px;opacity:0.9;font-weight:normal;letter-spacing:0.3px;">الضربة التالية</span></button>
                         </div>
@@ -5203,8 +5205,8 @@
                         <div id="quiz_${charIdx}" class="grid-container" style="cursor:crosshair; touch-action:none; position:relative;">
                             <div id="quiz_hw_${charIdx}" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:1;"></div>
                         </div>
-                        <div id="quiz_feedback_${charIdx}" style="min-height:20px; margin-top:10px; font-size:13px; color:var(--ink-green); font-weight:bold; text-align:center;"></div>
-                        <div style="display:flex; justify-content:center; margin-top:6px; width:100%;">
+                        <div id="quiz_feedback_${charIdx}" style="min-height:16px; margin-top:4px; font-size:13px; color:var(--ink-green); font-weight:bold; text-align:center;"></div>
+                        <div style="display:flex; justify-content:center; margin-top:3px; width:100%;">
                             <button class="next-stroke-btn" onclick="startQuiz(${charIdx})" title="重写 Rewrite · إعادة" aria-label="重写">重写<span class="btn-en" style="margin-left:5px;font-size:13px;opacity:0.9;font-weight:normal;letter-spacing:0.3px;">Rewrite</span><span class="btn-ar" style="margin-left:5px;font-size:14px;opacity:0.9;font-weight:normal;letter-spacing:0.3px;">إعادة</span></button>
                         </div>
                     </div>
@@ -5827,7 +5829,7 @@
         if (inputText && inputText.length > 0) {
             const sentenceWrapper = document.createElement('div');
             sentenceWrapper.style.cssText = 'margin-bottom:25px; width:100%; box-sizing:border-box; padding:8px 0; display:flex; flex-direction:column; align-items:center;';
-            sentenceWrapper.innerHTML = `<div class="row-label">整句展示 <span style="font-size:11px; color:var(--mo-light); font-weight:normal; margin-left:6px;">Full Sentence Display · عرض الجملة الكاملة</span></div>`;
+            sentenceWrapper.innerHTML = '';  // 汉字UI-14: 删除"整句展示"标题
             
             // 根据屏幕宽度自适应格子尺寸
             const CELL_W = getWorksheetCellWidth();
