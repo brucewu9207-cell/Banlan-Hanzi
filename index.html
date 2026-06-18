@@ -8,7 +8,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-    console.log('%c[斑斓汉字] 汉字UI-26 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+    console.log('%c[斑斓汉字] 汉字UI-27 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -669,6 +669,12 @@
         }
         /* UI-26: 三个按钮文字不换行,各自固定 中文1行+副标1行,高度一致 */
         .bl-tab, .bl-tab-add { white-space: nowrap; }
+        /* UI-27 真凶修复: 全局 `button{display:inline-flex;flex-direction:column}` 把 tab 按钮
+           做成纵向 flex,导致 "我的班级("、计数、")" 各成一行 flex item 被拆开。
+           这里改回 inline-block(行内块),内容正常流动: 中文+计数同一行,副标块级换到下一行。 */
+        .bl-tab, .bl-tab-add { display: inline-block; text-align: center; }
+        /* 计数被全局 `button span{display:block;font-size:10px}` 误套,改回行内正常字号 */
+        #blClassCount { display: inline; font-size: inherit; }
 
         /* 内容区 — ★ v2D.3: 缩小间距 */
         .bl-body {
