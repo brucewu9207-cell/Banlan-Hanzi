@@ -8,7 +8,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-    console.log('%c[斑斓汉字] 汉字UI-30 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+    console.log('%c[斑斓汉字] 汉字UI-31 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -812,6 +812,44 @@
         .bl-student-kick-btn:hover {
             background: #dc3545;
             color: white;
+        }
+        /* ★ UI-31: 已离开学生灰显 + 「已离开」标记 */
+        .bl-student-card.is-left {
+            background: #f7f8f9;
+            border-color: #e3e7eb;
+            border-left-color: #b6bfc7;
+            opacity: 0.72;
+        }
+        .bl-student-card.is-left:hover {
+            background: #f2f4f6;
+            border-left-color: #b6bfc7;
+        }
+        .bl-student-card.is-left .bl-student-name { color: #8a949d; }
+        .bl-left-badge {
+            display: inline-block;
+            background: #eceff1;
+            color: #78858f;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 1px 9px;
+            border-radius: 10px;
+            margin-left: 8px;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+        /* 明细表已离开学生行 */
+        tr.bl-matrix-row-left { opacity: 0.5; }
+        tr.bl-matrix-row-left .bl-matrix-name { color: #8a949d; }
+        .bl-left-badge-sm {
+            display: inline-block;
+            background: #eceff1;
+            color: #78858f;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 0 6px;
+            border-radius: 8px;
+            margin-left: 6px;
+            white-space: nowrap;
         }
 
         /* ═══ Phase 4-2: 答对率展示 ═══ */
@@ -9127,14 +9165,18 @@ window.BL = (function () {
 
     function renderStudents() {
         const list = $('blStudentList');
-        const n = state.students.length;
-        $('blStudentsCount').textContent = tt(
-            `${n} 学生`,
-            `${n} student${n === 1 ? '' : 's'}`,
-            `${n} طلاب`
-        );
+        // ★ UI-31: 区分在读 / 已离开
+        const activeCount = state.students.filter(s => !s.left).length;
+        const leftCount = state.students.filter(s => s.left).length;
+        let cZh = `在读 ${activeCount}`, cEn = `${activeCount} active`, cAr = `${activeCount} نشط`;
+        if (leftCount > 0) {
+            cZh += ` · 已离开 ${leftCount}`;
+            cEn += ` · ${leftCount} left`;
+            cAr += ` · ${leftCount} غادر`;
+        }
+        $('blStudentsCount').textContent = tt(cZh, cEn, cAr);
 
-        if (n === 0) {
+        if (state.students.length === 0) {
             list.innerHTML = `
                 <div class="bl-empty">
                     <div class="bl-empty-icon">👥</div>
@@ -9145,27 +9187,37 @@ window.BL = (function () {
         }
 
         const taskTotal = state.currentClassInfo.taskCount || 0;
-        const txtKick = tt('踢出', 'Kick', 'إخراج');
-        const titleKick = tt('踢出学生', 'Kick Student', 'إخراج الطالب');
+        const txtKick = tt('移出', 'Remove', 'إخراج');
+        const titleKick = tt('移出班级', 'Remove from class', 'إخراج من الصف');
         const txtDetail = tt('查看作答', 'View answers', 'عرض الإجابات');
+        const txtLeft = tt('已离开', 'Left', 'غادر');
 
-        list.innerHTML = state.students.map((s, idx) => {
+        // ★ UI-31: 在读在前、已离开沉底(sort 稳定,idx 仍指向 state.students 原下标)
+        const ordered = state.students
+            .map((s, idx) => ({ s, idx }))
+            .sort((a, b) => (a.s.left ? 1 : 0) - (b.s.left ? 1 : 0));
+
+        list.innerHTML = ordered.map(({ s, idx }) => {
+            const isLeft = !!s.left;
             const completed = (s.completedTasks || []).length;
             const meta = tt(
                 `已完成 ${completed} / ${taskTotal} 任务`,
                 `Completed ${completed} / ${taskTotal} tasks`,
                 `أكمل ${completed} / ${taskTotal} مهام`
             );
+            const badge = isLeft ? ` <span class="bl-left-badge">${escapeHtml(txtLeft)}</span>` : '';
+            const kickBtn = isLeft ? '' :
+                `<button class="bl-student-kick-btn" onclick="BL.kickStudent('${escapeAttr(s.studentCode)}', '${escapeAttr(s.name || s.studentCode)}')" title="${escapeAttr(titleKick)}">✗ ${escapeHtml(txtKick)}</button>`;
             return `
             <div class="bl-student-card-wrap">
-              <div class="bl-student-card">
+              <div class="bl-student-card${isLeft ? ' is-left' : ''}">
                 <div class="bl-student-info">
-                    <div class="bl-student-name">${escapeHtml(s.name || s.studentCode)}</div>
+                    <div class="bl-student-name">${escapeHtml(s.name || s.studentCode)}${badge}</div>
                     <div class="bl-student-meta">${escapeHtml(meta)}</div>
                 </div>
                 <div class="bl-student-actions">
                     <button class="bl-student-detail-btn" onclick="BL.toggleStudentDetail(${idx})">${escapeHtml(txtDetail)}</button>
-                    <button class="bl-student-kick-btn" onclick="BL.kickStudent('${escapeAttr(s.studentCode)}', '${escapeAttr(s.name || s.studentCode)}')" title="${escapeAttr(titleKick)}">✗ ${escapeHtml(txtKick)}</button>
+                    ${kickBtn}
                 </div>
               </div>
               <div class="bl-student-detail" id="bl-stu-detail-${idx}" style="display:none;"></div>
@@ -9234,9 +9286,12 @@ window.BL = (function () {
         const box = $('blAnswerRate');
         if (!box) return;
 
+        // ★ UI-31(选项B): 答对率只统计在读学生(已离开学生历史不计入聚合)
+        const activeStudents = state.students.filter(s => !s.left);
+
         // 收集所有"有学生做过"的任务 id (保持出现顺序)
         const taskIds = [];
-        state.students.forEach(s => {
+        activeStudents.forEach(s => {
             if (s.taskResults) Object.keys(s.taskResults).forEach(tid => {
                 if (!taskIds.includes(tid)) taskIds.push(tid);
             });
@@ -9281,7 +9336,7 @@ window.BL = (function () {
             const charOrder = [];
             const stat = {}; // char -> {pyC,pyT,compC,compT}
             let doneCount = 0;
-            state.students.forEach(s => {
+            activeStudents.forEach(s => {
                 const tr = s.taskResults && s.taskResults[taskId];
                 if (!tr || !tr.chars) return;
                 doneCount++;
@@ -9418,7 +9473,12 @@ window.BL = (function () {
                 });
             });
 
-            const doneText = tt(`${doneStudents.length} 人做过`, `${doneStudents.length} done`, `${doneStudents.length} أكملوا`);
+            // ★ UI-31: 含已离开学生数提示(明细表保留已离开学生历史)
+            const leftDone = doneStudents.filter(s => s.left).length;
+            const dn = doneStudents.length;
+            const doneText = leftDone > 0
+                ? tt(`${dn} 人做过 · 含已离开 ${leftDone}`, `${dn} done · ${leftDone} left`, `${dn} أكملوا · ${leftDone} غادر`)
+                : tt(`${dn} 人做过`, `${dn} done`, `${dn} أكملوا`);
 
             html += `
                 <div class="bl-matrix-task">
@@ -9454,6 +9514,8 @@ window.BL = (function () {
         charOrder.forEach(ch => { colC[ch] = 0; colT[ch] = 0; });
 
         // 每个学生一行
+        // ★ UI-31: 已离开学生标签
+        const txtLeftSm = tt('已离开', 'Left', 'غادر');
         let rows = '';
         students.forEach(s => {
             const chars = s.taskResults[taskId].chars;
@@ -9467,7 +9529,10 @@ window.BL = (function () {
                     if (v) { rowC++; colC[ch]++; }
                 }
             });
-            rows += `<tr><td class="bl-matrix-name">${escapeHtml(s.name || s.studentCode)}</td>${cells}<td class="bl-matrix-rowend">${pctCell(rowC, rowT)}</td></tr>`;
+            const isLeft = !!s.left;
+            const trCls = isLeft ? ' class="bl-matrix-row-left"' : '';
+            const nameBadge = isLeft ? ` <span class="bl-left-badge-sm">${escapeHtml(txtLeftSm)}</span>` : '';
+            rows += `<tr${trCls}><td class="bl-matrix-name">${escapeHtml(s.name || s.studentCode)}${nameBadge}</td>${cells}<td class="bl-matrix-rowend">${pctCell(rowC, rowT)}</td></tr>`;
         });
 
         // 列底统计 + 右下角
@@ -9495,10 +9560,11 @@ window.BL = (function () {
     async function kickStudent(studentCode, studentName) {
         if (!state.currentClassCode) return;
 
+        // ★ UI-31: 软离开语义(记录保留,凭学号可重新加入)
         const ok = confirm(tt(
-            `确定踢出学生「${studentName}」?\n\n该学生将退出班级,不再看到本班任务。`,
-            `Kick student "${studentName}"?\n\nStudent will leave the class.`,
-            `إخراج الطالب "${studentName}"؟`
+            `确定将「${studentName}」移出班级?\n\n该学生将退出班级、不再看到本班任务；\n学习记录会保留,凭学号可重新加入。`,
+            `Remove "${studentName}" from the class?\n\nThe student will leave and stop seeing tasks.\nTheir records are kept; they can rejoin with the same ID.`,
+            `إخراج "${studentName}" من الصف؟`
         ));
         if (!ok) return;
 
@@ -9506,16 +9572,17 @@ window.BL = (function () {
             await api('DELETE',
                 '/api/classes/' + encodeURIComponent(state.currentClassCode) +
                 '/students/' + encodeURIComponent(studentCode));
-            toast(tt(`已踢出 ${studentName}`, `Kicked ${studentName}`, `تم الإخراج`), 'success');
-            // 本地移除
-            state.students = state.students.filter(s => s.studentCode !== studentCode);
-            // 本地维护 classes 的 studentCount
-            if (state.currentClassInfo) {
-                state.currentClassInfo.studentCount = Math.max(0, (state.currentClassInfo.studentCount || 1) - 1);
+            toast(tt(`已移出 ${studentName}(记录保留)`, `Removed ${studentName} (records kept)`, `تم الإخراج`), 'success');
+            // ★ UI-31: 软离开 — 不删本地记录,只标记 left,渲染为灰显"已离开"
+            const stu = state.students.find(s => s.studentCode === studentCode);
+            if (stu) {
+                stu.left = true;
+                stu.leftAt = new Date().toISOString();
+                stu.kickedByTeacher = true;
             }
             renderStudents();
         } catch (e) {
-            toast(tt('踢出失败', 'Failed to kick', 'فشل الإخراج') + '：' + e.message, 'error');
+            toast(tt('移出失败', 'Failed to remove', 'فشل الإخراج') + '：' + e.message, 'error');
         }
     }
 
