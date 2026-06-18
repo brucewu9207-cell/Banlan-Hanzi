@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-7 (2026-06-17) — UI细化⑦: 弹窗内配色微调 —— ①TTS保存MP3按钮 ink-green→#4f6a5d(调浅); ②TTS发音人/语速区块 #fafafa→#dfe8e3+边框(调深); ③TTS输入文本框(JS样式)加 #e8efeb 底+深边框; ④印章输入框 #fff→#e8efeb+深边框(调深, 保持文字可读) -->
+<!-- 斑斓汉字(老师端) · 汉字UI-8 (2026-06-17) — UI细化⑧: 印章输入框上次的 #e8efeb 太接近白(几乎看不出), 这次明显调深为 #d3ded7 底+#99b2a6 边框(文字仍清晰可读); 仅此一处 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -8,7 +8,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-    console.log('%c[斑斓汉字] 汉字UI-7 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+    console.log('%c[斑斓汉字] 汉字UI-8 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -2212,7 +2212,7 @@
         .seal-modal-inner h3 { font-size: 20px; margin: 0 0 14px; text-align: center; color: var(--ink-green); letter-spacing: 2px; font-weight: bold; }
         .seal-controls { background: #fafafa; padding: 10px 12px; border-radius: 4px; margin-bottom: 12px; border: 1px solid #f0f0f0; }
         .seal-controls label { display: block; font-size: 12px; color: var(--ink-green); margin-bottom: 6px; font-weight: bold;}
-        .seal-input { width: 100%; padding: 8px; font-size: 18px; text-align: center; font-family: var(--font-main); letter-spacing: 4px; margin-bottom: 10px; border: 1px solid #aebfb6; background: #e8efeb; box-sizing: border-box;}
+        .seal-input { width: 100%; padding: 8px; font-size: 18px; text-align: center; font-family: var(--font-main); letter-spacing: 4px; margin-bottom: 10px; border: 1px solid #99b2a6; background: #d3ded7; box-sizing: border-box;}
         .seal-style-row { display: flex; gap: 6px; flex-wrap: wrap; }
         .seal-style-btn { flex: 1; min-width: 80px; background: #fff; color: var(--mo-mid); border: 1px solid #ddd; box-shadow: none; padding: 6px 8px; font-size: 12px;}
         .seal-style-btn.active { background: var(--zhusha); color: #fff; border-color: var(--zhusha); }
