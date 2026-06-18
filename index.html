@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-16 (2026-06-18) — UI细化⑯: #1 acc-header标题条恢复到16px24px(=关于汉字大小,含手机各档); #2 .card汉字卡上下padding30→12、HSK行上间距8→2、格子↔按钮占位20/10→16/4+按钮6→3(HSK贴顶/按钮贴底/格子贴按钮); acc-content页边距保持上版收紧 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-17 (2026-06-18) — UI细化⑰: 模块2(彩虹笔画)padding-top 15→4、模块3(汉字部件)margin-top 15→4, 顶部间距收紧, 向模块1看齐(模块4综合字帖本就无额外顶距) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -8,7 +8,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-    console.log('%c[斑斓汉字] 汉字UI-16 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+    console.log('%c[斑斓汉字] 汉字UI-17 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -4420,7 +4420,7 @@
                 </div>
             </div>
             <div class="acc-content" id="acc-isolated-strokes">
-                <div id="isolatedStrokesRoot" style="padding-top:15px; width:100%; display:flex; flex-direction:column; align-items:center;"></div>
+                <div id="isolatedStrokesRoot" style="padding-top:4px; width:100%; display:flex; flex-direction:column; align-items:center;"></div>
             </div>
         </div>
 
@@ -4434,7 +4434,7 @@
             </div>
             <div class="acc-content" id="acc-comp">
                 <div class="components-panel">
-                    <div id="compDisplayRoot" style="margin-top:15px; width:100%;"></div>
+                    <div id="compDisplayRoot" style="margin-top:4px; width:100%;"></div>
                 </div>
             </div>
         </div>
