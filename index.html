@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-22 (2026-06-18) — UI细化㉒: 印章modal ①印文框回车=刻印 ②n=3/5去掉中间虚线(横分隔+竖中线) ③左右两方框上下对齐(等高,预览标题移入框内)+边框改墨绿色var(--ink-green) -->
+<!-- 斑斓汉字(老师端) · 汉字UI-23 (2026-06-18) — UI细化㉓: ①"关于汉字"面板搬到内容区最下方,重命名"6. 关于汉字"(保留英文标签) ②下载按钮"下载关于汉字"重命名"6. 下载关于汉字"并移到末位 ③主输入框默认"你好"+加载即渲染 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -8,7 +8,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-    console.log('%c[斑斓汉字] 汉字UI-22 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+    console.log('%c[斑斓汉字] 汉字UI-23 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -4227,7 +4227,7 @@
     <div class="glass-panel no-print">
         <div class="controls-bar">
             <div class="input-wrapper">
-                <input type="text" id="charInput" value="" placeholder="提笔书写汉字 / 语音输入">
+                <input type="text" id="charInput" value="你好" placeholder="提笔书写汉字 / 语音输入">
                 <button class="mic-btn" id="micBtn" onclick="startDictation()" title="语音输入">🎤</button>
             </div>
 
@@ -4272,25 +4272,95 @@
 
         <!-- 展开的下载工具箱 (恢复为 30.html 的版本) -->
         <div class="download-group" id="downloadGroup">
-            <button class="btn-anim-dl" onclick="downloadStrokeGuide()" style="background:#7a9e8e; border:1px solid #668a7a;">⚠️ 下载关于汉字<span class="btn-en">Download: About Characters</span><span class="btn-ar">تنزيل: عن الحروف</span></button>
             <button class="btn-anim-dl" onclick="showAnimDownloadModal()">🎬 1. 下载循环动画<span class="btn-en">Download: Loop Animation</span><span class="btn-ar">تنزيل: الرسوم المتحركة</span></button>
             <button class="btn-dl-main" onclick="currentDownloadType='main'; executeDownload('full')">🖊 2. 下载彩虹笔顺图<span class="btn-en">Download: Rainbow Stroke Order</span><span class="btn-ar">تنزيل: ترتيب الفرشاة</span></button>
             <button class="btn-dl-strokes" onclick="downloadAllStrokes()">🌈 3. 下载彩虹笔画<span class="btn-en">Download: Rainbow Strokes</span><span class="btn-ar">تنزيل: ضربات قوس قزح</span></button>
             <button class="btn-dl-comp" onclick="downloadComponents()">🧩 4. 下载汉字部件<span class="btn-en">Download: Components</span><span class="btn-ar">تنزيل: المكونات</span></button>
             <button class="btn-dl-worksheet" onclick="downloadUnifiedWorksheet()">✍ 5. 下载综合字帖<span class="btn-en">Download: Worksheet</span><span class="btn-ar">تنزيل: ورقة التدريب</span></button>
+            <button class="btn-anim-dl" onclick="downloadStrokeGuide()" style="background:#7a9e8e; border:1px solid #668a7a;">⚠️ 6. 下载关于汉字<span class="btn-en">Download: About Characters</span><span class="btn-ar">تنزيل: عن الحروف</span></button>
         </div>
     </div>
 
 
+
+
+    <!-- 内容展示区 (手风琴) -->
+    <div class="acc-container" id="accRoot">
+        
+        <!-- 模块1：动态/彩虹笔顺 -->
+        <div class="acc-item">
+            <div class="acc-header active" data-acc-id="acc-anim-main">
+                <div style="display:flex; flex-direction:column; gap:4px; flex:1;">
+                    <div class="acc-inline-title">
+                        <span class="acc-inline-zh">🎬 1. 循环动画</span>
+                        <span class="acc-inline-sub lang-en">Animation</span><span class="acc-inline-sub lang-ar">الرسوم المتحركة</span>
+                    </div>
+                    <div class="acc-inline-title">
+                        <span class="acc-inline-zh">🖊 2. 彩虹笔顺</span>
+                        <span class="acc-inline-sub lang-en">Rainbow Stroke Order</span><span class="acc-inline-sub lang-ar">ترتيب الضربات الملون</span>
+                    </div>
+                </div>
+            </div>
+            <div class="acc-content active" id="acc-anim-main">
+                <!-- JS 动态注入卡片 -->
+            </div>
+        </div>
+
+        <!-- 模块2：彩虹笔画分解 -->
+        <div class="acc-item">
+            <div class="acc-header" data-acc-id="acc-isolated-strokes">
+                <div class="acc-inline-title" style="flex:1;">
+                    <span class="acc-inline-zh">🌈 3. 彩虹笔画</span>
+                    <span class="acc-inline-sub lang-en">Rainbow Strokes</span><span class="acc-inline-sub lang-ar">ضربات قوس قزح</span>
+                </div>
+            </div>
+            <div class="acc-content" id="acc-isolated-strokes">
+                <div id="isolatedStrokesRoot" style="padding-top:0; width:100%; display:flex; flex-direction:column; align-items:center;"></div>
+            </div>
+        </div>
+
+        <!-- 模块3：部件面板 -->
+        <div class="acc-item">
+            <div class="acc-header" data-acc-id="acc-comp">
+                <div class="acc-inline-title" style="flex:1;">
+                    <span class="acc-inline-zh">🧩 4. 汉字部件</span>
+                    <span class="acc-inline-sub lang-en">Character Components</span><span class="acc-inline-sub lang-ar">أجزاء الحروف الصينية</span>
+                </div>
+            </div>
+            <div class="acc-content" id="acc-comp">
+                <div class="components-panel">
+                    <div id="compDisplayRoot" style="margin-top:0; width:100%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 模块4：字帖面板 -->
+        <div class="acc-item">
+            <div class="acc-header" data-acc-id="acc-unified-worksheet">
+                <div class="acc-inline-title" style="flex:1;">
+                    <span class="acc-inline-zh">✍ 5. 综合字帖</span>
+                    <span class="acc-inline-sub lang-en">Practice Sheet</span><span class="acc-inline-sub lang-ar">ورقة التدريب</span>
+                </div>
+            </div>
+            <div class="acc-content" id="acc-unified-worksheet">
+                <div class="worksheet-panel">
+
+                    <div id="unifiedWorksheetRoot" style="width:100%; display:flex; flex-direction:column; align-items:center;"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
     <!-- ============================================================
          汉字笔顺规则指南 (Stroke Order Rules Guide) — 动画版
-         插入位置：功能区下方，内容展示区上方
+         插入位置：内容展示区最下方（第6项 · UI-23 调整）
          ============================================================ -->
     <div class="stroke-guide-panel no-print" id="strokeGuidePanel">
         <div class="stroke-guide-header" onclick="toggleStrokeGuide()">
             <div class="stroke-guide-title">
                 <span class="stroke-guide-icon">⚠️</span>
-                <span>关于汉字</span>
+                <span>6. 关于汉字</span>
                 <span class="stroke-guide-sub lang-en">About Chinese Characters</span>
                 <span class="stroke-guide-sub lang-ar">عن الحروف الصينية</span>
             </div>
@@ -4389,75 +4459,6 @@
         </div><!-- /stroke-guide-body -->
     </div>
     <!-- /汉字笔顺规则指南 -->
-
-
-    <!-- 内容展示区 (手风琴) -->
-    <div class="acc-container" id="accRoot">
-        
-        <!-- 模块1：动态/彩虹笔顺 -->
-        <div class="acc-item">
-            <div class="acc-header active" data-acc-id="acc-anim-main">
-                <div style="display:flex; flex-direction:column; gap:4px; flex:1;">
-                    <div class="acc-inline-title">
-                        <span class="acc-inline-zh">🎬 1. 循环动画</span>
-                        <span class="acc-inline-sub lang-en">Animation</span><span class="acc-inline-sub lang-ar">الرسوم المتحركة</span>
-                    </div>
-                    <div class="acc-inline-title">
-                        <span class="acc-inline-zh">🖊 2. 彩虹笔顺</span>
-                        <span class="acc-inline-sub lang-en">Rainbow Stroke Order</span><span class="acc-inline-sub lang-ar">ترتيب الضربات الملون</span>
-                    </div>
-                </div>
-            </div>
-            <div class="acc-content active" id="acc-anim-main">
-                <!-- JS 动态注入卡片 -->
-            </div>
-        </div>
-
-        <!-- 模块2：彩虹笔画分解 -->
-        <div class="acc-item">
-            <div class="acc-header" data-acc-id="acc-isolated-strokes">
-                <div class="acc-inline-title" style="flex:1;">
-                    <span class="acc-inline-zh">🌈 3. 彩虹笔画</span>
-                    <span class="acc-inline-sub lang-en">Rainbow Strokes</span><span class="acc-inline-sub lang-ar">ضربات قوس قزح</span>
-                </div>
-            </div>
-            <div class="acc-content" id="acc-isolated-strokes">
-                <div id="isolatedStrokesRoot" style="padding-top:0; width:100%; display:flex; flex-direction:column; align-items:center;"></div>
-            </div>
-        </div>
-
-        <!-- 模块3：部件面板 -->
-        <div class="acc-item">
-            <div class="acc-header" data-acc-id="acc-comp">
-                <div class="acc-inline-title" style="flex:1;">
-                    <span class="acc-inline-zh">🧩 4. 汉字部件</span>
-                    <span class="acc-inline-sub lang-en">Character Components</span><span class="acc-inline-sub lang-ar">أجزاء الحروف الصينية</span>
-                </div>
-            </div>
-            <div class="acc-content" id="acc-comp">
-                <div class="components-panel">
-                    <div id="compDisplayRoot" style="margin-top:0; width:100%;"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 模块4：字帖面板 -->
-        <div class="acc-item">
-            <div class="acc-header" data-acc-id="acc-unified-worksheet">
-                <div class="acc-inline-title" style="flex:1;">
-                    <span class="acc-inline-zh">✍ 5. 综合字帖</span>
-                    <span class="acc-inline-sub lang-en">Practice Sheet</span><span class="acc-inline-sub lang-ar">ورقة التدريب</span>
-                </div>
-            </div>
-            <div class="acc-content" id="acc-unified-worksheet">
-                <div class="worksheet-panel">
-
-                    <div id="unifiedWorksheetRoot" style="width:100%; display:flex; flex-direction:column; align-items:center;"></div>
-                </div>
-            </div>
-        </div>
-
-    </div>
 </div>
 
 <!-- 页面二维码弹窗 -->
@@ -9961,6 +9962,19 @@ if (document.readyState === 'loading') {
 } else {
     window.BL.init();
 }
+
+// 【UI-23】打开页面默认渲染"你好"（数据未就绪则跳过，避免弹窗；如只想预填文字不自动生成，删除本段即可）
+(function(){
+    function renderDefaultHello(){
+        try {
+            if (window.__hskLoadFailed) return;
+            var el = document.getElementById('charInput');
+            if (el && typeof initAll === 'function') initAll();
+        } catch(e){ console.warn('[斑斓汉字] 默认渲染你好失败', e); }
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', renderDefaultHello);
+    else renderDefaultHello();
+})();
 </script>
 
 </body>
