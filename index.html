@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-17 (2026-06-18) — UI细化⑰: 模块2(彩虹笔画)padding-top 15→4、模块3(汉字部件)margin-top 15→4, 顶部间距收紧, 向模块1看齐(模块4综合字帖本就无额外顶距) -->
+<!-- 斑斓汉字(老师端) · 汉字UI-18 (2026-06-18) — UI细化⑱: 统一各方框竖直间距=16px(参考3↔4模块间距): glass-panel(功能区)margin-bottom 25→16、stroke-guide-panel(关于汉字)margin-bottom 25→6(+acc-container margin-top10=16) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -8,7 +8,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-    console.log('%c[斑斓汉字] 汉字UI-17 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+    console.log('%c[斑斓汉字] 汉字UI-18 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -442,7 +442,7 @@
             border: 1px solid rgba(255, 255, 255, 0.6);
             border-radius: 8px;
             box-shadow: 0 10px 30px rgba(55, 74, 66, 0.08), inset 0 0 20px rgba(255, 255, 255, 0.9);
-            padding: 24px; margin-bottom: 25px; position: relative;
+            padding: 24px; margin-bottom: 16px; position: relative;
             overflow: visible;
             isolation: isolate;
         }
@@ -2243,7 +2243,7 @@
         .stroke-guide-panel {
             width: 100%;
             max-width: 1400px;
-            margin: 0 auto 25px auto;
+            margin: 0 auto 6px auto;
             background: var(--glass-bg);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
