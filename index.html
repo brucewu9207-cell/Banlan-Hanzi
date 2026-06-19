@@ -8,7 +8,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-    console.log('%c[斑斓汉字] 汉字UI-33 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+    console.log('%c[斑斓汉字] 汉字UI-34 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -8309,7 +8309,7 @@
 
             <!-- Phase 4-1 (v2D-8): 学生列表视图 -->
             <div id="blViewStudents" style="display:none;">
-                <div class="bl-tasks-header">
+                <div class="bl-tasks-header bl-students-header">
                     <div class="bl-tasks-title">
                         <span class="bl-tasks-class-tag" id="blStudentsClassTag">—</span>
                         <span id="blStudentsClassName">—</span>
@@ -8317,10 +8317,11 @@
                             —
                         </span>
                     </div>
-                </div>
-                <!-- ★ UI-33: 导入名单 -->
-                <div class="bl-roster-toolbar">
-                    <button class="bl-roster-import-btn" onclick="BL.openRosterImport()">⬆ 导入名单<span class="lang-en">Import list</span><span class="lang-ar">استيراد القائمة</span></button>
+                    <!-- ★ UI-34: 导入名单 + 手动录入 移到计数行 -->
+                    <div class="bl-roster-actions">
+                        <button class="bl-roster-import-btn" onclick="BL.openRosterImport()">⬆ 导入名单<span class="lang-en">Import</span><span class="lang-ar">استيراد</span></button>
+                        <button class="bl-roster-import-btn bl-roster-manual-btn" onclick="BL.openManualEntry()">✎ 手动录入<span class="lang-en">Manual</span><span class="lang-ar">يدوي</span></button>
+                    </div>
                 </div>
                 <!-- Phase 4-2: 学生名单 / 答对率 / 明细表 标签 -->
                 <div class="bl-stu-tabs">
@@ -9194,9 +9195,13 @@ window.BL = (function () {
         }
     }
 
+    // ★ UI-34: 批量选择集合 + 双语 lang-span 助手
+    let _selectedStudents = new Set();
+    const _L34 = (zh, en, ar) => `${zh}<span class="lang-en">${en}</span><span class="lang-ar">${ar || en}</span>`;
+
     function renderStudents() {
         const list = $('blStudentList');
-        // ★ UI-33: 用 status 区分在读/待加入(兼容老记录)
+        _selectedStudents.clear();   // ★ UI-34: 每次重渲染清空批量勾选
         const norm = s => s.status || ((s.firstSeen && !s.left) ? 'active' : 'pending');
         const active = state.students.filter(s => norm(s) === 'active');
         const pending = state.students.filter(s => norm(s) === 'pending');
@@ -9213,7 +9218,7 @@ window.BL = (function () {
             list.innerHTML = `
                 <div class="bl-empty">
                     <div class="bl-empty-icon">👥</div>
-                    <div class="bl-empty-text">${escapeHtml(tt('还没有学生，点上方「⬆ 导入名单」添加', 'No students yet — use "Import list" above', 'لا يوجد طلاب — استخدم استيراد القائمة'))}</div>
+                    <div class="bl-empty-text">${escapeHtml(tt('还没有学生，点上方「⬆ 导入名单 / ✎ 手动录入」添加', 'No students yet — use Import or Manual above', 'لا يوجد طلاب — استخدم استيراد أو يدوي'))}</div>
                 </div>`;
             return;
         }
@@ -9223,6 +9228,7 @@ window.BL = (function () {
         const titleKick = tt('彻底移出(不可恢复)', 'Remove permanently', 'إخراج نهائي');
         const txtDetail = tt('查看作答', 'View answers', 'عرض الإجابات');
         const txtPending = tt('待加入', 'Pending', 'بانتظار');
+        const txtSid = tt('学号', 'ID', 'الرقم');
 
         const sortByName = arr => arr.slice().sort((a, b) =>
             rosterSortKey(a.name || a.studentCode).localeCompare(rosterSortKey(b.name || b.studentCode)));
@@ -9242,8 +9248,10 @@ window.BL = (function () {
             return `
             <div class="bl-student-card-wrap">
               <div class="bl-student-card${isPending ? ' is-pending' : ''}">
+                <label class="bl-stu-checkwrap"><input type="checkbox" class="bl-stu-check" data-code="${escapeAttr(s.studentCode)}" onchange="BL.toggleStudentSelect('${escapeAttr(s.studentCode)}', this.checked)"></label>
                 <div class="bl-student-info">
                     <div class="bl-student-name"><span class="bl-stu-seq">${seq}.</span> ${escapeHtml(s.name || s.studentCode)}${badge}</div>
+                    <div class="bl-student-sid">${escapeHtml(txtSid)} ${escapeHtml(s.studentCode)}</div>
                     <div class="bl-student-meta">${escapeHtml(meta)}</div>
                 </div>
                 <div class="bl-student-actions">
@@ -9261,9 +9269,150 @@ window.BL = (function () {
             return `<div class="bl-roster-section-title">${escapeHtml(title)} · ${arr.length}</div>${cards}`;
         };
 
-        list.innerHTML =
+        const batchBar = `
+            <div id="blBatchBar" class="bl-batch-bar" style="display:none;">
+              <span id="blBatchCount" class="bl-batch-count">已选 0</span>
+              <span class="bl-batch-actions">
+                <button class="bl-batch-remove" onclick="BL.batchRemove()">${_L34('✗ 移出选中', '✗ Remove', '✗ إخراج')}</button>
+                <button class="bl-batch-clear" onclick="BL.clearStudentSelect()">${_L34('清空', 'Clear', 'مسح')}</button>
+              </span>
+            </div>`;
+
+        list.innerHTML = batchBar +
             section(tt('在读', 'Active', 'نشط'), active, false) +
             section(tt('待加入', 'Pending', 'بانتظار'), pending, true);
+        updateBatchBar();
+    }
+
+    // ★ UI-34: 批量勾选
+    function toggleStudentSelect(code, checked) {
+        if (checked) _selectedStudents.add(code); else _selectedStudents.delete(code);
+        updateBatchBar();
+    }
+    function updateBatchBar() {
+        const bar = $('blBatchBar'), cnt = $('blBatchCount');
+        if (!bar) return;
+        const n = _selectedStudents.size;
+        if (cnt) cnt.textContent = '已选 ' + n;
+        bar.style.display = n > 0 ? '' : 'none';
+    }
+    function clearStudentSelect() {
+        _selectedStudents.clear();
+        document.querySelectorAll('.bl-stu-check').forEach(cb => { cb.checked = false; });
+        updateBatchBar();
+    }
+    async function batchRemove() {
+        const codes = Array.from(_selectedStudents);
+        if (codes.length === 0 || !state.currentClassCode) return;
+        const ok = confirm(tt(
+            `确定彻底移出选中的 ${codes.length} 名学生？\n\n会从名单删除、删作答记录，不可恢复。`,
+            `Permanently remove ${codes.length} selected students?\n\nThis cannot be undone.`,
+            `إخراج ${codes.length} طلاب نهائيًا؟ لا يمكن التراجع.`
+        ));
+        if (!ok) return;
+        try {
+            await Promise.all(codes.map(code => api('DELETE',
+                '/api/classes/' + encodeURIComponent(state.currentClassCode) + '/students/' + encodeURIComponent(code))));
+            toast(tt(`已移出 ${codes.length} 人`, `Removed ${codes.length}`, `تم إخراج ${codes.length}`), 'success');
+            const removed = new Set(codes);
+            state.students = state.students.filter(s => !removed.has(s.studentCode));
+            renderStudents();
+        } catch (e) {
+            toast(tt('批量移出失败', 'Batch remove failed', 'فشل') + '：' + e.message, 'error');
+            await loadStudents();
+        }
+    }
+
+    // ★ UI-34: 手动录入(逐行 + 粘贴) —— 复用导入预览/保存路径
+    function openManualEntry() {
+        if (!state.currentClassCode) return;
+        const overlay = document.createElement('div');
+        overlay.className = 'bl-overlay bl-show';
+        overlay.innerHTML = `
+          <div class="bl-modal bl-modal-w560">
+            <div class="bl-header">
+              <h3>${_L34('手动录入', 'Manual entry', 'إدخال يدوي')}</h3>
+              <button class="bl-close" data-act="close">✕</button>
+            </div>
+            <div style="padding:14px 18px; overflow:auto;">
+              <div class="bl-me-tabs">
+                <button class="bl-me-tab bl-me-tab-active" data-mode="rows">${_L34('逐行填', 'Rows', 'صفوف')}</button>
+                <button class="bl-me-tab" data-mode="paste">${_L34('粘贴', 'Paste', 'لصق')}</button>
+              </div>
+              <div id="meRows" class="bl-me-pane">
+                <div class="bl-me-head"><span>${_L34('名字', 'Name', 'الاسم')}</span><span>${_L34('学号', 'ID', 'الرقم')}</span><span></span></div>
+                <div id="meRowList"></div>
+                <button class="bl-me-addrow" data-act="addrow">+ ${_L34('加一行', 'Add row', 'صف')}</button>
+              </div>
+              <div id="mePaste" class="bl-me-pane" style="display:none;">
+                <div class="bl-me-hint">${_L34('每行一个：名字 学号（空格 / 逗号 / Tab 分隔）', 'One per line: Name ID (space / comma / tab)', 'سطر لكل طالب: الاسم الرقم')}</div>
+                <textarea id="mePasteText" class="bl-me-textarea" placeholder="例：张三 2024001"></textarea>
+              </div>
+            </div>
+            <div class="bl-roster-foot">
+              <button class="bl-btn-ghost" data-act="close">${_L34('取消', 'Cancel', 'إلغاء')}</button>
+              <button class="bl-btn-primary" data-act="preview">${_L34('下一步 · 预览', 'Next · Preview', 'التالي')}</button>
+            </div>
+          </div>`;
+        document.body.appendChild(overlay);
+
+        const rowList = overlay.querySelector('#meRowList');
+        const addRow = (name, code) => {
+            const div = document.createElement('div');
+            div.className = 'bl-me-row';
+            div.innerHTML = `<input class="bl-me-name" placeholder="名字 / Name" value="${escapeAttr(name || '')}"><input class="bl-me-code" placeholder="学号 / ID" value="${escapeAttr(code || '')}"><button class="bl-me-del" title="删 / Del">✕</button>`;
+            div.querySelector('.bl-me-del').addEventListener('click', () => div.remove());
+            rowList.appendChild(div);
+        };
+        for (let i = 0; i < 4; i++) addRow();
+
+        let mode = 'rows';
+        overlay.querySelectorAll('.bl-me-tab').forEach(tab => tab.addEventListener('click', () => {
+            mode = tab.getAttribute('data-mode');
+            overlay.querySelectorAll('.bl-me-tab').forEach(t => t.classList.toggle('bl-me-tab-active', t === tab));
+            overlay.querySelector('#meRows').style.display = mode === 'rows' ? '' : 'none';
+            overlay.querySelector('#mePaste').style.display = mode === 'paste' ? '' : 'none';
+        }));
+
+        const close = () => overlay.remove();
+        overlay.querySelectorAll('[data-act="close"]').forEach(b => b.addEventListener('click', close));
+        overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+        overlay.querySelector('[data-act="addrow"]').addEventListener('click', () => addRow());
+        overlay.querySelector('[data-act="preview"]').addEventListener('click', () => {
+            let pairs = [];
+            if (mode === 'rows') {
+                overlay.querySelectorAll('.bl-me-row').forEach(r => {
+                    const name = r.querySelector('.bl-me-name').value.trim();
+                    const code = r.querySelector('.bl-me-code').value.trim();
+                    if (name || code) pairs.push([name, code]);
+                });
+            } else {
+                pairs = parseManualPaste(overlay.querySelector('#mePasteText').value);
+            }
+            if (pairs.length === 0) { toast(tt('还没填内容', 'Nothing entered', 'لا يوجد إدخال'), 'error'); return; }
+            close();
+            // 复用导入预览/保存:rows=[名字,学号],nameCol=0,codeCol=1
+            showRosterPreview(pairs, { dataRows: pairs, maxCols: 2, codeCol: 1, nameCol: 0 });
+        });
+    }
+
+    // 粘贴解析:每行 名字+学号(逗号/Tab/连续空格优先;学号取含数字那段)
+    function parseManualPaste(text) {
+        const out = [];
+        String(text || '').split(/\r?\n/).forEach(line => {
+            const t = line.trim();
+            if (!t) return;
+            let parts = t.split(/\s*[,，\t]\s*|\s{2,}/).filter(Boolean);
+            if (parts.length < 2) parts = t.split(/\s+/);
+            if (parts.length === 1) { out.push([parts[0], '']); return; }
+            let codeIdx = -1;
+            for (let i = parts.length - 1; i >= 0; i--) { if (/\d/.test(parts[i])) { codeIdx = i; break; } }
+            if (codeIdx < 0) codeIdx = parts.length - 1;
+            const code = parts[codeIdx];
+            const name = parts.filter((_, i) => i !== codeIdx).join(' ');
+            out.push([name, code]);
+        });
+        return out;
     }
 
     // ★ UI-33: 排序键 —— 英文按字母,中文按拼音(无声调)
@@ -10358,7 +10507,7 @@ window.BL = (function () {
         // —— Phase 2B 第 1 轮 ——
         openTasksView, backToClassList,
         // —— Phase 4-1 (v2D-8): 学生管理 ——
-        openStudentsView, kickStudent, openRosterImport,
+        openStudentsView, kickStudent, openRosterImport, openManualEntry, toggleStudentSelect, clearStudentSelect, batchRemove,
         // —— Phase 4-2: 答对率 ——
         switchStudentTab,
         // —— Phase 4-2 阶段③: 学生视角 ——
@@ -10395,5 +10544,31 @@ if (document.readyState === 'loading') {
 })();
 </script>
 
+    <style>
+    /* ★ UI-34 名单增强：学号行 / hover墨绿 / 批量勾选 / 手动录入 / 按钮上移 */
+    #blViewStudents .bl-students-header { justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px; }
+    .bl-roster-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .bl-roster-manual-btn { background: #fff; color: var(--ink-green); border: 1px solid var(--ink-green); }
+    .bl-roster-manual-btn:hover { background: rgba(55,74,66,0.06); }
+    .bl-student-sid { font-size: 12px; color: var(--ink-gray); font-family: monospace; margin: 1px 0; }
+    .bl-student-card:hover { background: rgba(55,74,66,0.06); border-left-color: var(--ink-green); }
+    .bl-stu-checkwrap { display: flex; align-items: center; flex-shrink: 0; cursor: pointer; }
+    .bl-stu-check { width: 17px; height: 17px; cursor: pointer; accent-color: var(--ink-green); }
+    .bl-batch-bar { position: sticky; top: 0; z-index: 6; display: flex; justify-content: space-between; align-items: center; background: var(--ink-green); color: #fff; padding: 9px 14px; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 2px 8px rgba(55,74,66,0.2); }
+    .bl-batch-count { font-size: 14px; font-weight: 600; }
+    .bl-batch-actions { display: flex; gap: 8px; }
+    .bl-batch-remove { background: var(--zhusha, #b33939); color: #fff; border: none; cursor: pointer; padding: 6px 13px; border-radius: 6px; font-size: 13px; font-weight: 600; }
+    .bl-batch-clear { background: rgba(255,255,255,0.22); color: #fff; border: none; cursor: pointer; padding: 6px 13px; border-radius: 6px; font-size: 13px; }
+    .bl-me-tabs { display: flex; gap: 6px; margin-bottom: 14px; }
+    .bl-me-tab { flex: 1; padding: 8px; border: 1px solid #d0d7d3; background: #fff; border-radius: 8px; cursor: pointer; font-size: 14px; color: var(--ink-gray); }
+    .bl-me-tab-active { background: var(--ink-green); color: #fff; border-color: var(--ink-green); }
+    .bl-me-head { display: grid; grid-template-columns: 1fr 1fr 34px; gap: 8px; font-size: 12px; color: var(--ink-gray); padding: 0 2px 5px; }
+    .bl-me-row { display: grid; grid-template-columns: 1fr 1fr 34px; gap: 8px; margin-bottom: 6px; }
+    .bl-me-row input { padding: 7px 9px; border: 1px solid #d0d7d3; border-radius: 6px; font-size: 14px; width: 100%; box-sizing: border-box; }
+    .bl-me-del { background: #fff; border: 1px solid #e3c4c4; color: var(--zhusha, #b33939); border-radius: 6px; cursor: pointer; font-size: 13px; }
+    .bl-me-addrow { margin-top: 4px; background: #fff; border: 1px dashed var(--ink-green); color: var(--ink-green); border-radius: 8px; padding: 7px 14px; cursor: pointer; font-size: 14px; }
+    .bl-me-hint { font-size: 13px; color: var(--ink-gray); margin-bottom: 8px; line-height: 1.5; }
+    .bl-me-textarea { width: 100%; min-height: 150px; padding: 10px; border: 1px solid #d0d7d3; border-radius: 8px; font-size: 14px; font-family: monospace; resize: vertical; box-sizing: border-box; }
+    </style>
 </body>
 </html>
