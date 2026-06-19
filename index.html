@@ -8,7 +8,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-    console.log('%c[斑斓汉字] 汉字UI-35 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+    console.log('%c[斑斓汉字] 汉字UI-36 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -9243,14 +9243,14 @@ window.BL = (function () {
             const kickBtn =
                 `<button class="bl-student-kick-btn" onclick="BL.kickStudent('${escapeAttr(s.studentCode)}', '${escapeAttr(s.name || s.studentCode)}')" title="${escapeAttr(titleKick)}">✗ ${escapeHtml(txtKick)}</button>`;
             const detailBox = isPending ? '' : `<div class="bl-student-detail" id="bl-stu-detail-${idx}" style="display:none;"></div>`;
-            const badge = isPending ? ` <span class="bl-pending-badge">${escapeHtml(txtPending)}</span>` : '';
+            const badge = isPending ? `<span class="bl-pending-badge">${escapeHtml(txtPending)}</span>` : '';
             return `
             <div class="bl-student-card-wrap">
               <div class="bl-student-card${isPending ? ' is-pending' : ''}">
                 <label class="bl-stu-checkwrap"><input type="checkbox" class="bl-stu-check" data-code="${escapeAttr(s.studentCode)}" onchange="BL.toggleStudentSelect('${escapeAttr(s.studentCode)}', this.checked)"></label>
                 <div class="bl-student-info">
-                    <div class="bl-student-name"><span class="bl-stu-seq">${seq}.</span> ${escapeHtml(s.name || s.studentCode)}${badge}</div>
-                    <div class="bl-student-sid">${escapeHtml(txtSid)} ${escapeHtml(s.studentCode)}</div>
+                    <div class="bl-student-name"><span class="bl-stu-seq">${seq}.</span> ${escapeHtml(s.name || s.studentCode)}</div>
+                    <div class="bl-student-subline"><span class="bl-student-sid">${escapeHtml(txtSid)} ${escapeHtml(s.studentCode)}</span>${badge}</div>
                     ${metaLine}
                 </div>
                 <div class="bl-student-actions">
@@ -10549,7 +10549,9 @@ if (document.readyState === 'loading') {
     .bl-roster-actions { display: flex; gap: 8px; flex-wrap: wrap; }
     .bl-roster-manual-btn { background: #fff; color: var(--ink-green); border: 1px solid var(--ink-green); }
     .bl-roster-manual-btn:hover { background: rgba(55,74,66,0.06); }
-    .bl-student-sid { font-size: 12px; color: var(--ink-gray); font-family: monospace; margin: 1px 0; }
+    .bl-student-subline { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 2px 0; }
+    .bl-student-sid { font-size: 12px; color: var(--ink-gray); font-family: monospace; min-width: 162px; }
+    .bl-student-card:hover .bl-pending-badge { background: rgba(255,255,255,0.92); color: var(--ink-green); }
     .bl-student-card:hover { background: var(--ink-green); border-color: var(--ink-green); border-left-color: var(--ink-green); }
     .bl-student-card:hover .bl-student-name, .bl-student-card:hover .bl-student-sid, .bl-student-card:hover .bl-student-meta, .bl-student-card:hover .bl-stu-seq { color: #fff; }
     .bl-student-card:hover .bl-student-detail-btn, .bl-student-card:hover .bl-student-kick-btn { border-color: #fff; color: #fff; background: transparent; }
