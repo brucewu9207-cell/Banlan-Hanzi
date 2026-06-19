@@ -8,7 +8,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-    console.log('%c[斑斓汉字] 汉字UI-32 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+    console.log('%c[斑斓汉字] 汉字UI-33 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -54,6 +54,33 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <!-- html2canvas 用于导出图片和PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- ★ UI-33: SheetJS(xlsx) + mammoth(docx) 用于导入名单 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <style>
+    /* ★ UI-33 名单导入 / 在读·待加入 */
+    .bl-roster-toolbar { padding: 0 16px 6px; display: flex; justify-content: flex-end; }
+    .bl-roster-import-btn { background: var(--ink-green); color: #fff; border: none; cursor: pointer; padding: 7px 14px; border-radius: 8px; font-size: 14px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
+    .bl-roster-import-btn:hover { background: #2c3a34; }
+    .bl-roster-section-title { font-size: 13px; color: var(--ink-gray); font-weight: 600; padding: 12px 4px 6px; border-bottom: 1px solid #eef1ef; margin-bottom: 6px; }
+    .bl-stu-seq { color: var(--ink-gray); font-weight: normal; margin-right: 2px; }
+    .bl-pending-badge { display: inline-block; font-size: 11px; padding: 1px 7px; border-radius: 10px; background: #f0ece2; color: #8a7a4e; margin-left: 4px; vertical-align: middle; }
+    .bl-student-card.is-pending { opacity: 0.78; }
+    .bl-roster-count { font-size: 14px; font-weight: 600; color: var(--ink-green); margin-bottom: 8px; }
+    .bl-roster-table-wrap { max-height: 46vh; overflow: auto; border: 1px solid #eef1ef; border-radius: 8px; }
+    .bl-roster-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .bl-roster-table th { position: sticky; top: 0; background: #f4f6f5; color: var(--ink-green); padding: 7px 10px; text-align: left; border-bottom: 1px solid #e5e9e7; }
+    .bl-roster-table td { padding: 6px 10px; border-bottom: 1px solid #f1f3f2; }
+    .bl-rp-seq { color: var(--ink-gray); width: 36px; }
+    .bl-rp-code { font-family: monospace; color: #555; }
+    .bl-roster-warn { background: #fdf6e6; color: #8a6d1e; border-radius: 8px; padding: 8px 12px; font-size: 13px; margin: 8px 0; line-height: 1.5; }
+    .bl-roster-foot { display: flex; justify-content: flex-end; gap: 10px; padding: 12px 18px; border-top: 1px solid #eef1ef; }
+    .bl-btn-primary { background: var(--ink-green); color: #fff; border: none; cursor: pointer; padding: 8px 18px; border-radius: 8px; font-size: 14px; font-weight: 600; }
+    .bl-btn-primary:disabled { opacity: 0.5; cursor: default; }
+    .bl-btn-ghost { background: #fff; color: var(--ink-green); border: 1px solid #d0d7d3; cursor: pointer; padding: 8px 16px; border-radius: 8px; font-size: 14px; }
+    .bl-cp-label { display: block; font-size: 14px; color: var(--ink-green); font-weight: 600; margin-bottom: 6px; }
+    .bl-cp-select { width: 100%; padding: 8px 10px; border: 1px solid #d0d7d3; border-radius: 8px; font-size: 14px; }
+    </style>
     <!-- 背景音乐：HTML5 Audio + 外部 URL（见脚本 MUSIC_URL） -->
     <style>
         /* ====================================================
@@ -8291,6 +8318,10 @@
                         </span>
                     </div>
                 </div>
+                <!-- ★ UI-33: 导入名单 -->
+                <div class="bl-roster-toolbar">
+                    <button class="bl-roster-import-btn" onclick="BL.openRosterImport()">⬆ 导入名单<span class="lang-en">Import list</span><span class="lang-ar">استيراد القائمة</span></button>
+                </div>
                 <!-- Phase 4-2: 学生名单 / 答对率 / 明细表 标签 -->
                 <div class="bl-stu-tabs">
                     <button class="bl-stu-tab bl-stu-tab-active" id="blStuTabList" onclick="BL.switchStudentTab('list')">学生名单<span class="lang-en">Students</span><span class="lang-ar">الطلاب</span></button>
@@ -8967,7 +8998,7 @@ window.BL = (function () {
                     <div class="bl-class-meta">${escapeHtml(metaText)}${escapeHtml(descLine)}</div>
                 </div>
                 <div class="bl-class-actions">
-                    <button class="bl-icon-btn" onclick="BL.openStudentsView('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleStudents)}">👥 ${c.studentCount || 0}</button>
+                    <button class="bl-icon-btn" onclick="BL.openStudentsView('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleStudents)}">👥 ${c.studentCount || 0}${(c.pendingCount || 0) > 0 ? ('<span style="color:var(--ink-gray);font-weight:normal;"> +' + c.pendingCount + '</span>') : ''}</button>
                     <button class="bl-icon-btn" onclick="BL.openTasksView('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleTasks)}">📋 ${c.taskCount || 0}</button>
                     <button class="bl-icon-btn" onclick="BL.openClassEditor('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleEdit)}">✎</button>
                     <button class="bl-icon-btn bl-danger-icon" onclick="BL.deleteClass('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleDelete)}">🗑</button>
@@ -9165,14 +9196,16 @@ window.BL = (function () {
 
     function renderStudents() {
         const list = $('blStudentList');
-        // ★ UI-31: 区分在读 / 已离开
-        const activeCount = state.students.filter(s => !s.left).length;
-        const leftCount = state.students.filter(s => s.left).length;
-        let cZh = `在读 ${activeCount}`, cEn = `${activeCount} active`, cAr = `${activeCount} نشط`;
-        if (leftCount > 0) {
-            cZh += ` · 已离开 ${leftCount}`;
-            cEn += ` · ${leftCount} left`;
-            cAr += ` · ${leftCount} غادر`;
+        // ★ UI-33: 用 status 区分在读/待加入(兼容老记录)
+        const norm = s => s.status || ((s.firstSeen && !s.left) ? 'active' : 'pending');
+        const active = state.students.filter(s => norm(s) === 'active');
+        const pending = state.students.filter(s => norm(s) === 'pending');
+
+        let cZh = `在读 ${active.length}`, cEn = `${active.length} active`, cAr = `${active.length} نشط`;
+        if (pending.length > 0) {
+            cZh += ` · 待加入 ${pending.length}`;
+            cEn += ` · ${pending.length} pending`;
+            cAr += ` · ${pending.length} بانتظار`;
         }
         $('blStudentsCount').textContent = tt(cZh, cEn, cAr);
 
@@ -9180,50 +9213,298 @@ window.BL = (function () {
             list.innerHTML = `
                 <div class="bl-empty">
                     <div class="bl-empty-icon">👥</div>
-                    <div class="bl-empty-text">${escapeHtml(tt('还没有学生加入', 'No students joined yet', 'لا يوجد طلاب بعد'))}</div>
-                </div>
-            `;
+                    <div class="bl-empty-text">${escapeHtml(tt('还没有学生，点上方「⬆ 导入名单」添加', 'No students yet — use "Import list" above', 'لا يوجد طلاب — استخدم استيراد القائمة'))}</div>
+                </div>`;
             return;
         }
 
         const taskTotal = state.currentClassInfo.taskCount || 0;
         const txtKick = tt('移出', 'Remove', 'إخراج');
-        const titleKick = tt('移出班级', 'Remove from class', 'إخراج من الصف');
+        const titleKick = tt('彻底移出(不可恢复)', 'Remove permanently', 'إخراج نهائي');
         const txtDetail = tt('查看作答', 'View answers', 'عرض الإجابات');
-        const txtLeft = tt('已离开', 'Left', 'غادر');
+        const txtPending = tt('待加入', 'Pending', 'بانتظار');
 
-        // ★ UI-31: 在读在前、已离开沉底(sort 稳定,idx 仍指向 state.students 原下标)
-        const ordered = state.students
-            .map((s, idx) => ({ s, idx }))
-            .sort((a, b) => (a.s.left ? 1 : 0) - (b.s.left ? 1 : 0));
+        const sortByName = arr => arr.slice().sort((a, b) =>
+            rosterSortKey(a.name || a.studentCode).localeCompare(rosterSortKey(b.name || b.studentCode)));
 
-        list.innerHTML = ordered.map(({ s, idx }) => {
-            const isLeft = !!s.left;
+        const card = (s, seq, isPending) => {
+            const idx = state.students.indexOf(s);
             const completed = (s.completedTasks || []).length;
-            const meta = tt(
-                `已完成 ${completed} / ${taskTotal} 任务`,
-                `Completed ${completed} / ${taskTotal} tasks`,
-                `أكمل ${completed} / ${taskTotal} مهام`
-            );
-            const badge = isLeft ? ` <span class="bl-left-badge">${escapeHtml(txtLeft)}</span>` : '';
-            const kickBtn = isLeft ? '' :
+            const meta = isPending
+                ? tt('尚未加入', 'Not joined yet', 'لم ينضم بعد')
+                : tt(`已完成 ${completed} / ${taskTotal} 任务`, `Completed ${completed} / ${taskTotal} tasks`, `أكمل ${completed} / ${taskTotal} مهام`);
+            const detailBtn = isPending ? '' :
+                `<button class="bl-student-detail-btn" onclick="BL.toggleStudentDetail(${idx})">${escapeHtml(txtDetail)}</button>`;
+            const kickBtn =
                 `<button class="bl-student-kick-btn" onclick="BL.kickStudent('${escapeAttr(s.studentCode)}', '${escapeAttr(s.name || s.studentCode)}')" title="${escapeAttr(titleKick)}">✗ ${escapeHtml(txtKick)}</button>`;
+            const detailBox = isPending ? '' : `<div class="bl-student-detail" id="bl-stu-detail-${idx}" style="display:none;"></div>`;
+            const badge = isPending ? ` <span class="bl-pending-badge">${escapeHtml(txtPending)}</span>` : '';
             return `
             <div class="bl-student-card-wrap">
-              <div class="bl-student-card${isLeft ? ' is-left' : ''}">
+              <div class="bl-student-card${isPending ? ' is-pending' : ''}">
                 <div class="bl-student-info">
-                    <div class="bl-student-name">${escapeHtml(s.name || s.studentCode)}${badge}</div>
+                    <div class="bl-student-name"><span class="bl-stu-seq">${seq}.</span> ${escapeHtml(s.name || s.studentCode)}${badge}</div>
                     <div class="bl-student-meta">${escapeHtml(meta)}</div>
                 </div>
                 <div class="bl-student-actions">
-                    <button class="bl-student-detail-btn" onclick="BL.toggleStudentDetail(${idx})">${escapeHtml(txtDetail)}</button>
+                    ${detailBtn}
                     ${kickBtn}
                 </div>
               </div>
-              <div class="bl-student-detail" id="bl-stu-detail-${idx}" style="display:none;"></div>
+              ${detailBox}
+            </div>`;
+        };
+
+        const section = (title, arr, isPending) => {
+            if (arr.length === 0) return '';
+            const cards = sortByName(arr).map((s, i) => card(s, i + 1, isPending)).join('');
+            return `<div class="bl-roster-section-title">${escapeHtml(title)} · ${arr.length}</div>${cards}`;
+        };
+
+        list.innerHTML =
+            section(tt('在读', 'Active', 'نشط'), active, false) +
+            section(tt('待加入', 'Pending', 'بانتظار'), pending, true);
+    }
+
+    // ★ UI-33: 排序键 —— 英文按字母,中文按拼音(无声调)
+    function rosterSortKey(name) {
+        const s = String(name || '').trim();
+        if (/[\u4e00-\u9fff]/.test(s)) {
+            try {
+                if (typeof pinyinPro !== 'undefined') {
+                    return pinyinPro.pinyin(s, { toneType: 'none' }).toLowerCase();
+                }
+            } catch (e) {}
+        }
+        return s.toLowerCase();
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // ★ UI-33 · 导入名单(Excel / Word) —— 自动识别列 + 完整预览 + 手动选列兜底
+    // ═══════════════════════════════════════════════════════════════
+    const _L = (zh, en, ar) => `${zh}<span class="lang-en">${en}</span><span class="lang-ar">${ar || en}</span>`;
+
+    function openRosterImport() {
+        if (!state.currentClassCode) return;
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.xlsx,.xls,.docx';
+        input.style.display = 'none';
+        input.addEventListener('change', async () => {
+            const file = input.files && input.files[0];
+            input.remove();
+            if (!file) return;
+            try {
+                const rows = await parseRosterFile(file);
+                if (!rows || rows.length === 0) {
+                    toast(tt('没读到内容,换个文件试试', 'No data found, try another file', 'لا توجد بيانات'), 'error');
+                    return;
+                }
+                showRosterPreview(rows, detectRosterColumns(rows));
+            } catch (e) {
+                toast(tt('解析失败', 'Parse failed', 'فشل التحليل') + '：' + e.message, 'error');
+            }
+        });
+        document.body.appendChild(input);
+        input.click();
+    }
+
+    async function parseRosterFile(file) {
+        const name = (file.name || '').toLowerCase();
+        const buf = await file.arrayBuffer();
+        if (name.endsWith('.docx')) {
+            if (typeof mammoth === 'undefined') throw new Error(tt('Word 解析库未加载', 'Word parser not loaded', ''));
+            const res = await mammoth.convertToHtml({ arrayBuffer: buf });
+            return htmlTableToRows(res.value);
+        }
+        if (typeof XLSX === 'undefined') throw new Error(tt('Excel 解析库未加载', 'Excel parser not loaded', ''));
+        const wb = XLSX.read(buf, { type: 'array' });
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const arr = XLSX.utils.sheet_to_json(ws, { header: 1, blankrows: false, defval: '' });
+        return arr.map(r => (r || []).map(c => String(c == null ? '' : c).trim()));
+    }
+
+    function htmlTableToRows(html) {
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const table = doc.querySelector('table');
+        if (table) {
+            return Array.from(table.querySelectorAll('tr')).map(tr =>
+                Array.from(tr.querySelectorAll('th,td')).map(td => (td.textContent || '').trim())
+            ).filter(r => r.some(c => c));
+        }
+        return Array.from(doc.querySelectorAll('p'))
+            .map(p => (p.textContent || '').trim())
+            .filter(Boolean)
+            .map(line => line.split(/\s{2,}|\t+/).map(c => c.trim()).filter(Boolean));
+    }
+
+    function looksLikeCode(v) {
+        const s = String(v || '').trim();
+        if (s.length < 5) return false;
+        if (!/[0-9]/.test(s)) return false;
+        return /^[0-9A-Za-z._-]+$/.test(s);
+    }
+    function looksLikeName(v) {
+        const s = String(v || '').trim();
+        if (!s || looksLikeCode(s)) return false;
+        return /[\u4e00-\u9fffA-Za-z]/.test(s);
+    }
+    function isArabicCell(v) { return /[\u0600-\u06FF]/.test(String(v || '')); }
+
+    function detectRosterColumns(rows) {
+        const maxCols = rows.reduce((m, r) => Math.max(m, r.length), 0);
+        let headerRow = 0;
+        if (rows.length > 1) {
+            const codeInRow0 = (rows[0] || []).filter(looksLikeCode).length;
+            if (codeInRow0 === 0) headerRow = 1;
+        }
+        const dataRows = rows.slice(headerRow);
+
+        let codeCol = -1, nameCol = -1, bestCode = 0, bestName = 0;
+        for (let c = 0; c < maxCols; c++) {
+            let codeHits = 0, nameHits = 0, arabicHits = 0, total = 0;
+            for (const r of dataRows) {
+                const v = (r[c] || '').trim();
+                if (!v) continue;
+                total++;
+                if (looksLikeCode(v)) codeHits++;
+                if (isArabicCell(v)) arabicHits++;
+                else if (looksLikeName(v)) nameHits++;
+            }
+            if (total === 0) continue;
+            if (codeHits > bestCode) { bestCode = codeHits; codeCol = c; }
+            if (nameHits > bestName && arabicHits < total / 2) { bestName = nameHits; nameCol = c; }
+        }
+        if (nameCol === codeCol && codeCol >= 0) {
+            nameCol = -1; bestName = 0;
+            for (let c = 0; c < maxCols; c++) {
+                if (c === codeCol) continue;
+                let nameHits = 0, arabicHits = 0, total = 0;
+                for (const r of dataRows) {
+                    const v = (r[c] || '').trim();
+                    if (!v) continue;
+                    total++;
+                    if (isArabicCell(v)) arabicHits++;
+                    else if (looksLikeName(v)) nameHits++;
+                }
+                if (total && nameHits > bestName && arabicHits < total / 2) { bestName = nameHits; nameCol = c; }
+            }
+        }
+        return { headerRow, dataRows, maxCols, codeCol, nameCol };
+    }
+
+    function buildRosterList(dataRows, codeCol, nameCol) {
+        const ok = [], missing = [];
+        for (const r of dataRows) {
+            const code = codeCol >= 0 ? String(r[codeCol] || '').trim() : '';
+            const name = nameCol >= 0 ? String(r[nameCol] || '').trim() : '';
+            if (!name && !code) continue;
+            if (!code) { missing.push({ name }); continue; }
+            ok.push({ studentCode: code, name: name || code });
+        }
+        ok.sort((a, b) => rosterSortKey(a.name).localeCompare(rosterSortKey(b.name)));
+        return { ok, missing };
+    }
+
+    function showRosterPreview(rows, det) {
+        const { ok, missing } = buildRosterList(det.dataRows, det.codeCol, det.nameCol);
+        const overlay = document.createElement('div');
+        overlay.className = 'bl-overlay bl-show';
+        const colTip = (det.codeCol < 0 || det.nameCol < 0)
+            ? `<div class="bl-roster-warn">${_L('没自动认出学号/名字列，请点「手动选列」', "Couldn't detect columns — use Manual", 'لم يتم التعرف — اختر يدويًا')}</div>`
+            : '';
+        const rowsHtml = ok.map((s, i) =>
+            `<tr><td class="bl-rp-seq">${i + 1}</td><td>${escapeHtml(s.name)}</td><td class="bl-rp-code">${escapeHtml(s.studentCode)}</td></tr>`
+        ).join('');
+        const missHtml = missing.length
+            ? `<div class="bl-roster-warn">⚠ ${_L(`${missing.length} 行缺学号，将跳过`, `${missing.length} rows missing ID — skipped`, `${missing.length} صفوف بلا رقم`)}：${missing.map(m => escapeHtml(m.name || '—')).join('、')}</div>`
+            : '';
+        overlay.innerHTML = `
+          <div class="bl-modal bl-modal-w560">
+            <div class="bl-header">
+              <h3>${_L('导入预览', 'Import preview', 'معاينة الاستيراد')}</h3>
+              <button class="bl-close" data-act="close">✕</button>
             </div>
-            `;
-        }).join('');
+            <div style="padding:14px 18px; overflow:auto;">
+              ${colTip}
+              <div class="bl-roster-count">${_L(`共找到 ${ok.length} 名学生`, `Found ${ok.length} students`, `${ok.length} طالبًا`)}</div>
+              <div class="bl-roster-table-wrap">
+                <table class="bl-roster-table">
+                  <thead><tr><th>#</th><th>${_L('名字', 'Name', 'الاسم')}</th><th>${_L('学号', 'ID', 'الرقم')}</th></tr></thead>
+                  <tbody>${rowsHtml || `<tr><td colspan="3" style="text-align:center;color:var(--ink-gray);padding:14px;">${_L('没识别到学生', 'No students detected', 'لا يوجد')}</td></tr>`}</tbody>
+                </table>
+              </div>
+              ${missHtml}
+            </div>
+            <div class="bl-roster-foot">
+              <button class="bl-btn-ghost" data-act="manual">${_L('列认错了？手动选', 'Wrong columns? Manual', 'أعمدة خاطئة؟')}</button>
+              <button class="bl-btn-primary" data-act="import"${ok.length ? '' : ' disabled'}>${_L(`导入 ${ok.length} 人`, `Import ${ok.length}`, `استيراد ${ok.length}`)}</button>
+            </div>
+          </div>`;
+        document.body.appendChild(overlay);
+        const close = () => overlay.remove();
+        overlay.querySelector('[data-act="close"]').addEventListener('click', close);
+        overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+        overlay.querySelector('[data-act="manual"]').addEventListener('click', () => { close(); showColumnPicker(rows, det); });
+        const impBtn = overlay.querySelector('[data-act="import"]');
+        if (ok.length) impBtn.addEventListener('click', async () => {
+            impBtn.disabled = true;
+            impBtn.textContent = tt('导入中...', 'Importing...', '...');
+            try {
+                const res = await api('POST',
+                    '/api/classes/' + encodeURIComponent(state.currentClassCode) + '/roster',
+                    { students: ok });
+                close();
+                toast(tt(`导入完成：新增 ${res.created || 0}、更新 ${res.updated || 0}`, `Done: +${res.created || 0}, updated ${res.updated || 0}`, `تم`), 'success');
+                await loadStudents();
+            } catch (e) {
+                impBtn.disabled = false;
+                toast(tt('导入失败', 'Import failed', 'فشل') + '：' + e.message, 'error');
+            }
+        });
+    }
+
+    function showColumnPicker(rows, det) {
+        const sample = det.dataRows.slice(0, 4);
+        const overlay = document.createElement('div');
+        overlay.className = 'bl-overlay bl-show';
+        const colOptions = () => {
+            let opts = '';
+            for (let c = 0; c < det.maxCols; c++) {
+                const ex = sample.map(r => (r[c] || '').trim()).filter(Boolean).slice(0, 2).join(' / ') || '—';
+                opts += `<option value="${c}">${escapeHtml('第 ' + (c + 1) + ' 列 · ' + ex.slice(0, 22))}</option>`;
+            }
+            return opts;
+        };
+        overlay.innerHTML = `
+          <div class="bl-modal bl-modal-w520">
+            <div class="bl-header">
+              <h3>${_L('手动选列', 'Pick columns', 'اختر الأعمدة')}</h3>
+              <button class="bl-close" data-act="close">✕</button>
+            </div>
+            <div style="padding:16px 20px;">
+              <label class="bl-cp-label">${_L('哪列是学号？', 'Which column is the ID?', 'أي عمود هو الرقم؟')}</label>
+              <select id="cpCode" class="bl-cp-select">${colOptions()}</select>
+              <label class="bl-cp-label" style="margin-top:12px;">${_L('哪列是名字？', 'Which column is the name?', 'أي عمود هو الاسم؟')}</label>
+              <select id="cpName" class="bl-cp-select">${colOptions()}</select>
+            </div>
+            <div class="bl-roster-foot">
+              <button class="bl-btn-ghost" data-act="close">${_L('取消', 'Cancel', 'إلغاء')}</button>
+              <button class="bl-btn-primary" data-act="ok">${_L('确定', 'OK', 'تم')}</button>
+            </div>
+          </div>`;
+        document.body.appendChild(overlay);
+        if (det.codeCol >= 0) overlay.querySelector('#cpCode').value = String(det.codeCol);
+        if (det.nameCol >= 0) overlay.querySelector('#cpName').value = String(det.nameCol);
+        const close = () => overlay.remove();
+        overlay.querySelectorAll('[data-act="close"]').forEach(b => b.addEventListener('click', close));
+        overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+        overlay.querySelector('[data-act="ok"]').addEventListener('click', () => {
+            const cc = parseInt(overlay.querySelector('#cpCode').value, 10);
+            const nc = parseInt(overlay.querySelector('#cpName').value, 10);
+            close();
+            showRosterPreview(rows, Object.assign({}, det, { codeCol: cc, nameCol: nc }));
+        });
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -9557,11 +9838,11 @@ window.BL = (function () {
     async function kickStudent(studentCode, studentName) {
         if (!state.currentClassCode) return;
 
-        // ★ UI-31: 软离开语义(记录保留,凭学号可重新加入)
+        // ★ UI-33: 移出 = 硬删(不可恢复)
         const ok = confirm(tt(
-            `确定将「${studentName}」移出班级?\n\n该学生将退出班级、不再看到本班任务；\n学习记录会保留,凭学号可重新加入。`,
-            `Remove "${studentName}" from the class?\n\nThe student will leave and stop seeing tasks.\nTheir records are kept; they can rejoin with the same ID.`,
-            `إخراج "${studentName}" من الصف؟`
+            `确定将「${studentName}」移出班级？\n\n会把 TA 从名单中彻底移除、删除作答记录，不可恢复。\n要再加入，需重新导入名单。`,
+            `Remove "${studentName}" from the class?\n\nThis permanently removes them from the roster and deletes their answer records. It cannot be undone.\nTo add them back, re-import the list.`,
+            `إخراج "${studentName}" نهائيًا؟ سيُحذف من القائمة وتُحذف سجلاته ولا يمكن التراجع.`
         ));
         if (!ok) return;
 
@@ -9569,20 +9850,14 @@ window.BL = (function () {
             await api('DELETE',
                 '/api/classes/' + encodeURIComponent(state.currentClassCode) +
                 '/students/' + encodeURIComponent(studentCode));
-            toast(tt(`已移出 ${studentName}(记录保留)`, `Removed ${studentName} (records kept)`, `تم الإخراج`), 'success');
-            // ★ UI-31: 软离开 — 不删本地记录,只标记 left,渲染为灰显"已离开"
-            const stu = state.students.find(s => s.studentCode === studentCode);
-            if (stu) {
-                stu.left = true;
-                stu.leftAt = new Date().toISOString();
-                stu.kickedByTeacher = true;
-            }
+            toast(tt(`已移出 ${studentName}`, `Removed ${studentName}`, `تم إخراج ${studentName}`), 'success');
+            // ★ UI-33: 硬删 — 本地直接移除该生
+            state.students = state.students.filter(s => s.studentCode !== studentCode);
             renderStudents();
         } catch (e) {
             toast(tt('移出失败', 'Failed to remove', 'فشل الإخراج') + '：' + e.message, 'error');
         }
     }
-
     // 拉取任务列表
     // ★ v2B Round 1.1 修复: 必须传 includeArchived=true,否则 Worker 默认过滤归档任务
     //   导致归档后任务消失、无法取消归档。归档的任务在前端通过 .bl-archived 灰色样式区分。
@@ -10083,7 +10358,7 @@ window.BL = (function () {
         // —— Phase 2B 第 1 轮 ——
         openTasksView, backToClassList,
         // —— Phase 4-1 (v2D-8): 学生管理 ——
-        openStudentsView, kickStudent,
+        openStudentsView, kickStudent, openRosterImport,
         // —— Phase 4-2: 答对率 ——
         switchStudentTab,
         // —— Phase 4-2 阶段③: 学生视角 ——
