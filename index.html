@@ -8,7 +8,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-    console.log('%c[斑斓汉字] 汉字UI-34 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+    console.log('%c[斑斓汉字] 汉字UI-35 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -9236,9 +9236,8 @@ window.BL = (function () {
         const card = (s, seq, isPending) => {
             const idx = state.students.indexOf(s);
             const completed = (s.completedTasks || []).length;
-            const meta = isPending
-                ? tt('尚未加入', 'Not joined yet', 'لم ينضم بعد')
-                : tt(`已完成 ${completed} / ${taskTotal} 任务`, `Completed ${completed} / ${taskTotal} tasks`, `أكمل ${completed} / ${taskTotal} مهام`);
+            const metaLine = isPending ? '' :
+                `<div class="bl-student-meta">${escapeHtml(tt(`已完成 ${completed} / ${taskTotal} 任务`, `Completed ${completed} / ${taskTotal} tasks`, `أكمل ${completed} / ${taskTotal} مهام`))}</div>`;
             const detailBtn = isPending ? '' :
                 `<button class="bl-student-detail-btn" onclick="BL.toggleStudentDetail(${idx})">${escapeHtml(txtDetail)}</button>`;
             const kickBtn =
@@ -9252,7 +9251,7 @@ window.BL = (function () {
                 <div class="bl-student-info">
                     <div class="bl-student-name"><span class="bl-stu-seq">${seq}.</span> ${escapeHtml(s.name || s.studentCode)}${badge}</div>
                     <div class="bl-student-sid">${escapeHtml(txtSid)} ${escapeHtml(s.studentCode)}</div>
-                    <div class="bl-student-meta">${escapeHtml(meta)}</div>
+                    ${metaLine}
                 </div>
                 <div class="bl-student-actions">
                     ${detailBtn}
@@ -10551,7 +10550,10 @@ if (document.readyState === 'loading') {
     .bl-roster-manual-btn { background: #fff; color: var(--ink-green); border: 1px solid var(--ink-green); }
     .bl-roster-manual-btn:hover { background: rgba(55,74,66,0.06); }
     .bl-student-sid { font-size: 12px; color: var(--ink-gray); font-family: monospace; margin: 1px 0; }
-    .bl-student-card:hover { background: rgba(55,74,66,0.06); border-left-color: var(--ink-green); }
+    .bl-student-card:hover { background: var(--ink-green); border-color: var(--ink-green); border-left-color: var(--ink-green); }
+    .bl-student-card:hover .bl-student-name, .bl-student-card:hover .bl-student-sid, .bl-student-card:hover .bl-student-meta, .bl-student-card:hover .bl-stu-seq { color: #fff; }
+    .bl-student-card:hover .bl-student-detail-btn, .bl-student-card:hover .bl-student-kick-btn { border-color: #fff; color: #fff; background: transparent; }
+    .bl-student-card:hover .bl-student-detail-btn:hover, .bl-student-card:hover .bl-student-kick-btn:hover { background: #fff; color: var(--ink-green); border-color: #fff; }
     .bl-stu-checkwrap { display: flex; align-items: center; flex-shrink: 0; cursor: pointer; }
     .bl-stu-check { width: 17px; height: 17px; cursor: pointer; accent-color: var(--ink-green); }
     .bl-batch-bar { position: sticky; top: 0; z-index: 6; display: flex; justify-content: space-between; align-items: center; background: var(--ink-green); color: #fff; padding: 9px 14px; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 2px 8px rgba(55,74,66,0.2); }
