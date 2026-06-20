@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-39 (2026-06-20) — ② 学习报告:「导出全班报告」按钮移到「明细表」同一排的最右侧 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-40 (2026-06-20) — ⑤ 班级看板:学生页新增「看板」标签(全班总览/按任务/最该回讲的字/最该关注的学生) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -8,7 +8,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-    console.log('%c[斑斓汉字] 汉字UI-39 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+    console.log('%c[斑斓汉字] 汉字UI-40 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -880,6 +880,25 @@
         }
 
         /* ═══ Phase 4-2: 答对率展示 ═══ */
+        /* ⑤ 班级看板 */
+        .bl-dash-card { background:#fff; border:1px solid var(--border); border-radius:12px; padding:16px 18px; margin-bottom:14px; }
+        .bl-dash-card-title { font-size:15px; font-weight:bold; color:var(--ink-green); margin-bottom:12px; }
+        .bl-dash-ov { display:flex; gap:14px; }
+        .bl-dash-ov-cell { flex:1; text-align:center; background:#f3f6f4; border-radius:10px; padding:12px 6px; }
+        .bl-dash-ov-label { font-size:12px; color:#5a655f; }
+        .bl-dash-ov-val { font-size:26px; font-weight:bold; margin-top:4px; }
+        .bl-dash-task-row { display:flex; align-items:center; gap:10px; padding:8px 0; border-top:1px solid var(--border); font-size:13px; }
+        .bl-dash-task-name { flex:1; font-weight:600; color:#232a27; }
+        .bl-dash-task-done { color:#7a857f; font-size:12px; white-space:nowrap; }
+        .bl-dash-task-m { min-width:76px; text-align:right; font-weight:600; white-space:nowrap; }
+        .bl-dash-weak { display:flex; flex-wrap:wrap; gap:10px; }
+        .bl-dash-weak-chip { display:inline-flex; align-items:center; gap:6px; background:#f3f6f4; border-radius:10px; padding:6px 10px; }
+        .bl-dash-weak-zi { font-size:22px; color:#232a27; }
+        .bl-dash-weak-p { font-size:13px; font-weight:bold; }
+        .bl-dash-stu-row { display:flex; align-items:center; gap:10px; padding:8px 0; border-top:1px solid var(--border); font-size:14px; }
+        .bl-dash-stu-name { flex:1; font-weight:600; }
+        .bl-dash-stu-chars { color:#7a857f; font-size:12px; white-space:nowrap; }
+        .bl-dash-stu-p { min-width:54px; text-align:right; font-weight:bold; }
         .bl-stu-tabs {
             display: flex;
             gap: 4px;
@@ -8328,6 +8347,7 @@
                     <button class="bl-stu-tab bl-stu-tab-active" id="blStuTabList" onclick="BL.switchStudentTab('list')">学生名单<span class="lang-en">Students</span><span class="lang-ar">الطلاب</span></button>
                     <button class="bl-stu-tab" id="blStuTabRate" onclick="BL.switchStudentTab('rate')">答对率<span class="lang-en">Accuracy</span><span class="lang-ar">معدل الدقة</span></button>
                     <button class="bl-stu-tab" id="blStuTabMatrix" onclick="BL.switchStudentTab('matrix')">明细表<span class="lang-en">Table</span><span class="lang-ar">الجدول</span></button>
+                    <button class="bl-stu-tab" id="blStuTabDash" onclick="BL.switchStudentTab('dashboard')">看板<span class="lang-en">Dashboard</span><span class="lang-ar">لوحة</span></button>
                     <button class="bl-roster-import-btn" onclick="BL.exportClassReport()" style="margin-inline-start:auto;align-self:center;">📄 导出全班报告<span class="lang-en">Export Report</span><span class="lang-ar">تصدير التقرير</span></button>
                 </div>
                 <div class="bl-task-list" id="blStudentList">
@@ -8338,6 +8358,9 @@
                 </div>
                 <div id="blMatrix" style="display:none;">
                     <!-- Phase 4-2 阶段④ 明细表,动态生成 -->
+                </div>
+                <div id="blDashboard" style="display:none;">
+                    <!-- ⑤ 班级看板,动态生成 -->
                 </div>
             </div>
 
@@ -9670,13 +9693,14 @@ window.BL = (function () {
     }
 
     function switchStudentTab(tab) {
-        const panels = { list: 'blStudentList', rate: 'blAnswerRate', matrix: 'blMatrix' };
-        const tabBtns = { list: 'blStuTabList', rate: 'blStuTabRate', matrix: 'blStuTabMatrix' };
+        const panels = { list: 'blStudentList', rate: 'blAnswerRate', matrix: 'blMatrix', dashboard: 'blDashboard' };
+        const tabBtns = { list: 'blStuTabList', rate: 'blStuTabRate', matrix: 'blStuTabMatrix', dashboard: 'blStuTabDash' };
         if (!panels[tab]) tab = 'list';
         Object.entries(panels).forEach(([k, id]) => { if ($(id)) $(id).style.display = (k === tab) ? '' : 'none'; });
         Object.entries(tabBtns).forEach(([k, id]) => { if ($(id)) $(id).classList.toggle('bl-stu-tab-active', k === tab); });
         if (tab === 'rate') renderAnswerRate();
         if (tab === 'matrix') renderMatrix();
+        if (tab === 'dashboard') renderDashboard();
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -9858,6 +9882,103 @@ window.BL = (function () {
         const className = (state.currentClassInfo && state.currentClassInfo.name) || state.currentClassCode || 'class';
         pdf.save('学习报告_' + className + '_' + dateStr + '.pdf');
         toast(tt('PDF 已导出 ✓', 'PDF exported ✓', 'تم التصدير ✓'), 'success');
+    }
+
+    // ═══════════════════════════════════════════════════
+    // ⑤ 班级看板:把同一份 taskResults 汇总成"全班一眼看"的四块总览
+    //   口径与答对率一致:只算拼音+部件,独体字部件 null 不计入分母,只统计在读学生。
+    // ═══════════════════════════════════════════════════
+    function renderDashboard() {
+        const box = $('blDashboard');
+        if (!box) return;
+        const pctColor = p => p >= 80 ? 'var(--ink-green)' : (p >= 60 ? 'var(--gold-accent)' : 'var(--zhusha)');
+        const fmt = p => p === null ? '—' : (p + '%');
+        const cOf = p => p === null ? '#9aa39e' : pctColor(p);
+        const active = state.students.filter(s => !s.left);
+        const done = active.filter(s => s.taskResults && Object.keys(s.taskResults).length > 0);
+
+        if (done.length === 0) {
+            box.innerHTML = '<div class="bl-empty"><div class="bl-empty-icon">📊</div><div class="bl-empty-text">'
+                + escapeHtml(tt('还没有学生完成任务，暂无看板数据', 'No completed tasks yet', 'لا توجد بيانات بعد')) + '</div></div>';
+            return;
+        }
+
+        // 全班整体 + 逐字 + 逐任务 聚合(一次遍历)
+        let pyC = 0, pyT = 0, compC = 0, compT = 0;
+        const charStat = {};       // ch -> {c,t}  拼音+部件合并,用于"最该回讲的字"
+        const taskStat = {};       // tid -> {pyC,pyT,compC,compT,doneCount}
+        const taskOrder = [];
+        done.forEach(s => {
+            Object.entries(s.taskResults).forEach(([tid, tr]) => {
+                if (!tr || !tr.chars) return;
+                if (!taskStat[tid]) { taskStat[tid] = { pyC:0, pyT:0, compC:0, compT:0, doneCount:0 }; taskOrder.push(tid); }
+                taskStat[tid].doneCount++;
+                Object.entries(tr.chars).forEach(([ch, r]) => {
+                    if (!charStat[ch]) charStat[ch] = { c:0, t:0 };
+                    if (r.py !== null && r.py !== undefined) {
+                        pyT++; taskStat[tid].pyT++; charStat[ch].t++;
+                        if (r.py) { pyC++; taskStat[tid].pyC++; charStat[ch].c++; }
+                    }
+                    if (r.comp !== null && r.comp !== undefined) {
+                        compT++; taskStat[tid].compT++; charStat[ch].t++;
+                        if (r.comp) { compC++; taskStat[tid].compC++; charStat[ch].c++; }
+                    }
+                });
+            });
+        });
+        const overallPy = pyT ? Math.round(pyC / pyT * 100) : null;
+        const overallComp = compT ? Math.round(compC / compT * 100) : null;
+        const txtPy = tt('拼音', 'Pinyin', 'بينيين');
+        const txtComp = tt('部件', 'Parts', 'مكوّنات');
+
+        // 1) 全班总览
+        const ovCell = (label, val, color) => '<div class="bl-dash-ov-cell"><div class="bl-dash-ov-label">'
+            + escapeHtml(label) + '</div><div class="bl-dash-ov-val" style="color:' + color + '">' + val + '</div></div>';
+        const overview = '<div class="bl-dash-card"><div class="bl-dash-card-title">'
+            + escapeHtml(tt('全班总览', 'Class Overview', 'نظرة عامة على الصف')) + '</div><div class="bl-dash-ov">'
+            + ovCell(txtPy, fmt(overallPy), cOf(overallPy))
+            + ovCell(txtComp, fmt(overallComp), cOf(overallComp))
+            + ovCell(tt('参与', 'Participation', 'المشاركة'), done.length + '/' + active.length, 'var(--ink-green)')
+            + '</div></div>';
+
+        // 2) 按任务
+        const taskRows = taskOrder.map(tid => {
+            const t = taskStat[tid];
+            const task = (state.tasks || []).find(x => x.taskId === tid);
+            const title = task ? task.title : tt('(已删除的任务)', '(deleted task)', '(مهمة محذوفة)');
+            const py = t.pyT ? Math.round(t.pyC / t.pyT * 100) : null;
+            const comp = t.compT ? Math.round(t.compC / t.compT * 100) : null;
+            const doneText = tt(t.doneCount + ' 人做过', t.doneCount + ' done', t.doneCount + ' أكملوا');
+            return '<div class="bl-dash-task-row"><span class="bl-dash-task-name">' + escapeHtml(title) + '</span>'
+                + '<span class="bl-dash-task-done">' + escapeHtml(doneText) + '</span>'
+                + '<span class="bl-dash-task-m" style="color:' + cOf(py) + '">' + escapeHtml(txtPy) + ' ' + fmt(py) + '</span>'
+                + '<span class="bl-dash-task-m" style="color:' + cOf(comp) + '">' + escapeHtml(txtComp) + ' ' + fmt(comp) + '</span></div>';
+        }).join('');
+        const byTask = '<div class="bl-dash-card"><div class="bl-dash-card-title">'
+            + escapeHtml(tt('按任务', 'By Task', 'حسب المهمة')) + '</div>' + taskRows + '</div>';
+
+        // 3) 最该重点回讲的字 · Top 8(拼音+部件合并答对率最低)
+        const weak = Object.keys(charStat).filter(ch => charStat[ch].t > 0)
+            .map(ch => ({ ch, p: Math.round(charStat[ch].c / charStat[ch].t * 100) }))
+            .sort((a, b) => a.p - b.p).slice(0, 8);
+        const weakHtml = weak.map(o => '<span class="bl-dash-weak-chip"><span class="bl-dash-weak-zi">'
+            + escapeHtml(o.ch) + '</span><span class="bl-dash-weak-p" style="color:' + pctColor(o.p) + '">' + o.p + '%</span></span>').join('');
+        const weakCard = '<div class="bl-dash-card"><div class="bl-dash-card-title">'
+            + escapeHtml(tt('最该重点回讲的字', 'Hardest Characters', 'أصعب الحروف')) + '</div><div class="bl-dash-weak">' + weakHtml + '</div></div>';
+
+        // 4) 最需要关注的学生 · Top 5(整体答对率最低,并列时完成字数少的在前)
+        const rank = done.map(s => {
+            const st = _reportStudentStats(s);
+            const tot = st.pyT + st.compT, cor = st.pyC + st.compC;
+            return { name: s.name || s.studentCode || '', p: tot ? Math.round(cor / tot * 100) : null, chars: st.charCount };
+        }).filter(o => o.p !== null).sort((a, b) => (a.p - b.p) || (a.chars - b.chars)).slice(0, 5);
+        const stuHtml = rank.map(o => '<div class="bl-dash-stu-row"><span class="bl-dash-stu-name">' + escapeHtml(o.name) + '</span>'
+            + '<span class="bl-dash-stu-chars">' + escapeHtml(tt('完成', 'done', 'أنجز')) + ' ' + o.chars + '</span>'
+            + '<span class="bl-dash-stu-p" style="color:' + pctColor(o.p) + '">' + o.p + '%</span></div>').join('');
+        const stuCard = '<div class="bl-dash-card"><div class="bl-dash-card-title">'
+            + escapeHtml(tt('最需要关注的学生', 'Students to Watch', 'طلاب بحاجة لمتابعة')) + '</div>' + stuHtml + '</div>';
+
+        box.innerHTML = overview + byTask + weakCard + stuCard;
     }
 
     function renderAnswerRate() {
