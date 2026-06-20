@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-37 (2026-06-20) — ② 学习报告第一版:学生页新增「导出全班报告」按钮,一键导出全班 PDF(每生一页:姓名 + 拼音/部件答对率 + 完成字数 + 错题) -->
+<!-- 斑斓汉字(老师端) · 汉字UI-38 (2026-06-20) — ② 学习报告: 修正 PDF 分页 —只在任务块/字行边界断页,不再把一行或一个词切成上下两页 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -8,7 +8,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-    console.log('%c[斑斓汉字] 汉字UI-37 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+    console.log('%c[斑斓汉字] 汉字UI-38 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -9806,22 +9806,8 @@ window.BL = (function () {
         const pw = pdf.internal.pageSize.getWidth();
         const ph = pdf.internal.pageSize.getHeight();
         let started = false;
-        const addPaged = (imgData, imgH) => {
-            if (imgH <= ph) {
-                if (started) pdf.addPage();
-                pdf.addImage(imgData, 'JPEG', 0, 0, pw, imgH);
-                started = true;
-                return;
-            }
-            let remain = imgH, posY = 0;
-            while (remain > 0) {
-                if (started) pdf.addPage();
-                pdf.addImage(imgData, 'JPEG', 0, posY, pw, imgH);
-                started = true;
-                posY -= ph;
-                remain -= ph;
-            }
-        };
+        const elWidth = 794;                         // 报告 DOM 的 CSS 宽度,与 _buildStudentReportEl 一致
+        const pageCssH = ph / pw * elWidth;          // 一个 A4 页对应多少 CSS 像素高
         for (let i = 0; i < students.length; i++) {
             const el = _buildStudentReportEl(students[i], dateStr);
             el.style.position = 'absolute';
@@ -9829,10 +9815,40 @@ window.BL = (function () {
             el.style.top = '0';
             document.body.appendChild(el);
             try {
+                // 收集"可安全断页"的位置:每个任务块顶 + 每行字顶 → 只在这些边界断页,绝不把一行/一个字切成两半
+                const elRect = el.getBoundingClientRect();
+                const cutSet = new Set([0]);
+                el.querySelectorAll('.bl-stu-detail-task, .bl-stu-detail-char').forEach(n => {
+                    cutSet.add(Math.max(0, Math.round(n.getBoundingClientRect().top - elRect.top)));
+                });
+                const totalCss = el.scrollHeight;
+                const cuts = Array.from(cutSet).filter(v => v < totalCss).sort((a, b) => a - b);
+                cuts.push(totalCss);
+
                 const canvas = await html2canvas(el, { scale: 2, backgroundColor: '#ffffff', useCORS: true });
-                const imgData = canvas.toDataURL('image/jpeg', 0.92);
-                const imgH = canvas.height * pw / canvas.width;
-                addPaged(imgData, imgH);
+                const pxPerCss = canvas.height / totalCss;
+
+                let start = 0;
+                while (start < totalCss - 1) {
+                    const limit = start + pageCssH;
+                    let end = -1;
+                    for (let k = 0; k < cuts.length; k++) { if (cuts[k] > start && cuts[k] <= limit + 0.5) end = cuts[k]; }
+                    if (end === -1) end = Math.min(limit, totalCss);   // 单块本身超过一页时才硬切(极少见)
+                    const sy = Math.round(start * pxPerCss);
+                    const sh = Math.round((end - start) * pxPerCss);
+                    const seg = document.createElement('canvas');
+                    seg.width = canvas.width;
+                    seg.height = sh;
+                    const sctx = seg.getContext('2d');
+                    sctx.fillStyle = '#ffffff';
+                    sctx.fillRect(0, 0, seg.width, seg.height);
+                    sctx.drawImage(canvas, 0, sy, canvas.width, sh, 0, 0, canvas.width, sh);
+                    const segHmm = (end - start) * pw / elWidth;
+                    if (started) pdf.addPage();
+                    pdf.addImage(seg.toDataURL('image/jpeg', 0.92), 'JPEG', 0, 0, pw, segHmm);
+                    started = true;
+                    start = end;
+                }
             } catch (e) {
                 // 单个学生失败不中断整体导出
             } finally {
