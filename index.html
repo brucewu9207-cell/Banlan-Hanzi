@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-38 (2026-06-20) — ② 学习报告: 修正 PDF 分页 —只在任务块/字行边界断页,不再把一行或一个词切成上下两页 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-39 (2026-06-20) — ② 学习报告:「导出全班报告」按钮移到「明细表」同一排的最右侧 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -8,7 +8,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-    console.log('%c[斑斓汉字] 汉字UI-38 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+    console.log('%c[斑斓汉字] 汉字UI-39 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -8328,8 +8328,8 @@
                     <button class="bl-stu-tab bl-stu-tab-active" id="blStuTabList" onclick="BL.switchStudentTab('list')">学生名单<span class="lang-en">Students</span><span class="lang-ar">الطلاب</span></button>
                     <button class="bl-stu-tab" id="blStuTabRate" onclick="BL.switchStudentTab('rate')">答对率<span class="lang-en">Accuracy</span><span class="lang-ar">معدل الدقة</span></button>
                     <button class="bl-stu-tab" id="blStuTabMatrix" onclick="BL.switchStudentTab('matrix')">明细表<span class="lang-en">Table</span><span class="lang-ar">الجدول</span></button>
+                    <button class="bl-roster-import-btn" onclick="BL.exportClassReport()" style="margin-inline-start:auto;align-self:center;">📄 导出全班报告<span class="lang-en">Export Report</span><span class="lang-ar">تصدير التقرير</span></button>
                 </div>
-                <div class="bl-report-actions" style="margin:10px 0 4px;"><button class="bl-roster-import-btn" onclick="BL.exportClassReport()">📄 导出全班报告<span class="lang-en">Export Report</span><span class="lang-ar">تصدير التقرير</span></button></div>
                 <div class="bl-task-list" id="blStudentList">
                     <!-- 动态生成 -->
                 </div>
