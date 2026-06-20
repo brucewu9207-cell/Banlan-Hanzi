@@ -1,5 +1,5 @@
 /* 斑斓汉字(老师端) · 离线缓存引擎(service worker) */
-const CACHE = 'banlan-hanzi-v41';
+const CACHE = 'banlan-hanzi-v42';
 const CORE = ['./', './index.html', './manifest.webmanifest',
   './icon-192.png', './icon-512.png', './apple-touch-icon-180.png'];
 
