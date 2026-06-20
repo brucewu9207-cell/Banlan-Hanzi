@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-24 (2026-06-18) — UI细化㉔: ①模块6(关于汉字)上边距16px使5↔6间距=3↔4(16px) ②模块1-5中文标题字号15px→16px对齐模块6 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-37 (2026-06-20) — ② 学习报告第一版:学生页新增「导出全班报告」按钮,一键导出全班 PDF(每生一页:姓名 + 拼音/部件答对率 + 完成字数 + 错题) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -8,7 +8,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-    console.log('%c[斑斓汉字] 汉字UI-36 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+    console.log('%c[斑斓汉字] 汉字UI-37 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -8329,6 +8329,7 @@
                     <button class="bl-stu-tab" id="blStuTabRate" onclick="BL.switchStudentTab('rate')">答对率<span class="lang-en">Accuracy</span><span class="lang-ar">معدل الدقة</span></button>
                     <button class="bl-stu-tab" id="blStuTabMatrix" onclick="BL.switchStudentTab('matrix')">明细表<span class="lang-en">Table</span><span class="lang-ar">الجدول</span></button>
                 </div>
+                <div class="bl-report-actions" style="margin:10px 0 4px;"><button class="bl-roster-import-btn" onclick="BL.exportClassReport()">📄 导出全班报告<span class="lang-en">Export Report</span><span class="lang-ar">تصدير التقرير</span></button></div>
                 <div class="bl-task-list" id="blStudentList">
                     <!-- 动态生成 -->
                 </div>
@@ -9711,6 +9712,138 @@ window.BL = (function () {
         }
     }
 
+    // ═══════════════════════════════════════════════════
+    // ② 学习报告 PDF(全班一份,每生一页)
+    //   复用既有答对率口径:只统计「拼音 / 部件」两维度,独体字部件维度 null 不计入分母。
+    //   成绩为「最近一次作答」(Worker 重做覆盖)。截既有渲染 → jsPDF,绕开中文/阿语字体嵌入。
+    // ═══════════════════════════════════════════════════
+    function _reportToday() {
+        const d = new Date();
+        const p = n => (n < 10 ? '0' + n : '' + n);
+        return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+    }
+
+    // 单生成绩聚合:返回 {pyC,pyT,compC,compT,charCount,wrongChars[]}
+    function _reportStudentStats(s) {
+        const tr = (s && s.taskResults) || {};
+        let pyC = 0, pyT = 0, compC = 0, compT = 0;
+        const charSet = new Set();
+        const wrong = new Set();
+        Object.keys(tr).forEach(taskId => {
+            const chars = (tr[taskId] && tr[taskId].chars) || {};
+            Object.entries(chars).forEach(([ch, r]) => {
+                charSet.add(ch);
+                if (r.py !== null && r.py !== undefined) { pyT++; if (r.py) pyC++; }
+                if (r.comp !== null && r.comp !== undefined) { compT++; if (r.comp) compC++; }
+                if (r.py === false || r.comp === false) wrong.add(ch);
+            });
+        });
+        return { pyC, pyT, compC, compT, charCount: charSet.size, wrongChars: Array.from(wrong) };
+    }
+
+    // 构造单生报告离屏 DOM(A4 比例,白底,内嵌 BLKai 字体)
+    function _buildStudentReportEl(s, dateStr) {
+        const pctColor = p => p >= 80 ? '#374a42' : (p >= 60 ? '#b5763a' : '#c84b2f');
+        const st = _reportStudentStats(s);
+        const pyPct = st.pyT ? Math.round(st.pyC / st.pyT * 100) : null;
+        const compPct = st.compT ? Math.round(st.compC / st.compT * 100) : null;
+        const fmt = p => p === null ? '—' : (p + '%');
+        const colorOf = p => p === null ? '#9aa39e' : pctColor(p);
+        const className = (state.currentClassInfo && state.currentClassInfo.name) || state.currentClassCode || '';
+        const txtPinyin = tt('拼音', 'Pinyin', 'بينيين');
+        const txtComp = tt('部件', 'Parts', 'مكوّنات');
+        const wrongHtml = st.wrongChars.length
+            ? st.wrongChars.map(c => '<span style="display:inline-block;margin:2px 6px 2px 0;padding:2px 8px;background:#fbeae6;color:#c84b2f;border-radius:6px;">' + escapeHtml(c) + '</span>').join('')
+            : '<span style="color:#7a857f;">' + escapeHtml(tt('无', 'None', 'لا شيء')) + '</span>';
+        const detail = renderStudentDetail(s) || ('<div style="color:#7a857f;">' + escapeHtml(tt('该学生还没完成任何任务', 'No tasks completed yet', 'لم يكمل أي مهمة')) + '</div>');
+
+        const statCard = (label, val, color) =>
+            '<div style="flex:1;text-align:center;background:#f3f6f4;border-radius:10px;padding:14px;">'
+            + '<div style="font-size:13px;color:#5a655f;white-space:pre-line;">' + escapeHtml(label) + '</div>'
+            + '<div style="font-size:30px;font-weight:bold;color:' + color + ';">' + val + '</div></div>';
+
+        const el = document.createElement('div');
+        el.style.cssText = 'width:794px;min-height:1123px;box-sizing:border-box;padding:48px 56px;background:#fff;color:#232a27;font-family:BLKai,"LXGW WenKai",sans-serif;';
+        el.innerHTML =
+            '<div style="border-bottom:2px solid #374a42;padding-bottom:14px;margin-bottom:22px;">'
+              + '<div style="font-size:26px;font-weight:bold;color:#374a42;white-space:pre-line;">' + escapeHtml(tt('斑斓学习报告', 'Brilliant Learning Report', 'تقرير التعلّم')) + '</div>'
+              + '<div style="font-size:15px;color:#5a655f;margin-top:10px;">'
+                + escapeHtml(tt('姓名', 'Name', 'الاسم')) + ': <b>' + escapeHtml(s.name || '') + '</b>'
+                + ' &nbsp;|&nbsp; ' + escapeHtml(tt('学号', 'ID', 'الرقم')) + ': ' + escapeHtml(s.studentCode || '')
+                + ' &nbsp;|&nbsp; ' + escapeHtml(tt('班级', 'Class', 'الصف')) + ': ' + escapeHtml(className)
+                + ' &nbsp;|&nbsp; ' + escapeHtml(dateStr)
+              + '</div></div>'
+            + '<div style="display:flex;gap:20px;margin-bottom:26px;">'
+              + statCard(txtPinyin, fmt(pyPct), colorOf(pyPct))
+              + statCard(txtComp, fmt(compPct), colorOf(compPct))
+              + statCard(tt('完成字数', 'Chars', 'عدد الحروف'), st.charCount, '#374a42')
+            + '</div>'
+            + '<div style="font-size:15px;font-weight:bold;color:#374a42;margin-bottom:8px;white-space:pre-line;">' + escapeHtml(tt('错题', 'Mistakes', 'الأخطاء')) + '</div>'
+            + '<div style="margin-bottom:26px;font-size:18px;line-height:1.9;">' + wrongHtml + '</div>'
+            + '<div style="font-size:15px;font-weight:bold;color:#374a42;margin-bottom:10px;white-space:pre-line;">' + escapeHtml(tt('逐字明细', 'Detail', 'التفاصيل')) + '</div>'
+            + '<div class="bl-report-detail">' + detail + '</div>'
+            + '<div style="margin-top:30px;padding-top:12px;border-top:1px solid #d8ddd9;font-size:11px;color:#9aa39e;white-space:pre-line;">'
+              + escapeHtml(tt('答对率仅统计拼音 + 部件;成绩为最近一次作答。', 'Accuracy counts Pinyin + Parts only; latest attempt.', 'تُحتسب الدقة للبينيين والمكوّنات فقط؛ المحاولة الأخيرة.'))
+            + '</div>';
+        return el;
+    }
+
+    // 一键导出:全班一份 PDF,每生一页(超一页自动续页)
+    async function exportClassReport() {
+        if (typeof html2canvas === 'undefined' || !window.jspdf) {
+            toast(tt('导出组件未就绪,请刷新重试', 'Export libs not ready', 'مكوّنات التصدير غير جاهزة'), 'error');
+            return;
+        }
+        const students = (state.students || []).filter(s => !s.left && s.taskResults && Object.keys(s.taskResults).length > 0);
+        if (students.length === 0) {
+            toast(tt('暂无已完成任务的学生,无法生成报告', 'No students with results yet', 'لا يوجد طلاب لديهم نتائج'), 'error');
+            return;
+        }
+        toast(tt('正在生成 PDF…', 'Generating PDF…', 'جارٍ إنشاء PDF…'));
+        const dateStr = _reportToday();
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pw = pdf.internal.pageSize.getWidth();
+        const ph = pdf.internal.pageSize.getHeight();
+        let started = false;
+        const addPaged = (imgData, imgH) => {
+            if (imgH <= ph) {
+                if (started) pdf.addPage();
+                pdf.addImage(imgData, 'JPEG', 0, 0, pw, imgH);
+                started = true;
+                return;
+            }
+            let remain = imgH, posY = 0;
+            while (remain > 0) {
+                if (started) pdf.addPage();
+                pdf.addImage(imgData, 'JPEG', 0, posY, pw, imgH);
+                started = true;
+                posY -= ph;
+                remain -= ph;
+            }
+        };
+        for (let i = 0; i < students.length; i++) {
+            const el = _buildStudentReportEl(students[i], dateStr);
+            el.style.position = 'absolute';
+            el.style.left = '-99999px';
+            el.style.top = '0';
+            document.body.appendChild(el);
+            try {
+                const canvas = await html2canvas(el, { scale: 2, backgroundColor: '#ffffff', useCORS: true });
+                const imgData = canvas.toDataURL('image/jpeg', 0.92);
+                const imgH = canvas.height * pw / canvas.width;
+                addPaged(imgData, imgH);
+            } catch (e) {
+                // 单个学生失败不中断整体导出
+            } finally {
+                if (el.parentNode) el.parentNode.removeChild(el);
+            }
+        }
+        const className = (state.currentClassInfo && state.currentClassInfo.name) || state.currentClassCode || 'class';
+        pdf.save('学习报告_' + className + '_' + dateStr + '.pdf');
+        toast(tt('PDF 已导出 ✓', 'PDF exported ✓', 'تم التصدير ✓'), 'success');
+    }
+
     function renderAnswerRate() {
         const box = $('blAnswerRate');
         if (!box) return;
@@ -10508,7 +10641,7 @@ window.BL = (function () {
         // —— Phase 4-1 (v2D-8): 学生管理 ——
         openStudentsView, kickStudent, openRosterImport, openManualEntry, toggleStudentSelect, clearStudentSelect, batchRemove,
         // —— Phase 4-2: 答对率 ——
-        switchStudentTab,
+        switchStudentTab, exportClassReport,
         // —— Phase 4-2 阶段③: 学生视角 ——
         toggleStudentDetail,
         openTaskEditor, closeTaskEditor, selectTaskType, submitTask,
