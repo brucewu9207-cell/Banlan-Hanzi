@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-42 (2026-06-20) — ③ PWA:安装邀请条改为对所有访客主动显示(电脑/手机均可,能调起系统安装就调起,否则给图文指引) -->
+<!-- 斑斓汉字(老师端) · 汉字UI-43 (2026-06-21) — ⑧老师端完整离线:笔顺数据改用本地 hsk.json 整包(原写死 CDN,断网失效),离线全字笔顺可用;主流程/基本笔顺卡/导出图/看板字 4 处加载切到本地字典+多源兜底 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-    console.log('%c[斑斓汉字] 汉字UI-42 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+    console.log('%c[斑斓汉字] 汉字UI-43 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -5248,6 +5248,68 @@
         });
     }
 
+    // ══════════════════════════════════════════════════════════════════════
+    // ★ 汉字UI-43 完整离线:笔顺数据加载器(本地 hsk.json 整包优先 + 多 CDN 兜底 + 缓存)
+    //   原各处直接用 HanziWriter.loadCharacterData(写死 CDN,断网即失效)。
+    //   改为:开屏预载 hsk.json 整包 → 之后内存秒查(离线可用、瞬时);
+    //   整包未就绪时去多源 CDN(国内镜像优先)取「单字」兜底,最后才用库默认源。
+    //   契约与 HanziWriter.loadCharacterData 一致:成功 resolve(data),全失败 reject。
+    // ══════════════════════════════════════════════════════════════════════
+    const _charCache = {};            // 单字缓存:char -> data
+    let _hskBundlePromise = null;     // hsk.json 整包加载 Promise(防并发重复请求)
+    let _hskBundleData = null;        // 整包就绪后填充 → 内存秒查
+    const _charInflight = {};         // 同字并发请求合并(de-dup)
+    const _STROKE_SOURCES = [
+        c => `https://registry.npmmirror.com/hanzi-writer-data/2.0.1/files/${encodeURIComponent(c)}.json`,
+        c => `https://cdn.jsdmirror.com/npm/hanzi-writer-data@2.0/${encodeURIComponent(c)}.json`,
+        c => `https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0/${encodeURIComponent(c)}.json`,
+        c => `https://unpkg.com/hanzi-writer-data@2.0/${encodeURIComponent(c)}.json`,
+        c => `https://raw.githubusercontent.com/chanind/hanzi-writer-data/master/data/${encodeURIComponent(c)}.json`,
+    ];
+    function _fetchWithTimeout(url, ms) {
+        if (typeof AbortController === 'undefined') return fetch(url, { mode: 'cors' });
+        const ctrl = new AbortController(); const t = setTimeout(() => ctrl.abort(), ms);
+        return fetch(url, { mode: 'cors', signal: ctrl.signal }).finally(() => clearTimeout(t));
+    }
+    function _loadHskBundle() {
+        if (_hskBundlePromise) return _hskBundlePromise;
+        _hskBundlePromise = fetch('hsk.json')
+            .then(r => r.ok ? r.json() : {})
+            .then(j => { _hskBundleData = j; return j; })
+            .catch(() => { _hskBundleData = {}; return {}; });
+        return _hskBundlePromise;
+    }
+    try { _loadHskBundle(); } catch (e) {}   // 开屏即预载整包(离线后随取随有)
+    async function loadCharData(char) {
+        if (_charCache[char]) return _charCache[char];
+        if (_hskBundleData && _hskBundleData[char] && _hskBundleData[char].strokes) {
+            return _charCache[char] = _hskBundleData[char];
+        }
+        if (_charInflight[char]) return _charInflight[char];
+        const job = (async () => {
+            for (let round = 0; round < 2; round++) {
+                for (const make of _STROKE_SOURCES) {
+                    try {
+                        const res = await _fetchWithTimeout(make(char), 4500);
+                        if (res && res.ok) { const d = await res.json(); if (d && d.strokes) return _charCache[char] = d; }
+                    } catch (e) { /* 试下一个源 */ }
+                }
+            }
+            try {
+                const d = await Promise.race([
+                    HanziWriter.loadCharacterData(char),
+                    new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 5000))
+                ]);
+                if (d && d.strokes) return _charCache[char] = d;
+            } catch (e) {}
+            if (_hskBundleData && _hskBundleData[char] && _hskBundleData[char].strokes) return _charCache[char] = _hskBundleData[char];
+            throw new Error('stroke data not found: ' + char);
+        })();
+        _charInflight[char] = job;
+        try { return await job; }
+        finally { delete _charInflight[char]; }
+    }
+
     async function initAll() {
         // 【部署检测】HSK 数据未加载则无法生成内容
         if (window.__hskLoadFailed) {
@@ -5366,7 +5428,7 @@
         for (let i = 0; i < chars.length; i++) {
             const char = chars[i];
             try {
-                const data = await HanziWriter.loadCharacterData(char);
+                const data = await loadCharData(char);
                 charDataArray.push({ char, data });
 
                 const tAnim = document.getElementById(`target_anim_${i}`);
@@ -7587,6 +7649,7 @@
                 strokeAnimationSpeed: 0.9,
                 delayBetweenStrokes: 400,
                 strokeColor: writerColors[rIdx % writerColors.length],
+                charDataLoader: (c, cb) => { loadCharData(c).then(d => cb(d)).catch(() => cb(null)); },
             });
             sgWriters[key] = w;
 
@@ -7823,7 +7886,7 @@
 
             // 加载字符数据，生成彩虹笔顺+数字SVG，用已有的 drawSvgToCanvas 渲染
             try {
-                const charData = await HanziWriter.loadCharacterData(rule.chars[0]);
+                const charData = await loadCharData(rule.chars[0]);
                 const svgEl = generateSvgGroup(charData.strokes, charData.medians, true, null);
                 await drawSvgToCanvas(svgEl, ctx, GX, GY, GS);
             } catch(e) {
@@ -9726,7 +9789,7 @@ window.BL = (function () {
             if (!ch || !/[\u4e00-\u9fff\u3400-\u4dbf]/.test(ch)) { el.dataset.ziDone = '1'; continue; }
             let data = _ziGlyphCache[ch];
             if (data === undefined) {
-                try { data = (await HanziWriter.loadCharacterData(ch)) || 'FAIL'; }
+                try { data = (await loadCharData(ch)) || 'FAIL'; }
                 catch (e) { data = 'FAIL'; }
                 _ziGlyphCache[ch] = data;
             }
