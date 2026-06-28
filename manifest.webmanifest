@@ -1,6 +1,6 @@
 {
   "name": "斑斓汉字 · 笔墨纸砚",
-  "short_name": "斑斓汉字",
+  "short_name": "斑斓汉字HSK3.0",
   "description": "笔顺动画 + 汉字拆解 · 老师端教学工具",
   "lang": "zh-CN",
   "start_url": "./",
@@ -10,7 +10,17 @@
   "background_color": "#e4eee9",
   "theme_color": "#374a42",
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
   ]
 }
