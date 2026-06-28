@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-59 (2026-06-28) — 学生视图标签全部满色深墨绿(去掉变淡)、当前页用竹黄下划线标识;待加入学生卡片改成浅陶红(方案C)与在读墨绿灰区分 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-60 (2026-06-28) — 学生卡片:查看作答/移出按钮改中文上译文下(pre-line);文字颜色按图2(在读深绿22312b/3f5249、待加入深棕4a2c20/6b4334);鼠标悬停整卡变深底(在读深墨绿/待加入深陶)且所有文字含按钮全变白 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-59 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-60 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -590,11 +590,20 @@ console.log('%c[斑斓汉字] 汉字UI-59 已加载', 'color:#374a42;font-weight
         /* ★ 联动(汉字-45):老师端统一改图2浅墨绿 #9caea3 + 自定义移出确认弹窗 */
         .bl-tab[data-tab="account"]{ background:var(--ink-green); }
         .bl-tab[data-tab="account"]:hover{ background:var(--ink-green); }
-        /* 在读学生卡片改浅墨绿(参考图2);灰色副文字调深保证可读 */
+        /* 在读学生卡片墨绿灰(参考图2) */
         .bl-student-card{ background:#9caea3 !important; border-left-color:#55706a !important; }
-        .bl-student-card:hover{ background:#a7b9af !important; }
-        .bl-student-card .bl-student-sid,
-        .bl-student-card .bl-student-meta{ color:#33493f !important; }
+        /* ★ 汉字-60:hover 整卡深底(在读深墨绿 / 待加入深陶),配白字 */
+        .bl-student-card:hover{ background:var(--ink-green) !important; }
+        .bl-student-card.is-pending:hover{ background:#905844 !important; border-left-color:#5e3526 !important; }
+        /* ★ 汉字-60:字体颜色严格按图2 —— 在读深绿 / 待加入深棕 */
+        .bl-student-card:not(.is-pending) .bl-student-name{ color:#22312b !important; }
+        .bl-student-card:not(.is-pending) .bl-student-sid,
+        .bl-student-card:not(.is-pending) .bl-student-meta,
+        .bl-student-card:not(.is-pending) .bl-stu-seq{ color:#3f5249 !important; }
+        .bl-student-card.is-pending .bl-student-name{ color:#4a2c20 !important; }
+        .bl-student-card.is-pending .bl-student-sid,
+        .bl-student-card.is-pending .bl-student-meta,
+        .bl-student-card.is-pending .bl-stu-seq{ color:#6b4334 !important; }
         .bl-student-card.is-left{ background:#cfd8d2 !important; }
         /* 在读·待加入 计数 chip 做成浅墨绿药丸 */
         #blStudentsCount{ background:#9caea3; color:#22312b !important; padding:3px 11px; border-radius:7px; white-space:normal !important; display:inline-block; }
@@ -950,7 +959,8 @@ console.log('%c[斑斓汉字] 汉字UI-59 已加载', 'color:#374a42;font-weight
             font-size: 13px;
             font-weight: 500;
             transition: all 0.2s;
-            white-space: nowrap;
+            white-space: pre-line;   /* 汉字-60:中文在上、译文在下 */
+            text-align: center;
             flex-shrink: 0;
         }
         .bl-student-kick-btn:hover {
@@ -1140,7 +1150,8 @@ console.log('%c[斑斓汉字] 汉字UI-59 已加载', 'color:#374a42;font-weight
             font-size: 13px;
             font-weight: 500;
             transition: all 0.2s;
-            white-space: nowrap;
+            white-space: pre-line;   /* 汉字-60:中文在上、译文在下 */
+            text-align: center;
         }
         .bl-student-detail-btn:hover { background: var(--ink-green); color: #fff; }
         .bl-student-detail {
@@ -11051,7 +11062,7 @@ if (document.readyState === 'loading') {
     .bl-student-sid { font-size: 12px; color: var(--ink-gray); font-family: monospace; min-width: 162px; }
     .bl-student-card:hover .bl-pending-badge { background: rgba(255,255,255,0.92); color: var(--ink-green); }
     .bl-student-card:hover { background: var(--ink-green); border-color: var(--ink-green); border-left-color: var(--ink-green); }
-    .bl-student-card:hover .bl-student-name, .bl-student-card:hover .bl-student-sid, .bl-student-card:hover .bl-student-meta, .bl-student-card:hover .bl-stu-seq { color: #fff; }
+    .bl-student-card:hover .bl-student-name, .bl-student-card:hover .bl-student-sid, .bl-student-card:hover .bl-student-meta, .bl-student-card:hover .bl-stu-seq { color: #fff !important; }  /* 汉字-60:压过图2基础色，hover全白 */
     .bl-student-card:hover .bl-student-detail-btn, .bl-student-card:hover .bl-student-kick-btn { border-color: #fff; color: #fff; background: transparent; }
     .bl-student-card:hover .bl-student-detail-btn:hover, .bl-student-card:hover .bl-student-kick-btn:hover { background: #fff; color: var(--ink-green); border-color: #fff; }
     .bl-stu-checkwrap { display: flex; align-items: center; flex-shrink: 0; cursor: pointer; }
