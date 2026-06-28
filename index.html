@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-52 (2026-06-28) — 账号视图三字段(用户名/账号ID/注册时间)套用班级码绿盒左+框右等高布局；墨舟名条居中并做成深绿盒白字；班级卡片深绿悬停时图标按钮文字翻白(精确停在某键仍白底深绿) -->
+<!-- 斑斓汉字(老师端) · 汉字UI-53 (2026-06-28) — 墨舟盒左对齐尺寸同绿盒且人形翻白；班级卡片每个图标键加方框、深绿悬停时人形垃圾桶等emoji翻白；去掉班级名与学生任务计数行；学生按钮改为在读/班级人数格式如2斜杠13 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-52 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-53 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -877,10 +877,11 @@ console.log('%c[斑斓汉字] 汉字UI-52 已加载', 'color:#374a42;font-weight
         .bl-class-card:hover .bl-class-code,
         .bl-class-card:hover .bl-class-name,
         .bl-class-card:hover .bl-class-meta { color: #fff; }
-        /* 汉字-52:深绿底时，右侧图标按钮(👥📋✎🗑及数字)也翻白才看得见 */
-        .bl-class-card:hover .bl-icon-btn { color: #fff; }
+        /* 汉字-52/53:深绿底时，右侧图标按钮(文字+方框+emoji)全翻白才看得见 */
+        .bl-class-card:hover .bl-icon-btn { color: #fff; border-color: rgba(255, 255, 255, 0.55); }
         .bl-class-card:hover .bl-icon-btn span { color: rgba(255, 255, 255, 0.85) !important; }
-        /* 但鼠标精确停在某个图标键上时，仍回到白底深绿(保留原点击反馈) */
+        .bl-class-card:hover .bl-icon-btn .bl-ico { filter: brightness(0) invert(1); }   /* 👥📋🗑 翻白 */
+        /* 但鼠标精确停在某个图标键上时，仍回到白底深绿(保留原点击反馈)，emoji 恢复原色 */
         .bl-class-card:hover .bl-icon-btn:hover {
             background: #fff; border-color: #d0d7d3; color: var(--ink-green);
         }
@@ -888,6 +889,7 @@ console.log('%c[斑斓汉字] 汉字UI-52 已加载', 'color:#374a42;font-weight
             color: var(--zhusha); border-color: #e8c8c8;
         }
         .bl-class-card:hover .bl-icon-btn:hover span { color: var(--ink-gray) !important; }
+        .bl-class-card:hover .bl-icon-btn:hover .bl-ico { filter: none; }
 
         /* —— Phase 4-1 (v2D-8): 学生卡片样式 —— */
         .bl-student-card {
@@ -1238,15 +1240,19 @@ console.log('%c[斑斓汉字] 汉字UI-52 已加载', 'color:#374a42;font-weight
             font-size: 12px; color: var(--ink-gray);
             margin-top: 4px; letter-spacing: 0.3px;
         }
+        /* 汉字-53:班级卡片去掉班级名 + 「学生·任务」计数行(冗余，数量已在右侧按钮显示) */
+        .bl-class-card .bl-class-name,
+        .bl-class-card .bl-class-meta { display: none; }
         .bl-class-actions { display: flex; gap: 6px; }
         .bl-icon-btn {
             background: transparent;
-            border: 1px solid transparent;
+            border: 1px solid #d0d7d3;          /* 汉字-53:每个图标键都带方框 */
             color: var(--mo-mid);
             padding: 6px 10px; font-size: 13px;
             cursor: pointer; border-radius: 4px;
             box-shadow: none;
         }
+        .bl-ico { display: inline-block; }       /* 汉字-53:包住 emoji，便于深绿底时单独翻白 */
         .bl-icon-btn:hover {
             background: #fff; border-color: #d0d7d3;
             color: var(--ink-green);
@@ -1283,21 +1289,21 @@ console.log('%c[斑斓汉字] 汉字UI-52 已加载', 'color:#374a42;font-weight
 
         /* 用户状态条 — ★ v2D.4: 颜色加深与班级卡片 hover 一致 */
         .bl-user-bar {
-            display: flex; align-items: center; justify-content: center;
+            display: flex; align-items: center; justify-content: flex-start;
             padding: 0;
             background: transparent;
             margin-bottom: 16px;
             font-size: 13px;
         }
-        /* 汉字-52:墨舟名居中并做成图1的深绿盒白字 */
+        /* 汉字-53:墨舟名左对齐、尺寸同其他绿盒，人形图标翻白 */
         .bl-user-name {
             color: #fff; font-weight: 500;
             background: var(--ink-green);
-            padding: 8px 18px; border-radius: 6px;
+            padding: 8px 16px; border-radius: 6px;
             border: 1px solid #2a3832;
             box-shadow: 0 3px 8px rgba(55, 74, 66, 0.15);
         }
-        .bl-user-name::before { content: '👤 '; opacity: 0.9; }
+        .bl-user-name::before { content: '👤 '; opacity: 1; filter: brightness(0) invert(1); }
         .bl-logout-btn {
             background: transparent; border: 1px solid #d0d7d3;
             color: var(--mo-mid); padding: 4px 10px;
@@ -9192,10 +9198,10 @@ window.BL = (function () {
                     <div class="bl-class-meta">${escapeHtml(metaText)}${escapeHtml(descLine)}</div>
                 </div>
                 <div class="bl-class-actions">
-                    <button class="bl-icon-btn" onclick="BL.openStudentsView('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleStudents)}">👥 ${c.studentCount || 0}${(c.pendingCount || 0) > 0 ? ('<span style="color:var(--ink-gray);font-weight:normal;"> +' + c.pendingCount + '</span>') : ''}</button>
-                    <button class="bl-icon-btn" onclick="BL.openTasksView('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleTasks)}">📋 ${c.taskCount || 0}</button>
+                    <button class="bl-icon-btn" onclick="BL.openStudentsView('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleStudents)}"><span class="bl-ico">👥</span> ${(c.studentCount || 0)}/${(c.studentCount || 0) + (c.pendingCount || 0)}</button>
+                    <button class="bl-icon-btn" onclick="BL.openTasksView('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleTasks)}"><span class="bl-ico">📋</span> ${c.taskCount || 0}</button>
                     <button class="bl-icon-btn" onclick="BL.openClassEditor('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleEdit)}">✎</button>
-                    <button class="bl-icon-btn bl-danger-icon" onclick="BL.deleteClass('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleDelete)}">🗑</button>
+                    <button class="bl-icon-btn bl-danger-icon" onclick="BL.deleteClass('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleDelete)}"><span class="bl-ico">🗑</span></button>
                 </div>
             </div>
         `;}).join('');
