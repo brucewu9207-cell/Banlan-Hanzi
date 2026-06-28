@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-48 (2026-06-28) — 新建班级:×关闭键改深绿底白字(同创建按钮);删除/隐藏班级名称字段(name空则默认取班级码);班级码标签去掉红星、红星移到下方说明区(放hint外层防JS覆盖) -->
+<!-- 斑斓汉字(老师端) · 汉字UI-49 (2026-06-28) — 登录表单用户名密码标签也做成深绿盒(同创建按钮);新建班级及登录的标签与输入框改flex左右并排、align-items stretch等高对齐 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-48 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-49 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -752,16 +752,31 @@ console.log('%c[斑斓汉字] 汉字UI-48 已加载', 'color:#374a42;font-weight
             display: block; font-size: 13px; color: var(--mo-dark);
             margin-bottom: 6px; letter-spacing: 0.5px;
         }
-        /* ★ 汉字-47:新建班级的 班级码/班级名称 标签做成深绿底白字方框(参考创建按钮) */
-        #blClassEditorOverlay .bl-form-group > .bl-label {
-            display: inline-block; width: fit-content;
+        /* ★ 汉字-47/49:新建班级 + 登录表单 标签做深绿盒;标签与输入框左右并排、等高对齐 */
+        #blClassEditorOverlay .bl-form-group,
+        #blViewAuth .bl-form-group {
+            display: flex; flex-wrap: wrap; align-items: stretch; gap: 12px;
+        }
+        #blClassEditorOverlay .bl-form-group > .bl-label,
+        #blViewAuth .bl-form-group > .bl-label {
+            display: flex; flex-direction: column; justify-content: center;
+            width: fit-content; margin: 0;
             background: var(--ink-green); color: #fff;
             border: 1px solid #2a3832; border-radius: 6px;
             padding: 8px 16px; box-shadow: 0 3px 8px rgba(55, 74, 66, 0.15);
         }
         #blClassEditorOverlay .bl-form-group > .bl-label .lang-en,
-        #blClassEditorOverlay .bl-form-group > .bl-label .lang-ar {
+        #blClassEditorOverlay .bl-form-group > .bl-label .lang-ar,
+        #blViewAuth .bl-form-group > .bl-label .lang-en,
+        #blViewAuth .bl-form-group > .bl-label .lang-ar {
             color: rgba(255, 255, 255, 0.88);
+        }
+        #blClassEditorOverlay .bl-form-group > .bl-input,
+        #blViewAuth .bl-form-group > .bl-input {
+            flex: 1 1 0; width: auto; min-width: 0;
+        }
+        #blClassEditorOverlay .bl-form-group > .bl-hint {
+            flex-basis: 100%; width: 100%; margin-top: 2px;
         }
         /* ★ 汉字-48:新建弹窗 × 关闭键改成创建按钮同款深绿底白字 */
         #blClassEditorOverlay .bl-close {
