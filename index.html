@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-65 (2026-06-29) — 在读/待加入药丸改中文在上译文在下并左对齐(pre-line+text-align left);手动录入按钮改墨绿同导入名单;11a1班级按钮改朱砂红(原手动录入的色)——相当于手动录入与11a1绿红对调 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-67 (2026-06-29) — 在读药丸保持靠左,11a1班级按钮改为在整行宽度里水平居中(绝对定位left50% translateX),并保持与在读等高(top0 bottom0撑满) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-65 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-67 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1050,12 +1050,14 @@ console.log('%c[斑斓汉字] 汉字UI-65 已加载', 'color:#374a42;font-weight
             flex-wrap: wrap;
             align-items: stretch;       /* 汉字-58:班级按钮与标签等高 */
         }
-        /* 汉字-64:在读标题 + 11a1班级按钮 一组居中 */
+        /* 汉字-67:在读靠左、11a1在整行宽度里居中(绝对定位),且与在读等高 */
         .bl-sec-headrow {
-            display: flex; align-items: center; justify-content: center;
-            gap: 10px; flex-wrap: wrap; align-self: center; margin: 14px 0 10px;
+            position: relative; align-self: stretch; margin: 14px 0 10px;
         }
         .bl-sec-headrow .bl-roster-section-title { margin: 0; align-self: auto; }
+        .bl-sec-headrow .bl-stu-classbtn {
+            position: absolute; left: 50%; top: 0; bottom: 0; transform: translateX(-50%);
+        }
         .bl-stu-classbtn {
             padding: 7px 16px;
             background: var(--zhusha);     /* 汉字-65:11a1班级按钮改朱砂红(原手动录入的色) */
