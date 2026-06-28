@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-60 (2026-06-28) — 学生卡片:查看作答/移出按钮改中文上译文下(pre-line);文字颜色按图2(在读深绿22312b/3f5249、待加入深棕4a2c20/6b4334);鼠标悬停整卡变深底(在读深墨绿/待加入深陶)且所有文字含按钮全变白 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-61 (2026-06-28) — 学生卡片两行内容改紧凑格式:学号行改成 学号/ID：学号值;已完成行改成 已完成/Completed：完成数/总数(去掉重复的任务/tasks词) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-60 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-61 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -9465,6 +9465,10 @@ window.BL = (function () {
         const txtDetail = tt('查看作答', 'View answers', 'عرض الإجابات');
         const txtPending = tt('待加入', 'Pending', 'بانتظار');
         const txtSid = tt('学号', 'ID', 'الرقم');
+        // ★ 汉字-61:学号/已完成 改紧凑格式「中文/译文：值」
+        const isArRoster = document.body.classList.contains('lang-mode-ar');
+        const sidLabel = '学号/' + (isArRoster ? 'الرقم' : 'ID') + '：';
+        const metaLabel = '已完成/' + (isArRoster ? 'مكتمل' : 'Completed') + '：';
 
         const sortByName = arr => arr.slice().sort((a, b) =>
             rosterSortKey(a.name || a.studentCode).localeCompare(rosterSortKey(b.name || b.studentCode)));
@@ -9473,7 +9477,7 @@ window.BL = (function () {
             const idx = state.students.indexOf(s);
             const completed = (s.completedTasks || []).length;
             const metaLine = isPending ? '' :
-                `<div class="bl-student-meta">${escapeHtml(tt(`已完成 ${completed} / ${taskTotal} 任务`, `Completed ${completed} / ${taskTotal} tasks`, `أكمل ${completed} / ${taskTotal} مهام`))}</div>`;
+                `<div class="bl-student-meta">${escapeHtml(metaLabel + completed + '/' + taskTotal)}</div>`;
             const detailBtn = isPending ? '' :
                 `<button class="bl-student-detail-btn" onclick="BL.toggleStudentDetail(${idx})">${escapeHtml(txtDetail)}</button>`;
             const kickBtn =
@@ -9486,7 +9490,7 @@ window.BL = (function () {
                 <label class="bl-stu-checkwrap"><input type="checkbox" class="bl-stu-check" data-code="${escapeAttr(s.studentCode)}" onchange="BL.toggleStudentSelect('${escapeAttr(s.studentCode)}', this.checked)"></label>
                 <div class="bl-student-info">
                     <div class="bl-student-name"><span class="bl-stu-seq">${seq}.</span> ${escapeHtml(s.name || s.studentCode)}</div>
-                    <div class="bl-student-subline"><span class="bl-student-sid">${escapeHtml(txtSid)} ${escapeHtml(s.studentCode)}</span>${badge}</div>
+                    <div class="bl-student-subline"><span class="bl-student-sid">${escapeHtml(sidLabel + s.studentCode)}</span>${badge}</div>
                     ${metaLine}
                 </div>
                 <div class="bl-student-actions">
