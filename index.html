@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-56 (2026-06-28) — 班级码方框:加min-width统一等宽、文字居中对齐、整体放大1.2倍(字号15到18) -->
+<!-- 斑斓汉字(老师端) · 汉字UI-57 (2026-06-28) — 学生视图重构:删头部班级码计数行;导入名单·手动录入·导出全班报告三按钮一排居中(手动录入改朱砂红同新增班级、导出全班报告改绿同导入名单);学生名单等四标签改绿色按钮(当前页满色其余变淡)并整排居中;最左加班级按钮显示班级码:在读/全班 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-56 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-57 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1014,29 +1014,44 @@ console.log('%c[斑斓汉字] 汉字UI-56 已加载', 'color:#374a42;font-weight
         .bl-dash-stu-name { flex:1; font-weight:600; }
         .bl-dash-stu-chars { color:#7a857f; font-size:12px; white-space:nowrap; }
         .bl-dash-stu-p { min-width:54px; text-align:right; font-weight:bold; }
+        /* ★ 汉字-57:标签栏整排居中；标签做成导入名单同款绿色按钮；最左班级信息按钮同款 */
         .bl-stu-tabs {
             display: flex;
-            gap: 4px;
+            gap: 8px;
             margin-bottom: 18px;
-            border-bottom: 1px solid var(--border);
+            justify-content: center;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .bl-stu-classbtn {
+            padding: 7px 16px;
+            background: var(--ink-green);
+            color: #fff;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: monospace;
+            display: inline-flex;
+            align-items: center;
+            white-space: nowrap;
         }
         .bl-stu-tab {
-            padding: 9px 20px;
-            background: none;
+            padding: 7px 16px;
+            background: var(--ink-green);
             border: none;
-            border-bottom: 2px solid transparent;
-            margin-bottom: -1px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 14px;
-            color: var(--ink-gray);
+            color: #fff;
+            font-weight: 600;
             font-family: var(--font-main);
+            opacity: 0.5;          /* 未选中:同色但变淡 */
             transition: all 0.2s;
         }
-        .bl-stu-tab:hover { color: var(--ink-green-light); }
+        .bl-stu-tab:hover { opacity: 0.8; color: #fff; }
         .bl-stu-tab-active {
-            color: var(--ink-green);
-            border-bottom-color: var(--ink-green);
-            font-weight: 600;
+            opacity: 1;            /* 选中:满色 */
+            color: #fff;
         }
         .bl-rate-card {
             background: rgba(255,255,255,0.55);
@@ -8523,26 +8538,20 @@ console.log('%c[斑斓汉字] 汉字UI-56 已加载', 'color:#374a42;font-weight
             <!-- Phase 4-1 (v2D-8): 学生列表视图 -->
             <div id="blViewStudents" style="display:none;">
                 <div class="bl-tasks-header bl-students-header">
-                    <div class="bl-tasks-title">
-                        <span class="bl-tasks-class-tag" id="blStudentsClassTag">—</span>
-                        <span id="blStudentsClassName">—</span>
-                        <span style="color:var(--ink-gray); font-weight:normal; font-size:13px; margin-left:8px; white-space:pre-line;" id="blStudentsCount">
-                            —
-                        </span>
-                    </div>
-                    <!-- ★ UI-34: 导入名单 + 手动录入 移到计数行 -->
+                    <!-- ★ 汉字-57:头部班级码/计数行已删；导入名单·手动录入·导出全班报告 一排居中 -->
                     <div class="bl-roster-actions">
                         <button class="bl-roster-import-btn" onclick="BL.openRosterImport()">⬆ 导入名单<span class="lang-en">Import</span><span class="lang-ar">استيراد</span></button>
                         <button class="bl-roster-import-btn bl-roster-manual-btn" onclick="BL.openManualEntry()">✎ 手动录入<span class="lang-en">Manual</span><span class="lang-ar">يدوي</span></button>
+                        <button class="bl-roster-import-btn" onclick="BL.exportClassReport()">📄 导出全班报告<span class="lang-en">Export Report</span><span class="lang-ar">تصدير التقرير</span></button>
                     </div>
                 </div>
                 <!-- Phase 4-2: 学生名单 / 答对率 / 明细表 标签 -->
                 <div class="bl-stu-tabs">
+                    <span class="bl-stu-classbtn" id="blStudentsClassBtn">—</span>
                     <button class="bl-stu-tab bl-stu-tab-active" id="blStuTabList" onclick="BL.switchStudentTab('list')">学生名单<span class="lang-en">Students</span><span class="lang-ar">الطلاب</span></button>
                     <button class="bl-stu-tab" id="blStuTabRate" onclick="BL.switchStudentTab('rate')">答对率<span class="lang-en">Accuracy</span><span class="lang-ar">معدل الدقة</span></button>
                     <button class="bl-stu-tab" id="blStuTabMatrix" onclick="BL.switchStudentTab('matrix')">明细表<span class="lang-en">Table</span><span class="lang-ar">الجدول</span></button>
                     <button class="bl-stu-tab" id="blStuTabDash" onclick="BL.switchStudentTab('dashboard')">看板<span class="lang-en">Dashboard</span><span class="lang-ar">لوحة</span></button>
-                    <button class="bl-roster-import-btn" onclick="BL.exportClassReport()" style="margin-inline-start:auto;align-self:center;">📄 导出全班报告<span class="lang-en">Export Report</span><span class="lang-ar">تصدير التقرير</span></button>
                 </div>
                 <div class="bl-task-list" id="blStudentList">
                     <!-- 动态生成 -->
@@ -9390,10 +9399,8 @@ window.BL = (function () {
         $('blViewTasks').style.display = 'none';
         $('blViewStudents').style.display = '';
 
-        // 填充头部
-        $('blStudentsClassTag').textContent = cls.classCode;
-        $('blStudentsClassName').textContent = cls.name;
-        $('blStudentsCount').textContent = '...';
+        // 填充头部(汉字-57:班级码+在读/全班 显示在标签栏的班级按钮上)
+        $('blStudentsClassBtn').textContent = cls.classCode + '：…';
         $('blStudentList').innerHTML = '<div class="bl-empty"><div class="bl-empty-text" style="color:var(--ink-gray);">' + escapeHtml(tt('加载中...', 'Loading...', 'جاري التحميل...')) + '</div></div>';
 
         switchStudentTab('list');  // ★ Phase 4-2: 每次打开默认回到"学生名单"标签
@@ -9426,14 +9433,8 @@ window.BL = (function () {
         const active = state.students.filter(s => norm(s) === 'active');
         const pending = state.students.filter(s => norm(s) === 'pending');
 
-        let cZh = `在读 ${active.length}`, cEn = `${active.length} active`, cAr = `${active.length} نشط`;
-        if (pending.length > 0) {
-            cZh += ` · 待加入 ${pending.length}`;
-            cEn += ` · ${pending.length} pending`;
-            cAr += ` · ${pending.length} بانتظار`;
-        }
-        // ★ 联动汉字-45:改用 lang-span,跟随 EN/عربي 切换(原 tt() 把中+译拼一串、中阿同时显示)
-        $('blStudentsCount').innerHTML = cZh + '<span class="lang-en">' + cEn + '</span><span class="lang-ar">' + cAr + '</span>';
+        // ★ 汉字-57:头部计数行已删，改填标签栏班级按钮：班级码：在读/全班(在读+待加入)
+        $('blStudentsClassBtn').textContent = state.currentClassCode + '：' + active.length + '/' + (active.length + pending.length);
 
         if (state.students.length === 0) {
             list.innerHTML = `
@@ -11037,10 +11038,12 @@ if (document.readyState === 'loading') {
 
     <style>
     /* ★ UI-34 名单增强：学号行 / hover墨绿 / 批量勾选 / 手动录入 / 按钮上移 */
-    #blViewStudents .bl-students-header { justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px; }
-    .bl-roster-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-    .bl-roster-manual-btn { background: #fff; color: var(--ink-green); border: 1px solid var(--ink-green); }
-    .bl-roster-manual-btn:hover { background: rgba(55,74,66,0.06); }
+    /* ★ 汉字-57:头部删计数后，三个动作按钮整排居中 */
+    #blViewStudents .bl-students-header { justify-content: center; align-items: flex-start; flex-wrap: wrap; gap: 8px; }
+    .bl-roster-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; width: 100%; }
+    /* 手动录入 改成新增班级同款朱砂红(图3样式) */
+    .bl-roster-manual-btn { background: var(--zhusha); color: #fff; border: none; }
+    .bl-roster-manual-btn:hover { background: #9e3232; }
     .bl-student-subline { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 2px 0; }
     .bl-student-sid { font-size: 12px; color: var(--ink-gray); font-family: monospace; min-width: 162px; }
     .bl-student-card:hover .bl-pending-badge { background: rgba(255,255,255,0.92); color: var(--ink-green); }
