@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-55 (2026-06-28) — 班级码方框回缩到上版2.5倍的0.5倍(15px)；账号页绿盒内容居中；工具栏标签译文改为对齐到核心中文(＋和计数旁挂不参与居中) -->
+<!-- 斑斓汉字(老师端) · 汉字UI-56 (2026-06-28) — 班级码方框:加min-width统一等宽、文字居中对齐、整体放大1.2倍(字号15到18) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-55 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-56 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1246,9 +1246,10 @@ console.log('%c[斑斓汉字] 汉字UI-55 已加载', 'color:#374a42;font-weight
         .bl-class-code {
             display: inline-block;
             background: var(--ink-green); color: #fff;
-            padding: 3px 10px; border-radius: 4px;          /* 汉字-55:回缩到 2.5× 的 0.5 倍 */
-            font-size: 15px; letter-spacing: 1px;
+            padding: 4px 12px; border-radius: 5px;          /* 汉字-56:1.2× + 等宽 + 文字居中 */
+            font-size: 18px; letter-spacing: 1.2px;
             font-family: monospace; margin-right: 8px;
+            min-width: 52px; text-align: center;            /* 短码统一最小宽度、居中对齐 */
         }
         .bl-class-name { font-size: 15px; color: var(--mo-dark); font-weight: 500; }
         .bl-class-meta {
