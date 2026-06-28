@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-50 (2026-06-28) — 三个标签按钮居中成一组；我的班级+账号固定账号灰绿、班级卡片悬停也变灰绿；新建弹窗班级码盒+创建按钮改灰绿 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-51 (2026-06-28) — 把上版工具栏标签、班级卡片悬停、新建弹窗班级码盒与创建按钮的灰绿，统一改成×删除键的深墨绿底白字 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-50 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-51 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -586,8 +586,8 @@ console.log('%c[斑斓汉字] 汉字UI-50 已加载', 'color:#374a42;font-weight
         .bl-overlay.bl-show { display: flex; }
 
         /* ★ 联动(汉字-45):老师端统一改图2浅墨绿 #9caea3 + 自定义移出确认弹窗 */
-        .bl-tab[data-tab="account"]{ background:#9caea3; }
-        .bl-tab[data-tab="account"]:hover{ background:#9caea3; }
+        .bl-tab[data-tab="account"]{ background:var(--ink-green); }
+        .bl-tab[data-tab="account"]:hover{ background:var(--ink-green); }
         /* 在读学生卡片改浅墨绿(参考图2);灰色副文字调深保证可读 */
         .bl-student-card{ background:#9caea3 !important; border-left-color:#55706a !important; }
         .bl-student-card:hover{ background:#a7b9af !important; }
@@ -682,9 +682,9 @@ console.log('%c[斑斓汉字] 汉字UI-50 已加载', 'color:#374a42;font-weight
         /* 切换视图的标签(我的班级 / 账号) — 按钮外观，颜色随激活态变化 */
         .bl-tab {
             padding: 7px 16px;
-            background: #9caea3;          /* 汉字-50:统一成账号灰绿，三态(默认/悬停/激活)都不变色 */
+            background: var(--ink-green);          /* 汉字-51:统一成×键深墨绿+白字，三态都不变色 */
             border: none;
-            color: #22312b;
+            color: #fff;
             font-size: 13px;
             cursor: pointer;
             font-family: inherit;
@@ -696,18 +696,18 @@ console.log('%c[斑斓汉字] 汉字UI-50 已加载', 'color:#374a42;font-weight
             transition: background 0.2s;
         }
         .bl-tab:hover {
-            background: #9caea3;
-            color: #22312b;
+            background: var(--ink-green);
+            color: #fff;
             transform: none; box-shadow: none; filter: none;
         }
         .bl-tab.bl-active {
-            background: #9caea3; /* 汉字-50:激活态也用灰绿，仅靠加粗区分 */
-            color: #22312b;
+            background: var(--ink-green); /* 汉字-51:激活态同深墨绿，仅靠加粗区分 */
+            color: #fff;
             font-weight: bold;
         }
         .bl-tab.bl-active:hover {
-            background: #9caea3;
-            color: #22312b;
+            background: var(--ink-green);
+            color: #fff;
         }
         /* 新增班级 — 动作按钮(弹窗)，永远朱砂红，与两个绿色标签明显区分 */
         .bl-tab-add {
@@ -783,16 +783,16 @@ console.log('%c[斑斓汉字] 汉字UI-50 已加载', 'color:#374a42;font-weight
             background: var(--ink-green); color: #fff;
             border: 1px solid #2a3832; box-shadow: 0 3px 8px rgba(55, 74, 66, 0.15);
         }
-        /* ★ 汉字-50:新建弹窗 班级码盒 + 创建按钮 改账号灰绿(只动这弹窗,登录页仍深绿) */
+        /* ★ 汉字-51:新建弹窗 班级码盒 + 创建按钮 改×键深墨绿+白字(登录页标签不动) */
         #blClassEditorOverlay .bl-form-group > .bl-label {
-            background: #9caea3; color: #22312b; border-color: #7e948b;
+            background: var(--ink-green); color: #fff; border-color: #2a3832;
         }
         #blClassEditorOverlay .bl-form-group > .bl-label .lang-en,
         #blClassEditorOverlay .bl-form-group > .bl-label .lang-ar {
-            color: rgba(34, 49, 43, 0.7);
+            color: rgba(255, 255, 255, 0.88);
         }
         #blClassSubmitBtn {
-            background: #9caea3; color: #22312b; border-color: #7e948b;
+            background: var(--ink-green); color: #fff; border-color: #2a3832;
         }
         .bl-input, .bl-textarea {
             width: 100%; padding: 10px 12px;
@@ -867,7 +867,11 @@ console.log('%c[斑斓汉字] 汉字UI-50 已加载', 'color:#374a42;font-weight
             gap: 10px;
             transition: all 0.2s;
         }
-        .bl-class-card:hover { background: #9caea3; border-left-color: #55706a; }
+        .bl-class-card:hover { background: var(--ink-green); border-left-color: var(--ink-green); }
+        /* 汉字-51:深墨绿底，卡片内文字翻白保证读得清 */
+        .bl-class-card:hover .bl-class-code,
+        .bl-class-card:hover .bl-class-name,
+        .bl-class-card:hover .bl-class-meta { color: #fff; }
 
         /* —— Phase 4-1 (v2D-8): 学生卡片样式 —— */
         .bl-student-card {
