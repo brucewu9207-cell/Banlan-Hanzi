@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-46 (2026-06-28) — 班级与任务改名布置作业(入口按钮+弹窗标题);班级数据在登录态恢复时即预加载,打开面板秒显;新建班级的班级码/班级名称输入框加墨绿边框;隐藏新建里的备注字段(留元素防报错) -->
+<!-- 斑斓汉字(老师端) · 汉字UI-47 (2026-06-28) — 新建班级的 班级码/班级名称 标签做成深绿底白字方框(参考创建按钮);仅限新建弹窗,不影响其它标签 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-46 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-47 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -751,6 +751,17 @@ console.log('%c[斑斓汉字] 汉字UI-46 已加载', 'color:#374a42;font-weight
         .bl-label {
             display: block; font-size: 13px; color: var(--mo-dark);
             margin-bottom: 6px; letter-spacing: 0.5px;
+        }
+        /* ★ 汉字-47:新建班级的 班级码/班级名称 标签做成深绿底白字方框(参考创建按钮) */
+        #blClassEditorOverlay .bl-form-group > .bl-label {
+            display: inline-block; width: fit-content;
+            background: var(--ink-green); color: #fff;
+            border: 1px solid #2a3832; border-radius: 6px;
+            padding: 8px 16px; box-shadow: 0 3px 8px rgba(55, 74, 66, 0.15);
+        }
+        #blClassEditorOverlay .bl-form-group > .bl-label .lang-en,
+        #blClassEditorOverlay .bl-form-group > .bl-label .lang-ar {
+            color: rgba(255, 255, 255, 0.88);
         }
         .bl-input, .bl-textarea {
             width: 100%; padding: 10px 12px;
