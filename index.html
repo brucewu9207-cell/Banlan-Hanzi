@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-49 (2026-06-28) — 登录表单用户名密码标签也做成深绿盒(同创建按钮);新建班级及登录的标签与输入框改flex左右并排、align-items stretch等高对齐 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-50 (2026-06-28) — 三个标签按钮居中成一组；我的班级+账号固定账号灰绿、班级卡片悬停也变灰绿；新建弹窗班级码盒+创建按钮改灰绿 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-49 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-50 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -587,7 +587,7 @@ console.log('%c[斑斓汉字] 汉字UI-49 已加载', 'color:#374a42;font-weight
 
         /* ★ 联动(汉字-45):老师端统一改图2浅墨绿 #9caea3 + 自定义移出确认弹窗 */
         .bl-tab[data-tab="account"]{ background:#9caea3; }
-        .bl-tab[data-tab="account"]:hover{ background:#8fa498; }
+        .bl-tab[data-tab="account"]:hover{ background:#9caea3; }
         /* 在读学生卡片改浅墨绿(参考图2);灰色副文字调深保证可读 */
         .bl-student-card{ background:#9caea3 !important; border-left-color:#55706a !important; }
         .bl-student-card:hover{ background:#a7b9af !important; }
@@ -675,14 +675,14 @@ console.log('%c[斑斓汉字] 汉字UI-49 已加载', 'color:#374a42;font-weight
 
         /* Tab 栏 — ★ v2D.3: 缩小间距 */
         .bl-tabs {
-            display: flex; gap: 8px; align-items: center;
+            display: flex; gap: 8px; align-items: center; justify-content: center;
             padding: 8px 20px;
             border-bottom: 1px solid #eef1ef;
         }
         /* 切换视图的标签(我的班级 / 账号) — 按钮外观，颜色随激活态变化 */
         .bl-tab {
             padding: 7px 16px;
-            background: #8ab69e;          /* 未激活：加深绿(选项C) */
+            background: #9caea3;          /* 汉字-50:统一成账号灰绿，三态(默认/悬停/激活)都不变色 */
             border: none;
             color: #22312b;
             font-size: 13px;
@@ -696,18 +696,18 @@ console.log('%c[斑斓汉字] 汉字UI-49 已加载', 'color:#374a42;font-weight
             transition: background 0.2s;
         }
         .bl-tab:hover {
-            background: #7aa890;
+            background: #9caea3;
             color: #22312b;
             transform: none; box-shadow: none; filter: none;
         }
         .bl-tab.bl-active {
-            background: var(--ink-green); /* 激活：实心深绿 */
-            color: #fff;
+            background: #9caea3; /* 汉字-50:激活态也用灰绿，仅靠加粗区分 */
+            color: #22312b;
             font-weight: bold;
         }
         .bl-tab.bl-active:hover {
-            background: #2f3f38;
-            color: #fff;
+            background: #9caea3;
+            color: #22312b;
         }
         /* 新增班级 — 动作按钮(弹窗)，永远朱砂红，与两个绿色标签明显区分 */
         .bl-tab-add {
@@ -783,6 +783,17 @@ console.log('%c[斑斓汉字] 汉字UI-49 已加载', 'color:#374a42;font-weight
             background: var(--ink-green); color: #fff;
             border: 1px solid #2a3832; box-shadow: 0 3px 8px rgba(55, 74, 66, 0.15);
         }
+        /* ★ 汉字-50:新建弹窗 班级码盒 + 创建按钮 改账号灰绿(只动这弹窗,登录页仍深绿) */
+        #blClassEditorOverlay .bl-form-group > .bl-label {
+            background: #9caea3; color: #22312b; border-color: #7e948b;
+        }
+        #blClassEditorOverlay .bl-form-group > .bl-label .lang-en,
+        #blClassEditorOverlay .bl-form-group > .bl-label .lang-ar {
+            color: rgba(34, 49, 43, 0.7);
+        }
+        #blClassSubmitBtn {
+            background: #9caea3; color: #22312b; border-color: #7e948b;
+        }
         .bl-input, .bl-textarea {
             width: 100%; padding: 10px 12px;
             border: 1px solid #d0d7d3;
@@ -856,7 +867,7 @@ console.log('%c[斑斓汉字] 汉字UI-49 已加载', 'color:#374a42;font-weight
             gap: 10px;
             transition: all 0.2s;
         }
-        .bl-class-card:hover { background: #d4e6dc; border-left-color: var(--zhusha); }
+        .bl-class-card:hover { background: #9caea3; border-left-color: #55706a; }
 
         /* —— Phase 4-1 (v2D-8): 学生卡片样式 —— */
         .bl-student-card {
@@ -8387,7 +8398,7 @@ console.log('%c[斑斓汉字] 汉字UI-49 已加载', 'color:#374a42;font-weight
         <div class="bl-tabs" id="blTabs" style="display:none;">
             <button class="bl-tab bl-active" data-tab="classes" onclick="BL.switchTab('classes')">我的班级（<span id="blClassCount">0</span>）<span class="lang-en">My Classes</span><span class="lang-ar">فصولي</span></button>
             <button class="bl-tab-add" onclick="BL.openClassEditor()">＋ 新增班级<span class="lang-en">New Class</span><span class="lang-ar">فصل جديد</span></button>
-            <button class="bl-tab" data-tab="account" onclick="BL.switchTab('account')" style="margin-left:auto;">账号<span class="lang-en">Account</span><span class="lang-ar">الحساب</span></button>
+            <button class="bl-tab" data-tab="account" onclick="BL.switchTab('account')">账号<span class="lang-en">Account</span><span class="lang-ar">الحساب</span></button>
         </div>
 
         <div class="bl-body">
