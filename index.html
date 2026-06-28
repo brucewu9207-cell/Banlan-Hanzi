@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-51 (2026-06-28) — 把上版工具栏标签、班级卡片悬停、新建弹窗班级码盒与创建按钮的灰绿，统一改成×删除键的深墨绿底白字 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-52 (2026-06-28) — 账号视图三字段(用户名/账号ID/注册时间)套用班级码绿盒左+框右等高布局；墨舟名条居中并做成深绿盒白字；班级卡片深绿悬停时图标按钮文字翻白(精确停在某键仍白底深绿) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-51 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-52 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -754,11 +754,13 @@ console.log('%c[斑斓汉字] 汉字UI-51 已加载', 'color:#374a42;font-weight
         }
         /* ★ 汉字-47/49:新建班级 + 登录表单 标签做深绿盒;标签与输入框左右并排、等高对齐 */
         #blClassEditorOverlay .bl-form-group,
-        #blViewAuth .bl-form-group {
+        #blViewAuth .bl-form-group,
+        #blViewAccount .bl-form-group {
             display: flex; flex-wrap: wrap; align-items: stretch; gap: 12px;
         }
         #blClassEditorOverlay .bl-form-group > .bl-label,
-        #blViewAuth .bl-form-group > .bl-label {
+        #blViewAuth .bl-form-group > .bl-label,
+        #blViewAccount .bl-form-group > .bl-label {
             display: flex; flex-direction: column; justify-content: center;
             width: fit-content; margin: 0;
             background: var(--ink-green); color: #fff;
@@ -768,11 +770,14 @@ console.log('%c[斑斓汉字] 汉字UI-51 已加载', 'color:#374a42;font-weight
         #blClassEditorOverlay .bl-form-group > .bl-label .lang-en,
         #blClassEditorOverlay .bl-form-group > .bl-label .lang-ar,
         #blViewAuth .bl-form-group > .bl-label .lang-en,
-        #blViewAuth .bl-form-group > .bl-label .lang-ar {
+        #blViewAuth .bl-form-group > .bl-label .lang-ar,
+        #blViewAccount .bl-form-group > .bl-label .lang-en,
+        #blViewAccount .bl-form-group > .bl-label .lang-ar {
             color: rgba(255, 255, 255, 0.88);
         }
         #blClassEditorOverlay .bl-form-group > .bl-input,
-        #blViewAuth .bl-form-group > .bl-input {
+        #blViewAuth .bl-form-group > .bl-input,
+        #blViewAccount .bl-form-group > .bl-input {
             flex: 1 1 0; width: auto; min-width: 0;
         }
         #blClassEditorOverlay .bl-form-group > .bl-hint {
@@ -872,6 +877,17 @@ console.log('%c[斑斓汉字] 汉字UI-51 已加载', 'color:#374a42;font-weight
         .bl-class-card:hover .bl-class-code,
         .bl-class-card:hover .bl-class-name,
         .bl-class-card:hover .bl-class-meta { color: #fff; }
+        /* 汉字-52:深绿底时，右侧图标按钮(👥📋✎🗑及数字)也翻白才看得见 */
+        .bl-class-card:hover .bl-icon-btn { color: #fff; }
+        .bl-class-card:hover .bl-icon-btn span { color: rgba(255, 255, 255, 0.85) !important; }
+        /* 但鼠标精确停在某个图标键上时，仍回到白底深绿(保留原点击反馈) */
+        .bl-class-card:hover .bl-icon-btn:hover {
+            background: #fff; border-color: #d0d7d3; color: var(--ink-green);
+        }
+        .bl-class-card:hover .bl-icon-btn.bl-danger-icon:hover {
+            color: var(--zhusha); border-color: #e8c8c8;
+        }
+        .bl-class-card:hover .bl-icon-btn:hover span { color: var(--ink-gray) !important; }
 
         /* —— Phase 4-1 (v2D-8): 学生卡片样式 —— */
         .bl-student-card {
@@ -1267,15 +1283,21 @@ console.log('%c[斑斓汉字] 汉字UI-51 已加载', 'color:#374a42;font-weight
 
         /* 用户状态条 — ★ v2D.4: 颜色加深与班级卡片 hover 一致 */
         .bl-user-bar {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 8px 16px;
-            background: #d4e6dc;
-            border-radius: 4px;
+            display: flex; align-items: center; justify-content: center;
+            padding: 0;
+            background: transparent;
             margin-bottom: 16px;
             font-size: 13px;
         }
-        .bl-user-name { color: var(--ink-green); font-weight: 500; }
-        .bl-user-name::before { content: '👤 '; opacity: 0.6; }
+        /* 汉字-52:墨舟名居中并做成图1的深绿盒白字 */
+        .bl-user-name {
+            color: #fff; font-weight: 500;
+            background: var(--ink-green);
+            padding: 8px 18px; border-radius: 6px;
+            border: 1px solid #2a3832;
+            box-shadow: 0 3px 8px rgba(55, 74, 66, 0.15);
+        }
+        .bl-user-name::before { content: '👤 '; opacity: 0.9; }
         .bl-logout-btn {
             background: transparent; border: 1px solid #d0d7d3;
             color: var(--mo-mid); padding: 4px 10px;
