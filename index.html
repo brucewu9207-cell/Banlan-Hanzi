@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-47 (2026-06-28) — 新建班级的 班级码/班级名称 标签做成深绿底白字方框(参考创建按钮);仅限新建弹窗,不影响其它标签 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-48 (2026-06-28) — 新建班级:×关闭键改深绿底白字(同创建按钮);删除/隐藏班级名称字段(name空则默认取班级码);班级码标签去掉红星、红星移到下方说明区(放hint外层防JS覆盖) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-47 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-48 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -762,6 +762,11 @@ console.log('%c[斑斓汉字] 汉字UI-47 已加载', 'color:#374a42;font-weight
         #blClassEditorOverlay .bl-form-group > .bl-label .lang-en,
         #blClassEditorOverlay .bl-form-group > .bl-label .lang-ar {
             color: rgba(255, 255, 255, 0.88);
+        }
+        /* ★ 汉字-48:新建弹窗 × 关闭键改成创建按钮同款深绿底白字 */
+        #blClassEditorOverlay .bl-close {
+            background: var(--ink-green); color: #fff;
+            border: 1px solid #2a3832; box-shadow: 0 3px 8px rgba(55, 74, 66, 0.15);
         }
         .bl-input, .bl-textarea {
             width: 100%; padding: 10px 12px;
@@ -8508,11 +8513,11 @@ console.log('%c[斑斓汉字] 汉字UI-47 已加载', 'color:#374a42;font-weight
         </div>
         <div class="bl-body">
             <div class="bl-form-group">
-                <label class="bl-label">班级码<span class="lang-en">Class Code</span><span class="lang-ar">رمز الفصل</span> <span style="color:var(--zhusha)">*</span></label>
+                <label class="bl-label">班级码<span class="lang-en">Class Code</span><span class="lang-ar">رمز الفصل</span></label>
                 <input type="text" class="bl-input" id="blClassCode" placeholder="如：HSK3A、MyClass2024" maxlength="20" style="border:2px solid #374a42">
-                <p class="bl-hint" id="blClassCodeHint">2-20 位字母数字横线下划线，学生用这个码加入班级</p>
+                <p class="bl-hint"><span style="color:var(--zhusha)">*</span> <span id="blClassCodeHint">2-20 位字母数字横线下划线，学生用这个码加入班级</span></p>
             </div>
-            <div class="bl-form-group">
+            <div class="bl-form-group" style="display:none">
                 <label class="bl-label">班级名称<span class="lang-en">Class Name</span><span class="lang-ar">اسم الفصل</span> <span style="color:var(--zhusha)">*</span></label>
                 <input type="text" class="bl-input" id="blClassName" placeholder="如：三年级 A 班" maxlength="100" style="border:2px solid #374a42">
             </div>
@@ -9185,7 +9190,7 @@ window.BL = (function () {
     //   (这个 bug v2A 就有,只是用户感知不强,这一轮一并修掉)
     async function submitClass() {
         const code = $('blClassCode').value.trim();
-        const name = $('blClassName').value.trim();
+        const name = $('blClassName').value.trim() || code;   /* 汉字-48:班级名称已删,空则默认=班级码 */
         const description = $('blClassDescription').value.trim();
 
         if (!code || !name) {
