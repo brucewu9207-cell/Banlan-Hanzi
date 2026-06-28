@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-53 (2026-06-28) — 墨舟盒左对齐尺寸同绿盒且人形翻白；班级卡片每个图标键加方框、深绿悬停时人形垃圾桶等emoji翻白；去掉班级名与学生任务计数行；学生按钮改为在读/班级人数格式如2斜杠13 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-54 (2026-06-28) — 账号页四个绿盒(含墨舟)统一宽度120px；班级码方框整体放大2.5倍；班级卡片图标整体放大2倍数字不变；图标按钮改横排让数字回到图标右边 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-53 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-54 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -775,6 +775,9 @@ console.log('%c[斑斓汉字] 汉字UI-53 已加载', 'color:#374a42;font-weight
         #blViewAccount .bl-form-group > .bl-label .lang-ar {
             color: rgba(255, 255, 255, 0.88);
         }
+        /* 汉字-54:账号页几个绿盒(含墨舟)统一宽度 */
+        #blViewAccount .bl-form-group > .bl-label,
+        .bl-user-name { width: 120px; box-sizing: border-box; }
         #blClassEditorOverlay .bl-form-group > .bl-input,
         #blViewAuth .bl-form-group > .bl-input,
         #blViewAccount .bl-form-group > .bl-input {
@@ -1231,8 +1234,8 @@ console.log('%c[斑斓汉字] 汉字UI-53 已加载', 'color:#374a42;font-weight
         .bl-class-code {
             display: inline-block;
             background: var(--ink-green); color: #fff;
-            padding: 2px 8px; border-radius: 3px;
-            font-size: 12px; letter-spacing: 1px;
+            padding: 5px 20px; border-radius: 7px;          /* 汉字-54:整体放大 2.5× */
+            font-size: 30px; letter-spacing: 2px;
             font-family: monospace; margin-right: 8px;
         }
         .bl-class-name { font-size: 15px; color: var(--mo-dark); font-weight: 500; }
@@ -1251,8 +1254,13 @@ console.log('%c[斑斓汉字] 汉字UI-53 已加载', 'color:#374a42;font-weight
             padding: 6px 10px; font-size: 13px;
             cursor: pointer; border-radius: 4px;
             box-shadow: none;
+            flex-direction: row; align-items: center; gap: 5px;   /* 汉字-54:数字放图标右边(横排) */
         }
-        .bl-ico { display: inline-block; }       /* 汉字-53:包住 emoji，便于深绿底时单独翻白 */
+        /* 汉字-53/54:包住 emoji，深绿底单独翻白 + 图标整体放大 2× */
+        .bl-ico {
+            display: inline-flex; align-items: center;
+            font-size: 24px; line-height: 1; margin: 0; opacity: 1; vertical-align: middle;
+        }
         .bl-icon-btn:hover {
             background: #fff; border-color: #d0d7d3;
             color: var(--ink-green);
@@ -9200,7 +9208,7 @@ window.BL = (function () {
                 <div class="bl-class-actions">
                     <button class="bl-icon-btn" onclick="BL.openStudentsView('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleStudents)}"><span class="bl-ico">👥</span> ${(c.studentCount || 0)}/${(c.studentCount || 0) + (c.pendingCount || 0)}</button>
                     <button class="bl-icon-btn" onclick="BL.openTasksView('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleTasks)}"><span class="bl-ico">📋</span> ${c.taskCount || 0}</button>
-                    <button class="bl-icon-btn" onclick="BL.openClassEditor('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleEdit)}">✎</button>
+                    <button class="bl-icon-btn" onclick="BL.openClassEditor('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleEdit)}"><span class="bl-ico">✎</span></button>
                     <button class="bl-icon-btn bl-danger-icon" onclick="BL.deleteClass('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleDelete)}"><span class="bl-ico">🗑</span></button>
                 </div>
             </div>
