@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-61 (2026-06-28) — 学生卡片两行内容改紧凑格式:学号行改成 学号/ID：学号值;已完成行改成 已完成/Completed：完成数/总数(去掉重复的任务/tasks词) -->
+<!-- 斑斓汉字(老师端) · 汉字UI-62 (2026-06-28) — 答对率/看板/明细表三视图:X人做过计数统一改成 已完成/Completed：完成人数/总人数 行内格式;所有双语标签改中文在上译文在下(容器pre-line+覆盖原nowrap),明细表只放开表头表尾标签换行、学生姓名与数据单元格仍单行 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-61 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-62 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1066,6 +1066,11 @@ console.log('%c[斑斓汉字] 汉字UI-61 已加载', 'color:#374a42;font-weight
             font-weight: 700;
             box-shadow: inset 0 -3px 0 0 #b5763a;  /* 当前页:竹黄下边线标识 */
         }
+        /* ★ 汉字-62:答对率/明细表/看板 所有双语标签 中文在上、译文在下(tt 的\n换行) */
+        #blAnswerRate, #blMatrix, #blDashboard { white-space: pre-line; }
+        /* 这些标签原本带 nowrap,强制换行;明细表只放开表头/表尾标签,学生姓名与数据单元格仍 nowrap */
+        .bl-rate-ov-lead, .bl-dash-task-m, .bl-dash-stu-chars,
+        #blMatrix thead th, .bl-matrix-footer .bl-matrix-name, .bl-matrix-corner-label { white-space: pre-line !important; }
         .bl-rate-card {
             background: rgba(255,255,255,0.55);
             border: 1px solid var(--border);
@@ -8739,6 +8744,11 @@ window.BL = (function () {
         const isAr = document.body.classList.contains('lang-mode-ar');
         return zh + '\n' + (isAr ? ar : en);
     }
+    // ★ 汉字-62:统一「已完成/Completed：完成/总」行内计数(三视图共用)
+    function _doneLabel(doneN, totalN) {
+        const isAr = document.body.classList.contains('lang-mode-ar');
+        return '已完成/' + (isAr ? 'مكتمل' : 'Completed') + '：' + doneN + '/' + totalN;
+    }
 
     // 长文本(confirm 多行)使用换行分隔
     function ttBlock(zh, en, ar) {
@@ -10164,7 +10174,7 @@ window.BL = (function () {
             const title = task ? task.title : tt('(已删除的任务)', '(deleted task)', '(مهمة محذوفة)');
             const py = t.pyT ? Math.round(t.pyC / t.pyT * 100) : null;
             const comp = t.compT ? Math.round(t.compC / t.compT * 100) : null;
-            const doneText = tt(t.doneCount + ' 人做过', t.doneCount + ' done', t.doneCount + ' أكملوا');
+            const doneText = _doneLabel(t.doneCount, active.length);
             return '<div class="bl-dash-task-row"><span class="bl-dash-task-name">' + escapeHtml(title) + '</span>'
                 + '<span class="bl-dash-task-done">' + escapeHtml(doneText) + '</span>'
                 + '<span class="bl-dash-task-m" style="color:' + cOf(py) + '">' + escapeHtml(txtPy) + ' ' + fmt(py) + '</span>'
@@ -10277,7 +10287,7 @@ window.BL = (function () {
                     </div>
                 </div>`).join('');
 
-            const doneText = tt(`${doneCount} 人做过`, `${doneCount} done`, `${doneCount} أكملوا`);
+            const doneText = _doneLabel(doneCount, activeStudents.length);
 
             html += `
                 <div class="bl-rate-card">
@@ -10388,10 +10398,10 @@ window.BL = (function () {
 
             // ★ UI-31: 含已离开学生数提示(明细表保留已离开学生历史)
             const leftDone = doneStudents.filter(s => s.left).length;
-            const dn = doneStudents.length;
-            const doneText = leftDone > 0
-                ? tt(`${dn} 人做过 · 含已离开 ${leftDone}`, `${dn} done · ${leftDone} left`, `${dn} أكملوا · ${leftDone} غادر`)
-                : tt(`${dn} 人做过`, `${dn} done`, `${dn} أكملوا`);
+            const dnActive = doneStudents.filter(s => !s.left).length;
+            const totalStu = state.students.filter(s => !s.left).length;
+            let doneText = _doneLabel(dnActive, totalStu);
+            if (leftDone > 0) doneText += (document.body.classList.contains('lang-mode-ar') ? ' · غادر ' : ' · 已离开 ') + leftDone;
 
             html += `
                 <div class="bl-matrix-task">
