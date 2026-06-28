@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-64 (2026-06-29) — 学生视图头部重排:标签(学生名单/答对率/明细表/看板)与动作按钮(导入名单/手动录入/导出全班报告)并到同一行(标签左动作右);11a1班级按钮从标签行移到在读段标题右边、两者居中成一组;主面板加宽到880(随视口收窄)容纳一行 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-65 (2026-06-29) — 在读/待加入药丸改中文在上译文在下并左对齐(pre-line+text-align left);手动录入按钮改墨绿同导入名单;11a1班级按钮改朱砂红(原手动录入的色)——相当于手动录入与11a1绿红对调 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-64 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-65 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -70,7 +70,7 @@ console.log('%c[斑斓汉字] 汉字UI-64 已加载', 'color:#374a42;font-weight
     .bl-roster-import-btn { background: var(--ink-green); color: #fff; border: none; cursor: pointer; padding: 7px 14px; border-radius: 8px; font-size: 14px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
     .bl-roster-import-btn:hover { background: #2c3a34; }
     /* ★ 汉字-58:在读/待加入 计数行改成图5那种绿色按钮(药丸);父级是flex纵向,加align-self防拉伸满宽 */
-    .bl-roster-section-title { display: inline-block; align-self: flex-start; background: var(--ink-green); color: #fff; font-size: 14px; font-weight: 600; padding: 7px 16px; border-radius: 8px; margin: 14px 0 10px; }
+    .bl-roster-section-title { display: inline-block; align-self: flex-start; background: var(--ink-green); color: #fff; font-size: 14px; font-weight: 600; padding: 7px 16px; border-radius: 8px; margin: 14px 0 10px; white-space: pre-line; text-align: left; }  /* 汉字-65:中文在上译文在下、左对齐 */
     .bl-stu-seq { color: var(--ink-gray); font-weight: normal; margin-right: 2px; }
     .bl-pending-badge { display: inline-block; font-size: 11px; padding: 1px 7px; border-radius: 10px; background: #f0ece2; color: #8a7a4e; margin-left: 4px; vertical-align: middle; }
     /* ★ 汉字-59:待加入卡片改浅陶红(方案C)，与在读的墨绿灰区分；不再用半透明 */
@@ -1058,7 +1058,7 @@ console.log('%c[斑斓汉字] 汉字UI-64 已加载', 'color:#374a42;font-weight
         .bl-sec-headrow .bl-roster-section-title { margin: 0; align-self: auto; }
         .bl-stu-classbtn {
             padding: 7px 16px;
-            background: var(--ink-green);
+            background: var(--zhusha);     /* 汉字-65:11a1班级按钮改朱砂红(原手动录入的色) */
             color: #fff;
             border-radius: 8px;
             font-size: 14px;
@@ -11099,8 +11099,8 @@ if (document.readyState === 'loading') {
     #blViewStudents .bl-students-header { justify-content: center; align-items: flex-start; flex-wrap: wrap; gap: 8px; }
     .bl-roster-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; width: auto; align-items: stretch; }  /* 汉字-64:并入标签行右侧 */
     /* 手动录入 改成新增班级同款朱砂红(图3样式) */
-    .bl-roster-manual-btn { background: var(--zhusha); color: #fff; border: none; }
-    .bl-roster-manual-btn:hover { background: #9e3232; }
+    .bl-roster-manual-btn { background: var(--ink-green); color: #fff; border: none; }  /* 汉字-65:改绿、同导入名单 */
+    .bl-roster-manual-btn:hover { background: #2c3a34; }
     .bl-student-subline { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 2px 0; }
     .bl-student-sid { font-size: 12px; color: var(--ink-gray); font-family: monospace; min-width: 162px; }
     .bl-student-card:hover .bl-pending-badge { background: rgba(255,255,255,0.92); color: var(--ink-green); }
