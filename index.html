@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-45 (2026-06-28) — 老师端移出确认改自定义图2风格绿弹窗；在读学生卡片/计数chip/账号按钮统一浅墨绿#9caea3；计数chip支持EN阿语切换 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-46 (2026-06-28) — 班级与任务改名布置作业(入口按钮+弹窗标题);班级数据在登录态恢复时即预加载,打开面板秒显;新建班级的班级码/班级名称输入框加墨绿边框;隐藏新建里的备注字段(留元素防报错) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-45 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-46 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -4399,7 +4399,7 @@ console.log('%c[斑斓汉字] 汉字UI-45 已加载', 'color:#374a42;font-weight
             <button class="btn-seal" onclick="openSealStudio()">❒ 印章生成<span class="btn-en">Seal Generation</span><span class="btn-ar">توليد الختم</span></button>
             <button class="btn-toggle-dl" onclick="toggleDownloadMenu()" id="btnToggleDl">⬇ 下载中心<span class="btn-en">Download Center</span><span class="btn-ar">مركز التنزيل</span></button>
             <button class="btn-feedback" onclick="openFeedback()">💬 用户反馈<span class="btn-en">Feedback</span><span class="btn-ar">التغذية الراجعة</span></button>
-            <button class="btn-linkage" id="btnLinkage" onclick="BL.openPanel()" style="position:relative;">📚 班级与任务<span class="btn-en">Classes &amp; Tasks</span><span class="btn-ar">الفصول والمهام</span><span class="bl-tester-badge" id="blTesterBadge" style="display:none;">测试</span></button>
+            <button class="btn-linkage" id="btnLinkage" onclick="BL.openPanel()" style="position:relative;">📚 布置作业<span class="btn-en">Assign Homework</span><span class="btn-ar">تعيين الواجبات</span><span class="bl-tester-badge" id="blTesterBadge" style="display:none;">测试</span></button>
             
             <!-- 背景音乐控件已搬至 <body> 顶部 (#bgmControls)，详见 lang-switcher 旁 -->
 
@@ -8348,7 +8348,7 @@ console.log('%c[斑斓汉字] 汉字UI-45 已加载', 'color:#374a42;font-weight
 <div class="bl-overlay" id="blOverlay">
     <div class="bl-modal">
         <div class="bl-header">
-            <h3 id="blTitle"><span class="t-cn"><span class="t-ico">📚</span>班级与任务</span><span class="lang-en">Classes &amp; Tasks</span><span class="lang-ar">الفصول والمهام</span></h3>
+            <h3 id="blTitle"><span class="t-cn"><span class="t-ico">📚</span>布置作业</span><span class="lang-en">Assign Homework</span><span class="lang-ar">تعيين الواجبات</span></h3>
             <button class="bl-close" onclick="BL.closePanel()">×</button>
         </div>
 
@@ -8498,14 +8498,14 @@ console.log('%c[斑斓汉字] 汉字UI-45 已加载', 'color:#374a42;font-weight
         <div class="bl-body">
             <div class="bl-form-group">
                 <label class="bl-label">班级码<span class="lang-en">Class Code</span><span class="lang-ar">رمز الفصل</span> <span style="color:var(--zhusha)">*</span></label>
-                <input type="text" class="bl-input" id="blClassCode" placeholder="如：HSK3A、MyClass2024" maxlength="20">
+                <input type="text" class="bl-input" id="blClassCode" placeholder="如：HSK3A、MyClass2024" maxlength="20" style="border:2px solid #374a42">
                 <p class="bl-hint" id="blClassCodeHint">2-20 位字母数字横线下划线，学生用这个码加入班级</p>
             </div>
             <div class="bl-form-group">
                 <label class="bl-label">班级名称<span class="lang-en">Class Name</span><span class="lang-ar">اسم الفصل</span> <span style="color:var(--zhusha)">*</span></label>
-                <input type="text" class="bl-input" id="blClassName" placeholder="如：三年级 A 班" maxlength="100">
+                <input type="text" class="bl-input" id="blClassName" placeholder="如：三年级 A 班" maxlength="100" style="border:2px solid #374a42">
             </div>
-            <div class="bl-form-group">
+            <div class="bl-form-group" style="display:none">
                 <label class="bl-label">备注（可选）<span class="lang-en">Notes (Optional)</span><span class="lang-ar">ملاحظات (اختياري)</span></label>
                 <textarea class="bl-textarea" id="blClassDescription" placeholder="如：周二/周四 19:00-20:00" maxlength="500"></textarea>
             </div>
@@ -8841,6 +8841,7 @@ window.BL = (function () {
             try {
                 const data = await api('GET', '/api/teacher/me');
                 state.teacher = data.teacher;
+                loadClasses();   /* 汉字-46:登录态恢复即预加载班级,打开面板秒显 */
             } catch (e) {
                 state.token = null;
                 localStorage.removeItem(LS_TOKEN_KEY);
@@ -8965,6 +8966,7 @@ window.BL = (function () {
         lockBlModalWidth();
         if (state.teacher) {
             showLoggedInView();
+            if (state.classes && state.classes.length) renderClasses();   /* 汉字-46:已预加载→先秒显 */
             loadClasses();
         } else {
             showAuthView();
