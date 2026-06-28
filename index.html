@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-63 (2026-06-28) — 明细表拼音/部件表格上下留白大幅收紧(task底边距30到14、sub标签16/8到6/4、行内边距9/12到5/10);表头左侧新增返回键,进入班级(学生/任务视图)时顶部我的班级新增班级账号三按钮收起、显示返回键+班级按钮,点返回回班级列表三按钮恢复 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-64 (2026-06-29) — 学生视图头部重排:标签(学生名单/答对率/明细表/看板)与动作按钮(导入名单/手动录入/导出全班报告)并到同一行(标签左动作右);11a1班级按钮从标签行移到在读段标题右边、两者居中成一组;主面板加宽到880(随视口收窄)容纳一行 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-63 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-64 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1037,14 +1037,25 @@ console.log('%c[斑斓汉字] 汉字UI-63 已加载', 'color:#374a42;font-weight
         .bl-dash-stu-chars { color:#7a857f; font-size:12px; white-space:nowrap; }
         .bl-dash-stu-p { min-width:54px; text-align:right; font-weight:bold; }
         /* ★ 汉字-57:标签栏整排居中；标签做成导入名单同款绿色按钮；最左班级信息按钮同款 */
+        /* ★ 汉字-64:标签(左)+ 动作按钮(右) 同一行 */
+        .bl-stu-headrow {
+            display: flex; justify-content: space-between; align-items: stretch;
+            gap: 14px; flex-wrap: wrap; margin-bottom: 16px;
+        }
         .bl-stu-tabs {
             display: flex;
             gap: 8px;
-            margin-bottom: 18px;
-            justify-content: center;
+            margin-bottom: 0;
+            justify-content: flex-start;
             flex-wrap: wrap;
             align-items: stretch;       /* 汉字-58:班级按钮与标签等高 */
         }
+        /* 汉字-64:在读标题 + 11a1班级按钮 一组居中 */
+        .bl-sec-headrow {
+            display: flex; align-items: center; justify-content: center;
+            gap: 10px; flex-wrap: wrap; align-self: center; margin: 14px 0 10px;
+        }
+        .bl-sec-headrow .bl-roster-section-title { margin: 0; align-self: auto; }
         .bl-stu-classbtn {
             padding: 7px 16px;
             background: var(--ink-green);
@@ -8568,21 +8579,19 @@ console.log('%c[斑斓汉字] 汉字UI-63 已加载', 'color:#374a42;font-weight
 
             <!-- Phase 4-1 (v2D-8): 学生列表视图 -->
             <div id="blViewStudents" style="display:none;">
-                <div class="bl-tasks-header bl-students-header">
-                    <!-- ★ 汉字-57:头部班级码/计数行已删；导入名单·手动录入·导出全班报告 一排居中 -->
+                <!-- ★ 汉字-64:标签(左)+ 导入/手动/导出(右) 同一行；11a1班级按钮移到「在读」旁 -->
+                <div class="bl-stu-headrow">
+                    <div class="bl-stu-tabs">
+                        <button class="bl-stu-tab bl-stu-tab-active" id="blStuTabList" onclick="BL.switchStudentTab('list')">学生名单<span class="lang-en">Students</span><span class="lang-ar">الطلاب</span></button>
+                        <button class="bl-stu-tab" id="blStuTabRate" onclick="BL.switchStudentTab('rate')">答对率<span class="lang-en">Accuracy</span><span class="lang-ar">معدل الدقة</span></button>
+                        <button class="bl-stu-tab" id="blStuTabMatrix" onclick="BL.switchStudentTab('matrix')">明细表<span class="lang-en">Table</span><span class="lang-ar">الجدول</span></button>
+                        <button class="bl-stu-tab" id="blStuTabDash" onclick="BL.switchStudentTab('dashboard')">看板<span class="lang-en">Dashboard</span><span class="lang-ar">لوحة</span></button>
+                    </div>
                     <div class="bl-roster-actions">
                         <button class="bl-roster-import-btn" onclick="BL.openRosterImport()">⬆ 导入名单<span class="lang-en">Import</span><span class="lang-ar">استيراد</span></button>
                         <button class="bl-roster-import-btn bl-roster-manual-btn" onclick="BL.openManualEntry()">✎ 手动录入<span class="lang-en">Manual</span><span class="lang-ar">يدوي</span></button>
                         <button class="bl-roster-import-btn" onclick="BL.exportClassReport()">📄 导出全班报告<span class="lang-en">Export Report</span><span class="lang-ar">تصدير التقرير</span></button>
                     </div>
-                </div>
-                <!-- Phase 4-2: 学生名单 / 答对率 / 明细表 标签 -->
-                <div class="bl-stu-tabs">
-                    <span class="bl-stu-classbtn" id="blStudentsClassBtn">—</span>
-                    <button class="bl-stu-tab bl-stu-tab-active" id="blStuTabList" onclick="BL.switchStudentTab('list')">学生名单<span class="lang-en">Students</span><span class="lang-ar">الطلاب</span></button>
-                    <button class="bl-stu-tab" id="blStuTabRate" onclick="BL.switchStudentTab('rate')">答对率<span class="lang-en">Accuracy</span><span class="lang-ar">معدل الدقة</span></button>
-                    <button class="bl-stu-tab" id="blStuTabMatrix" onclick="BL.switchStudentTab('matrix')">明细表<span class="lang-en">Table</span><span class="lang-ar">الجدول</span></button>
-                    <button class="bl-stu-tab" id="blStuTabDash" onclick="BL.switchStudentTab('dashboard')">看板<span class="lang-en">Dashboard</span><span class="lang-ar">لوحة</span></button>
                 </div>
                 <div class="bl-task-list" id="blStudentList">
                     <!-- 动态生成 -->
@@ -9074,8 +9083,9 @@ window.BL = (function () {
     // ═════════════════════════════════════════════════════════════
     function lockBlModalWidth() {
         const isMobile = window.innerWidth < 600;
+        const panelW = Math.min(880, window.innerWidth - 32);  // 汉字-64:加宽主面板以容纳「标签+动作」一行
         const targets = [
-            ['#blOverlay .bl-modal', 720],
+            ['#blOverlay .bl-modal', panelW],
             ['#blClassEditorOverlay .bl-modal', 520],
             ['#blTaskEditorOverlay .bl-modal', 560]
         ];
@@ -9440,8 +9450,7 @@ window.BL = (function () {
         $('blViewStudents').style.display = '';
         $('blTabs').style.display = 'none'; $('blBackBtn').style.display = ''; // 汉字-63:进班级收起三按钮、显返回
 
-        // 填充头部(汉字-57:班级码+在读/全班 显示在标签栏的班级按钮上)
-        $('blStudentsClassBtn').textContent = cls.classCode + '：…';
+        // 汉字-64:班级码+在读/全班 现由 renderStudents 渲染到「在读」段右侧的班级按钮
         $('blStudentList').innerHTML = '<div class="bl-empty"><div class="bl-empty-text" style="color:var(--ink-gray);">' + escapeHtml(tt('加载中...', 'Loading...', 'جاري التحميل...')) + '</div></div>';
 
         switchStudentTab('list');  // ★ Phase 4-2: 每次打开默认回到"学生名单"标签
@@ -9474,8 +9483,7 @@ window.BL = (function () {
         const active = state.students.filter(s => norm(s) === 'active');
         const pending = state.students.filter(s => norm(s) === 'pending');
 
-        // ★ 汉字-57:头部计数行已删，改填标签栏班级按钮：班级码：在读/全班(在读+待加入)
-        $('blStudentsClassBtn').textContent = state.currentClassCode + '：' + active.length + '/' + (active.length + pending.length);
+        // ★ 汉字-64:班级按钮(班级码：在读/全班)改由下方 section 的 classBtn 渲染到「在读」段右侧
 
         if (state.students.length === 0) {
             list.innerHTML = `
@@ -9529,11 +9537,15 @@ window.BL = (function () {
             </div>`;
         };
 
-        const section = (title, arr, isPending) => {
-            if (arr.length === 0) return '';
+        // ★ 汉字-64:extra=右侧附挂的 11a1 班级按钮(只在"在读"段),与标题居中成一组
+        const section = (title, arr, isPending, extra) => {
+            if (arr.length === 0 && !extra) return '';
             const cards = sortByName(arr).map((s, i) => card(s, i + 1, isPending)).join('');
-            return `<div class="bl-roster-section-title">${escapeHtml(title)} · ${arr.length}</div>${cards}`;
+            const titleDiv = `<div class="bl-roster-section-title">${escapeHtml(title)} · ${arr.length}</div>`;
+            const head = extra ? `<div class="bl-sec-headrow">${titleDiv}${extra}</div>` : titleDiv;
+            return head + cards;
         };
+        const classBtn = `<span class="bl-stu-classbtn">${escapeHtml(state.currentClassCode + '：' + active.length + '/' + (active.length + pending.length))}</span>`;
 
         const batchBar = `
             <div id="blBatchBar" class="bl-batch-bar" style="display:none;">
@@ -9545,7 +9557,7 @@ window.BL = (function () {
             </div>`;
 
         list.innerHTML = batchBar +
-            section(tt('在读', 'Active', 'نشط'), active, false) +
+            section(tt('在读', 'Active', 'نشط'), active, false, classBtn) +
             section(tt('待加入', 'Pending', 'بانتظار'), pending, true);
         updateBatchBar();
     }
@@ -11085,7 +11097,7 @@ if (document.readyState === 'loading') {
     /* ★ UI-34 名单增强：学号行 / hover墨绿 / 批量勾选 / 手动录入 / 按钮上移 */
     /* ★ 汉字-57:头部删计数后，三个动作按钮整排居中 */
     #blViewStudents .bl-students-header { justify-content: center; align-items: flex-start; flex-wrap: wrap; gap: 8px; }
-    .bl-roster-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; width: 100%; }
+    .bl-roster-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; width: auto; align-items: stretch; }  /* 汉字-64:并入标签行右侧 */
     /* 手动录入 改成新增班级同款朱砂红(图3样式) */
     .bl-roster-manual-btn { background: var(--zhusha); color: #fff; border: none; }
     .bl-roster-manual-btn:hover { background: #9e3232; }
