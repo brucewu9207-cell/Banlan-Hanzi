@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-58 (2026-06-28) — 学生视图标签栏班级按钮与标签等高(align-items stretch)且字体改回PingFang与导入名单一致;工具栏中文字体统一14px/600;在读待加入计数行改成绿色药丸按钮(同班级按钮样式) -->
+<!-- 斑斓汉字(老师端) · 汉字UI-59 (2026-06-28) — 学生视图标签全部满色深墨绿(去掉变淡)、当前页用竹黄下划线标识;待加入学生卡片改成浅陶红(方案C)与在读墨绿灰区分 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-58 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-59 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -73,7 +73,8 @@ console.log('%c[斑斓汉字] 汉字UI-58 已加载', 'color:#374a42;font-weight
     .bl-roster-section-title { display: inline-block; align-self: flex-start; background: var(--ink-green); color: #fff; font-size: 14px; font-weight: 600; padding: 7px 16px; border-radius: 8px; margin: 14px 0 10px; }
     .bl-stu-seq { color: var(--ink-gray); font-weight: normal; margin-right: 2px; }
     .bl-pending-badge { display: inline-block; font-size: 11px; padding: 1px 7px; border-radius: 10px; background: #f0ece2; color: #8a7a4e; margin-left: 4px; vertical-align: middle; }
-    .bl-student-card.is-pending { opacity: 0.78; }
+    /* ★ 汉字-59:待加入卡片改浅陶红(方案C)，与在读的墨绿灰区分；不再用半透明 */
+    .bl-student-card.is-pending { opacity: 1; background: #d6b3a6 !important; border-left-color: #a8705c !important; }
     .bl-roster-count { font-size: 14px; font-weight: 600; color: var(--ink-green); margin-bottom: 8px; }
     .bl-roster-table-wrap { max-height: 46vh; overflow: auto; border: 1px solid #eef1ef; border-radius: 8px; }
     .bl-roster-table { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -1046,13 +1047,14 @@ console.log('%c[斑斓汉字] 汉字UI-58 已加载', 'color:#374a42;font-weight
             color: #fff;
             font-weight: 600;
             font-family: var(--font-main);
-            opacity: 0.5;          /* 未选中:同色但变淡 */
+            opacity: 1;            /* 汉字-59:全部满色深墨绿(同当前页) */
             transition: all 0.2s;
         }
-        .bl-stu-tab:hover { opacity: 0.8; color: #fff; }
+        .bl-stu-tab:hover { filter: brightness(1.12); color: #fff; }
         .bl-stu-tab-active {
-            opacity: 1;            /* 选中:满色 */
             color: #fff;
+            font-weight: 700;
+            box-shadow: inset 0 -3px 0 0 #b5763a;  /* 当前页:竹黄下边线标识 */
         }
         .bl-rate-card {
             background: rgba(255,255,255,0.55);
