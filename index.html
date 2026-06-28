@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-57 (2026-06-28) — 学生视图重构:删头部班级码计数行;导入名单·手动录入·导出全班报告三按钮一排居中(手动录入改朱砂红同新增班级、导出全班报告改绿同导入名单);学生名单等四标签改绿色按钮(当前页满色其余变淡)并整排居中;最左加班级按钮显示班级码:在读/全班 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-58 (2026-06-28) — 学生视图标签栏班级按钮与标签等高(align-items stretch)且字体改回PingFang与导入名单一致;工具栏中文字体统一14px/600;在读待加入计数行改成绿色药丸按钮(同班级按钮样式) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-57 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-58 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -69,7 +69,8 @@ console.log('%c[斑斓汉字] 汉字UI-57 已加载', 'color:#374a42;font-weight
     .bl-roster-toolbar { padding: 0 16px 6px; display: flex; justify-content: flex-end; }
     .bl-roster-import-btn { background: var(--ink-green); color: #fff; border: none; cursor: pointer; padding: 7px 14px; border-radius: 8px; font-size: 14px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
     .bl-roster-import-btn:hover { background: #2c3a34; }
-    .bl-roster-section-title { font-size: 13px; color: var(--ink-gray); font-weight: 600; padding: 12px 4px 6px; border-bottom: 1px solid #eef1ef; margin-bottom: 6px; }
+    /* ★ 汉字-58:在读/待加入 计数行改成图5那种绿色按钮(药丸);父级是flex纵向,加align-self防拉伸满宽 */
+    .bl-roster-section-title { display: inline-block; align-self: flex-start; background: var(--ink-green); color: #fff; font-size: 14px; font-weight: 600; padding: 7px 16px; border-radius: 8px; margin: 14px 0 10px; }
     .bl-stu-seq { color: var(--ink-gray); font-weight: normal; margin-right: 2px; }
     .bl-pending-badge { display: inline-block; font-size: 11px; padding: 1px 7px; border-radius: 10px; background: #f0ece2; color: #8a7a4e; margin-left: 4px; vertical-align: middle; }
     .bl-student-card.is-pending { opacity: 0.78; }
@@ -744,10 +745,10 @@ console.log('%c[斑斓汉字] 汉字UI-57 已加载', 'color:#374a42;font-weight
         }
         #blTabs .bl-tab-stack {
             display: inline-flex; flex-direction: column; align-items: center;
-            font-size: 13px; margin: 0; opacity: 1; line-height: 1.3;
+            font-size: 14px; font-weight: 600; margin: 0; opacity: 1; line-height: 1.3;  /* 汉字-58:字体向导入名单看齐(14/600) */
         }
         #blTabs .bl-tab-cnt, #blTabs .bl-tab-deco {
-            align-self: flex-start; font-size: 13px; margin: 0; opacity: 1; line-height: 1.3;
+            align-self: flex-start; font-size: 14px; margin: 0; opacity: 1; line-height: 1.3;
         }
 
         /* 内容区 — ★ v2D.3: 缩小间距 */
@@ -1021,7 +1022,7 @@ console.log('%c[斑斓汉字] 汉字UI-57 已加载', 'color:#374a42;font-weight
             margin-bottom: 18px;
             justify-content: center;
             flex-wrap: wrap;
-            align-items: center;
+            align-items: stretch;       /* 汉字-58:班级按钮与标签等高 */
         }
         .bl-stu-classbtn {
             padding: 7px 16px;
@@ -1030,7 +1031,7 @@ console.log('%c[斑斓汉字] 汉字UI-57 已加载', 'color:#374a42;font-weight
             border-radius: 8px;
             font-size: 14px;
             font-weight: 600;
-            font-family: monospace;
+            font-family: var(--font-main); /* 汉字-58:字体跟导入名单一致(去掉monospace) */
             display: inline-flex;
             align-items: center;
             white-space: nowrap;
