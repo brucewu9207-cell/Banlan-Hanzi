@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-72 (2026-06-29) — 在读待加入名单做成手风琴(点标题展开再点收起,默认在读开待加入收);布置作业弹窗加高到屏94%上下贴近页面,宽度不变;任务行到下方展开区留白14缩到6 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-73 (2026-06-29) — 在读标题改灰绿待加入改浅陶红(各与对应学生卡片同色);选中任务用方案B(选中保原色其余灰掉);整体框间距按图3保持;答对率大方框边框加深加粗更明显 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-72 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-73 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -73,8 +73,12 @@ console.log('%c[斑斓汉字] 汉字UI-72 已加载', 'color:#374a42;font-weight
     .bl-roster-section-title { display: inline-block; align-self: flex-start; background: var(--ink-green); color: #fff; font-size: 14px; font-weight: 600; padding: 7px 16px; border-radius: 8px; margin: 14px 0 10px; white-space: pre-line; text-align: left; }  /* 汉字-65:中文在上译文在下、左对齐 */
     /* ★ 汉字-72:在读/待加入做成可折叠手风琴——标题可点、前置小三角 */
     .bl-roster-toggle { cursor: pointer; user-select: none; }
-    .bl-roster-toggle:hover { background: #2c3a34; }
     .bl-roster-caret { display: inline-block; margin-right: 6px; font-size: 11px; vertical-align: middle; }
+    /* ★ 汉字-73:标题改成与各自学生卡片同色(在读灰绿/待加入浅陶),配各自深色字 */
+    #bl-roster-title-active  { background: #9caea3; color: #22312b; }
+    #bl-roster-title-active:hover  { background: #8a9e93; }
+    #bl-roster-title-pending { background: #d6b3a6; color: #4a2c20; }
+    #bl-roster-title-pending:hover { background: #c89f93; }
     .bl-stu-seq { color: var(--ink-gray); font-weight: normal; margin-right: 2px; }
     .bl-pending-badge { display: inline-block; font-size: 11px; padding: 1px 7px; border-radius: 10px; background: #f0ece2; color: #8a7a4e; margin-left: 4px; vertical-align: middle; }
     /* ★ 汉字-59:待加入卡片改浅陶红(方案C)，与在读的墨绿灰区分；不再用半透明 */
@@ -1110,7 +1114,7 @@ console.log('%c[斑斓汉字] 汉字UI-72 已加载', 'color:#374a42;font-weight
         #blMatrix thead th, .bl-matrix-footer .bl-matrix-name, .bl-matrix-corner-label { white-space: pre-line !important; }
         .bl-rate-card {
             background: rgba(255,255,255,0.55);
-            border: 1px solid var(--border);
+            border: 1.5px solid rgba(55,74,66,0.45);   /* 汉字-73:边框加深加粗,更明显(原 1px/0.2) */
             border-radius: 12px;
             padding: 18px 20px;
             margin-bottom: 16px;
@@ -1256,9 +1260,10 @@ console.log('%c[斑斓汉字] 汉字UI-72 已加载', 'color:#374a42;font-weight
             display: flex; flex-wrap: wrap; justify-content: center;
             gap: 10px; margin-bottom: 6px;   /* 汉字-72:缩小任务行与下方展开区的留白(原14) */
         }
-        .bl-task-pill-btn { transition: box-shadow .15s, transform .15s, opacity .15s; opacity: .82; }
-        .bl-task-pill-btn:hover { opacity: 1; }
-        .bl-task-pill-btn.is-open { opacity: 1; box-shadow: 0 0 0 3px rgba(0,0,0,.16); transform: translateY(-1px); }
+        /* ★ 汉字-73:方案B——选中任务保持原色,同行其余按钮灰掉 */
+        .bl-task-pill-btn { transition: filter .15s, opacity .15s; }
+        .bl-task-pill-btn:hover { opacity: .92; }
+        .bl-task-pill-btn.is-dimmed { filter: grayscale(1) brightness(1.08) opacity(.6); }
         .bl-matrix-sub {
             font-size: 13px;
             font-weight: 600;
@@ -8831,13 +8836,16 @@ window.BL = (function () {
         const pill = document.getElementById('bl-' + prefix + '-pill-' + taskId);
         if (!panel) return;
         const wasOpen = (panel.style.display !== 'none');
-        // 先把本视图所有任务收起(保证同一时间只展开一个)
+        // 先把本视图所有任务收起(保证同一时间只展开一个)+ 清掉选中/灰掉态
         document.querySelectorAll('[id^="bl-' + prefix + '-panel-"]').forEach(function (p) { p.style.display = 'none'; });
-        document.querySelectorAll('[id^="bl-' + prefix + '-pill-"]').forEach(function (b) { b.classList.remove('is-open'); });
+        const pills = document.querySelectorAll('[id^="bl-' + prefix + '-pill-"]');
+        pills.forEach(function (b) { b.classList.remove('is-open', 'is-dimmed'); });
         // 原来没开 → 打开它;原来已开 → 上面已收起,保持折叠(实现再点收起)
         if (!wasOpen) {
             panel.style.display = '';
             if (pill) pill.classList.add('is-open');
+            // ★ 方案B:选中后,同行其余任务按钮灰掉(没选中时全部保持原色)
+            pills.forEach(function (b) { if (b !== pill) b.classList.add('is-dimmed'); });
         }
     }
 
