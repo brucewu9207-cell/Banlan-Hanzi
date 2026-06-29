@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-67 (2026-06-29) — 在读药丸保持靠左,11a1班级按钮改为在整行宽度里水平居中(绝对定位left50% translateX),并保持与在读等高(top0 bottom0撑满) -->
+<!-- 斑斓汉字(老师端) · 汉字UI-68 (2026-06-29) — 11a1班级按钮从在读段移到表头返回键右边(返回+11a1一组绝对定位表头左侧);学生视图显返回+11a1、任务视图只显返回、回班级列表两者都收;在读段恢复成单独药丸不带11a1 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-67 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-68 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -683,15 +683,21 @@ console.log('%c[斑斓汉字] 汉字UI-67 已加载', 'color:#374a42;font-weight
             background: #d4e6dc; color: var(--zhusha);
             transform: translateY(-50%); box-shadow: none; filter: none;
         }
-        /* ★ 汉字-63:表头左侧返回键(镜像 × 键) */
+        /* ★ 汉字-68:返回键 + 11a1班级按钮 一组,绝对定位表头左侧 */
+        .bl-head-left {
+            position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+            display: flex; align-items: center; gap: 10px;
+        }
+        /* ★ 汉字-63/68:表头左侧返回键(在 .bl-head-left 内,静态排) */
         .bl-back-header {
             background: none; border: none; cursor: pointer;
             color: var(--ink-green); font-size: 15px; font-weight: 600;
             padding: 4px 10px; border-radius: 6px; box-shadow: none;
-            position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
             white-space: nowrap;
         }
-        .bl-back-header:hover { background: #d4e6dc; transform: translateY(-50%); box-shadow: none; filter: none; }
+        .bl-back-header:hover { background: #d4e6dc; box-shadow: none; filter: none; }
+        /* 汉字-68:表头里的 11a1 班级按钮(沿用红色样式,略缩小适配表头) */
+        .bl-head-classbtn { padding: 5px 12px !important; font-size: 13px !important; }
         .bl-back-header .lang-en, .bl-back-header .lang-ar { display: inline !important; font-size: 0.8em; opacity: 0.8; }
 
         /* Tab 栏 — ★ v2D.3: 缩小间距 */
@@ -8500,8 +8506,11 @@ console.log('%c[斑斓汉字] 汉字UI-67 已加载', 'color:#374a42;font-weight
 <div class="bl-overlay" id="blOverlay">
     <div class="bl-modal">
         <div class="bl-header">
-            <!-- ★ 汉字-63:进入班级时显示返回键(回到班级列表),顶部三按钮收起 -->
-            <button class="bl-back-header" id="blBackBtn" onclick="BL.backToClassList()" style="display:none;">‹ 返回<span class="lang-en"> Back</span><span class="lang-ar"> رجوع</span></button>
+            <!-- ★ 汉字-68:返回键 + 11a1班级按钮 一组放表头左侧(进班级才显示) -->
+            <div class="bl-head-left" id="blHeadLeft" style="display:none;">
+                <button class="bl-back-header" id="blBackBtn" onclick="BL.backToClassList()">‹ 返回<span class="lang-en"> Back</span><span class="lang-ar"> رجوع</span></button>
+                <span class="bl-stu-classbtn bl-head-classbtn" id="blHeadClassBtn" style="display:none;">—</span>
+            </div>
             <h3 id="blTitle"><span class="t-cn"><span class="t-ico">📚</span>布置作业</span><span class="lang-en">Assign Homework</span><span class="lang-ar">تعيين الواجبات</span></h3>
             <button class="bl-close" onclick="BL.closePanel()">×</button>
         </div>
@@ -9134,7 +9143,7 @@ window.BL = (function () {
         $('blViewClasses').style.display = 'none';
         $('blViewAccount').style.display = 'none';
         $('blTabs').style.display = 'none';
-        $('blBackBtn').style.display = 'none'; // 汉字-63:登录页无返回键
+        $('blHeadLeft').style.display = 'none'; // 汉字-68:登录页无返回键/班级按钮
     }
 
     function showLoggedInView() {
@@ -9151,7 +9160,7 @@ window.BL = (function () {
 
     function switchTab(tab) {
         state.currentTab = tab;
-        $('blBackBtn').style.display = 'none'; $('blTabs').style.display = ''; // 汉字-63:顶层Tab→无返回键、三按钮在
+        $('blHeadLeft').style.display = 'none'; $('blTabs').style.display = ''; // 汉字-68:顶层Tab→无返回键/班级按钮、三按钮在
         // 切回 Tab 时，从任务视图退出回班级列表
         state.currentClassCode = null;
         document.querySelectorAll('#blTabs .bl-tab').forEach(b => {
@@ -9403,7 +9412,7 @@ window.BL = (function () {
         $('blViewAccount').style.display = 'none';
         $('blViewStudents').style.display = 'none'; // UI-28: 防止学生视图残留叠显
         $('blViewTasks').style.display = '';
-        $('blTabs').style.display = 'none'; $('blBackBtn').style.display = ''; // 汉字-63:进班级收起三按钮、显返回
+        $('blTabs').style.display = 'none'; $('blHeadLeft').style.display = ''; $('blHeadClassBtn').style.display = 'none'; // 汉字-68:任务视图显返回、不显班级按钮
 
         // 填充头部信息
         $('blTasksClassTag').textContent = cls.classCode;
@@ -9428,7 +9437,7 @@ window.BL = (function () {
         $('blViewTasks').style.display = 'none';
         $('blViewStudents').style.display = 'none';   // ★ v2D-8
         $('blViewClasses').style.display = '';
-        $('blTabs').style.display = ''; $('blBackBtn').style.display = 'none'; // 汉字-63:回班级列表→恢复三按钮、收返回
+        $('blTabs').style.display = ''; $('blHeadLeft').style.display = 'none'; // 汉字-68:回班级列表→恢复三按钮、收返回/班级按钮
         renderClasses();  // 用本地最新数据立即重渲染,看到正确的 📋 N
     }
 
@@ -9450,7 +9459,7 @@ window.BL = (function () {
         $('blViewAccount').style.display = 'none';
         $('blViewTasks').style.display = 'none';
         $('blViewStudents').style.display = '';
-        $('blTabs').style.display = 'none'; $('blBackBtn').style.display = ''; // 汉字-63:进班级收起三按钮、显返回
+        $('blTabs').style.display = 'none'; $('blHeadLeft').style.display = ''; $('blHeadClassBtn').style.display = ''; // 汉字-68:学生视图显返回+班级按钮
 
         // 汉字-64:班级码+在读/全班 现由 renderStudents 渲染到「在读」段右侧的班级按钮
         $('blStudentList').innerHTML = '<div class="bl-empty"><div class="bl-empty-text" style="color:var(--ink-gray);">' + escapeHtml(tt('加载中...', 'Loading...', 'جاري التحميل...')) + '</div></div>';
@@ -9485,7 +9494,8 @@ window.BL = (function () {
         const active = state.students.filter(s => norm(s) === 'active');
         const pending = state.students.filter(s => norm(s) === 'pending');
 
-        // ★ 汉字-64:班级按钮(班级码：在读/全班)改由下方 section 的 classBtn 渲染到「在读」段右侧
+        // ★ 汉字-68:班级按钮(班级码：在读/全班)填到表头返回键右侧
+        $('blHeadClassBtn').textContent = state.currentClassCode + '：' + active.length + '/' + (active.length + pending.length);
 
         if (state.students.length === 0) {
             list.innerHTML = `
@@ -9539,15 +9549,12 @@ window.BL = (function () {
             </div>`;
         };
 
-        // ★ 汉字-64:extra=右侧附挂的 11a1 班级按钮(只在"在读"段),与标题居中成一组
-        const section = (title, arr, isPending, extra) => {
-            if (arr.length === 0 && !extra) return '';
+        // ★ 汉字-68:11a1班级按钮已移到表头,这里 section 只渲染药丸标题
+        const section = (title, arr, isPending) => {
+            if (arr.length === 0) return '';
             const cards = sortByName(arr).map((s, i) => card(s, i + 1, isPending)).join('');
-            const titleDiv = `<div class="bl-roster-section-title">${escapeHtml(title)} · ${arr.length}</div>`;
-            const head = extra ? `<div class="bl-sec-headrow">${titleDiv}${extra}</div>` : titleDiv;
-            return head + cards;
+            return `<div class="bl-roster-section-title">${escapeHtml(title)} · ${arr.length}</div>${cards}`;
         };
-        const classBtn = `<span class="bl-stu-classbtn">${escapeHtml(state.currentClassCode + '：' + active.length + '/' + (active.length + pending.length))}</span>`;
 
         const batchBar = `
             <div id="blBatchBar" class="bl-batch-bar" style="display:none;">
@@ -9559,7 +9566,7 @@ window.BL = (function () {
             </div>`;
 
         list.innerHTML = batchBar +
-            section(tt('在读', 'Active', 'نشط'), active, false, classBtn) +
+            section(tt('在读', 'Active', 'نشط'), active, false) +
             section(tt('待加入', 'Pending', 'بانتظار'), pending, true);
         updateBatchBar();
     }
