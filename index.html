@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-77 (2026-06-29) — 明细表升级领奖台版:学生按整体答对率降序+并列同名次,前三名整行金银铜通铺+奖牌(绶带),维度列纯文字去整行色块,该生和答对率列按达标线分色(绿80金60红),答对率列每生整体大号,底部每字答对率全班整体一行,去掉任务整体标题和分段标题,已离开学生不上榜 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-78 (2026-06-29) — 删明细表顶部概览块(整体加逐字进度条);该生列和底部每字答对率改黑色不分色;答对率列前三名数字改对应金银铜色其余黑 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-77 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-78 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -10574,7 +10574,6 @@ window.BL = (function () {
 
             panels += `
                 <div class="bl-matrix-task" id="bl-matrix-panel-${escapeAttr(taskId)}" style="display:none">
-                    ${_matrixOverview(taskId, doneStudents, charOrder)}
                     ${buildMergedMatrix(taskId, doneStudents, charOrder)}
                 </div>`;
         });
@@ -10654,11 +10653,13 @@ window.BL = (function () {
         const mark = v => (v === null || v === undefined)
             ? '<span class="bl-matrix-na">—</span>'
             : (v ? '<span class="bl-matrix-ok">✓</span>' : '<span class="bl-matrix-no">✗</span>');
+        // ★ 汉字-78:该生列、底部每字% 改黑色(不分色);只有「答对率」列前三名用金银铜
         const pctCell = (c, t) => {
             if (t === 0) return '<span class="bl-matrix-na">—</span>';
             const p = Math.round(c / t * 100);
-            return `<span style="color:${TH(p)};font-weight:600;">${p}%</span>`;
+            return `<span style="color:#22312b;font-weight:600;">${p}%</span>`;
         };
+        const ACC_MEDAL = { 1: '#b8860b', 2: '#5f6c72', 3: '#9c4a28' };   // 答对率数字:金/银/铜(深一档,在浅色块上清晰)
         const txtLeftSm = tt('已离开', 'Left', 'غادر');
         const dimPy = `<td class="bl-matrix-dim">${escapeHtml(tt('拼音', 'Pinyin', 'بينيين'))}</td>`;
         const dimComp = `<td class="bl-matrix-dim">${escapeHtml(tt('部件', 'Parts', 'مكوّنات'))}</td>`;
@@ -10701,14 +10702,14 @@ window.BL = (function () {
             + `<th class="bl-matrix-acc">${escapeHtml(tt('答对率', 'Accuracy', 'الدقة'))}</th>`;
 
         // 一个学生两行(拼音/部件)
-        function rowOf(o, rankLabel, rkCls, divider) {
+        function rowOf(o, rankLabel, rkCls, divider, accColor) {
             const s = o.s;
             const nameBadge = s.left ? ` <span class="bl-left-badge-sm">${escapeHtml(txtLeftSm)}</span>` : '';
             const nameInner = `<span class="bl-stu-rankname">${rankLabel}<span>${escapeHtml(s.name || s.studentCode)}${nameBadge}</span></span>`;
             let pyCells = '', compCells = '';
             charOrder.forEach(ch => { pyCells += `<td>${mark(o.cells.py[ch])}</td>`; compCells += `<td>${mark(o.cells.comp[ch])}</td>`; });
             const accVal = (o.acc === null) ? '<span class="bl-matrix-na">—</span>'
-                : `<span style="color:${TH(o.acc)}">${o.acc}%</span>`;
+                : `<span style="color:${accColor}">${o.acc}%</span>`;
             const c1 = `bl-mrow-py${rkCls}${divider ? ' bl-rk-divider' : ''}`;
             return `<tr class="${c1}"><td class="bl-matrix-name" rowspan="2">${nameInner}</td>${dimPy}${pyCells}<td class="bl-matrix-rowend">${pctCell(o.pyC, o.pyT)}</td><td class="bl-matrix-acc" rowspan="2">${accVal}</td></tr>`
                 + `<tr class="bl-mrow-comp${rkCls}">${dimComp}${compCells}<td class="bl-matrix-rowend">${pctCell(o.compC, o.compT)}</td></tr>`;
@@ -10720,11 +10721,12 @@ window.BL = (function () {
             const top3 = o.rank <= 3;
             const rkCls = top3 ? (' bl-rk' + o.rank) : '';
             const rankLabel = top3 ? _rankMedal(o.rank) : `<span class="bl-rank-num">${o.rank}</span>`;
-            rows += rowOf(o, rankLabel, rkCls, (prevTop3 && !top3));  // 前三名→其余 的分隔线
+            const accColor = top3 ? ACC_MEDAL[o.rank] : '#22312b';   // 前三名金银铜,其余黑
+            rows += rowOf(o, rankLabel, rkCls, (prevTop3 && !top3), accColor);  // 前三名→其余 的分隔线
             prevTop3 = top3;
         });
         left.forEach((o, i) => {
-            rows += rowOf(o, '<span class="bl-rank-num">·</span>', '', (i === 0 && prevTop3));
+            rows += rowOf(o, '<span class="bl-rank-num">·</span>', '', (i === 0 && prevTop3), '#22312b');
             prevTop3 = false;
         });
 
@@ -10732,11 +10734,11 @@ window.BL = (function () {
         let footCells = '', tcAll = 0, ttAll = 0;
         charOrder.forEach(ch => {
             const c = colC.py[ch] + colC.comp[ch], t = colT.py[ch] + colT.comp[ch];
-            footCells += `<td>${t ? `<span style="color:${TH(Math.round(c/t*100))};font-weight:600;">${Math.round(c/t*100)}%</span>` : '<span class="bl-matrix-na">—</span>'}</td>`;
+            footCells += `<td>${t ? `<span style="color:#22312b;font-weight:600;">${Math.round(c/t*100)}%</span>` : '<span class="bl-matrix-na">—</span>'}</td>`;
             tcAll += c; ttAll += t;
         });
         const classAll = ttAll ? Math.round(tcAll / ttAll * 100) : null;
-        const classAcc = (classAll === null) ? '<span class="bl-matrix-na">—</span>' : `<span style="color:${TH(classAll)}">${classAll}%</span>`;
+        const classAcc = (classAll === null) ? '<span class="bl-matrix-na">—</span>' : `<span style="color:#22312b">${classAll}%</span>`;
         const footer = `<tr class="bl-matrix-footer"><td colspan="2" class="bl-matrix-name">${escapeHtml(tt('每字答对率·全班', 'Per char · Class', 'لكل حرف · الصف'))}</td>${footCells}<td class="bl-matrix-rowend"></td><td class="bl-matrix-acc">${classAcc}</td></tr>`;
 
         return `
