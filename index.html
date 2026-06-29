@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-69 (2026-06-29) — 答对率视图:测试任务名做成墨绿按钮(同学生名单标签风格);已完成计数从最右改到紧跟测试右边(rate-head改flex-start);表头11a1班级按钮放大到与测试按钮同高(7px16px/14px,都34px) -->
+<!-- 斑斓汉字(老师端) · 汉字UI-70 (2026-06-29) — 答对率明细表看板三视图的任务标题统一改成彩色按钮 任务名：完成/总(如 发三：1/13);每个任务按taskId哈希分配一个颜色(方案C六色循环 翠红金靛橙紫)跨三视图一致;看板任务行按钮在左指标在右、明细表任务名去掉下划线 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-69 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-70 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1234,12 +1234,13 @@ console.log('%c[斑斓汉字] 汉字UI-69 已加载', 'color:#374a42;font-weight
         .bl-matrix-task { margin-bottom: 14px; }   /* 汉字-63:收紧表格上下留白(原30) */
         .bl-matrix-task:last-child { margin-bottom: 0; }
         .bl-matrix-task-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--mo-dark);
-            padding-bottom: 5px;
-            border-bottom: 2px solid var(--border);
-            margin-bottom: 2px;
+            margin-bottom: 8px;     /* 汉字-70:任务名改用彩色按钮(去掉原标题下划线/字号) */
+        }
+        /* ★ 汉字-70:任务按钮(任务名：完成/总),背景色按任务内联 */
+        .bl-task-pill {
+            display: inline-flex; align-items: center;
+            color: #fff; font-size: 14px; font-weight: 600;
+            padding: 7px 16px; border-radius: 8px; white-space: nowrap;
         }
         .bl-matrix-sub {
             font-size: 13px;
@@ -8787,6 +8788,18 @@ window.BL = (function () {
         const isAr = document.body.classList.contains('lang-mode-ar');
         return '已完成/' + (isAr ? 'مكتمل' : 'Completed') + '：' + doneN + '/' + totalN;
     }
+    // ★ 汉字-70:任务按钮统一「任务名：完成/总」,每个任务一个颜色(按taskId哈希,跨视图一致)
+    const TASK_PALETTE = ['#2e6b4f', '#c0392b', '#b8841f', '#2c6e8f', '#b05a2f', '#7a4a8f'];
+    function _taskColor(taskId) {
+        const s = String(taskId || '');
+        let h = 0;
+        for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+        return TASK_PALETTE[h % TASK_PALETTE.length];
+    }
+    function _taskPill(taskId, title, done, total) {
+        return '<span class="bl-task-pill" style="background:' + _taskColor(taskId) + '">'
+            + escapeHtml(title) + '：' + done + '/' + total + '</span>';
+    }
 
     // 长文本(confirm 多行)使用换行分隔
     function ttBlock(zh, en, ar) {
@@ -10219,8 +10232,8 @@ window.BL = (function () {
             const py = t.pyT ? Math.round(t.pyC / t.pyT * 100) : null;
             const comp = t.compT ? Math.round(t.compC / t.compT * 100) : null;
             const doneText = _doneLabel(t.doneCount, active.length);
-            return '<div class="bl-dash-task-row"><span class="bl-dash-task-name">' + escapeHtml(title) + '</span>'
-                + '<span class="bl-dash-task-done">' + escapeHtml(doneText) + '</span>'
+            return '<div class="bl-dash-task-row">' + _taskPill(tid, title, t.doneCount, active.length)
+                + '<span style="flex:1"></span>'
                 + '<span class="bl-dash-task-m" style="color:' + cOf(py) + '">' + escapeHtml(txtPy) + ' ' + fmt(py) + '</span>'
                 + '<span class="bl-dash-task-m" style="color:' + cOf(comp) + '">' + escapeHtml(txtComp) + ' ' + fmt(comp) + '</span></div>';
         }).join('');
@@ -10336,8 +10349,7 @@ window.BL = (function () {
             html += `
                 <div class="bl-rate-card">
                     <div class="bl-rate-head">
-                        <span class="bl-rate-title">${escapeHtml(title)}</span>
-                        <span class="bl-rate-done">${escapeHtml(doneText)}</span>
+                        ${_taskPill(taskId, title, doneCount, activeStudents.length)}
                     </div>
                     <div class="bl-rate-overall">
                         <span class="bl-rate-ov-lead">${escapeHtml(txtOverall)}</span>
@@ -10449,7 +10461,7 @@ window.BL = (function () {
 
             html += `
                 <div class="bl-matrix-task">
-                    <div class="bl-matrix-task-title">${escapeHtml(title)} <span style="font-size:13px;font-weight:normal;color:var(--ink-gray);">· ${escapeHtml(doneText)}</span></div>
+                    <div class="bl-matrix-task-title">${_taskPill(taskId, title, dnActive, totalStu)}</div>
                     ${buildOneMatrix(tt('拼音', 'Pinyin', 'بينيين'), taskId, doneStudents, charOrder, 'py')}
                     ${buildOneMatrix(tt('部件', 'Parts', 'مكوّنات'), taskId, doneStudents, charOrder, 'comp')}
                 </div>`;
