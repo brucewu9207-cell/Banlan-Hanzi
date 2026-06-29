@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-78 (2026-06-29) — 删明细表顶部概览块(整体加逐字进度条);该生列和底部每字答对率改黑色不分色;答对率列前三名数字改对应金银铜色其余黑 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-79 (2026-06-29) — 删看板标签和视图;把最该回讲的字和最需要关注的学生两块并入明细表(按当前练习算),回讲的字老师可下拉选阈值百分比、关注学生可下拉选人数,墨水风毛笔字 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-78 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-79 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1303,6 +1303,21 @@ console.log('%c[斑斓汉字] 汉字UI-78 已加载', 'color:#374a42;font-weight
         .bl-rk2 td { background: #dde4e0 !important; }   /* 银 */
         .bl-rk3 td { background: #ecd9cc !important; }   /* 铜 */
         .bl-rk-divider td { border-top: 2.5px solid var(--border-strong, #b9c0bb) !important; }  /* 前三名与其余的分隔 */
+        /* ★ 汉字-79:明细表下方「最该回讲的字 / 最需关注的学生」两块(墨水风,老师可选阈值/人数) */
+        .bl-wk-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 14px; }
+        .bl-wk-card { background: rgba(255,255,255,0.6); border: 1px solid rgba(55,74,66,0.22); border-radius: 12px; padding: 14px 16px; }
+        .bl-wk-head { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+        .bl-wk-title { font-size: 15px; font-weight: 600; color: var(--ink-green); }
+        .bl-wk-ctrl { margin-left: auto; font-size: 13px; color: #5a655f; }
+        .bl-wk-ctrl select { border: 1px solid rgba(55,74,66,0.3); border-radius: 6px; padding: 2px 6px; color: var(--ink-green); background: #fff; font-family: inherit; cursor: pointer; }
+        .bl-wk-chars { display: flex; flex-wrap: wrap; gap: 10px; }
+        .bl-wk-chip { display: inline-flex; align-items: center; gap: 8px; border-radius: 10px; padding: 6px 13px; }
+        .bl-wk-zi { font-size: 22px; color: #22312b; font-family: var(--font-calligraphy); line-height: 1; }
+        .bl-wk-stus { display: flex; flex-direction: column; gap: 9px; }
+        .bl-wk-row { display: flex; align-items: center; font-size: 14px; }
+        .bl-wk-name { flex: 1; color: #22312b; padding-right: 10px; }
+        .bl-wk-empty { color: var(--ink-gray); font-size: 13px; }
+        @media (max-width: 700px) { .bl-wk-wrap { grid-template-columns: 1fr; } }
         .bl-matrix-table {
             border-collapse: collapse;
             width: 100%;
@@ -8651,7 +8666,6 @@ console.log('%c[斑斓汉字] 汉字UI-78 已加载', 'color:#374a42;font-weight
                     <div class="bl-stu-tabs">
                         <button class="bl-stu-tab bl-stu-tab-active" id="blStuTabList" onclick="BL.switchStudentTab('list')">学生名单<span class="lang-en">Students</span><span class="lang-ar">الطلاب</span></button>
                         <button class="bl-stu-tab" id="blStuTabMatrix" onclick="BL.switchStudentTab('matrix')">明细表<span class="lang-en">Table</span><span class="lang-ar">الجدول</span></button>
-                        <button class="bl-stu-tab" id="blStuTabDash" onclick="BL.switchStudentTab('dashboard')">看板<span class="lang-en">Dashboard</span><span class="lang-ar">لوحة</span></button>
                     </div>
                     <div class="bl-roster-actions">
                         <button class="bl-roster-import-btn" onclick="BL.openRosterImport()">⬆ 导入名单<span class="lang-en">Import</span><span class="lang-ar">استيراد</span></button>
@@ -10076,14 +10090,13 @@ window.BL = (function () {
 
     function switchStudentTab(tab) {
         // ★ 汉字-76:精简——去掉「答对率」独立页,其概览并入明细表顶部(rate 不再在切换里)
-        const panels = { list: 'blStudentList', matrix: 'blMatrix', dashboard: 'blDashboard' };
-        const tabBtns = { list: 'blStuTabList', matrix: 'blStuTabMatrix', dashboard: 'blStuTabDash' };
+        // ★ 汉字-79:删看板——其「最该回讲的字/最需关注的学生」并入明细表(按当前练习)
+        const panels = { list: 'blStudentList', matrix: 'blMatrix' };
+        const tabBtns = { list: 'blStuTabList', matrix: 'blStuTabMatrix' };
         if (!panels[tab]) tab = 'list';
         Object.entries(panels).forEach(([k, id]) => { if ($(id)) $(id).style.display = (k === tab) ? '' : 'none'; });
         Object.entries(tabBtns).forEach(([k, id]) => { if ($(id)) $(id).classList.toggle('bl-stu-tab-active', k === tab); });
-        if (tab === 'rate') renderAnswerRate();
         if (tab === 'matrix') renderMatrix();
-        if (tab === 'dashboard') renderDashboard();
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -10572,9 +10585,13 @@ window.BL = (function () {
 
             pills += _taskPillBtn('matrix', taskId, title, dnActive, totalStu);
 
+            // ★ 汉字-79:算本练习「最弱的字/最弱的学生」数据,供下方两块(老师可选阈值/人数)
+            _matrixWeakData[taskId] = _computeWeak(taskId, doneStudents, charOrder);
+
             panels += `
                 <div class="bl-matrix-task" id="bl-matrix-panel-${escapeAttr(taskId)}" style="display:none">
                     ${buildMergedMatrix(taskId, doneStudents, charOrder)}
+                    ${buildWeakBlocks(taskId)}
                 </div>`;
         });
 
@@ -10643,6 +10660,77 @@ window.BL = (function () {
             + '<circle cx="13" cy="21" r="8.5" fill="' + c + '" stroke="#fff" stroke-width="1.5"/>'
             + '<circle cx="13" cy="21" r="6" fill="none" stroke="#fff" stroke-width="0.8" opacity="0.5"/>'
             + '<text x="13" y="24.9" text-anchor="middle" fill="#fff" font-size="11.5" font-weight="700">' + rank + '</text></svg></span>';
+    }
+
+    // ★ 汉字-79:看板「最该回讲的字/最需关注的学生」并入明细表(按当前练习);老师可选阈值/人数
+    const _matrixWeakData = {};   // taskId -> { chars:[{z,p}], stus:[{n,p}] }
+    function _thPct(p) { return p >= 80 ? 'var(--ink-green)' : (p >= 60 ? 'var(--gold-accent)' : 'var(--zhusha)'); }
+    function _computeWeak(taskId, doneStudents, charOrder) {
+        // 每字全班整体%(拼音+部件合并,含已离开历史,与底部口径一致)
+        const chars = charOrder.map(ch => {
+            let c = 0, t = 0;
+            doneStudents.forEach(s => {
+                const r = s.taskResults[taskId].chars[ch]; if (!r) return;
+                if (r.py !== null && r.py !== undefined) { t++; if (r.py) c++; }
+                if (r.comp !== null && r.comp !== undefined) { t++; if (r.comp) c++; }
+            });
+            return { z: ch, p: t ? Math.round(c / t * 100) : null };
+        }).filter(o => o.p !== null);
+        // 每生答对率(只在读学生——已离开的不用关注)
+        const stus = doneStudents.filter(s => !s.left).map(s => {
+            let c = 0, t = 0; const ch = s.taskResults[taskId].chars;
+            charOrder.forEach(k => {
+                const r = ch[k]; if (!r) return;
+                if (r.py !== null && r.py !== undefined) { t++; if (r.py) c++; }
+                if (r.comp !== null && r.comp !== undefined) { t++; if (r.comp) c++; }
+            });
+            return { n: s.name || s.studentCode, p: t ? Math.round(c / t * 100) : null };
+        }).filter(o => o.p !== null);
+        return { chars, stus };
+    }
+    function _weakCharsHtml(arr, lim) {
+        const f = arr.filter(c => c.p < lim).sort((a, b) => a.p - b.p);
+        if (!f.length) return `<span class="bl-wk-empty">${escapeHtml(tt('本练习没有低于', 'None below ', 'لا حرف تحت '))}${lim}%${escapeHtml(tt('的字 🎉', ' 🎉', ' 🎉'))}</span>`;
+        return f.map(c => `<span class="bl-wk-chip" style="background:${c.p >= 60 ? '#f6ecd7' : '#f7e3e1'}"><span class="bl-wk-zi">${escapeHtml(c.z)}</span><span style="color:${_thPct(c.p)};font-weight:600;">${c.p}%</span></span>`).join('');
+    }
+    function _weakStusHtml(arr, n) {
+        const f = arr.slice().sort((a, b) => a.p - b.p).slice(0, n);
+        if (!f.length) return `<span class="bl-wk-empty">${escapeHtml(tt('暂无数据', 'No data', 'لا بيانات'))}</span>`;
+        return f.map(s => `<div class="bl-wk-row"><span class="bl-wk-name">${escapeHtml(s.n)}</span><span style="color:${_thPct(s.p)};font-weight:600;">${s.p}%</span></div>`).join('');
+    }
+    function buildWeakBlocks(taskId) {
+        const d = _matrixWeakData[taskId] || { chars: [], stus: [] };
+        const tid = escapeAttr(taskId);
+        const opt = (v, sel) => `<option value="${v}"${v === sel ? ' selected' : ''}>${v === 999 ? escapeHtml(tt('全部', 'All', 'الكل')) : v + (v <= 100 && v >= 50 ? '%' : '')}</option>`;
+        return `
+            <div class="bl-wk-wrap">
+                <div class="bl-wk-card">
+                    <div class="bl-wk-head">
+                        <span class="bl-wk-title">📌 ${escapeHtml(tt('最该重点回讲的字', 'Hardest characters', 'أصعب الحروف'))}</span>
+                        <span class="bl-wk-ctrl">${escapeHtml(tt('低于', 'Below', 'تحت'))}
+                            <select onchange="BL.refilterWeakChars('${tid}',this.value)">${[50,60,70,80,90].map(v => opt(v, 60)).join('')}</select>
+                        </span>
+                    </div>
+                    <div class="bl-wk-chars" id="wk-chars-${tid}">${_weakCharsHtml(d.chars, 60)}</div>
+                </div>
+                <div class="bl-wk-card">
+                    <div class="bl-wk-head">
+                        <span class="bl-wk-title">👀 ${escapeHtml(tt('最需要关注的学生', 'Students to watch', 'طلاب بحاجة لمتابعة'))}</span>
+                        <span class="bl-wk-ctrl">${escapeHtml(tt('最弱', 'Lowest', 'الأضعف'))}
+                            <select onchange="BL.refilterWeakStus('${tid}',this.value)">${[3,5,8,999].map(v => opt(v, 5)).join('')}</select> ${escapeHtml(tt('人', '', 'طالب'))}
+                        </span>
+                    </div>
+                    <div class="bl-wk-stus" id="wk-stus-${tid}">${_weakStusHtml(d.stus, 5)}</div>
+                </div>
+            </div>`;
+    }
+    function refilterWeakChars(taskId, lim) {
+        const d = _matrixWeakData[taskId]; const el = document.getElementById('wk-chars-' + taskId);
+        if (d && el) el.innerHTML = _weakCharsHtml(d.chars, +lim);
+    }
+    function refilterWeakStus(taskId, n) {
+        const d = _matrixWeakData[taskId]; const el = document.getElementById('wk-stus-' + taskId);
+        if (d && el) el.innerHTML = _weakStusHtml(d.stus, +n);
     }
 
     // ★ 汉字-77:合并表(领奖台)——学生按整体答对率降序+并列同名次,前三名整行金银铜+奖牌;
@@ -11368,6 +11456,8 @@ window.BL = (function () {
         switchStudentTab, exportClassReport,
         // —— 汉字-71: 任务按钮点开/收起 ——
         toggleTaskPanel,
+        // —— 汉字-79: 明细表「最弱字/最弱生」下拉重筛 ——
+        refilterWeakChars, refilterWeakStus,
         // —— 汉字-72: 在读/待加入名单折叠 ——
         toggleRosterSection,
         // —— Phase 4-2 阶段③: 学生视角 ——
