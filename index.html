@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-73 (2026-06-29) — 在读标题改灰绿待加入改浅陶红(各与对应学生卡片同色);选中任务用方案B(选中保原色其余灰掉);整体框间距按图3保持;答对率大方框边框加深加粗更明显 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-74 (2026-06-29) — 修复答对率明细表任务按钮到展开卡片间距越往后越大(隐藏卡片间换行空白撑空行);容器改纵向flex忽略空白,间距恒定贴紧 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-73 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-74 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1255,6 +1255,9 @@ console.log('%c[斑斓汉字] 汉字UI-73 已加载', 'color:#374a42;font-weight
             padding: 7px 16px; border-radius: 8px; white-space: nowrap;
             border: none; cursor: pointer; font-family: inherit; line-height: 1.2;
         }
+        /* ★ 汉字-74:修复"任务按钮到展开卡片间距越往后越大"——容器改纵向flex,
+           让答对率/明细表里隐藏卡片(display:none)之间的换行空白文本不再撑出空行(每个隐藏卡约多顶22px) */
+        #blAnswerRate, #blMatrix { display: flex; flex-direction: column; }
         /* ★ 汉字-71:答对率/明细表 任务按钮排一行居中,点按钮才展开该任务内容 */
         .bl-task-pillrow {
             display: flex; flex-wrap: wrap; justify-content: center;
