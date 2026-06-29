@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-79 (2026-06-29) — 删看板标签和视图;把最该回讲的字和最需要关注的学生两块并入明细表(按当前练习算),回讲的字老师可下拉选阈值百分比、关注学生可下拉选人数,墨水风毛笔字 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-80 (2026-06-30) — 明细表两块控件:标题-低于/最弱-下拉 改同行紧凑左对齐+中上译下;最需要关注的学生人数下拉从3/5/8改成1到10加全部 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-79 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-80 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1306,9 +1306,9 @@ console.log('%c[斑斓汉字] 汉字UI-79 已加载', 'color:#374a42;font-weight
         /* ★ 汉字-79:明细表下方「最该回讲的字 / 最需关注的学生」两块(墨水风,老师可选阈值/人数) */
         .bl-wk-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 14px; }
         .bl-wk-card { background: rgba(255,255,255,0.6); border: 1px solid rgba(55,74,66,0.22); border-radius: 12px; padding: 14px 16px; }
-        .bl-wk-head { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+        .bl-wk-head { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 14px; }   /* 汉字-80:标题-低于-下拉同行紧凑左对齐 */
         .bl-wk-title { font-size: 15px; font-weight: 600; color: var(--ink-green); }
-        .bl-wk-ctrl { margin-left: auto; font-size: 13px; color: #5a655f; }
+        .bl-wk-ctrl { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: #5a655f; }
         .bl-wk-ctrl select { border: 1px solid rgba(55,74,66,0.3); border-radius: 6px; padding: 2px 6px; color: var(--ink-green); background: #fff; font-family: inherit; cursor: pointer; }
         .bl-wk-chars { display: flex; flex-wrap: wrap; gap: 10px; }
         .bl-wk-chip { display: inline-flex; align-items: center; gap: 8px; border-radius: 10px; padding: 6px 13px; }
@@ -10717,7 +10717,7 @@ window.BL = (function () {
                     <div class="bl-wk-head">
                         <span class="bl-wk-title">👀 ${escapeHtml(tt('最需要关注的学生', 'Students to watch', 'طلاب بحاجة لمتابعة'))}</span>
                         <span class="bl-wk-ctrl">${escapeHtml(tt('最弱', 'Lowest', 'الأضعف'))}
-                            <select onchange="BL.refilterWeakStus('${tid}',this.value)">${[3,5,8,999].map(v => opt(v, 5)).join('')}</select> ${escapeHtml(tt('人', '', 'طالب'))}
+                            <select onchange="BL.refilterWeakStus('${tid}',this.value)">${[1,2,3,4,5,6,7,8,9,10,999].map(v => opt(v, 5)).join('')}</select> ${escapeHtml(tt('人', '', 'طالب'))}
                         </span>
                     </div>
                     <div class="bl-wk-stus" id="wk-stus-${tid}">${_weakStusHtml(d.stus, 5)}</div>
