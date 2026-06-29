@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-75 (2026-06-29) — 明细表拼音部件小标题改成墨绿药丸按钮(学生名单同款中上译下);任务按钮到方框间距6缩到2px;看板4模块改成一行墨绿按钮点开其一才展开(手风琴) -->
+<!-- 斑斓汉字(老师端) · 汉字UI-76 (2026-06-29) — 看板4按钮改多彩(同任务按钮配色);精简去掉答对率独立标签,其概览(整体百分比+逐字进度条)并入明细表每个任务顶部,一个表=概览加逐人明细 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-75 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-76 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -8636,7 +8636,6 @@ console.log('%c[斑斓汉字] 汉字UI-75 已加载', 'color:#374a42;font-weight
                 <div class="bl-stu-headrow">
                     <div class="bl-stu-tabs">
                         <button class="bl-stu-tab bl-stu-tab-active" id="blStuTabList" onclick="BL.switchStudentTab('list')">学生名单<span class="lang-en">Students</span><span class="lang-ar">الطلاب</span></button>
-                        <button class="bl-stu-tab" id="blStuTabRate" onclick="BL.switchStudentTab('rate')">答对率<span class="lang-en">Accuracy</span><span class="lang-ar">معدل الدقة</span></button>
                         <button class="bl-stu-tab" id="blStuTabMatrix" onclick="BL.switchStudentTab('matrix')">明细表<span class="lang-en">Table</span><span class="lang-ar">الجدول</span></button>
                         <button class="bl-stu-tab" id="blStuTabDash" onclick="BL.switchStudentTab('dashboard')">看板<span class="lang-en">Dashboard</span><span class="lang-ar">لوحة</span></button>
                     </div>
@@ -8844,9 +8843,9 @@ window.BL = (function () {
             + escapeHtml(title) + '：' + done + '/' + total + '</button>';
     }
     // ★ 汉字-75:看板模块按钮(墨绿药丸、中上译下),点开/收起对应模块;复用 toggleTaskPanel(prefix='dash')
-    function _dashPillBtn(key, title) {
+    function _dashPillBtn(key, title, color) {
         return '<button type="button" class="bl-task-pill bl-task-pill-btn bl-dash-pill"'
-            + ' id="bl-dash-pill-' + key + '" style="background:var(--ink-green)"'
+            + ' id="bl-dash-pill-' + key + '" style="background:' + (color || 'var(--ink-green)') + '"'
             + ' onclick="BL.toggleTaskPanel(\'dash\',\'' + key + '\')">'
             + escapeHtml(title) + '</button>';
     }
@@ -10062,8 +10061,9 @@ window.BL = (function () {
     }
 
     function switchStudentTab(tab) {
-        const panels = { list: 'blStudentList', rate: 'blAnswerRate', matrix: 'blMatrix', dashboard: 'blDashboard' };
-        const tabBtns = { list: 'blStuTabList', rate: 'blStuTabRate', matrix: 'blStuTabMatrix', dashboard: 'blStuTabDash' };
+        // ★ 汉字-76:精简——去掉「答对率」独立页,其概览并入明细表顶部(rate 不再在切换里)
+        const panels = { list: 'blStudentList', matrix: 'blMatrix', dashboard: 'blDashboard' };
+        const tabBtns = { list: 'blStuTabList', matrix: 'blStuTabMatrix', dashboard: 'blStuTabDash' };
         if (!panels[tab]) tab = 'list';
         Object.entries(panels).forEach(([k, id]) => { if ($(id)) $(id).style.display = (k === tab) ? '' : 'none'; });
         Object.entries(tabBtns).forEach(([k, id]) => { if ($(id)) $(id).classList.toggle('bl-stu-tab-active', k === tab); });
@@ -10353,8 +10353,8 @@ window.BL = (function () {
             ['stu', tt('最需要关注的学生', 'Students to Watch', 'طلاب بحاجة لمتابعة'), stuInner]
         ];
         let dashPills = '', dashPanels = '';
-        mods.forEach(m => {
-            dashPills += _dashPillBtn(m[0], m[1]);
+        mods.forEach((m, i) => {
+            dashPills += _dashPillBtn(m[0], m[1], TASK_PALETTE[i % TASK_PALETTE.length]);   // 汉字-76:看板按钮改多彩(同任务按钮配色)
             dashPanels += '<div class="bl-dash-card" id="bl-dash-panel-' + m[0] + '" style="display:none">' + m[2] + '</div>';
         });
         box.innerHTML = '<div class="bl-task-pillrow">' + dashPills + '</div>' + dashPanels;
@@ -10560,12 +10560,65 @@ window.BL = (function () {
 
             panels += `
                 <div class="bl-matrix-task" id="bl-matrix-panel-${escapeAttr(taskId)}" style="display:none">
+                    ${_matrixOverview(taskId, doneStudents, charOrder)}
                     ${buildOneMatrix(tt('拼音', 'Pinyin', 'بينيين'), taskId, doneStudents, charOrder, 'py')}
                     ${buildOneMatrix(tt('部件', 'Parts', 'مكوّنات'), taskId, doneStudents, charOrder, 'comp')}
                 </div>`;
         });
 
         box.innerHTML = `<div class="bl-task-pillrow">${pills}</div>${panels}`;
+    }
+
+    // ★ 汉字-76:明细表顶部「每字答对率」概览(原独立答对率页并入此处;复用 .bl-rate-* 样式)
+    function _matrixOverview(taskId, students, charOrder) {
+        const pctColor = p => p >= 80 ? 'var(--ink-green)' : (p >= 60 ? 'var(--gold-accent)' : 'var(--zhusha)');
+        const txtPinyin = tt('拼音', 'Pinyin', 'بينيين');
+        const txtComp = tt('部件', 'Parts', 'مكوّنات');
+        const txtOverall = tt('整体', 'Overall', 'إجمالي');
+        const txtNA = '—';
+        const stat = {};
+        charOrder.forEach(ch => { stat[ch] = { pyC:0, pyT:0, compC:0, compT:0 }; });
+        students.forEach(s => {
+            const tr = s.taskResults && s.taskResults[taskId];
+            if (!tr || !tr.chars) return;
+            Object.entries(tr.chars).forEach(([ch, r]) => {
+                if (!stat[ch]) stat[ch] = { pyC:0, pyT:0, compC:0, compT:0 };
+                if (r.py !== null && r.py !== undefined) { stat[ch].pyT++; if (r.py) stat[ch].pyC++; }
+                if (r.comp !== null && r.comp !== undefined) { stat[ch].compT++; if (r.comp) stat[ch].compC++; }
+            });
+        });
+        let pyC=0, pyT=0, compC=0, compT=0;
+        charOrder.forEach(ch => { const c = stat[ch]; pyC+=c.pyC; pyT+=c.pyT; compC+=c.compC; compT+=c.compT; });
+        const overallPy = pyT ? Math.round(pyC/pyT*100) : null;
+        const overallComp = compT ? Math.round(compC/compT*100) : null;
+        const metricBlock = (label, c, t) => {
+            if (t === 0) return `<div class="bl-rate-metric"><span class="bl-rate-metric-label">${escapeHtml(label)}</span><span class="bl-rate-na">${txtNA}</span></div>`;
+            const p = Math.round(c/t*100); const col = pctColor(p);
+            return `<div class="bl-rate-metric"><span class="bl-rate-metric-label">${escapeHtml(label)}</span><span class="bl-rate-track"><span class="bl-rate-fill" style="width:${p}%;background:${col};"></span></span><span class="bl-rate-val" style="color:${col};">${p}%</span></div>`;
+        };
+        const overallCell = (label, p) => {
+            const valHtml = (p === null) ? `<span class="bl-rate-ov-val bl-rate-na">${txtNA}</span>` : `<span class="bl-rate-ov-val" style="color:${pctColor(p)};">${p}%</span>`;
+            return `<div class="bl-rate-ov-cell"><span class="bl-rate-ov-label">${escapeHtml(label)}</span><span class="bl-rate-ov-spacer"></span>${valHtml}</div>`;
+        };
+        const charRows = charOrder.map(ch => `
+            <div class="bl-rate-char-row">
+                <span class="bl-rate-char" data-zi="${escapeHtml(ch)}">${escapeHtml(ch)}</span>
+                <div class="bl-rate-metrics">
+                    ${metricBlock(txtPinyin, stat[ch].pyC, stat[ch].pyT)}
+                    ${metricBlock(txtComp, stat[ch].compC, stat[ch].compT)}
+                </div>
+            </div>`).join('');
+        return `
+            <div class="bl-rate-card" style="margin-bottom:12px;">
+                <div class="bl-rate-overall">
+                    <span class="bl-rate-ov-lead">${escapeHtml(txtOverall)}</span>
+                    <div class="bl-rate-ov-metrics">
+                        ${overallCell(txtPinyin, overallPy)}
+                        ${overallCell(txtComp, overallComp)}
+                    </div>
+                </div>
+                <div class="bl-rate-chars">${charRows}</div>
+            </div>`;
     }
 
     // 生成单张矩阵(dim='py' 或 'comp')
