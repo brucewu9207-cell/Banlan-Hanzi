@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-71 (2026-06-29) — 答对率明细表任务按钮改排一行居中,点按钮展开内容再点折起,同一时间只展开一个(手风琴),看板不变 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-72 (2026-06-29) — 在读待加入名单做成手风琴(点标题展开再点收起,默认在读开待加入收);布置作业弹窗加高到屏94%上下贴近页面,宽度不变;任务行到下方展开区留白14缩到6 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-71 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-72 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -71,6 +71,10 @@ console.log('%c[斑斓汉字] 汉字UI-71 已加载', 'color:#374a42;font-weight
     .bl-roster-import-btn:hover { background: #2c3a34; }
     /* ★ 汉字-58:在读/待加入 计数行改成图5那种绿色按钮(药丸);父级是flex纵向,加align-self防拉伸满宽 */
     .bl-roster-section-title { display: inline-block; align-self: flex-start; background: var(--ink-green); color: #fff; font-size: 14px; font-weight: 600; padding: 7px 16px; border-radius: 8px; margin: 14px 0 10px; white-space: pre-line; text-align: left; }  /* 汉字-65:中文在上译文在下、左对齐 */
+    /* ★ 汉字-72:在读/待加入做成可折叠手风琴——标题可点、前置小三角 */
+    .bl-roster-toggle { cursor: pointer; user-select: none; }
+    .bl-roster-toggle:hover { background: #2c3a34; }
+    .bl-roster-caret { display: inline-block; margin-right: 6px; font-size: 11px; vertical-align: middle; }
     .bl-stu-seq { color: var(--ink-gray); font-weight: normal; margin-right: 2px; }
     .bl-pending-badge { display: inline-block; font-size: 11px; padding: 1px 7px; border-radius: 10px; background: #f0ece2; color: #8a7a4e; margin-left: 4px; vertical-align: middle; }
     /* ★ 汉字-59:待加入卡片改浅陶红(方案C)，与在读的墨绿灰区分；不再用半透明 */
@@ -646,6 +650,10 @@ console.log('%c[斑斓汉字] 汉字UI-71 已加载', 'color:#374a42;font-weight
         .bl-modal-w520 { min-width: 520px; width: 520px; max-width: 520px; }
         /* ★ v2D.6: 任务编辑器锁死 560px */
         .bl-modal-w560 { min-width: 560px; width: 560px; max-width: 560px; }
+        /* ★ 汉字-72:布置作业主弹窗加高,上下两边都贴近页面(桌面端;宽度不动) */
+        @media (min-width: 601px) {
+            #blOverlay .bl-modal { height: 94vh; max-height: 94vh; }
+        }
         .bl-modal::before {
             content: ''; position: absolute; top: 0; left: 24px; right: 24px;
             height: 3px; background: var(--ink-green);
@@ -1246,7 +1254,7 @@ console.log('%c[斑斓汉字] 汉字UI-71 已加载', 'color:#374a42;font-weight
         /* ★ 汉字-71:答对率/明细表 任务按钮排一行居中,点按钮才展开该任务内容 */
         .bl-task-pillrow {
             display: flex; flex-wrap: wrap; justify-content: center;
-            gap: 10px; margin-bottom: 14px;
+            gap: 10px; margin-bottom: 6px;   /* 汉字-72:缩小任务行与下方展开区的留白(原14) */
         }
         .bl-task-pill-btn { transition: box-shadow .15s, transform .15s, opacity .15s; opacity: .82; }
         .bl-task-pill-btn:hover { opacity: 1; }
@@ -9601,10 +9609,14 @@ window.BL = (function () {
         };
 
         // ★ 汉字-68:11a1班级按钮已移到表头,这里 section 只渲染药丸标题
-        const section = (title, arr, isPending) => {
+        // ★ 汉字-72:药丸标题做成手风琴——点标题展开/收起本组名单(在读默认展开、待加入默认收起)
+        const section = (title, arr, isPending, key, openDefault) => {
             if (arr.length === 0) return '';
             const cards = sortByName(arr).map((s, i) => card(s, i + 1, isPending)).join('');
-            return `<div class="bl-roster-section-title">${escapeHtml(title)} · ${arr.length}</div>${cards}`;
+            const caret = openDefault ? '▾' : '▸';
+            const hideStyle = openDefault ? '' : ' style="display:none;"';
+            return `<div class="bl-roster-section-title bl-roster-toggle${openDefault ? ' is-open' : ''}" id="bl-roster-title-${key}" onclick="BL.toggleRosterSection('${key}')"><span class="bl-roster-caret">${caret}</span>${escapeHtml(title)} · ${arr.length}</div>`
+                 + `<div class="bl-roster-cards" id="bl-roster-cards-${key}"${hideStyle}>${cards}</div>`;
         };
 
         const batchBar = `
@@ -9617,9 +9629,23 @@ window.BL = (function () {
             </div>`;
 
         list.innerHTML = batchBar +
-            section(tt('在读', 'Active', 'نشط'), active, false) +
-            section(tt('待加入', 'Pending', 'بانتظار'), pending, true);
+            section(tt('在读', 'Active', 'نشط'), active, false, 'active', true) +
+            section(tt('待加入', 'Pending', 'بانتظار'), pending, true, 'pending', false);
         updateBatchBar();
+    }
+
+    // ★ 汉字-72:点「在读/待加入」药丸 → 展开/收起本组名单(两组各自独立)
+    function toggleRosterSection(key) {
+        const cards = document.getElementById('bl-roster-cards-' + key);
+        const title = document.getElementById('bl-roster-title-' + key);
+        if (!cards) return;
+        const willOpen = (cards.style.display === 'none');
+        cards.style.display = willOpen ? '' : 'none';
+        if (title) {
+            title.classList.toggle('is-open', willOpen);
+            const caret = title.querySelector('.bl-roster-caret');
+            if (caret) caret.textContent = willOpen ? '▾' : '▸';
+        }
     }
 
     // ★ UI-34: 批量勾选
@@ -11122,6 +11148,8 @@ window.BL = (function () {
         switchStudentTab, exportClassReport,
         // —— 汉字-71: 任务按钮点开/收起 ——
         toggleTaskPanel,
+        // —— 汉字-72: 在读/待加入名单折叠 ——
+        toggleRosterSection,
         // —— Phase 4-2 阶段③: 学生视角 ——
         toggleStudentDetail,
         openTaskEditor, closeTaskEditor, selectTaskType, submitTask,
