@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-74 (2026-06-29) — 修复答对率明细表任务按钮到展开卡片间距越往后越大(隐藏卡片间换行空白撑空行);容器改纵向flex忽略空白,间距恒定贴紧 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-75 (2026-06-29) — 明细表拼音部件小标题改成墨绿药丸按钮(学生名单同款中上译下);任务按钮到方框间距6缩到2px;看板4模块改成一行墨绿按钮点开其一才展开(手风琴) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-74 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-75 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1257,21 +1257,31 @@ console.log('%c[斑斓汉字] 汉字UI-74 已加载', 'color:#374a42;font-weight
         }
         /* ★ 汉字-74:修复"任务按钮到展开卡片间距越往后越大"——容器改纵向flex,
            让答对率/明细表里隐藏卡片(display:none)之间的换行空白文本不再撑出空行(每个隐藏卡约多顶22px) */
-        #blAnswerRate, #blMatrix { display: flex; flex-direction: column; }
+        #blAnswerRate, #blMatrix, #blDashboard { display: flex; flex-direction: column; }
         /* ★ 汉字-71:答对率/明细表 任务按钮排一行居中,点按钮才展开该任务内容 */
         .bl-task-pillrow {
             display: flex; flex-wrap: wrap; justify-content: center;
-            gap: 10px; margin-bottom: 6px;   /* 汉字-72:缩小任务行与下方展开区的留白(原14) */
+            gap: 10px; margin-bottom: 2px;   /* 汉字-75:再缩小任务行与下方展开区的留白(14→6→2) */
         }
+        /* ★ 汉字-75:看板4模块按钮(墨绿药丸、中上译下),跟明细表任务按钮同形式 */
+        .bl-dash-pill { white-space: pre-line; text-align: center; line-height: 1.25; }
         /* ★ 汉字-73:方案B——选中任务保持原色,同行其余按钮灰掉 */
         .bl-task-pill-btn { transition: filter .15s, opacity .15s; }
         .bl-task-pill-btn:hover { opacity: .92; }
         .bl-task-pill-btn.is-dimmed { filter: grayscale(1) brightness(1.08) opacity(.6); }
+        /* ★ 汉字-75:拼音/部件小标题做成学生名单按钮(墨绿药丸、白字、中上译下) */
         .bl-matrix-sub {
-            font-size: 13px;
+            display: inline-block;
+            background: var(--ink-green);
+            color: #fff;
+            font-size: 14px;
             font-weight: 600;
-            color: var(--ink-green);
-            margin: 6px 0 4px;          /* 汉字-63:收紧(原16/8) */
+            padding: 7px 16px;
+            border-radius: 8px;
+            white-space: pre-line;      /* 中文在上、译文在下 */
+            text-align: left;
+            line-height: 1.25;
+            margin: 0 0 8px;
         }
         .bl-matrix-scroll {
             overflow-x: auto;
@@ -8833,6 +8843,13 @@ window.BL = (function () {
             + ' onclick="BL.toggleTaskPanel(\'' + prefix + '\',\'' + tid + '\')">'
             + escapeHtml(title) + '：' + done + '/' + total + '</button>';
     }
+    // ★ 汉字-75:看板模块按钮(墨绿药丸、中上译下),点开/收起对应模块;复用 toggleTaskPanel(prefix='dash')
+    function _dashPillBtn(key, title) {
+        return '<button type="button" class="bl-task-pill bl-task-pill-btn bl-dash-pill"'
+            + ' id="bl-dash-pill-' + key + '" style="background:var(--ink-green)"'
+            + ' onclick="BL.toggleTaskPanel(\'dash\',\'' + key + '\')">'
+            + escapeHtml(title) + '</button>';
+    }
     // ★ 汉字-71:点任务按钮 → 展开/收起对应内容面板(答对率/明细表共用);每次只展开一个(手风琴)
     function toggleTaskPanel(prefix, taskId) {
         const panel = document.getElementById('bl-' + prefix + '-panel-' + taskId);
@@ -10286,12 +10303,11 @@ window.BL = (function () {
         // 1) 全班总览
         const ovCell = (label, val, color) => '<div class="bl-dash-ov-cell"><div class="bl-dash-ov-label">'
             + escapeHtml(label) + '</div><div class="bl-dash-ov-val" style="color:' + color + '">' + val + '</div></div>';
-        const overview = '<div class="bl-dash-card"><div class="bl-dash-card-title">'
-            + escapeHtml(tt('全班总览', 'Class Overview', 'نظرة عامة على الصف')) + '</div><div class="bl-dash-ov">'
+        const ovInner = '<div class="bl-dash-ov">'
             + ovCell(txtPy, fmt(overallPy), cOf(overallPy))
             + ovCell(txtComp, fmt(overallComp), cOf(overallComp))
             + ovCell(tt('参与', 'Participation', 'المشاركة'), done.length + '/' + active.length, 'var(--ink-green)')
-            + '</div></div>';
+            + '</div>';
 
         // 2) 按任务
         const taskRows = taskOrder.map(tid => {
@@ -10306,8 +10322,8 @@ window.BL = (function () {
                 + '<span class="bl-dash-task-m" style="color:' + cOf(py) + '">' + escapeHtml(txtPy) + ' ' + fmt(py) + '</span>'
                 + '<span class="bl-dash-task-m" style="color:' + cOf(comp) + '">' + escapeHtml(txtComp) + ' ' + fmt(comp) + '</span></div>';
         }).join('');
-        const byTask = '<div class="bl-dash-card"><div class="bl-dash-card-title">'
-            + escapeHtml(tt('按任务', 'By Task', 'حسب المهمة')) + '</div>' + taskRows + '</div>';
+        const taskInner = taskRows || ('<div class="bl-dash-stu-chars" style="padding:4px 0">'
+            + escapeHtml(tt('暂无任务数据', 'No task data yet', 'لا توجد بيانات')) + '</div>');
 
         // 3) 最该重点回讲的字 · Top 8(拼音+部件合并答对率最低)
         const weak = Object.keys(charStat).filter(ch => charStat[ch].t > 0)
@@ -10315,8 +10331,7 @@ window.BL = (function () {
             .sort((a, b) => a.p - b.p).slice(0, 8);
         const weakHtml = weak.map(o => '<span class="bl-dash-weak-chip"><span class="bl-dash-weak-zi">'
             + escapeHtml(o.ch) + '</span><span class="bl-dash-weak-p" style="color:' + pctColor(o.p) + '">' + o.p + '%</span></span>').join('');
-        const weakCard = '<div class="bl-dash-card"><div class="bl-dash-card-title">'
-            + escapeHtml(tt('最该重点回讲的字', 'Hardest Characters', 'أصعب الحروف')) + '</div><div class="bl-dash-weak">' + weakHtml + '</div></div>';
+        const weakInner = '<div class="bl-dash-weak">' + weakHtml + '</div>';
 
         // 4) 最需要关注的学生 · Top 5(整体答对率最低,并列时完成字数少的在前)
         const rank = done.map(s => {
@@ -10327,10 +10342,22 @@ window.BL = (function () {
         const stuHtml = rank.map(o => '<div class="bl-dash-stu-row"><span class="bl-dash-stu-name">' + escapeHtml(o.name) + '</span>'
             + '<span class="bl-dash-stu-chars">' + escapeHtml(tt('完成', 'done', 'أنجز')) + ' ' + o.chars + '</span>'
             + '<span class="bl-dash-stu-p" style="color:' + pctColor(o.p) + '">' + o.p + '%</span></div>').join('');
-        const stuCard = '<div class="bl-dash-card"><div class="bl-dash-card-title">'
-            + escapeHtml(tt('最需要关注的学生', 'Students to Watch', 'طلاب بحاجة لمتابعة')) + '</div>' + stuHtml + '</div>';
+        const stuInner = stuHtml || ('<div class="bl-dash-stu-chars" style="padding:4px 0">'
+            + escapeHtml(tt('暂无学生数据', 'No student data yet', 'لا توجد بيانات')) + '</div>');
 
-        box.innerHTML = overview + byTask + weakCard + stuCard;
+        // ★ 汉字-75:看板4模块改成"按钮一行 + 点开其中一个才展开"(手风琴,跟明细表任务按钮同形式)
+        const mods = [
+            ['ov', tt('全班总览', 'Class Overview', 'نظرة عامة على الصف'), ovInner],
+            ['task', tt('按任务', 'By Task', 'حسب المهمة'), taskInner],
+            ['weak', tt('最该重点回讲的字', 'Hardest Characters', 'أصعب الحروف'), weakInner],
+            ['stu', tt('最需要关注的学生', 'Students to Watch', 'طلاب بحاجة لمتابعة'), stuInner]
+        ];
+        let dashPills = '', dashPanels = '';
+        mods.forEach(m => {
+            dashPills += _dashPillBtn(m[0], m[1]);
+            dashPanels += '<div class="bl-dash-card" id="bl-dash-panel-' + m[0] + '" style="display:none">' + m[2] + '</div>';
+        });
+        box.innerHTML = '<div class="bl-task-pillrow">' + dashPills + '</div>' + dashPanels;
     }
 
     function renderAnswerRate() {
