@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-80 (2026-06-30) — 明细表两块控件:标题-低于/最弱-下拉 改同行紧凑左对齐+中上译下;最需要关注的学生人数下拉从3/5/8改成1到10加全部 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-81 (2026-06-30) — 明细表两块改手风琴:标题做成墨绿药丸按钮(同学生名单按钮)可点折叠展开,头部左标题按钮右下拉,回讲字默认展开关注生默认折叠,单列堆叠 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-80 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-81 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1304,10 +1304,15 @@ console.log('%c[斑斓汉字] 汉字UI-80 已加载', 'color:#374a42;font-weight
         .bl-rk3 td { background: #ecd9cc !important; }   /* 铜 */
         .bl-rk-divider td { border-top: 2.5px solid var(--border-strong, #b9c0bb) !important; }  /* 前三名与其余的分隔 */
         /* ★ 汉字-79:明细表下方「最该回讲的字 / 最需关注的学生」两块(墨水风,老师可选阈值/人数) */
-        .bl-wk-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 14px; }
-        .bl-wk-card { background: rgba(255,255,255,0.6); border: 1px solid rgba(55,74,66,0.22); border-radius: 12px; padding: 14px 16px; }
-        .bl-wk-head { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 14px; }   /* 汉字-80:标题-低于-下拉同行紧凑左对齐 */
-        .bl-wk-title { font-size: 15px; font-weight: 600; color: var(--ink-green); }
+        /* ★ 汉字-81:两块改手风琴(单列堆叠),标题=墨绿药丸按钮可折叠,头部左标题右下拉 */
+        .bl-wk-wrap { display: flex; flex-direction: column; gap: 12px; margin-top: 14px; }
+        .bl-wk-card { background: rgba(255,255,255,0.6); border: 1px solid rgba(55,74,66,0.22); border-radius: 12px; padding: 12px 14px; }
+        .bl-wk-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+        .bl-wk-title { display: inline-flex; flex-direction: row; align-items: center; gap: 8px; background: var(--ink-green); color: #fff; border: none; border-radius: 8px; padding: 8px 16px; font-size: 15px; font-weight: 600; line-height: 1.2; cursor: pointer; text-align: left; font-family: inherit; }
+        .bl-wk-title:hover { background: #2c3a34; }
+        .bl-wk-car { font-size: 11px; }
+        .bl-wk-body { margin-top: 14px; }
+        .bl-wk-card.bl-wk-folded .bl-wk-body { display: none; }
         .bl-wk-ctrl { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: #5a655f; }
         .bl-wk-ctrl select { border: 1px solid rgba(55,74,66,0.3); border-radius: 6px; padding: 2px 6px; color: var(--ink-green); background: #fff; font-family: inherit; cursor: pointer; }
         .bl-wk-chars { display: flex; flex-wrap: wrap; gap: 10px; }
@@ -10698,31 +10703,37 @@ window.BL = (function () {
         if (!f.length) return `<span class="bl-wk-empty">${escapeHtml(tt('暂无数据', 'No data', 'لا بيانات'))}</span>`;
         return f.map(s => `<div class="bl-wk-row"><span class="bl-wk-name">${escapeHtml(s.n)}</span><span style="color:${_thPct(s.p)};font-weight:600;">${s.p}%</span></div>`).join('');
     }
+    // ★ 汉字-81:两块做成手风琴——标题=墨绿药丸按钮(可点折叠);回讲字默认展开、关注生默认折叠
     function buildWeakBlocks(taskId) {
         const d = _matrixWeakData[taskId] || { chars: [], stus: [] };
         const tid = escapeAttr(taskId);
         const opt = (v, sel) => `<option value="${v}"${v === sel ? ' selected' : ''}>${v === 999 ? escapeHtml(tt('全部', 'All', 'الكل')) : v + (v <= 100 && v >= 50 ? '%' : '')}</option>`;
         return `
             <div class="bl-wk-wrap">
-                <div class="bl-wk-card">
+                <div class="bl-wk-card" id="wk-card-c-${tid}">
                     <div class="bl-wk-head">
-                        <span class="bl-wk-title">📌 ${escapeHtml(tt('最该重点回讲的字', 'Hardest characters', 'أصعب الحروف'))}</span>
+                        <button class="bl-wk-title" onclick="BL.toggleWeakBlock('wk-card-c-${tid}')"><span class="bl-wk-car">▾</span>📌 ${escapeHtml(tt('最该重点回讲的字', 'Hardest characters', 'أصعب الحروف'))}</button>
                         <span class="bl-wk-ctrl">${escapeHtml(tt('低于', 'Below', 'تحت'))}
                             <select onchange="BL.refilterWeakChars('${tid}',this.value)">${[50,60,70,80,90].map(v => opt(v, 60)).join('')}</select>
                         </span>
                     </div>
-                    <div class="bl-wk-chars" id="wk-chars-${tid}">${_weakCharsHtml(d.chars, 60)}</div>
+                    <div class="bl-wk-body"><div class="bl-wk-chars" id="wk-chars-${tid}">${_weakCharsHtml(d.chars, 60)}</div></div>
                 </div>
-                <div class="bl-wk-card">
+                <div class="bl-wk-card bl-wk-folded" id="wk-card-s-${tid}">
                     <div class="bl-wk-head">
-                        <span class="bl-wk-title">👀 ${escapeHtml(tt('最需要关注的学生', 'Students to watch', 'طلاب بحاجة لمتابعة'))}</span>
+                        <button class="bl-wk-title" onclick="BL.toggleWeakBlock('wk-card-s-${tid}')"><span class="bl-wk-car">▸</span>👀 ${escapeHtml(tt('最需要关注的学生', 'Students to watch', 'طلاب بحاجة لمتابعة'))}</button>
                         <span class="bl-wk-ctrl">${escapeHtml(tt('最弱', 'Lowest', 'الأضعف'))}
                             <select onchange="BL.refilterWeakStus('${tid}',this.value)">${[1,2,3,4,5,6,7,8,9,10,999].map(v => opt(v, 5)).join('')}</select> ${escapeHtml(tt('人', '', 'طالب'))}
                         </span>
                     </div>
-                    <div class="bl-wk-stus" id="wk-stus-${tid}">${_weakStusHtml(d.stus, 5)}</div>
+                    <div class="bl-wk-body"><div class="bl-wk-stus" id="wk-stus-${tid}">${_weakStusHtml(d.stus, 5)}</div></div>
                 </div>
             </div>`;
+    }
+    function toggleWeakBlock(cardId) {
+        const c = document.getElementById(cardId); if (!c) return;
+        const folded = c.classList.toggle('bl-wk-folded');
+        const car = c.querySelector('.bl-wk-car'); if (car) car.textContent = folded ? '▸' : '▾';
     }
     function refilterWeakChars(taskId, lim) {
         const d = _matrixWeakData[taskId]; const el = document.getElementById('wk-chars-' + taskId);
@@ -11458,6 +11469,8 @@ window.BL = (function () {
         toggleTaskPanel,
         // —— 汉字-79: 明细表「最弱字/最弱生」下拉重筛 ——
         refilterWeakChars, refilterWeakStus,
+        // —— 汉字-81: 两块手风琴折叠 ——
+        toggleWeakBlock,
         // —— 汉字-72: 在读/待加入名单折叠 ——
         toggleRosterSection,
         // —— Phase 4-2 阶段③: 学生视角 ——
