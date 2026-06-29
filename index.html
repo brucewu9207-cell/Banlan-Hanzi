@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-68 (2026-06-29) — 11a1班级按钮从在读段移到表头返回键右边(返回+11a1一组绝对定位表头左侧);学生视图显返回+11a1、任务视图只显返回、回班级列表两者都收;在读段恢复成单独药丸不带11a1 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-69 (2026-06-29) — 答对率视图:测试任务名做成墨绿按钮(同学生名单标签风格);已完成计数从最右改到紧跟测试右边(rate-head改flex-start);表头11a1班级按钮放大到与测试按钮同高(7px16px/14px,都34px) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-68 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-69 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -697,7 +697,7 @@ console.log('%c[斑斓汉字] 汉字UI-68 已加载', 'color:#374a42;font-weight
         }
         .bl-back-header:hover { background: #d4e6dc; box-shadow: none; filter: none; }
         /* 汉字-68:表头里的 11a1 班级按钮(沿用红色样式,略缩小适配表头) */
-        .bl-head-classbtn { padding: 5px 12px !important; font-size: 13px !important; }
+        .bl-head-classbtn { padding: 7px 16px !important; font-size: 14px !important; }  /* 汉字-69:与测试绿按钮同高 */
         .bl-back-header .lang-en, .bl-back-header .lang-ar { display: inline !important; font-size: 0.8em; opacity: 0.8; }
 
         /* Tab 栏 — ★ v2D.3: 缩小间距 */
@@ -1107,17 +1107,23 @@ console.log('%c[斑斓汉字] 汉字UI-68 已加载', 'color:#374a42;font-weight
             padding: 18px 20px;
             margin-bottom: 16px;
         }
+        /* 汉字-69:测试任务名做成绿按钮,已完成紧跟其右 */
         .bl-rate-head {
             display: flex;
-            justify-content: space-between;
-            align-items: baseline;
+            justify-content: flex-start;
+            align-items: center;
             margin-bottom: 14px;
             gap: 12px;
         }
         .bl-rate-title {
-            font-size: 17px;
+            font-size: 14px;
             font-weight: 600;
-            color: var(--mo-dark);
+            color: #fff;
+            background: var(--ink-green);
+            padding: 7px 16px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
         }
         .bl-rate-done {
             font-size: 12px;
