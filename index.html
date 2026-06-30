@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-82 (2026-06-30) — 明细表模块间距统一12;两块标题药丸往上贴近卡片边框;关注生折叠时隐藏右侧下拉;班级方框从头部移到学生名单标签左边并与标签等高 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-83 (2026-06-30) — 根治明细表pre-line把元素间换行撑成空行的问题(面板设normal+两块标题控件单独pre-line),合并表底部空白和合并表到两块的大间距消除、各模块间距统一;工具栏班级方框单独靠左,学生名单明细表和导入手动导出全靠右 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-82 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-83 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1076,6 +1076,7 @@ console.log('%c[斑斓汉字] 汉字UI-82 已加载', 'color:#374a42;font-weight
         .bl-sec-headrow .bl-stu-classbtn {
             position: absolute; left: 50%; top: 0; bottom: 0; transform: translateX(-50%);
         }
+        .bl-tab-classbtn { margin-right: auto; }   /* 汉字-83:班级方框单独靠左,标签+导入/手动/导出全靠右 */
         .bl-stu-classbtn {
             padding: 7px 16px;
             background: var(--zhusha);     /* 汉字-65:11a1班级按钮改朱砂红(原手动录入的色) */
@@ -1243,7 +1244,7 @@ console.log('%c[斑斓汉字] 汉字UI-82 已加载', 'color:#374a42;font-weight
         }
 
         /* ═══ Phase 4-2 阶段④: 明细表(矩阵) ═══ */
-        .bl-matrix-task { margin-bottom: 14px; }   /* 汉字-63:收紧表格上下留白(原30) */
+        .bl-matrix-task { margin-bottom: 14px; white-space: normal; }   /* 汉字-63:收紧;汉字-83:normal 消除 pre-line 把元素间换行撑成空行(合并表卡片底部空白/合并表→两块大间距) */
         .bl-matrix-task:last-child { margin-bottom: 0; }
         .bl-matrix-task-title {
             margin-bottom: 8px;     /* 汉字-70:任务名改用彩色按钮(去掉原标题下划线/字号) */
@@ -1309,7 +1310,8 @@ console.log('%c[斑斓汉字] 汉字UI-82 已加载', 'color:#374a42;font-weight
         .bl-wk-wrap { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
         .bl-wk-card { background: rgba(255,255,255,0.6); border: 1px solid rgba(55,74,66,0.22); border-radius: 12px; padding: 8px 14px 12px; }
         .bl-wk-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
-        .bl-wk-title { display: inline-flex; flex-direction: row; align-items: center; gap: 8px; background: var(--ink-green); color: #fff; border: none; border-radius: 8px; padding: 8px 16px; font-size: 15px; font-weight: 600; line-height: 1.2; cursor: pointer; text-align: left; font-family: inherit; }
+        .bl-wk-title { display: inline-flex; flex-direction: row; align-items: center; gap: 8px; background: var(--ink-green); color: #fff; border: none; border-radius: 8px; padding: 8px 16px; font-size: 15px; font-weight: 600; line-height: 1.2; cursor: pointer; text-align: left; font-family: inherit; white-space: pre-line; }
+        .bl-wk-ctrl { white-space: pre-line; }   /* 汉字-83:面板改normal后,标题/控件单独保中上译下 */
         .bl-wk-title:hover { background: #2c3a34; }
         .bl-wk-car { font-size: 11px; }
         .bl-wk-body { margin-top: 12px; }
@@ -8669,8 +8671,8 @@ console.log('%c[斑斓汉字] 汉字UI-82 已加载', 'color:#374a42;font-weight
             <div id="blViewStudents" style="display:none;">
                 <!-- ★ 汉字-64:标签(左)+ 导入/手动/导出(右) 同一行；11a1班级按钮移到「在读」旁 -->
                 <div class="bl-stu-headrow">
+                    <span class="bl-stu-classbtn bl-tab-classbtn" id="blHeadClassBtn" style="display:none;">—</span>
                     <div class="bl-stu-tabs">
-                        <span class="bl-stu-classbtn bl-tab-classbtn" id="blHeadClassBtn" style="display:none;">—</span>
                         <button class="bl-stu-tab bl-stu-tab-active" id="blStuTabList" onclick="BL.switchStudentTab('list')">学生名单<span class="lang-en">Students</span><span class="lang-ar">الطلاب</span></button>
                         <button class="bl-stu-tab" id="blStuTabMatrix" onclick="BL.switchStudentTab('matrix')">明细表<span class="lang-en">Table</span><span class="lang-ar">الجدول</span></button>
                     </div>
