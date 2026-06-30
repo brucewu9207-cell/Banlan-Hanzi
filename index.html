@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-81 (2026-06-30) — 明细表两块改手风琴:标题做成墨绿药丸按钮(同学生名单按钮)可点折叠展开,头部左标题按钮右下拉,回讲字默认展开关注生默认折叠,单列堆叠 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-82 (2026-06-30) — 明细表模块间距统一12;两块标题药丸往上贴近卡片边框;关注生折叠时隐藏右侧下拉;班级方框从头部移到学生名单标签左边并与标签等高 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-81 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-82 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1305,14 +1305,16 @@ console.log('%c[斑斓汉字] 汉字UI-81 已加载', 'color:#374a42;font-weight
         .bl-rk-divider td { border-top: 2.5px solid var(--border-strong, #b9c0bb) !important; }  /* 前三名与其余的分隔 */
         /* ★ 汉字-79:明细表下方「最该回讲的字 / 最需关注的学生」两块(墨水风,老师可选阈值/人数) */
         /* ★ 汉字-81:两块改手风琴(单列堆叠),标题=墨绿药丸按钮可折叠,头部左标题右下拉 */
-        .bl-wk-wrap { display: flex; flex-direction: column; gap: 12px; margin-top: 14px; }
-        .bl-wk-card { background: rgba(255,255,255,0.6); border: 1px solid rgba(55,74,66,0.22); border-radius: 12px; padding: 12px 14px; }
+        /* ★ 汉字-82:模块间距统一12;标题往上贴近卡片边框;折叠时隐藏下拉 */
+        .bl-wk-wrap { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
+        .bl-wk-card { background: rgba(255,255,255,0.6); border: 1px solid rgba(55,74,66,0.22); border-radius: 12px; padding: 8px 14px 12px; }
         .bl-wk-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
         .bl-wk-title { display: inline-flex; flex-direction: row; align-items: center; gap: 8px; background: var(--ink-green); color: #fff; border: none; border-radius: 8px; padding: 8px 16px; font-size: 15px; font-weight: 600; line-height: 1.2; cursor: pointer; text-align: left; font-family: inherit; }
         .bl-wk-title:hover { background: #2c3a34; }
         .bl-wk-car { font-size: 11px; }
-        .bl-wk-body { margin-top: 14px; }
+        .bl-wk-body { margin-top: 12px; }
         .bl-wk-card.bl-wk-folded .bl-wk-body { display: none; }
+        .bl-wk-card.bl-wk-folded .bl-wk-ctrl { display: none; }   /* 折叠时去掉下拉(图4) */
         .bl-wk-ctrl { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: #5a655f; }
         .bl-wk-ctrl select { border: 1px solid rgba(55,74,66,0.3); border-radius: 6px; padding: 2px 6px; color: var(--ink-green); background: #fff; font-family: inherit; cursor: pointer; }
         .bl-wk-chars { display: flex; flex-wrap: wrap; gap: 10px; }
@@ -8585,7 +8587,6 @@ console.log('%c[斑斓汉字] 汉字UI-81 已加载', 'color:#374a42;font-weight
             <!-- ★ 汉字-68:返回键 + 11a1班级按钮 一组放表头左侧(进班级才显示) -->
             <div class="bl-head-left" id="blHeadLeft" style="display:none;">
                 <button class="bl-back-header" id="blBackBtn" onclick="BL.backToClassList()">‹ 返回<span class="lang-en"> Back</span><span class="lang-ar"> رجوع</span></button>
-                <span class="bl-stu-classbtn bl-head-classbtn" id="blHeadClassBtn" style="display:none;">—</span>
             </div>
             <h3 id="blTitle"><span class="t-cn"><span class="t-ico">📚</span>布置作业</span><span class="lang-en">Assign Homework</span><span class="lang-ar">تعيين الواجبات</span></h3>
             <button class="bl-close" onclick="BL.closePanel()">×</button>
@@ -8669,6 +8670,7 @@ console.log('%c[斑斓汉字] 汉字UI-81 已加载', 'color:#374a42;font-weight
                 <!-- ★ 汉字-64:标签(左)+ 导入/手动/导出(右) 同一行；11a1班级按钮移到「在读」旁 -->
                 <div class="bl-stu-headrow">
                     <div class="bl-stu-tabs">
+                        <span class="bl-stu-classbtn bl-tab-classbtn" id="blHeadClassBtn" style="display:none;">—</span>
                         <button class="bl-stu-tab bl-stu-tab-active" id="blStuTabList" onclick="BL.switchStudentTab('list')">学生名单<span class="lang-en">Students</span><span class="lang-ar">الطلاب</span></button>
                         <button class="bl-stu-tab" id="blStuTabMatrix" onclick="BL.switchStudentTab('matrix')">明细表<span class="lang-en">Table</span><span class="lang-ar">الجدول</span></button>
                     </div>
