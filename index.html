@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-93 (2026-07-01) — 布置作业页两处UI:①任务行4个图标放大到24px(同结果页图标),鼠标划过任务行时图标翻白;②任务页班级方框拆成上下两个红chip——上「11A1(班级):N个任务」、下「11A1:M个已归档」(有归档才显示、白字另起一行) -->
+<!-- 斑斓汉字(老师端) · 汉字UI-94 (2026-07-01) — 布置作业页任务列表重构为分组布局(参考名单页在读/待加入):顶部合并成一个红chip 11A1：总=任务+归档(5=4+1);任务列表拆成 任务(灰绿药丸)/已归档(陶红药丸) 两个可折叠分组,任务默认展开已归档默认收起;去掉显示归档勾选框 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-93 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-94 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1549,6 +1549,11 @@ console.log('%c[斑斓汉字] 汉字UI-93 已加载', 'color:#374a42;font-weight
 
         /* 任务列表 — ★ v2D.3: 缩小间距 */
         .bl-task-list { display: flex; flex-direction: column; gap: 6px; }
+        /* 汉字-94:任务分组药丸(任务=灰绿/已归档=陶红,同名单页在读/待加入) */
+        #bl-tasks-title-active { background: #9caea3; color: #22312b; }
+        #bl-tasks-title-active:hover { background: #8a9e93; }
+        #bl-tasks-title-archived { background: #d6b3a6; color: #4a2c20; }
+        #bl-tasks-title-archived:hover { background: #c89f93; }
         .bl-task-card {
             border: 1px solid #d0d7d3;
             border-left: 4px solid var(--ink-green);
@@ -8657,18 +8662,10 @@ console.log('%c[斑斓汉字] 汉字UI-93 已加载', 'color:#374a42;font-weight
                     <div class="bl-tasks-titles">
                         <span class="bl-tasks-title" id="blTasksChipActive">
                             <span class="bl-tasks-class-tag" id="blTasksClassTag">—</span>
-                            <span id="blTasksClassName">—</span>
                             <span id="blTasksCount">—</span>
-                        </span>
-                        <span class="bl-tasks-title" id="blTasksChipArchived" style="display:none;">
-                            <span class="bl-tasks-class-tag" id="blTasksClassTag2">—</span>
-                            <span id="blTasksArchivedCount">—</span>
                         </span>
                     </div>
                     <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-                        <label class="bl-archived-toggle" id="blArchivedToggle" onclick="BL.toggleShowArchived()">
-                            <span class="bl-archived-check"></span>显示归档<span class="lang-en">Show Archived</span><span class="lang-ar">عرض المؤرشفة</span>
-                        </label>
                         <button class="bl-btn" onclick="BL.openTaskEditor()">+ 新建任务<span class="lang-en">New</span><span class="lang-ar">جديد</span></button>
                     </div>
                 </div>
@@ -9548,7 +9545,6 @@ window.BL = (function () {
         // ★ v2B-r2: 进新班级时清空批量选中状态,重置归档显示
         state.selectedTaskIds = [];
         state.showArchived = false;
-        $('blArchivedToggle').classList.remove('bl-on');
 
         // 切换显示：隐藏班级列表，显示任务视图
         $('blViewClasses').style.display = 'none';
@@ -9558,10 +9554,7 @@ window.BL = (function () {
         $('blTabs').style.display = 'none'; $('blHeadLeft').style.display = ''; $('blHeadClassBtn').style.display = 'none'; // 汉字-68:任务视图显返回、不显班级按钮
 
         // 填充头部信息
-        const clsUp = (cls.classCode || '').toUpperCase();   // 汉字-92:班级号大写 11A1
-        $('blTasksClassTag').textContent = clsUp;
-        if ($('blTasksClassTag2')) $('blTasksClassTag2').textContent = clsUp;   // 已归档chip的班级号
-        $('blTasksClassName').textContent = tt('(班级)', '(Class)', '(الصف)');
+        $('blTasksClassTag').textContent = (cls.classCode || '').toUpperCase();   // 汉字-92:班级号大写 11A1
         $('blTasksCount').textContent = '...';
         // 立刻显示加载占位,避免上次班级的任务 HTML 闪现
         $('blTaskList').innerHTML = '<div class="bl-empty"><div class="bl-empty-text" style="color:var(--ink-gray);">' + escapeHtml(tt('加载中...', 'Loading...', 'جاري التحميل...')) + '</div></div>';
@@ -9724,6 +9717,20 @@ window.BL = (function () {
     function toggleRosterSection(key) {
         const cards = document.getElementById('bl-roster-cards-' + key);
         const title = document.getElementById('bl-roster-title-' + key);
+        if (!cards) return;
+        const willOpen = (cards.style.display === 'none');
+        cards.style.display = willOpen ? '' : 'none';
+        if (title) {
+            title.classList.toggle('is-open', willOpen);
+            const caret = title.querySelector('.bl-roster-caret');
+            if (caret) caret.textContent = willOpen ? '▾' : '▸';
+        }
+    }
+
+    // 汉字-94:点「任务/已归档」药丸 → 展开/收起本组任务(同名单页手风琴)
+    function toggleTaskGroup(key) {
+        const cards = document.getElementById('bl-tasks-cards-' + key);
+        const title = document.getElementById('bl-tasks-title-' + key);
         if (!cards) return;
         const willOpen = (cards.style.display === 'none');
         cards.style.display = willOpen ? '' : 'none';
@@ -11172,48 +11179,30 @@ window.BL = (function () {
         // 方案: 任务的 createdAt 早于班级的 createdAt,说明是上次的残留,前端过滤掉
         // (Phase 3 时一并修 Worker,加任务索引彻底解决)
         const classCreatedAt = state.currentClassInfo && state.currentClassInfo.createdAt;
-        let visibleTasks = classCreatedAt
-            ? state.tasks.filter(t => !t.createdAt || t.createdAt >= classCreatedAt)
-            : state.tasks;
-
-        // ★ v2B-r2: 按"显示归档"开关过滤归档任务
-        if (!state.showArchived) {
-            visibleTasks = visibleTasks.filter(t => !t.archived);
-        }
-
-        // 分别显示活跃数 + 归档数 (统计基于过滤前的 + 班级残留过滤后的)
+        // 汉字-94:任务分「任务/已归档」两组(参考名单页在读/待加入手风琴),去掉显示归档开关
         const allValidTasks = classCreatedAt
             ? state.tasks.filter(t => !t.createdAt || t.createdAt >= classCreatedAt)
             : state.tasks;
-        const activeCount = allValidTasks.filter(t => !t.archived).length;
-        const archivedCount = allValidTasks.filter(t => t.archived).length;
+        const activeTasks = allValidTasks.filter(t => !t.archived);
+        const archivedTasks = allValidTasks.filter(t => t.archived);
+        const activeCount = activeTasks.length, archivedCount = archivedTasks.length;
+        const total = activeCount + archivedCount;
+
+        // 顶部红chip:11A1：总=任务+归档(无归档时只显示总数)
         const countEl = $('blTasksCount');
-        // ★ v2D.3: 整行竖排,避免拆词导致多行错乱
-        if (countEl) countEl.textContent = tt('：' + activeCount + ' 个任务', ': ' + activeCount + ' tasks', ': ' + activeCount + ' مهام');
-        // 汉字-93:已归档单独一个红chip、另起一行,有归档才显示
-        const archChip = $('blTasksChipArchived'), archCnt = $('blTasksArchivedCount');
-        if (archChip && archCnt) {
-            if (archivedCount > 0) {
-                archChip.style.display = '';
-                archCnt.textContent = tt('：' + archivedCount + ' 个已归档', ': ' + archivedCount + ' archived', ': ' + archivedCount + ' مؤرشفة');
-            } else {
-                archChip.style.display = 'none';
-            }
-        }
+        if (countEl) countEl.textContent = archivedCount > 0
+            ? ('：' + total + '=' + activeCount + '+' + archivedCount)
+            : ('：' + activeCount);
 
         // ★ v2B-r2: 渲染批量操作栏 (有选中项才显示)
         renderBulkBar();
 
-        if (visibleTasks.length === 0) {
-            const msg = state.showArchived
-                ? tt('还没有任务，点右上角"+ 新建任务"开始', 'No tasks yet. Click "+ New Task" at top right.', 'لا توجد مهام بعد. انقر "+ مهمة جديدة" أعلى اليمين.')
-                : (archivedCount > 0 ? tt('没有活跃任务（勾选"显示归档"看归档的任务）', 'No active tasks (check "Show Archived" to see archived)', 'لا توجد مهام نشطة (حدد "عرض المؤرشفة")') : tt('还没有任务，点右上角"+ 新建任务"开始', 'No tasks yet. Click "+ New Task" at top right.', 'لا توجد مهام بعد. انقر "+ مهمة جديدة"'));
+        if (total === 0) {
             list.innerHTML = `
                 <div class="bl-empty">
                     <div class="bl-empty-icon">📋</div>
-                    <div class="bl-empty-text">${escapeHtml(msg)}</div>
-                </div>
-            `;
+                    <div class="bl-empty-text">${escapeHtml(tt('还没有任务，点右上角"+ 新建任务"开始', 'No tasks yet. Click "+ New Task" at top right.', 'لا توجد مهام بعد. انقر "+ مهمة جديدة" أعلى اليمين.'))}</div>
+                </div>`;
             return;
         }
 
@@ -11231,7 +11220,7 @@ window.BL = (function () {
         const titleUnarchive = tt('取消归档', 'Unarchive', 'إلغاء الأرشفة');
         const titleDelete = tt('删除', 'Delete', 'حذف');
 
-        list.innerHTML = visibleTasks.map(t => {
+        const cardHtml = t => {
             const archivedClass = t.archived ? ' bl-archived' : '';
             const selectedClass = state.selectedTaskIds.includes(t.taskId) ? ' bl-selected' : '';
             const typeBadge = `<span class="bl-type-badge bl-type-${t.type}">${escapeHtml(typeLabel[t.type] || t.type)}</span>`;
@@ -11254,9 +11243,21 @@ window.BL = (function () {
                         <button class="bl-icon-btn" onclick="BL.toggleArchiveTask('${escapeAttr(t.taskId)}')" title="${escapeAttr(archiveTitle)}"><span class="bl-ico">${archiveIcon}</span></button>
                         <button class="bl-icon-btn bl-danger-icon" onclick="BL.deleteTask('${escapeAttr(t.taskId)}')" title="${escapeAttr(titleDelete)}"><span class="bl-ico">🗑</span></button>
                     </div>
-                </div>
-            `;
-        }).join('');
+                </div>`;
+        };
+
+        // 分组药丸(可折叠,任务默认展开、已归档默认收起;颜色同名单页在读/待加入)
+        const group = (title, arr, key, openDefault) => {
+            if (arr.length === 0) return '';
+            const caret = openDefault ? '▾' : '▸';
+            const hideStyle = openDefault ? '' : ' style="display:none;"';
+            return `<div class="bl-roster-section-title bl-roster-toggle${openDefault ? ' is-open' : ''}" id="bl-tasks-title-${key}" onclick="BL.toggleTaskGroup('${key}')"><span class="bl-roster-caret">${caret}</span>${escapeHtml(title)} · ${arr.length}</div>`
+                 + `<div class="bl-task-list" id="bl-tasks-cards-${key}"${hideStyle}>${arr.map(cardHtml).join('')}</div>`;
+        };
+
+        list.innerHTML =
+            group(tt('任务', 'Tasks', 'المهام'), activeTasks, 'active', true) +
+            group(tt('已归档', 'Archived', 'مؤرشفة'), archivedTasks, 'archived', false);
     }
 
     // ★ v2B-r2: 渲染批量操作栏 (根据选中任务状态智能显示按钮)
@@ -11655,6 +11656,7 @@ window.BL = (function () {
         toggleWeakBlock,
         // —— 汉字-72: 在读/待加入名单折叠 ——
         toggleRosterSection,
+        toggleTaskGroup,
         // —— Phase 4-2 阶段③: 学生视角 ——
         toggleStudentDetail,
         openTaskEditor, closeTaskEditor, selectTaskType, submitTask,
