@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-92 (2026-07-01) — 布置作业页两处UI:①任务行卡片鼠标划过变深墨绿(同新建任务按钮),卡内任务名/图标翻白;②任务页班级方框改朱砂红(参考结果页班级按钮),内容改成 11A1(班级):5个任务 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-93 (2026-07-01) — 布置作业页两处UI:①任务行4个图标放大到24px(同结果页图标),鼠标划过任务行时图标翻白;②任务页班级方框拆成上下两个红chip——上「11A1(班级):N个任务」、下「11A1:M个已归档」(有归档才显示、白字另起一行) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-92 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-93 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1526,6 +1526,8 @@ console.log('%c[斑斓汉字] 汉字UI-92 已加载', 'color:#374a42;font-weight
             padding-bottom: 10px; border-bottom: 1px solid #e5ebe7;
             gap: 8px;
         }
+        /* 汉字-93:班级信息拆成两个红chip(任务/已归档),上下堆叠 */
+        .bl-tasks-titles { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
         .bl-tasks-title {
             font-size: 15px; color: #fff; font-weight: 600;
             /* 汉字-92:班级信息块改朱砂红(参考结果页 11a1 班级按钮),纯展示不可点 */
@@ -8652,11 +8654,15 @@ console.log('%c[斑斓汉字] 汉字UI-92 已加载', 'color:#374a42;font-weight
             <!-- 任务列表视图 (Phase 2B 新增) -->
             <div id="blViewTasks" style="display:none;">
                 <div class="bl-tasks-header">
-                    <div class="bl-tasks-title">
-                        <span class="bl-tasks-class-tag" id="blTasksClassTag">—</span>
-                        <span id="blTasksClassName">—</span>
-                        <span style="color:var(--ink-gray); font-weight:normal; font-size:13px; margin-left:8px;" id="blTasksCount">
-                            —
+                    <div class="bl-tasks-titles">
+                        <span class="bl-tasks-title" id="blTasksChipActive">
+                            <span class="bl-tasks-class-tag" id="blTasksClassTag">—</span>
+                            <span id="blTasksClassName">—</span>
+                            <span id="blTasksCount">—</span>
+                        </span>
+                        <span class="bl-tasks-title" id="blTasksChipArchived" style="display:none;">
+                            <span class="bl-tasks-class-tag" id="blTasksClassTag2">—</span>
+                            <span id="blTasksArchivedCount">—</span>
                         </span>
                     </div>
                     <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
@@ -9552,7 +9558,9 @@ window.BL = (function () {
         $('blTabs').style.display = 'none'; $('blHeadLeft').style.display = ''; $('blHeadClassBtn').style.display = 'none'; // 汉字-68:任务视图显返回、不显班级按钮
 
         // 填充头部信息
-        $('blTasksClassTag').textContent = (cls.classCode || '').toUpperCase();   // 汉字-92:班级号大写 11A1
+        const clsUp = (cls.classCode || '').toUpperCase();   // 汉字-92:班级号大写 11A1
+        $('blTasksClassTag').textContent = clsUp;
+        if ($('blTasksClassTag2')) $('blTasksClassTag2').textContent = clsUp;   // 已归档chip的班级号
         $('blTasksClassName').textContent = tt('(班级)', '(Class)', '(الصف)');
         $('blTasksCount').textContent = '...';
         // 立刻显示加载占位,避免上次班级的任务 HTML 闪现
@@ -11181,17 +11189,15 @@ window.BL = (function () {
         const archivedCount = allValidTasks.filter(t => t.archived).length;
         const countEl = $('blTasksCount');
         // ★ v2D.3: 整行竖排,避免拆词导致多行错乱
-        if (countEl) {
+        if (countEl) countEl.textContent = tt('：' + activeCount + ' 个任务', ': ' + activeCount + ' tasks', ': ' + activeCount + ' مهام');
+        // 汉字-93:已归档单独一个红chip、另起一行,有归档才显示
+        const archChip = $('blTasksChipArchived'), archCnt = $('blTasksArchivedCount');
+        if (archChip && archCnt) {
             if (archivedCount > 0) {
-                const zh = `：${activeCount} 个任务 · ${archivedCount} 已归档`;
-                const en = `: ${activeCount} tasks · ${archivedCount} archived`;
-                const ar = `: ${activeCount} مهام · ${archivedCount} مؤرشفة`;
-                countEl.textContent = tt(zh, en, ar);
+                archChip.style.display = '';
+                archCnt.textContent = tt('：' + archivedCount + ' 个已归档', ': ' + archivedCount + ' archived', ': ' + archivedCount + ' مؤرشفة');
             } else {
-                const zh = `：${activeCount} 个任务`;
-                const en = `: ${activeCount} tasks`;
-                const ar = `: ${activeCount} مهام`;
-                countEl.textContent = tt(zh, en, ar);
+                archChip.style.display = 'none';
             }
         }
 
@@ -11243,10 +11249,10 @@ window.BL = (function () {
                         </div>
                     </div>
                     <div class="bl-task-actions">
-                        <button class="bl-icon-btn" onclick="BL.openTaskEditor('${escapeAttr(t.taskId)}')" title="${escapeAttr(titleEdit)}">✎</button>
-                        <button class="bl-icon-btn" onclick="BL.duplicateTask('${escapeAttr(t.taskId)}')" title="${escapeAttr(titleDuplicate)}">📑</button>
-                        <button class="bl-icon-btn" onclick="BL.toggleArchiveTask('${escapeAttr(t.taskId)}')" title="${escapeAttr(archiveTitle)}">${archiveIcon}</button>
-                        <button class="bl-icon-btn bl-danger-icon" onclick="BL.deleteTask('${escapeAttr(t.taskId)}')" title="${escapeAttr(titleDelete)}">🗑</button>
+                        <button class="bl-icon-btn" onclick="BL.openTaskEditor('${escapeAttr(t.taskId)}')" title="${escapeAttr(titleEdit)}"><span class="bl-ico">✎</span></button>
+                        <button class="bl-icon-btn" onclick="BL.duplicateTask('${escapeAttr(t.taskId)}')" title="${escapeAttr(titleDuplicate)}"><span class="bl-ico">📑</span></button>
+                        <button class="bl-icon-btn" onclick="BL.toggleArchiveTask('${escapeAttr(t.taskId)}')" title="${escapeAttr(archiveTitle)}"><span class="bl-ico">${archiveIcon}</span></button>
+                        <button class="bl-icon-btn bl-danger-icon" onclick="BL.deleteTask('${escapeAttr(t.taskId)}')" title="${escapeAttr(titleDelete)}"><span class="bl-ico">🗑</span></button>
                     </div>
                 </div>
             `;
