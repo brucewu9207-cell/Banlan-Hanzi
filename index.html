@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-84 (2026-07-01) — 导出全班报告改为Excel:总览sheet(学生×练习成绩表+最难字+最需关注学生)+每个练习一张学生×字网格sheet;布置作业弹窗桌面端放宽到1.2倍(880→1056) -->
+<!-- 斑斓汉字(老师端) · 汉字UI-85 (2026-07-01) — 修复导出Excel报错:writeFile应为XLSX.writeFile(原误写成XLSX.utils.writeFile导致点导出全班报告无反应) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-84 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-85 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -10395,7 +10395,7 @@ window.BL = (function () {
             XLSX.utils.book_append_sheet(wb, ws, sheetName(titleOf(tid)));
         });
 
-        XLSX.utils.writeFile(wb, '学习报告_' + className + '_' + dateStr + '.xlsx');
+        XLSX.writeFile(wb, '学习报告_' + className + '_' + dateStr + '.xlsx');
         toast(tt('Excel 已导出 ✓', 'Excel exported ✓', 'تم التصدير ✓'), 'success');
     }
 
