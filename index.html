@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-105 (2026-07-01) — 清掉背景水墨装饰SVG的24个控制台报错:删10个d坐标里硬写%的无效path(本来就没渲染)、剥离9个ellipse上失效的rotate百分比transform;背景视觉零变化只是控制台不再报错 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-106 (2026-07-01) — 布置作业页三处:①任务标题内容输入框加autocomplete off禁用浏览器历史记录下拉不再记录不默认展开;②多班推送列表项鼠标划过变深墨绿翻白同我的班级卡片;③任务卡4个图标恢复原色彩色emoji不再默认全白仅hover深绿时翻白 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-105 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-106 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1573,9 +1573,7 @@ console.log('%c[斑斓汉字] 汉字UI-105 已加载', 'color:#374a42;font-weigh
             gap: 10px;
             transition: all 0.2s;
         }
-        /* 汉字-95:任务卡在灰绿/陶红底上,图标键默认就翻白(白图标+白边框) */
-        .bl-task-card .bl-icon-btn { border-color: rgba(255, 255, 255, 0.55); color: #fff; }
-        .bl-task-card .bl-icon-btn .bl-ico { filter: brightness(0) invert(1); }
+        /* 汉字-106:任务卡图标恢复原色(彩色emoji/灰✎),不再默认翻白;仅 hover 深绿时才翻白(见下方规则) */
         /* 汉字-92:任务行 hover 变深墨绿(同图2/班级卡片),卡内文字+图标翻白保证读得清 */
         .bl-task-card:hover { background: var(--ink-green); border-color: #2a3832; border-left-color: var(--ink-green); }
         .bl-task-card:hover .bl-task-title { color: #fff; }
@@ -1751,8 +1749,14 @@ console.log('%c[斑斓汉字] 汉字UI-105 已加载', 'color:#374a42;font-weigh
             transition: background 0.15s;
             user-select: none;
         }
-        .bl-multi-class-item:hover { background: #f0f7f3; }
         .bl-multi-class-item.bl-current-class { background: rgba(74, 139, 111, 0.06); }
+        /* 汉字-106:多班项 hover 变深墨绿翻白(同「我的班级」卡片图3);放在 current-class 之后,当前班级也能hover变色 */
+        .bl-multi-class-item:hover { background: var(--ink-green); }
+        .bl-multi-class-item:hover .bl-multi-class-name { color: #fff; }
+        .bl-multi-class-item:hover .bl-multi-class-code { background: rgba(255, 255, 255, 0.2); color: #fff; }
+        .bl-multi-class-item:hover .bl-multi-class-checkbox { border-color: rgba(255, 255, 255, 0.7); background: transparent; }
+        .bl-multi-class-item:hover.bl-checked .bl-multi-class-checkbox { background: #fff; border-color: #fff; }
+        .bl-multi-class-item:hover.bl-checked .bl-multi-class-checkbox::after { color: var(--ink-green); }
         .bl-multi-class-checkbox {
             width: 18px;
             height: 18px;
@@ -8787,11 +8791,11 @@ console.log('%c[斑斓汉字] 汉字UI-105 已加载', 'color:#374a42;font-weigh
         <div class="bl-body">
             <div class="bl-form-group">
                 <label class="bl-label">任务标题<span class="lang-en">Title</span><span class="lang-ar">العنوان</span></label>
-                <input type="text" class="bl-input" id="blTaskTitle" placeholder="如：HSK3 第 5 课字 / 周末作业" maxlength="100">
+                <input type="text" class="bl-input" id="blTaskTitle" placeholder="如：HSK3 第 5 课字 / 周末作业" maxlength="100" autocomplete="off">
             </div>
             <div class="bl-form-group">
                 <label class="bl-label">任务内容<span class="lang-en">Content</span><span class="lang-ar">المحتوى</span></label>
-                <textarea class="bl-task-content-input" id="blTaskContent" placeholder="在此输入要练的汉字" maxlength="5000"></textarea>
+                <textarea class="bl-task-content-input" id="blTaskContent" placeholder="在此输入要练的汉字" maxlength="5000" autocomplete="off"></textarea>
                 <p class="bl-hint">逐字练习你输入的每个汉字（按顺序）；空格、标点、英文会自动忽略。<span class="lang-en"><br>Each Chinese character is practiced one by one, in order. Spaces, punctuation and non-Chinese are ignored.</span><span class="lang-ar"><br>يُتدرَّب على كل حرف صيني على حدة بالترتيب؛ تُتجاهل المسافات وعلامات الترقيم وغير الصينية.</span></p>
             </div>
             <!-- v2B-r2 多班推送(D3 升级版核心): 创建/复制模式显示,编辑模式隐藏 -->
