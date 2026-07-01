@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-83 (2026-06-30) — 根治明细表pre-line把元素间换行撑成空行的问题(面板设normal+两块标题控件单独pre-line),合并表底部空白和合并表到两块的大间距消除、各模块间距统一;工具栏班级方框单独靠左,学生名单明细表和导入手动导出全靠右 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-84 (2026-07-01) — 导出全班报告改为Excel:总览sheet(学生×练习成绩表+最难字+最需关注学生)+每个练习一张学生×字网格sheet;布置作业弹窗桌面端放宽到1.2倍(880→1056) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-83 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-84 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -9217,7 +9217,7 @@ window.BL = (function () {
     // ═════════════════════════════════════════════════════════════
     function lockBlModalWidth() {
         const isMobile = window.innerWidth < 600;
-        const panelW = Math.min(880, window.innerWidth - 32);  // 汉字-64:加宽主面板以容纳「标签+动作」一行
+        const panelW = Math.min(1056, window.innerWidth - 32);  // 汉字-84:放宽到 880×1.2=1056,容纳明细表网格(桌面;手机走上面 isMobile 分支不受影响)
         const targets = [
             ['#blOverlay .bl-modal', panelW],
             ['#blClassEditorOverlay .bl-modal', 520],
@@ -10142,9 +10142,10 @@ window.BL = (function () {
     }
 
     // ═══════════════════════════════════════════════════
-    // ② 学习报告 PDF(全班一份,每生一页)
-    //   复用既有答对率口径:只统计「拼音 / 部件」两维度,独体字部件维度 null 不计入分母。
-    //   成绩为「最近一次作答」(Worker 重做覆盖)。截既有渲染 → jsPDF,绕开中文/阿语字体嵌入。
+    // ② 全班学习报告 Excel(汉字-84:由每生一页PDF改为一份 .xlsx)
+    //   复用既有答对率口径:只统计「拼音 / 部件」两维度,独体字部件维度 null 不计入分母,成绩为「最近一次作答」。
+    //   结构:第一张「总览」sheet(学生×练习成绩表 + 最难字 + 待关注学生),之后每个练习各一张「学生×字」网格 sheet。
+    //   注:网页版 SheetJS 只写数据、不写单元格底色,故导出无阈值色;老师可在 Excel 里自行条件格式上色。
     // ═══════════════════════════════════════════════════
     function _reportToday() {
         const d = new Date();
@@ -10170,123 +10171,232 @@ window.BL = (function () {
         return { pyC, pyT, compC, compT, charCount: charSet.size, wrongChars: Array.from(wrong) };
     }
 
-    // 构造单生报告离屏 DOM(A4 比例,白底,内嵌 BLKai 字体)
-    function _buildStudentReportEl(s, dateStr) {
-        const pctColor = p => p >= 80 ? '#374a42' : (p >= 60 ? '#b5763a' : '#c84b2f');
-        const st = _reportStudentStats(s);
-        const pyPct = st.pyT ? Math.round(st.pyC / st.pyT * 100) : null;
-        const compPct = st.compT ? Math.round(st.compC / st.compT * 100) : null;
-        const fmt = p => p === null ? '—' : (p + '%');
-        const colorOf = p => p === null ? '#9aa39e' : pctColor(p);
-        const className = (state.currentClassInfo && state.currentClassInfo.name) || state.currentClassCode || '';
-        const txtPinyin = tt('拼音', 'Pinyin', 'بينيين');
-        const txtComp = tt('部件', 'Parts', 'مكوّنات');
-        const wrongHtml = st.wrongChars.length
-            ? st.wrongChars.map(c => '<span style="display:inline-block;margin:2px 6px 2px 0;padding:2px 8px;background:#fbeae6;color:#c84b2f;border-radius:6px;">' + escapeHtml(c) + '</span>').join('')
-            : '<span style="color:#7a857f;">' + escapeHtml(tt('无', 'None', 'لا شيء')) + '</span>';
-        const detail = renderStudentDetail(s) || ('<div style="color:#7a857f;">' + escapeHtml(tt('该学生还没完成任何任务', 'No tasks completed yet', 'لم يكمل أي مهمة')) + '</div>');
-
-        const statCard = (label, val, color) =>
-            '<div style="flex:1;text-align:center;background:#f3f6f4;border-radius:10px;padding:14px;">'
-            + '<div style="font-size:13px;color:#5a655f;white-space:pre-line;">' + escapeHtml(label) + '</div>'
-            + '<div style="font-size:30px;font-weight:bold;color:' + color + ';">' + val + '</div></div>';
-
-        const el = document.createElement('div');
-        el.style.cssText = 'width:794px;min-height:1123px;box-sizing:border-box;padding:48px 56px;background:#fff;color:#232a27;font-family:BLKai,"LXGW WenKai",sans-serif;';
-        el.innerHTML =
-            '<div style="border-bottom:2px solid #374a42;padding-bottom:14px;margin-bottom:22px;">'
-              + '<div style="font-size:26px;font-weight:bold;color:#374a42;white-space:pre-line;">' + escapeHtml(tt('斑斓学习报告', 'Brilliant Learning Report', 'تقرير التعلّم')) + '</div>'
-              + '<div style="font-size:15px;color:#5a655f;margin-top:10px;">'
-                + escapeHtml(tt('姓名', 'Name', 'الاسم')) + ': <b>' + escapeHtml(s.name || '') + '</b>'
-                + ' &nbsp;|&nbsp; ' + escapeHtml(tt('学号', 'ID', 'الرقم')) + ': ' + escapeHtml(s.studentCode || '')
-                + ' &nbsp;|&nbsp; ' + escapeHtml(tt('班级', 'Class', 'الصف')) + ': ' + escapeHtml(className)
-                + ' &nbsp;|&nbsp; ' + escapeHtml(dateStr)
-              + '</div></div>'
-            + '<div style="display:flex;gap:20px;margin-bottom:26px;">'
-              + statCard(txtPinyin, fmt(pyPct), colorOf(pyPct))
-              + statCard(txtComp, fmt(compPct), colorOf(compPct))
-              + statCard(tt('完成字数', 'Chars', 'عدد الحروف'), st.charCount, '#374a42')
-            + '</div>'
-            + '<div style="font-size:15px;font-weight:bold;color:#374a42;margin-bottom:8px;white-space:pre-line;">' + escapeHtml(tt('错题', 'Mistakes', 'الأخطاء')) + '</div>'
-            + '<div style="margin-bottom:26px;font-size:18px;line-height:1.9;">' + wrongHtml + '</div>'
-            + '<div style="font-size:15px;font-weight:bold;color:#374a42;margin-bottom:10px;white-space:pre-line;">' + escapeHtml(tt('逐字明细', 'Detail', 'التفاصيل')) + '</div>'
-            + '<div class="bl-report-detail">' + detail + '</div>'
-            + '<div style="margin-top:30px;padding-top:12px;border-top:1px solid #d8ddd9;font-size:11px;color:#9aa39e;white-space:pre-line;">'
-              + escapeHtml(tt('答对率仅统计拼音 + 部件;成绩为最近一次作答。', 'Accuracy counts Pinyin + Parts only; latest attempt.', 'تُحتسب الدقة للبينيين والمكوّنات فقط؛ المحاولة الأخيرة.'))
-            + '</div>';
-        return el;
-    }
-
-    // 一键导出:全班一份 PDF,每生一页(超一页自动续页)
+    // 一键导出:全班一份 Excel(.xlsx)。第一张「总览」sheet + 每个练习一张「学生×字」网格 sheet。
+    //   口径与明细表完全一致:拼音+部件合并、独体字部件 null 不计入、成绩取最近一次作答;每字统计含已离开学生历史,学生行/名单只列在读。
     async function exportClassReport() {
-        if (typeof html2canvas === 'undefined' || !window.jspdf) {
+        if (!window.XLSX) {
             toast(tt('导出组件未就绪,请刷新重试', 'Export libs not ready', 'مكوّنات التصدير غير جاهزة'), 'error');
             return;
         }
-        const students = (state.students || []).filter(s => !s.left && s.taskResults && Object.keys(s.taskResults).length > 0);
-        if (students.length === 0) {
+        // 收集有人做过的练习(按出现顺序)
+        const taskIds = [];
+        (state.students || []).forEach(s => {
+            if (s.taskResults) Object.keys(s.taskResults).forEach(tid => { if (!taskIds.includes(tid)) taskIds.push(tid); });
+        });
+        if (taskIds.length === 0) {
             toast(tt('暂无已完成任务的学生,无法生成报告', 'No students with results yet', 'لا يوجد طلاب لديهم نتائج'), 'error');
             return;
         }
-        toast(tt('正在生成 PDF…', 'Generating PDF…', 'جارٍ إنشاء PDF…'));
+        toast(tt('正在生成 Excel…', 'Generating Excel…', 'جارٍ إنشاء Excel…'));
+
+        // Excel 单元格用单语标签(跟随当前界面语言,避免 tt 的双语换行把格子撑乱)
+        const isAr = document.body.classList.contains('lang-mode-ar');
+        const isEn = document.body.classList.contains('lang-mode-en');
+        const L = (zh, en, ar) => isAr ? ar : (isEn ? en : zh);
+        const NA = '—';
         const dateStr = _reportToday();
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const pw = pdf.internal.pageSize.getWidth();
-        const ph = pdf.internal.pageSize.getHeight();
-        let started = false;
-        const elWidth = 794;                         // 报告 DOM 的 CSS 宽度,与 _buildStudentReportEl 一致
-        const pageCssH = ph / pw * elWidth;          // 一个 A4 页对应多少 CSS 像素高
-        for (let i = 0; i < students.length; i++) {
-            const el = _buildStudentReportEl(students[i], dateStr);
-            el.style.position = 'absolute';
-            el.style.left = '-99999px';
-            el.style.top = '0';
-            document.body.appendChild(el);
-            try {
-                // 收集"可安全断页"的位置:每个任务块顶 + 每行字顶 → 只在这些边界断页,绝不把一行/一个字切成两半
-                const elRect = el.getBoundingClientRect();
-                const cutSet = new Set([0]);
-                el.querySelectorAll('.bl-stu-detail-task, .bl-stu-detail-char').forEach(n => {
-                    cutSet.add(Math.max(0, Math.round(n.getBoundingClientRect().top - elRect.top)));
-                });
-                const totalCss = el.scrollHeight;
-                const cuts = Array.from(cutSet).filter(v => v < totalCss).sort((a, b) => a - b);
-                cuts.push(totalCss);
-
-                const canvas = await html2canvas(el, { scale: 2, backgroundColor: '#ffffff', useCORS: true });
-                const pxPerCss = canvas.height / totalCss;
-
-                let start = 0;
-                while (start < totalCss - 1) {
-                    const limit = start + pageCssH;
-                    let end = -1;
-                    for (let k = 0; k < cuts.length; k++) { if (cuts[k] > start && cuts[k] <= limit + 0.5) end = cuts[k]; }
-                    if (end === -1) end = Math.min(limit, totalCss);   // 单块本身超过一页时才硬切(极少见)
-                    const sy = Math.round(start * pxPerCss);
-                    const sh = Math.round((end - start) * pxPerCss);
-                    const seg = document.createElement('canvas');
-                    seg.width = canvas.width;
-                    seg.height = sh;
-                    const sctx = seg.getContext('2d');
-                    sctx.fillStyle = '#ffffff';
-                    sctx.fillRect(0, 0, seg.width, seg.height);
-                    sctx.drawImage(canvas, 0, sy, canvas.width, sh, 0, 0, canvas.width, sh);
-                    const segHmm = (end - start) * pw / elWidth;
-                    if (started) pdf.addPage();
-                    pdf.addImage(seg.toDataURL('image/jpeg', 0.92), 'JPEG', 0, 0, pw, segHmm);
-                    started = true;
-                    start = end;
-                }
-            } catch (e) {
-                // 单个学生失败不中断整体导出
-            } finally {
-                if (el.parentNode) el.parentNode.removeChild(el);
-            }
-        }
         const className = (state.currentClassInfo && state.currentClassInfo.name) || state.currentClassCode || 'class';
-        pdf.save('学习报告_' + className + '_' + dateStr + '.pdf');
-        toast(tt('PDF 已导出 ✓', 'PDF exported ✓', 'تم التصدير ✓'), 'success');
+        const titleOf = tid => { const t = (state.tasks || []).find(x => x.taskId === tid); return t ? t.title : L('(已删除任务)', '(deleted task)', '(محذوفة)'); };
+
+        // 每个练习:做过的学生 + 字序(与明细表口径一致)
+        const tdata = {};
+        taskIds.forEach(tid => {
+            const done = state.students.filter(s => s.taskResults && s.taskResults[tid] && s.taskResults[tid].chars);
+            const charOrder = [];
+            done.forEach(s => Object.keys(s.taskResults[tid].chars).forEach(ch => { if (!charOrder.includes(ch)) charOrder.push(ch); }));
+            tdata[tid] = { done, charOrder };
+        });
+        // 单生·单练习 整体%(!= null 同时挡住 null / undefined)
+        function stuAcc(s, tid) {
+            const chars = (s.taskResults[tid] && s.taskResults[tid].chars) || {};
+            let c = 0, t = 0;
+            tdata[tid].charOrder.forEach(ch => {
+                const r = chars[ch]; if (!r) return;
+                if (r.py != null) { t++; if (r.py) c++; }
+                if (r.comp != null) { t++; if (r.comp) c++; }
+            });
+            return t ? Math.round(c / t * 100) : null;
+        }
+        // 单生 跨全部练习 总平均%(按作答次数加权)
+        function stuTotal(s) {
+            let c = 0, t = 0;
+            taskIds.forEach(tid => {
+                const chars = (s.taskResults && s.taskResults[tid] && s.taskResults[tid].chars) || {};
+                tdata[tid].charOrder.forEach(ch => {
+                    const r = chars[ch]; if (!r) return;
+                    if (r.py != null) { t++; if (r.py) c++; }
+                    if (r.comp != null) { t++; if (r.comp) c++; }
+                });
+            });
+            return t ? Math.round(c / t * 100) : null;
+        }
+
+        // sheet 名:去 Excel 非法字符、限长、同名加序号
+        const usedNames = new Set();
+        function sheetName(raw) {
+            let n = String(raw || '表').replace(/[\[\]\:\*\?\/\\]/g, ' ').replace(/^'+|'+$/g, '').trim().slice(0, 28) || '表';
+            let base = n, i = 2;
+            while (usedNames.has(n)) { n = base.slice(0, 24) + '(' + i + ')'; i++; }
+            usedNames.add(n); return n;
+        }
+        // 把指定列的数字格子设成百分比显示(值存整数 77,格式 → 显示 77%,仍按数字排序)
+        function fmtPct(ws, cols, r0, r1) {
+            for (let r = r0; r < r1; r++) cols.forEach(c => {
+                const cell = ws[XLSX.utils.encode_cell({ r, c })];
+                if (cell && typeof cell.v === 'number') cell.z = '0"%"';
+            });
+        }
+
+        const wb = XLSX.utils.book_new();
+
+        // ── ① 总览 sheet:学生×练习成绩表 + 最难字 + 待关注学生 ──
+        const activeStu = state.students.filter(s => !s.left);
+        const aoa = [];
+        aoa.push([L('斑斓学习报告 · 全班总览', 'Class Overview', 'نظرة عامة على الصف')]);
+        // 每练习班均(在读学生,加权) + 全班总平均
+        let gC = 0, gT = 0;
+        const taskClassAvg = taskIds.map(tid => {
+            let c = 0, t = 0;
+            activeStu.forEach(s => {
+                const chars = (s.taskResults && s.taskResults[tid] && s.taskResults[tid].chars) || {};
+                tdata[tid].charOrder.forEach(ch => {
+                    const r = chars[ch]; if (!r) return;
+                    if (r.py != null) { t++; if (r.py) c++; }
+                    if (r.comp != null) { t++; if (r.comp) c++; }
+                });
+            });
+            gC += c; gT += t;
+            return t ? Math.round(c / t * 100) : null;
+        });
+        const grandAvg = gT ? Math.round(gC / gT * 100) : null;
+        aoa.push([L('班级', 'Class', 'الصف'), className, L('日期', 'Date', 'التاريخ'), dateStr,
+                  L('学生数', 'Students', 'الطلاب'), activeStu.length, L('练习数', 'Tasks', 'المهام'), taskIds.length,
+                  L('全班总平均', 'Class avg', 'المعدل'), grandAvg == null ? NA : grandAvg + '%']);
+        aoa.push([]);
+        aoa.push([L('学生', 'Student', 'الطالب')].concat(taskIds.map(titleOf)).concat([L('总平均', 'Average', 'المعدل')]));
+        const gradeStart = aoa.length;
+        activeStu.forEach(s => {
+            const row = [s.name || s.studentCode];
+            taskIds.forEach(tid => { const a = stuAcc(s, tid); row.push(a == null ? '' : a); });
+            const tot = stuTotal(s); row.push(tot == null ? '' : tot);
+            aoa.push(row);
+        });
+        aoa.push([L('班级平均', 'Class avg', 'معدل الصف')].concat(taskClassAvg.map(p => p == null ? '' : p)).concat([grandAvg == null ? '' : grandAvg]));
+        const gradeEnd = aoa.length;   // 含班均行,末尾之后(不含)
+        aoa.push([]);
+
+        // 📌 最难的字(跨全部练习合并,答对率最低 Top8)
+        const charAgg = {};
+        taskIds.forEach(tid => {
+            const { done, charOrder } = tdata[tid];
+            charOrder.forEach(ch => {
+                let c = 0, t = 0;
+                done.forEach(s => {
+                    const r = s.taskResults[tid].chars[ch]; if (!r) return;
+                    if (r.py != null) { t++; if (r.py) c++; }
+                    if (r.comp != null) { t++; if (r.comp) c++; }
+                });
+                if (t) {
+                    if (!charAgg[ch]) charAgg[ch] = { c: 0, t: 0, tasks: [] };
+                    charAgg[ch].c += c; charAgg[ch].t += t;
+                    const tn = titleOf(tid); if (charAgg[ch].tasks.indexOf(tn) < 0) charAgg[ch].tasks.push(tn);
+                }
+            });
+        });
+        const hardest = Object.keys(charAgg)
+            .map(ch => ({ z: ch, p: Math.round(charAgg[ch].c / charAgg[ch].t * 100), tasks: charAgg[ch].tasks }))
+            .sort((a, b) => a.p - b.p).slice(0, 8);
+        aoa.push(['📌 ' + L('最难的字', 'Hardest characters', 'أصعب الحروف')]);
+        aoa.push([L('排名', 'Rank', 'الترتيب'), L('字', 'Char', 'الحرف'), L('全班答对率', 'Class accuracy', 'الدقة'), L('所在练习', 'In tasks', 'المهام')]);
+        const hardStart = aoa.length;
+        hardest.forEach((o, i) => aoa.push([i + 1, o.z, o.p, o.tasks.join(' · ')]));
+        const hardEnd = aoa.length;
+        aoa.push([]);
+
+        // 👀 最需要关注的学生(总平均最低 Top5)
+        const watch = activeStu.map(s => {
+            let wt = '', wp = null;
+            taskIds.forEach(tid => { const a = stuAcc(s, tid); if (a != null && (wp == null || a < wp)) { wp = a; wt = titleOf(tid); } });
+            return { n: s.name || s.studentCode, p: stuTotal(s), wt, wp };
+        }).filter(o => o.p != null).sort((a, b) => a.p - b.p).slice(0, 5);
+        aoa.push(['👀 ' + L('最需要关注的学生', 'Students to watch', 'طلاب بحاجة لمتابعة')]);
+        aoa.push([L('排名', 'Rank', 'الترتيب'), L('学生', 'Student', 'الطالب'), L('总平均', 'Average', 'المعدل'), L('最弱的练习', 'Weakest task', 'أضعف مهمة')]);
+        const watchStart = aoa.length;
+        watch.forEach((o, i) => aoa.push([i + 1, o.n, o.p, o.wp == null ? '' : (o.wt + ' ' + o.wp + '%')]));
+        const watchEnd = aoa.length;
+
+        const wsOv = XLSX.utils.aoa_to_sheet(aoa);
+        wsOv['!cols'] = [{ wch: 26 }].concat(taskIds.map(() => ({ wch: 9 }))).concat([{ wch: 9 }]);
+        fmtPct(wsOv, taskIds.map((_, i) => i + 1).concat([taskIds.length + 1]), gradeStart, gradeEnd);  // 成绩表:练习列 + 总平均列
+        fmtPct(wsOv, [2], hardStart, hardEnd);    // 最难字:全班答对率列
+        fmtPct(wsOv, [2], watchStart, watchEnd);  // 待关注:总平均列
+        XLSX.utils.book_append_sheet(wb, wsOv, sheetName('总览'));
+
+        // ── ② 每个练习一张「学生×字」网格 sheet ──
+        const MK = v => (v == null) ? NA : (v ? '✓' : '✗');
+        taskIds.forEach(tid => {
+            const { done, charOrder } = tdata[tid];
+            // 学生排序:在读按整体%降序,已离开接后面(与明细表一致)
+            const stat = s => {
+                const chars = s.taskResults[tid].chars;
+                const cellsPy = {}, cellsComp = {};
+                let pyC = 0, pyT = 0, compC = 0, compT = 0;
+                charOrder.forEach(ch => {
+                    const r = chars[ch]; const vp = r ? r.py : undefined, vc = r ? r.comp : undefined;
+                    cellsPy[ch] = vp; cellsComp[ch] = vc;
+                    if (vp != null) { pyT++; if (vp) pyC++; }
+                    if (vc != null) { compT++; if (vc) compC++; }
+                });
+                const tot = pyT + compT, cor = pyC + compC;
+                return { s, cellsPy, cellsComp, pyC, pyT, compC, compT, acc: tot ? Math.round(cor / tot * 100) : null };
+            };
+            const _av = o => (o.acc == null ? -1 : o.acc);
+            const ordered = done.filter(x => !x.left).map(stat).sort((a, b) => _av(b) - _av(a))
+                .concat(done.filter(x => x.left).map(stat));
+
+            const rows = [[L('学生', 'Student', 'الطالب'), L('维度', 'Type', 'النوع')]
+                .concat(charOrder).concat([L('该生', 'Student', 'الطالب'), L('答对率', 'Accuracy', 'الدقة')])];
+            const sCol = 2 + charOrder.length;   // 该生列
+            const accCol = sCol + 1;             // 答对率列
+            ordered.forEach(o => {
+                const nm = (o.s.name || o.s.studentCode) + (o.s.left ? ' (' + L('已离开', 'left', 'غادر') + ')' : '');
+                const pyRow = [nm, L('拼音', 'Pinyin', 'بينيين')];
+                charOrder.forEach(ch => pyRow.push(MK(o.cellsPy[ch])));
+                pyRow.push(o.pyT ? Math.round(o.pyC / o.pyT * 100) : '');   // 该生拼音%
+                pyRow.push(o.acc == null ? '' : o.acc);                     // 答对率(整体,拼音行显示一次)
+                rows.push(pyRow);
+                const compRow = ['', L('部件', 'Parts', 'مكوّنات')];
+                charOrder.forEach(ch => compRow.push(MK(o.cellsComp[ch])));
+                compRow.push(o.compT ? Math.round(o.compC / o.compT * 100) : '');  // 该生部件%
+                compRow.push('');
+                rows.push(compRow);
+            });
+            // 底部:每字答对率·全班(拼音+部件合并,含已离开历史) + 全班整体
+            const foot = [L('每字答对率·全班', 'Per char · Class', 'لكل حرف · الصف'), ''];
+            let tcAll = 0, ttAll = 0;
+            charOrder.forEach(ch => {
+                let c = 0, t = 0;
+                done.forEach(s => {
+                    const r = s.taskResults[tid].chars[ch]; if (!r) return;
+                    if (r.py != null) { t++; if (r.py) c++; }
+                    if (r.comp != null) { t++; if (r.comp) c++; }
+                });
+                foot.push(t ? Math.round(c / t * 100) : '');
+                tcAll += c; ttAll += t;
+            });
+            foot.push('');
+            foot.push(ttAll ? Math.round(tcAll / ttAll * 100) : '');
+            rows.push(foot);
+
+            const ws = XLSX.utils.aoa_to_sheet(rows);
+            ws['!cols'] = [{ wch: 26 }, { wch: 7 }].concat(charOrder.map(() => ({ wch: 4 }))).concat([{ wch: 7 }, { wch: 8 }]);
+            fmtPct(ws, [sCol, accCol], 1, rows.length);                          // 该生列 + 答对率列(跳过表头)
+            fmtPct(ws, charOrder.map((_, i) => 2 + i), rows.length - 1, rows.length);  // 底部班均的每字列
+            XLSX.utils.book_append_sheet(wb, ws, sheetName(titleOf(tid)));
+        });
+
+        XLSX.utils.writeFile(wb, '学习报告_' + className + '_' + dateStr + '.xlsx');
+        toast(tt('Excel 已导出 ✓', 'Excel exported ✓', 'تم التصدير ✓'), 'success');
     }
 
     // ═══════════════════════════════════════════════════
