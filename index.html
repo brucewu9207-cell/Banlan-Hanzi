@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-95 (2026-07-01) — 布置作业页任务卡配色对齐名单页学生卡:任务组卡片灰绿#9caea3(hover深墨绿)、已归档组卡片陶红#d6b3a6(hover深陶#905844),文字深色/hover翻白同名单页;去掉班级红chip里11A1的白色半透明底框(纯白字) -->
+<!-- 斑斓汉字(老师端) · 汉字UI-96 (2026-07-01) — 布置作业页三处微调:①红chip改为11A1：5(只显任务总数=任务+已归档);②字/词/句类型徽章改白底(保留彩色字);③任务卡图标键默认就翻白(白图标+白边框,配灰绿/陶红底) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-95 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-96 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1564,6 +1564,9 @@ console.log('%c[斑斓汉字] 汉字UI-95 已加载', 'color:#374a42;font-weight
             gap: 10px;
             transition: all 0.2s;
         }
+        /* 汉字-95:任务卡在灰绿/陶红底上,图标键默认就翻白(白图标+白边框) */
+        .bl-task-card .bl-icon-btn { border-color: rgba(255, 255, 255, 0.55); color: #fff; }
+        .bl-task-card .bl-icon-btn .bl-ico { filter: brightness(0) invert(1); }
         /* 汉字-92:任务行 hover 变深墨绿(同图2/班级卡片),卡内文字+图标翻白保证读得清 */
         .bl-task-card:hover { background: var(--ink-green); border-color: #2a3832; border-left-color: var(--ink-green); }
         .bl-task-card:hover .bl-task-title { color: #fff; }
@@ -1650,9 +1653,10 @@ console.log('%c[斑斓汉字] 汉字UI-95 已加载', 'color:#374a42;font-weight
             font-size: 11px; letter-spacing: 0.5px;
             font-weight: 500;
         }
-        .bl-type-char { background: rgba(143, 39, 39, 0.12); color: #8f2727; }
-        .bl-type-word { background: rgba(202, 138, 4, 0.15); color: #976806; }
-        .bl-type-sentence { background: rgba(74, 139, 111, 0.15); color: #2f6b53; }
+        /* 汉字-95:类型徽章改白底(在灰绿/陶红卡片上更清爽),保留彩色字区分 */
+        .bl-type-char { background: #fff; color: #8f2727; }
+        .bl-type-word { background: #fff; color: #976806; }
+        .bl-type-sentence { background: #fff; color: #2f6b53; }
 
         /* 任务编辑器：单选按钮组 (字/词/句) */
         .bl-radio-group {
@@ -11193,11 +11197,9 @@ window.BL = (function () {
         const activeCount = activeTasks.length, archivedCount = archivedTasks.length;
         const total = activeCount + archivedCount;
 
-        // 顶部红chip:11A1：总=任务+归档(无归档时只显示总数)
+        // 顶部红chip:11A1：总(任务总数=任务+已归档)
         const countEl = $('blTasksCount');
-        if (countEl) countEl.textContent = archivedCount > 0
-            ? ('：' + total + '=' + activeCount + '+' + archivedCount)
-            : ('：' + activeCount);
+        if (countEl) countEl.textContent = '：' + total;
 
         // ★ v2B-r2: 渲染批量操作栏 (有选中项才显示)
         renderBulkBar();
