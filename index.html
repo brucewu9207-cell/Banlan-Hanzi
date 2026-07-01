@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-111 (2026-07-01) — 阿语防移位:顶栏三按钮(我的班级/账号/新增班级)+ 名单折叠药丸(在读/待加入)+ 任务折叠药丸(任务/已归档)锁定英文态宽度,切英↔阿时框不再缩放。做法=给这几个元素加 min-width=英文实测宽(药丸补 box-sizing:border-box);纯 CSS 不动 HTML、无 @media 两端通用。Chrome 实测阿语态尺寸精确回到英文态。 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-112 (2026-07-01) — 阿语防移位第二批:①新建班级弹窗三框(班级码/取消/创建)②弱项看板两药丸(最该重点讲的字/最需要关注的学生)锁定英文态宽度,切英↔阿不再缩放。给两个看板药丸各加区分 class(bl-wk-title-weak/stu)再分别锁宽;弹窗框按 id/scope 精确锁。Chrome 逐个实测阿语态精确回到英文尺寸。连同上一版顶栏三按钮+四折叠药丸,双语防移位已覆盖 11 个元素。 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-111 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-112 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -804,6 +804,16 @@ console.log('%c[斑斓汉字] 汉字UI-111 已加载', 'color:#374a42;font-weigh
         #bl-roster-title-pending { min-width: 111px; }              /* 待加入 */
         #bl-tasks-title-active { min-width: 96px; }                 /* 任务 */
         #bl-tasks-title-archived { min-width: 115px; }              /* 已归档 */
+        /* 汉字-112:再加「新建班级弹窗三框」+「弱项看板两药丸」同款锁定(补 border-box 免 content-box 偏差) */
+        #blClassEditorOverlay .bl-form-group > .bl-label,
+        #blClassEditorOverlay .bl-btn.bl-secondary,
+        #blClassSubmitBtn,
+        .bl-wk-title-weak, .bl-wk-title-stu { box-sizing: border-box; }
+        #blClassEditorOverlay .bl-form-group > .bl-label { min-width: 91px; }   /* 班级码 */
+        #blClassEditorOverlay .bl-btn.bl-secondary { min-width: 75px; }         /* 取消 */
+        #blClassSubmitBtn { min-width: 88px; }                                  /* 创建 */
+        .bl-wk-title-weak { min-width: 202px; }                                 /* 最该重点讲的字 */
+        .bl-wk-title-stu { min-width: 196px; }                                  /* 最需要关注的学生 */
 
         /* 内容区 — ★ v2D.3: 缩小间距 */
         .bl-body {
@@ -10910,7 +10920,7 @@ window.BL = (function () {
             <div class="bl-wk-wrap">
                 <div class="bl-wk-card" id="wk-card-c-${tid}">
                     <div class="bl-wk-head">
-                        <button class="bl-wk-title" onclick="BL.toggleWeakBlock('wk-card-c-${tid}')"><span class="bl-wk-car">▾</span>📌 ${escapeHtml(tt('最该重点回讲的字', 'Hardest characters', 'أصعب الحروف'))}</button>
+                        <button class="bl-wk-title bl-wk-title-weak" onclick="BL.toggleWeakBlock('wk-card-c-${tid}')"><span class="bl-wk-car">▾</span>📌 ${escapeHtml(tt('最该重点回讲的字', 'Hardest characters', 'أصعب الحروف'))}</button>
                         <span class="bl-wk-ctrl">${escapeHtml(tt('低于', 'Below', 'تحت'))}
                             <select onchange="BL.refilterWeakChars('${tid}',this.value)">${[50,60,70,80,90].map(v => opt(v, 60)).join('')}</select>
                         </span>
@@ -10919,7 +10929,7 @@ window.BL = (function () {
                 </div>
                 <div class="bl-wk-card bl-wk-folded" id="wk-card-s-${tid}">
                     <div class="bl-wk-head">
-                        <button class="bl-wk-title" onclick="BL.toggleWeakBlock('wk-card-s-${tid}')"><span class="bl-wk-car">▸</span>👀 ${escapeHtml(tt('最需要关注的学生', 'Students to watch', 'طلاب بحاجة لمتابعة'))}</button>
+                        <button class="bl-wk-title bl-wk-title-stu" onclick="BL.toggleWeakBlock('wk-card-s-${tid}')"><span class="bl-wk-car">▸</span>👀 ${escapeHtml(tt('最需要关注的学生', 'Students to watch', 'طلاب بحاجة لمتابعة'))}</button>
                         <span class="bl-wk-ctrl">${escapeHtml(tt('最弱', 'Lowest', 'الأضعف'))}
                             <select onchange="BL.refilterWeakStus('${tid}',this.value)">${[1,2,3,4,5,6,7,8,9,10,999].map(v => opt(v, 5)).join('')}</select> ${escapeHtml(tt('人', '', 'طالب'))}
                         </span>
