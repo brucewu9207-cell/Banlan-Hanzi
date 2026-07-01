@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-91 (2026-07-01) — 全班报告Excel:副标题全班总平均改大号加粗醒目(富文本);Average总平均列整列放大加粗(班级总平均最大);每个练习sheet标签页用不同颜色区分(总览墨绿) -->
+<!-- 斑斓汉字(老师端) · 汉字UI-92 (2026-07-01) — 布置作业页两处UI:①任务行卡片鼠标划过变深墨绿(同新建任务按钮),卡内任务名/图标翻白;②任务页班级方框改朱砂红(参考结果页班级按钮),内容改成 11A1(班级):5个任务 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-91 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-92 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1527,11 +1527,11 @@ console.log('%c[斑斓汉字] 汉字UI-91 已加载', 'color:#374a42;font-weight
             gap: 8px;
         }
         .bl-tasks-title {
-            font-size: 15px; color: var(--ink-green); font-weight: 500;
-            /* UI-29: 班级信息做成圆角色块(纯展示,不可点) */
+            font-size: 15px; color: #fff; font-weight: 600;
+            /* 汉字-92:班级信息块改朱砂红(参考结果页 11a1 班级按钮),纯展示不可点 */
             display: inline-block;
-            background: #eef4f0;
-            border: 1px solid #d7e4dd;
+            background: var(--zhusha);
+            border: 1px solid #9a2f2f;
             border-radius: 8px;
             padding: 8px 18px;
         }
@@ -1539,10 +1539,10 @@ console.log('%c[斑斓汉字] 汉字UI-91 已加载', 'color:#374a42;font-weight
         #blViewStudents .bl-tasks-header { justify-content: center; }
         .bl-tasks-class-tag {
             display: inline-block;
-            background: var(--ink-green); color: #fff;
+            background: rgba(255, 255, 255, 0.18); color: #fff;
             padding: 2px 8px; border-radius: 3px;
-            font-size: 12px; letter-spacing: 1px;
-            font-family: monospace; margin-right: 8px;
+            font-size: 13px; letter-spacing: 1px; font-weight: 700;
+            font-family: monospace; margin-right: 6px;
         }
 
         /* 任务列表 — ★ v2D.3: 缩小间距 */
@@ -1557,7 +1557,19 @@ console.log('%c[斑斓汉字] 汉字UI-91 已加载', 'color:#374a42;font-weight
             gap: 10px;
             transition: all 0.2s;
         }
-        .bl-task-card:hover { background: #d4e6dc; }
+        /* 汉字-92:任务行 hover 变深墨绿(同图2/班级卡片),卡内文字+图标翻白保证读得清 */
+        .bl-task-card:hover { background: var(--ink-green); border-color: #2a3832; border-left-color: var(--ink-green); }
+        .bl-task-card:hover .bl-task-title { color: #fff; }
+        .bl-task-card:hover .bl-task-meta { color: rgba(255, 255, 255, 0.85); }
+        .bl-task-card:hover .bl-task-select { border-color: rgba(255, 255, 255, 0.7); }
+        .bl-task-card:hover .bl-icon-btn { color: #fff; border-color: rgba(255, 255, 255, 0.55); }
+        .bl-task-card:hover .bl-icon-btn span { color: rgba(255, 255, 255, 0.85) !important; }
+        .bl-task-card:hover .bl-icon-btn .bl-ico { filter: brightness(0) invert(1); }
+        /* 精确停在某个图标键上时回到白底深绿(保留点击反馈) */
+        .bl-task-card:hover .bl-icon-btn:hover { background: #fff; border-color: #d0d7d3; color: var(--ink-green); }
+        .bl-task-card:hover .bl-icon-btn.bl-danger-icon:hover { color: var(--zhusha); border-color: #e8c8c8; }
+        .bl-task-card:hover .bl-icon-btn:hover span { color: var(--ink-gray) !important; }
+        .bl-task-card:hover .bl-icon-btn:hover .bl-ico { filter: none; }
         /* ★ v2D.2 双语竖排规则 (仅限 BL 模块,v2A 现有横排不动)
            - BL 内的 .lang-en/.lang-ar 改为 block 显示,在中文下方独立成行
            - BL 容器允许 \n 换行(用于 JS textContent 动态文字) */
@@ -9540,8 +9552,8 @@ window.BL = (function () {
         $('blTabs').style.display = 'none'; $('blHeadLeft').style.display = ''; $('blHeadClassBtn').style.display = 'none'; // 汉字-68:任务视图显返回、不显班级按钮
 
         // 填充头部信息
-        $('blTasksClassTag').textContent = cls.classCode;
-        $('blTasksClassName').textContent = cls.name;
+        $('blTasksClassTag').textContent = (cls.classCode || '').toUpperCase();   // 汉字-92:班级号大写 11A1
+        $('blTasksClassName').textContent = tt('(班级)', '(Class)', '(الصف)');
         $('blTasksCount').textContent = '...';
         // 立刻显示加载占位,避免上次班级的任务 HTML 闪现
         $('blTaskList').innerHTML = '<div class="bl-empty"><div class="bl-empty-text" style="color:var(--ink-gray);">' + escapeHtml(tt('加载中...', 'Loading...', 'جاري التحميل...')) + '</div></div>';
@@ -11171,14 +11183,14 @@ window.BL = (function () {
         // ★ v2D.3: 整行竖排,避免拆词导致多行错乱
         if (countEl) {
             if (archivedCount > 0) {
-                const zh = `${activeCount} 个任务 · ${archivedCount} 已归档`;
-                const en = `${activeCount} tasks · ${archivedCount} archived`;
-                const ar = `${activeCount} مهام · ${archivedCount} مؤرشفة`;
+                const zh = `：${activeCount} 个任务 · ${archivedCount} 已归档`;
+                const en = `: ${activeCount} tasks · ${archivedCount} archived`;
+                const ar = `: ${activeCount} مهام · ${archivedCount} مؤرشفة`;
                 countEl.textContent = tt(zh, en, ar);
             } else {
-                const zh = `${activeCount} 个任务`;
-                const en = `${activeCount} tasks`;
-                const ar = `${activeCount} مهام`;
+                const zh = `：${activeCount} 个任务`;
+                const en = `: ${activeCount} tasks`;
+                const ar = `: ${activeCount} مهام`;
                 countEl.textContent = tt(zh, en, ar);
             }
         }
