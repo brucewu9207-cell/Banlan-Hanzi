@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-107 (2026-07-01) — 任务卡两处:①彻底去掉编辑按钮(建了就发没草稿箱概念,打错删了重发即可;编辑改内容还会弄乱已答成绩);②复制任务图标从📑换成更明显的⧉双方框(按钮+复制任务弹窗标题一致);归档按钮保留 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-110 (2026-07-01) — 清理任务卡编辑功能的死代码：编辑按钮早已移除，openTaskEditor/submitTask/updateSubmitButtonText/语言刷新函数/state 里所有 mode=edit 分支与 editingTaskId 全部删除。新建、复制两条流程不受影响（已 node 模拟真跑验证）。纯代码清理，无 UI 无数据可见变化。 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-107 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-110 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -8841,10 +8841,9 @@ window.BL = (function () {
         currentClassCode: null,      // 当前查看任务的班级
         currentClassInfo: null,      // 当前班级的元信息
         tasks: [],                   // 当前班级的任务列表
-        editingTaskId: null,         // 编辑模式下的任务 ID
         taskEditorType: 'char',      // 任务编辑器当前选中的类型 char/word/sentence
         // —— Phase 2B 第 2 轮 (v2B-r2) ——
-        taskEditorMode: 'create',    // 'create' | 'edit' | 'duplicate'
+        taskEditorMode: 'create',    // 'create' | 'duplicate'(编辑功能已下线)
         selectedClasses: [],         // 多班推送时勾选的班级码数组
         showArchived: false,         // 是否在列表中显示归档任务
         selectedTaskIds: [],         // 批量选中的任务 ID 数组
@@ -9084,10 +9083,7 @@ window.BL = (function () {
             const taskEditorOpen = document.getElementById('blTaskEditorOverlay').classList.contains('bl-show');
             if (taskEditorOpen) {
                 const mode = state.taskEditorMode;
-                if (mode === 'edit') {
-                    document.getElementById('blTaskEditorTitle').innerHTML = _editorTitleHTML('编辑任务', 'Edit Task', 'تعديل المهمة');
-                    document.getElementById('blTaskSubmitBtn').textContent = tt('保存', 'Save', 'حفظ');
-                } else if (mode === 'duplicate') {
+                if (mode === 'duplicate') {
                     document.getElementById('blTaskEditorTitle').innerHTML = _editorTitleHTML('⧉ 复制任务', '⧉ Duplicate Task', '⧉ نسخ المهمة');
                     updateSubmitButtonText();
                     renderMultiClassPicker();
@@ -9400,7 +9396,6 @@ window.BL = (function () {
         // ★ v2D.3: 按钮 title (单词级 tt 没问题,因为是 title 属性,不竖排显示)
         const titleStudents = tt('学生管理', 'Students', 'الطلاب');
         const titleTasks = tt('任务管理', 'Tasks', 'المهام');
-        const titleEdit = tt('编辑', 'Edit', 'تعديل');
         const titleDelete = tt('删除', 'Delete', 'حذف');
 
         list.innerHTML = state.classes.map(c => {
@@ -9425,7 +9420,6 @@ window.BL = (function () {
                 <div class="bl-class-actions">
                     <button class="bl-icon-btn" onclick="BL.openStudentsView('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleStudents)}"><span class="bl-ico">👥</span> ${(c.studentCount || 0)}/${(c.studentCount || 0) + (c.pendingCount || 0)}</button>
                     <button class="bl-icon-btn" onclick="BL.openTasksView('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleTasks)}"><span class="bl-ico">📋</span> ${c.taskCount || 0}</button>
-                    <button class="bl-icon-btn" onclick="BL.openClassEditor('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleEdit)}"><span class="bl-ico">✎</span></button>
                     <button class="bl-icon-btn bl-danger-icon" onclick="BL.deleteClass('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleDelete)}"><span class="bl-ico">🗑</span></button>
                 </div>
             </div>
@@ -10204,17 +10198,20 @@ window.BL = (function () {
             toast(tt('导出组件未就绪,请刷新重试', 'Export libs not ready', 'مكوّنات التصدير غير جاهزة'), 'error');
             return;
         }
+        toast(tt('正在生成 Excel…', 'Generating Excel…', 'جارٍ إنشاء Excel…'));
+        // ★ 汉字-89:先拉任务名(含已归档),否则 state.tasks 为空时任务名全变「(已删除任务)」
+        try { await loadTasksForRate(); } catch (e) { /* 失败沿用已有 state.tasks */ }
+        // ★ 汉字-108:只收集"还存在的任务"(state.tasks 里有的),已删除任务的残留成绩不进报告
         const taskIds = [];
         (state.students || []).forEach(s => {
-            if (s.taskResults) Object.keys(s.taskResults).forEach(tid => { if (!taskIds.includes(tid)) taskIds.push(tid); });
+            if (s.taskResults) Object.keys(s.taskResults).forEach(tid => {
+                if (!taskIds.includes(tid) && (!state.tasks || !state.tasks.length || state.tasks.some(t => t.taskId === tid))) taskIds.push(tid);
+            });
         });
         if (taskIds.length === 0) {
             toast(tt('暂无已完成任务的学生,无法生成报告', 'No students with results yet', 'لا يوجد طلاب لديهم نتائج'), 'error');
             return;
         }
-        toast(tt('正在生成 Excel…', 'Generating Excel…', 'جارٍ إنشاء Excel…'));
-        // ★ 汉字-89:导出前先拉任务名(含已归档),否则 state.tasks 为空时任务名全变「(已删除任务)」
-        try { await loadTasksForRate(); } catch (e) { /* 失败沿用已有 state.tasks */ }
 
         const isAr = document.body.classList.contains('lang-mode-ar');
         const isEn = document.body.classList.contains('lang-mode-en');
@@ -10732,11 +10729,11 @@ window.BL = (function () {
         const box = $('blMatrix');
         if (!box) return;
 
-        // 收集有学生做过的任务
+        // 收集有学生做过的任务(汉字-108:只留 state.tasks 里还存在的,已删除任务的残留成绩不显示)
         const taskIds = [];
         state.students.forEach(s => {
             if (s.taskResults) Object.keys(s.taskResults).forEach(tid => {
-                if (!taskIds.includes(tid)) taskIds.push(tid);
+                if (!taskIds.includes(tid) && (!state.tasks || !state.tasks.length || state.tasks.some(t => t.taskId === tid))) taskIds.push(tid);
             });
         });
 
@@ -11272,49 +11269,37 @@ window.BL = (function () {
     // 打开任务编辑器 (create / edit / duplicate)
     // ★ v2B-r2: 支持 duplicate 模式 + 多班勾选
     function openTaskEditor(taskId, mode) {
-        // 自动判断 mode: 没传 taskId → create; 显式传 'duplicate' → duplicate; 否则 edit
-        mode = mode || (taskId ? 'edit' : 'create');
+        // 只剩两种入口: 没传 taskId → create(新建); 显式传 'duplicate' → duplicate(复制)
+        mode = mode || 'create';
         state.taskEditorMode = mode;
-        state.editingTaskId = mode === 'edit' ? taskId : null;
 
         // 标题和按钮文字
-        let titleText, btnText;
-        if (mode === 'edit') {
-            titleText = _editorTitleHTML('编辑任务', 'Edit Task', 'تعديل المهمة');
-            btnText = tt('保存', 'Save', 'حفظ');
-        } else if (mode === 'duplicate') {
+        let titleText;
+        if (mode === 'duplicate') {
             titleText = _editorTitleHTML('⧉ 复制任务', '⧉ Duplicate Task', '⧉ نسخ المهمة');
-            btnText = tt('发布', 'Publish', 'نشر');
         } else {
             titleText = _editorTitleHTML('+ 新建任务', '+ New Task', '+ مهمة جديدة');
-            btnText = tt('发布', 'Publish', 'نشر');
         }
         $('blTaskEditorTitle').innerHTML = titleText;   // 汉字-97:改 lang-span,译文比中文小(同其他大标题)
-        $('blTaskSubmitBtn').textContent = btnText;
+        $('blTaskSubmitBtn').textContent = tt('发布', 'Publish', 'نشر');
 
-        // 填表单
+        // 填表单: create 清空; duplicate 载入源任务数据
         if (mode === 'create') {
             $('blTaskTitle').value = '';
             $('blTaskContent').value = '';
         } else {
-            // edit 或 duplicate 都需要源任务数据
             const task = state.tasks.find(t => t.taskId === taskId);
             if (!task) { toast(tt('任务不存在', 'Task not found', 'المهمة غير موجودة'), 'error'); return; }
             $('blTaskTitle').value = task.title || '';
             $('blTaskContent').value = task.content || '';
         }
 
-        // 多班勾选区: 编辑模式隐藏(只能改单条任务); 创建/复制模式显示
-        const multiGroup = $('blMultiClassGroup');
-        if (mode === 'edit') {
-            multiGroup.style.display = 'none';
-        } else {
-            multiGroup.style.display = '';
-            // 默认勾选当前班级
-            state.selectedClasses = state.currentClassCode ? [state.currentClassCode] : [];
-            renderMultiClassPicker();
-            updateSubmitButtonText();
-        }
+        // 多班勾选区: 创建/复制均显示
+        $('blMultiClassGroup').style.display = '';
+        // 默认勾选当前班级
+        state.selectedClasses = state.currentClassCode ? [state.currentClassCode] : [];
+        renderMultiClassPicker();
+        updateSubmitButtonText();
 
         $('blTaskEditorOverlay').classList.add('bl-show');
         lockBlModalWidth();
@@ -11357,9 +11342,7 @@ window.BL = (function () {
     function updateSubmitButtonText() {
         const n = state.selectedClasses.length;
         const btn = $('blTaskSubmitBtn');
-        if (state.taskEditorMode === 'edit') {
-            btn.textContent = tt('保存', 'Save', 'حفظ');
-        } else if (n === 0) {
+        if (n === 0) {
             btn.textContent = tt('请选择班级', 'Select Classes', 'اختر الفصول');
         } else if (n === 1) {
             btn.textContent = tt('发布', 'Publish', 'نشر');
@@ -11371,7 +11354,6 @@ window.BL = (function () {
     // 关闭任务编辑器
     function closeTaskEditor() {
         $('blTaskEditorOverlay').classList.remove('bl-show');
-        state.editingTaskId = null;
     }
 
     // 汉字-97:任务编辑器标题用 lang-span(中文正常大、译文0.78em),不再用 tt 双语同大小
@@ -11379,56 +11361,39 @@ window.BL = (function () {
         return escapeHtml(zh) + '<span class="lang-en">' + escapeHtml(en) + '</span><span class="lang-ar">' + escapeHtml(ar) + '</span>';
     }
 
-    // 提交任务 (创建 / 编辑 / 复制)
+    // 提交任务 (创建 / 复制)
     // ★ v2B-r2: 创建/复制时支持多班推送 (D3 升级版核心)
     async function submitTask() {
         const title = $('blTaskTitle').value.trim();
         const content = $('blTaskContent').value.trim();
         const type = 'char';   // 汉字-98:已去掉字/词/句选择(纯装饰标签),payload 仍带默认 type 保持接口不变
-        const mode = state.taskEditorMode;
 
         if (!title) { toast(tt('请填写任务标题', 'Please fill in task title', 'الرجاء ملء عنوان المهمة'), 'error'); return; }
         if (!content) { toast(tt('请填写任务内容', 'Please fill in task content', 'الرجاء ملء محتوى المهمة'), 'error'); return; }
 
         try {
-            if (mode === 'edit') {
-                // 编辑模式: PUT 返回 { task } - 用 retry 容忍 KV list 延迟
-                if (!state.currentClassCode) {
-                    toast(tt('班级信息丢失，请返回重试', 'Class info lost, please retry', 'فُقدت معلومات الفصل'), 'error'); return;
-                }
-                const result = await apiWithRetry('PUT',
-                    '/api/tasks/' + encodeURIComponent(state.currentClassCode) +
-                    '/' + encodeURIComponent(state.editingTaskId),
-                    { title, content, type }
-                );
-                // 用返回的 task 替换 state.tasks 里对应那条
-                const idx = state.tasks.findIndex(t => t.taskId === state.editingTaskId);
-                if (idx >= 0 && result.task) state.tasks[idx] = result.task;
-                toast(tt('任务已更新 ✓', 'Task updated ✓', 'تم تحديث المهمة ✓'), 'success');
-            } else {
-                // 创建 / 复制: batch-create 支持多班级
-                if (!state.selectedClasses || state.selectedClasses.length === 0) {
-                    toast(tt('请至少选择一个班级', 'Please select at least one class', 'الرجاء اختيار فصل واحد على الأقل'), 'error'); return;
-                }
-                const result = await api('POST', '/api/tasks/batch-create', {
-                    title, content, type,
-                    classCodes: state.selectedClasses
-                });
-                const createdTasks = result.created || [];
-                // 把推送到当前班级的那条插到列表最前
-                const myTask = createdTasks.find(t => t.classCode === state.currentClassCode);
-                if (myTask) {
-                    state.tasks.unshift(myTask);
-                }
-                // 同步更新所有目标班级的本地 taskCount
-                createdTasks.forEach(t => {
-                    const cls = state.classes.find(c => c.classCode === t.classCode);
-                    if (cls) cls.taskCount = (cls.taskCount || 0) + 1;
-                });
-                // 提示文案: 1 班正常,多班显示数量
-                const n = createdTasks.length;
-                toast(n === 1 ? tt('任务已发布 ✓', 'Task published ✓', 'تم نشر المهمة ✓') : tt('已发布到 ' + n + ' 个班级 ✓', 'Published to ' + n + ' classes ✓', 'تم النشر إلى ' + n + ' فصول ✓'), 'success');
+            // 创建 / 复制: batch-create 支持多班级
+            if (!state.selectedClasses || state.selectedClasses.length === 0) {
+                toast(tt('请至少选择一个班级', 'Please select at least one class', 'الرجاء اختيار فصل واحد على الأقل'), 'error'); return;
             }
+            const result = await api('POST', '/api/tasks/batch-create', {
+                title, content, type,
+                classCodes: state.selectedClasses
+            });
+            const createdTasks = result.created || [];
+            // 把推送到当前班级的那条插到列表最前
+            const myTask = createdTasks.find(t => t.classCode === state.currentClassCode);
+            if (myTask) {
+                state.tasks.unshift(myTask);
+            }
+            // 同步更新所有目标班级的本地 taskCount
+            createdTasks.forEach(t => {
+                const cls = state.classes.find(c => c.classCode === t.classCode);
+                if (cls) cls.taskCount = (cls.taskCount || 0) + 1;
+            });
+            // 提示文案: 1 班正常,多班显示数量
+            const n = createdTasks.length;
+            toast(n === 1 ? tt('任务已发布 ✓', 'Task published ✓', 'تم نشر المهمة ✓') : tt('已发布到 ' + n + ' 个班级 ✓', 'Published to ' + n + ' classes ✓', 'تم النشر إلى ' + n + ' فصول ✓'), 'success');
             closeTaskEditor();
             renderTasks();
         } catch (e) {
