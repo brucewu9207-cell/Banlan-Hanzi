@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-94 (2026-07-01) — 布置作业页任务列表重构为分组布局(参考名单页在读/待加入):顶部合并成一个红chip 11A1：总=任务+归档(5=4+1);任务列表拆成 任务(灰绿药丸)/已归档(陶红药丸) 两个可折叠分组,任务默认展开已归档默认收起;去掉显示归档勾选框 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-95 (2026-07-01) — 布置作业页任务卡配色对齐名单页学生卡:任务组卡片灰绿#9caea3(hover深墨绿)、已归档组卡片陶红#d6b3a6(hover深陶#905844),文字深色/hover翻白同名单页;去掉班级红chip里11A1的白色半透明底框(纯白字) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-94 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-95 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1541,9 +1541,9 @@ console.log('%c[斑斓汉字] 汉字UI-94 已加载', 'color:#374a42;font-weight
         #blViewStudents .bl-tasks-header { justify-content: center; }
         .bl-tasks-class-tag {
             display: inline-block;
-            background: rgba(255, 255, 255, 0.18); color: #fff;
-            padding: 2px 8px; border-radius: 3px;
-            font-size: 13px; letter-spacing: 1px; font-weight: 700;
+            background: transparent; color: #fff;   /* 汉字-95:去掉11A1的白色半透明底框,纯白字 */
+            padding: 0; border-radius: 0;
+            font-size: 14px; letter-spacing: 1px; font-weight: 700;
             font-family: monospace; margin-right: 6px;
         }
 
@@ -1556,10 +1556,10 @@ console.log('%c[斑斓汉字] 汉字UI-94 已加载', 'color:#374a42;font-weight
         #bl-tasks-title-archived:hover { background: #c89f93; }
         .bl-task-card {
             border: 1px solid #d0d7d3;
-            border-left: 4px solid var(--ink-green);
+            border-left: 4px solid #55706a;
             border-radius: 4px;
             padding: 8px 12px;
-            background: #fafbfa;
+            background: #9caea3;   /* 汉字-95:任务卡配色对齐名单页在读学生卡(灰绿) */
             display: flex; align-items: center; justify-content: space-between;
             gap: 10px;
             transition: all 0.2s;
@@ -1621,18 +1621,23 @@ console.log('%c[斑斓汉字] 汉字UI-94 已加载', 'color:#374a42;font-weight
         /* 按钮稍微加高,容纳两行文字 */
         .bl-overlay .bl-btn { line-height: 1.35; }
         .bl-task-card.bl-archived {
-            border-left-color: var(--ink-gray); opacity: 0.65;
-            background: #f4f5f4;
+            border-left-color: #a8705c; opacity: 1;
+            background: #d6b3a6;   /* 汉字-95:已归档任务卡对齐名单页待加入(陶红) */
         }
+        .bl-task-card.bl-archived .bl-task-title { color: #4a2c20; }
+        .bl-task-card.bl-archived .bl-task-meta { color: #6b4334; }
+        .bl-task-card.bl-archived:hover { background: #905844; border-left-color: #5e3526; }
+        .bl-task-card.bl-archived:hover .bl-task-title { color: #fff; }
+        .bl-task-card.bl-archived:hover .bl-task-meta { color: rgba(255, 255, 255, 0.85); }
         .bl-task-info { flex: 1; min-width: 0; }
         .bl-task-title {
-            font-size: 14px; color: var(--mo-dark); font-weight: 500;
+            font-size: 14px; color: #22312b; font-weight: 500;
             margin-bottom: 4px;
             overflow: hidden; text-overflow: ellipsis;
             display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical;
         }
         .bl-task-meta {
-            font-size: 12px; color: var(--ink-gray);
+            font-size: 12px; color: #3f5249;
             letter-spacing: 0.3px;
             display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
         }
