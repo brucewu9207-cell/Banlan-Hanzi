@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-88 (2026-07-01) — 全班报告Excel精修:标题居中放大18号、标题副标题分块条合并格全加边框、英文字体Calibri、浅墨绿统一换中墨绿A3C0B2、最难的字改任务列在前字在后(待关注学生保持原顺序) -->
+<!-- 斑斓汉字(老师端) · 汉字UI-89 (2026-07-01) — 修两处:导出Excel前先拉任务名(含已归档)修复In tasks与表头全变已删除任务;边框色加深(CBD3CE→8A948E)让三个小表格边框清晰可见 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-88 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-89 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -10190,6 +10190,8 @@ window.BL = (function () {
             return;
         }
         toast(tt('正在生成 Excel…', 'Generating Excel…', 'جارٍ إنشاء Excel…'));
+        // ★ 汉字-89:导出前先拉任务名(含已归档),否则 state.tasks 为空时任务名全变「(已删除任务)」
+        try { await loadTasksForRate(); } catch (e) { /* 失败沿用已有 state.tasks */ }
 
         const isAr = document.body.classList.contains('lang-mode-ar');
         const isEn = document.body.classList.contains('lang-mode-en');
@@ -10231,7 +10233,7 @@ window.BL = (function () {
 
         // ── 样式工具(英文字体 Calibri;中墨绿 midGreen 替代原浅墨绿)──
         const FONT = 'Calibri';
-        const C = { ink: 'FF374A42', gold: 'FFB5763A', zhu: 'FFC84B2F', gray: 'FF9AA39E', white: 'FFFFFFFF', text: 'FF232A27', midGreen: 'FFA3C0B2', ltGold: 'FFF6ECD7', ltRed: 'FFF7E3E1', band: 'FFF3F6F4', section: 'FFA3C0B2', border: 'FFCBD3CE' };
+        const C = { ink: 'FF374A42', gold: 'FFB5763A', zhu: 'FFC84B2F', gray: 'FF9AA39E', white: 'FFFFFFFF', text: 'FF232A27', midGreen: 'FFA3C0B2', ltGold: 'FFF6ECD7', ltRed: 'FFF7E3E1', band: 'FFF3F6F4', section: 'FFA3C0B2', border: 'FF8A948E' };
         const solid = argb => ({ type: 'pattern', pattern: 'solid', fgColor: { argb } });
         const bd = { top: { style: 'thin', color: { argb: C.border } }, left: { style: 'thin', color: { argb: C.border } }, bottom: { style: 'thin', color: { argb: C.border } }, right: { style: 'thin', color: { argb: C.border } } };
         const header = cell => { cell.font = { name: FONT, bold: true, color: { argb: C.white } }; cell.fill = solid(C.ink); cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true }; cell.border = bd; };
