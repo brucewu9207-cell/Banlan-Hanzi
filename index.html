@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-89 (2026-07-01) — 修两处:导出Excel前先拉任务名(含已归档)修复In tasks与表头全变已删除任务;边框色加深(CBD3CE→8A948E)让三个小表格边框清晰可见 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-90 (2026-07-01) — 全班报告Excel三修:三个表格+网格加墨绿中粗外框;总览总平均/班级平均改回按字加权的真实答对率(与看板/副标题一致,修55%与38%不匹配,不再是平均的平均);信息栏副标题加浅绿底 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-89 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-90 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -10233,7 +10233,7 @@ window.BL = (function () {
 
         // ── 样式工具(英文字体 Calibri;中墨绿 midGreen 替代原浅墨绿)──
         const FONT = 'Calibri';
-        const C = { ink: 'FF374A42', gold: 'FFB5763A', zhu: 'FFC84B2F', gray: 'FF9AA39E', white: 'FFFFFFFF', text: 'FF232A27', midGreen: 'FFA3C0B2', ltGold: 'FFF6ECD7', ltRed: 'FFF7E3E1', band: 'FFF3F6F4', section: 'FFA3C0B2', border: 'FF8A948E' };
+        const C = { ink: 'FF374A42', gold: 'FFB5763A', zhu: 'FFC84B2F', gray: 'FF9AA39E', white: 'FFFFFFFF', text: 'FF232A27', midGreen: 'FFA3C0B2', metaBg: 'FFDCE8E2', ltGold: 'FFF6ECD7', ltRed: 'FFF7E3E1', band: 'FFF3F6F4', section: 'FFA3C0B2', border: 'FF8A948E' };
         const solid = argb => ({ type: 'pattern', pattern: 'solid', fgColor: { argb } });
         const bd = { top: { style: 'thin', color: { argb: C.border } }, left: { style: 'thin', color: { argb: C.border } }, bottom: { style: 'thin', color: { argb: C.border } }, right: { style: 'thin', color: { argb: C.border } } };
         const header = cell => { cell.font = { name: FONT, bold: true, color: { argb: C.white } }; cell.fill = solid(C.ink); cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true }; cell.border = bd; };
@@ -10242,6 +10242,12 @@ window.BL = (function () {
         const pctBase = cell => { cell.alignment = { horizontal: 'center', vertical: 'middle' }; cell.border = bd; cell.font = { name: FONT, color: { argb: C.gray } }; cell.numFmt = '0"%"'; };
         // 给合并区/整段加边框(边框只设在 master 时合并区外沿不全,逐格补)
         const borderRange = (ws, r1, c1, r2, c2) => { for (let r = r1; r <= r2; r++) for (let c = c1; c <= c2; c++) ws.getCell(r, c).border = bd; };
+        // 给某个表格加「墨绿中粗外框」(内部细线不动,只加粗四周外沿)
+        const outline = (ws, r1, c1, r2, c2) => {
+            const M = { style: 'medium', color: { argb: C.ink } };
+            for (let c = c1; c <= c2; c++) { const t = ws.getCell(r1, c); t.border = Object.assign({}, t.border, { top: M }); const b = ws.getCell(r2, c); b.border = Object.assign({}, b.border, { bottom: M }); }
+            for (let r = r1; r <= r2; r++) { const l = ws.getCell(r, c1); l.border = Object.assign({}, l.border, { left: M }); const g = ws.getCell(r, c2); g.border = Object.assign({}, g.border, { right: M }); }
+        };
         const colL = n => { let s = ''; while (n > 0) { const m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - 1) / 26); } return s; };
         const pf = (formula, result) => ({ formula: formula, result: (result === '' || result == null ? undefined : result) });
         let cfp = 0;
@@ -10281,8 +10287,9 @@ window.BL = (function () {
         const metaStr = L('班级', 'Class', 'الصف') + ' ' + className + '     ·     ' + L('日期', 'Date', 'التاريخ') + ' ' + dateStr + '     ·     ' + L('学生', 'Students', 'الطلاب') + ' ' + activeStu.length + '     ·     ' + L('练习', 'Tasks', 'المهام') + ' ' + nTask + '     ·     ' + L('全班总平均', 'Class avg', 'المعدل') + ' ' + (grandAvg == null ? NA : grandAvg + '%');
         const rMeta = wsOv.addRow([metaStr]);
         wsOv.mergeCells(rMeta.number, 1, rMeta.number, totalCols);
-        { const c = rMeta.getCell(1); c.font = { name: FONT, color: { argb: C.ink } }; c.alignment = { vertical: 'middle', horizontal: 'center' }; rMeta.height = 20; }
+        { const c = rMeta.getCell(1); c.font = { name: FONT, color: { argb: C.ink } }; c.fill = solid(C.metaBg); c.alignment = { vertical: 'middle', horizontal: 'center' }; rMeta.height = 20; }
         borderRange(wsOv, rMeta.number, 1, rMeta.number, totalCols);
+        for (let c = 1; c <= totalCols; c++) wsOv.getCell(rMeta.number, c).fill = solid(C.metaBg);   // 信息栏整行浅绿底
         wsOv.addRow([]);
         // Row4 成绩表表头
         const rHead = wsOv.addRow([L('序号', 'No.', 'م'), L('学生', 'Student', 'الطالب')].concat(taskIds.map(titleOf)).concat([L('总平均', 'Average', 'المعدل')]));
@@ -10294,18 +10301,18 @@ window.BL = (function () {
             plain(row.getCell(oName), { align: 'left' }); row.getCell(oName).value = s.name || s.studentCode;
             taskIds.forEach((tid, i) => { const c = row.getCell(oTaskStart + i); pctBase(c); const v = stuAcc(s, tid); c.value = (v == null ? '' : v); });
             const c = row.getCell(oAvg); pctBase(c);
-            const rng = colL(oTaskStart) + row.number + ':' + colL(oTaskEnd) + row.number;
-            c.value = pf('IFERROR(ROUND(AVERAGE(' + rng + '),0),"")', stuTotal(s));
+            const tot = stuTotal(s); c.value = (tot == null ? '' : tot);   // 按字加权的真实总平均(与看板一致),非"平均的平均"
         });
         const lastData = hdrRow + activeStu.length;
         const rAvg = wsOv.addRow(new Array(oAvg).fill(null));
         plain(rAvg.getCell(oSerial), { fill: C.band });
         plain(rAvg.getCell(oName), { bold: true, fill: C.band }); rAvg.getCell(oName).value = L('班级平均', 'Class avg', 'معدل الصف');
-        taskIds.forEach((tid, i) => { const c = rAvg.getCell(oTaskStart + i); pctBase(c); const cl = colL(oTaskStart + i); c.value = pf('IFERROR(ROUND(AVERAGE(' + cl + firstData + ':' + cl + lastData + '),0),"")', taskClassAvg[i]); });
-        { const c = rAvg.getCell(oAvg); pctBase(c); const cl = colL(oAvg); c.value = pf('IFERROR(ROUND(AVERAGE(' + cl + firstData + ':' + cl + lastData + '),0),"")', grandAvg); }
+        taskIds.forEach((tid, i) => { const c = rAvg.getCell(oTaskStart + i); pctBase(c); c.value = (taskClassAvg[i] == null ? '' : taskClassAvg[i]); });   // 按字加权的真实班级答对率
+        { const c = rAvg.getCell(oAvg); pctBase(c); c.value = (grandAvg == null ? '' : grandAvg); }
         const classAvgRow = rAvg.number;
         if (activeStu.length) addCF(wsOv, colL(oTaskStart) + firstData + ':' + colL(oAvg) + classAvgRow);
         wsOv.views = [{ state: 'frozen', xSplit: 2, ySplit: hdrRow }];
+        outline(wsOv, hdrRow, 1, classAvgRow, oAvg);   // 成绩表加粗外框
         wsOv.addRow([]);
 
         // 📌 最难的字(跨练习合并,Top8)—— 任务列在前、字在后
@@ -10327,6 +10334,7 @@ window.BL = (function () {
         const hardStart = rH2.number + 1;
         hardest.forEach((o, i) => { const row = wsOv.addRow([null, null, null, null]); plain(row.getCell(1), { align: 'center' }); row.getCell(1).value = i + 1; plain(row.getCell(2), {}); row.getCell(2).value = o.tasks.join(' · '); plain(row.getCell(3), { align: 'center', bold: true }); row.getCell(3).value = o.z; const c = row.getCell(4); pctBase(c); c.value = o.p; });
         if (hardest.length) addCF(wsOv, 'D' + hardStart + ':D' + (rH2.number + hardest.length));
+        outline(wsOv, rH1.number, 1, rH2.number + hardest.length, 4);   // 最难字表加粗外框(含标题条)
         wsOv.addRow([]);
 
         // 👀 最需要关注的学生(Top5)—— 保持原顺序:排名 · 学生 · 总平均 · 最弱的练习
@@ -10345,6 +10353,7 @@ window.BL = (function () {
             plain(row.getCell(4), {}); row.getCell(4).value = (o.wp == null ? '' : (o.wt + ' ' + o.wp + '%'));
         });
         if (watch.length) addCF(wsOv, 'C' + watchStart + ':C' + (rW2.number + watch.length));
+        outline(wsOv, rW1.number, 1, rW2.number + watch.length, 4);   // 待关注学生表加粗外框(含标题条)
 
         // 总览列宽
         const nameW = Math.min(32, Math.max(14, ...activeStu.map(s => (s.name || s.studentCode || '').length + 2)));
@@ -10409,6 +10418,7 @@ window.BL = (function () {
               let cc = 0, den = 0; done.forEach(s => charOrder.forEach(ch => { const r = s.taskResults[tid].chars[ch]; if (!r) return; if (r.py != null) { den++; if (r.py) cc++; } if (r.comp != null) { den++; if (r.comp) cc++; } }));
               c.value = pf('IFERROR(ROUND(COUNTIF(' + blk + ',"✓")/(COUNTIF(' + blk + ',"✓")+COUNTIF(' + blk + ',"✗"))*100,0),"")', den ? Math.round(cc / den * 100) : null); }
             addCF(wsg, colL(gCharStart) + firstG + ':' + colL(gAcc) + fr.number);
+            outline(wsg, rHd.number, 1, fr.number, gCols);   // 网格表也加粗外框,与总览统一
 
             const gNameW = Math.min(32, Math.max(14, ...ordered.map(s => (s.name || s.studentCode || '').length + 6)));
             wsg.getColumn(gSerial).width = 6;
