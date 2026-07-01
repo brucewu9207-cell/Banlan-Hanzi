@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-112 (2026-07-01) — 阿语防移位第二批:①新建班级弹窗三框(班级码/取消/创建)②弱项看板两药丸(最该重点讲的字/最需要关注的学生)锁定英文态宽度,切英↔阿不再缩放。给两个看板药丸各加区分 class(bl-wk-title-weak/stu)再分别锁宽;弹窗框按 id/scope 精确锁。Chrome 逐个实测阿语态精确回到英文尺寸。连同上一版顶栏三按钮+四折叠药丸,双语防移位已覆盖 11 个元素。 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-113 (2026-07-01) — 修双语切换漏项:切语言时学生名单(在读/待加入)和明细表弱项药丸(最该重点讲的字/最需要关注的学生/低于)不跟着切。根因=它们用 tt() 把语言烤死在渲染时,而语言切换事件 banlan-lang-changed 的监听里只重渲染了任务列表,漏了这两个。修法=在同一监听里按当前可见的学生子页补 renderStudents()/renderMatrix()(offsetParent 判可见,隐藏页不动)。与任务列表同机制。副作用:切语言时若正看明细表,低于阈值会回默认(语言一般只设一次,影响小)。 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-112 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-113 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -9087,6 +9087,11 @@ window.BL = (function () {
             if (state.token) {
                 if (state.currentClassCode) {
                     renderTasks();
+                    // 汉字-113:名单(在读/待加入)和明细表弱项药丸(最该重点讲的字/最需要关注的学生/低于)
+                    //          也是用 tt() 把语言烤死在渲染时,之前漏在本监听里 → 切语言不跟着变。
+                    //          这里按「当前可见的学生子页」补渲染(offsetParent 判可见,隐藏页不动、免误清批量勾选)。
+                    if ($('blStudentList') && $('blStudentList').offsetParent !== null) renderStudents();
+                    if ($('blMatrix') && $('blMatrix').offsetParent !== null) renderMatrix();
                 } else if (state.currentTab === 'classes') {
                     renderClasses();
                 }
