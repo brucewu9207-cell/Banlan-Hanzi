@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-87 (2026-07-01) — 全班报告Excel升级:A列固定序号、学生按姓名A-Z排序、网格该生%/答对率/每字班均用COUNTIF数勾叉公式算、总览总平均/班级平均用AVERAGE公式(改勾叉自动重算)、阈值色改条件格式随之变、标题带+副标题美化表头 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-88 (2026-07-01) — 全班报告Excel精修:标题居中放大18号、标题副标题分块条合并格全加边框、英文字体Calibri、浅墨绿统一换中墨绿A3C0B2、最难的字改任务列在前字在后(待关注学生保持原顺序) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-87 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-88 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -10175,7 +10175,7 @@ window.BL = (function () {
 
     // 一键导出:全班一份 Excel(.xlsx),ExcelJS 上色美化 + 公式联动。第一张「总览」sheet + 每个练习一张「学生×字」网格 sheet。
     //   序号列固定占 A 列、学生按姓名 A-Z 排序;网格的 该生%/答对率/每字班均 用 COUNTIF 数 ✓✗ 公式算,总览 总平均/班级平均 用 AVERAGE 公式;
-    //   改任一 ✓/✗ 百分比自动重算,阈值色用条件格式(≥80墨绿/60-79竹黄/<60朱砂,与看板同口径)也随之变。每字统计含已离开学生历史,学生行/名单只列在读。
+    //   改任一 ✓/✗ 百分比自动重算,阈值色用条件格式(≥80中墨绿/60-79竹黄/<60朱砂,与看板同口径)也随之变。每字统计含已离开学生历史,学生行/名单只列在读。
     async function exportClassReport() {
         if (!window.ExcelJS) {
             toast(tt('导出组件未就绪,请刷新重试', 'Export libs not ready', 'مكوّنات التصدير غير جاهزة'), 'error');
@@ -10229,26 +10229,25 @@ window.BL = (function () {
             usedNames.add(n); return n;
         }
 
-        // ── 样式工具 ──
-        const C = { ink: 'FF374A42', gold: 'FFB5763A', zhu: 'FFC84B2F', gray: 'FF9AA39E', white: 'FFFFFFFF', text: 'FF232A27', ltGreen: 'FFE7EFE9', ltGold: 'FFF6ECD7', ltRed: 'FFF7E3E1', band: 'FFF3F6F4', section: 'FFE7EFE9', border: 'FFDDE3DF' };
+        // ── 样式工具(英文字体 Calibri;中墨绿 midGreen 替代原浅墨绿)──
+        const FONT = 'Calibri';
+        const C = { ink: 'FF374A42', gold: 'FFB5763A', zhu: 'FFC84B2F', gray: 'FF9AA39E', white: 'FFFFFFFF', text: 'FF232A27', midGreen: 'FFA3C0B2', ltGold: 'FFF6ECD7', ltRed: 'FFF7E3E1', band: 'FFF3F6F4', section: 'FFA3C0B2', border: 'FFCBD3CE' };
         const solid = argb => ({ type: 'pattern', pattern: 'solid', fgColor: { argb } });
         const bd = { top: { style: 'thin', color: { argb: C.border } }, left: { style: 'thin', color: { argb: C.border } }, bottom: { style: 'thin', color: { argb: C.border } }, right: { style: 'thin', color: { argb: C.border } } };
-        const header = cell => { cell.font = { bold: true, color: { argb: C.white } }; cell.fill = solid(C.ink); cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true }; cell.border = bd; };
-        const plain = (cell, o) => { o = o || {}; cell.alignment = { horizontal: o.align || 'left', vertical: 'middle' }; cell.border = bd; cell.font = { bold: !!o.bold, color: { argb: o.color || C.text } }; if (o.fill) cell.fill = solid(o.fill); };
-        const mark = (cell, v) => { cell.alignment = { horizontal: 'center', vertical: 'middle' }; cell.border = bd; if (v == null) { cell.value = NA; cell.font = { color: { argb: C.gray } }; } else if (v) { cell.value = '✓'; cell.font = { bold: true, color: { argb: C.ink } }; } else { cell.value = '✗'; cell.font = { bold: true, color: { argb: C.zhu } }; } };
-        // 百分比格:只设基样式+数字格式,颜色交给条件格式
-        const pctBase = cell => { cell.alignment = { horizontal: 'center', vertical: 'middle' }; cell.border = bd; cell.font = { color: { argb: C.gray } }; cell.numFmt = '0"%"'; };
-        // 列号→字母
+        const header = cell => { cell.font = { name: FONT, bold: true, color: { argb: C.white } }; cell.fill = solid(C.ink); cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true }; cell.border = bd; };
+        const plain = (cell, o) => { o = o || {}; cell.alignment = { horizontal: o.align || 'left', vertical: 'middle' }; cell.border = bd; cell.font = { name: FONT, bold: !!o.bold, color: { argb: o.color || C.text } }; if (o.fill) cell.fill = solid(o.fill); };
+        const mark = (cell, v) => { cell.alignment = { horizontal: 'center', vertical: 'middle' }; cell.border = bd; if (v == null) { cell.value = NA; cell.font = { name: FONT, color: { argb: C.gray } }; } else if (v) { cell.value = '✓'; cell.font = { name: FONT, bold: true, color: { argb: C.ink } }; } else { cell.value = '✗'; cell.font = { name: FONT, bold: true, color: { argb: C.zhu } }; } };
+        const pctBase = cell => { cell.alignment = { horizontal: 'center', vertical: 'middle' }; cell.border = bd; cell.font = { name: FONT, color: { argb: C.gray } }; cell.numFmt = '0"%"'; };
+        // 给合并区/整段加边框(边框只设在 master 时合并区外沿不全,逐格补)
+        const borderRange = (ws, r1, c1, r2, c2) => { for (let r = r1; r <= r2; r++) for (let c = c1; c <= c2; c++) ws.getCell(r, c).border = bd; };
         const colL = n => { let s = ''; while (n > 0) { const m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - 1) / 26); } return s; };
-        // 公式对象(带算好的 result,离线查看也能先显示)
         const pf = (formula, result) => ({ formula: formula, result: (result === '' || result == null ? undefined : result) });
-        // 条件格式:阈值三档,仅对数字生效(ISNUMBER 挡住空格/文字);priority 全局递增保证唯一
         let cfp = 0;
         const addCF = (ws, ref) => {
             const tl = ref.split(':')[0];
             const dxf = (bg, fg) => ({ fill: { type: 'pattern', pattern: 'solid', bgColor: { argb: bg } }, font: { color: { argb: fg } } });
             ws.addConditionalFormatting({ ref, rules: [
-                { type: 'expression', formulae: ['AND(ISNUMBER(' + tl + '),' + tl + '>=80)'], style: dxf(C.ltGreen, C.ink), priority: ++cfp },
+                { type: 'expression', formulae: ['AND(ISNUMBER(' + tl + '),' + tl + '>=80)'], style: dxf(C.midGreen, C.ink), priority: ++cfp },
                 { type: 'expression', formulae: ['AND(ISNUMBER(' + tl + '),' + tl + '>=60,' + tl + '<80)'], style: dxf(C.ltGold, C.gold), priority: ++cfp },
                 { type: 'expression', formulae: ['AND(ISNUMBER(' + tl + '),' + tl + '<60)'], style: dxf(C.ltRed, C.zhu), priority: ++cfp }
             ] });
@@ -10259,10 +10258,9 @@ window.BL = (function () {
         // ═══ ① 总览 sheet ═══
         const nTask = taskIds.length;
         const oSerial = 1, oName = 2, oTaskStart = 3, oTaskEnd = 2 + nTask, oAvg = 3 + nTask;
-        const totalCols = Math.max(oAvg, 4);
+        const totalCols = Math.max(oAvg, 6);
         const wsOv = wb.addWorksheet(sheetName('总览'));
 
-        // 班均 + 总平均(值,供 CF result 与副标题)
         let gC = 0, gT = 0;
         const taskClassAvg = taskIds.map(tid => {
             let c = 0, t = 0;
@@ -10272,15 +10270,17 @@ window.BL = (function () {
         });
         const grandAvg = gT ? Math.round(gC / gT * 100) : null;
 
-        // Row1 标题带(浅绿底、墨绿粗体)
+        // Row1 标题(居中、放大、中墨绿底、加边框)
         const rTitle = wsOv.addRow([L('斑斓学习报告 · 全班总览', 'Brilliant Learning · Class Overview', 'تقرير التعلّم · نظرة عامة')]);
         wsOv.mergeCells(rTitle.number, 1, rTitle.number, totalCols);
-        { const c = rTitle.getCell(1); c.font = { bold: true, size: 14, color: { argb: C.ink } }; c.fill = solid(C.section); c.alignment = { vertical: 'middle', horizontal: 'left', indent: 1 }; rTitle.height = 26; }
-        // Row2 副标题(元信息一行,墨绿字)
+        { const c = rTitle.getCell(1); c.font = { name: FONT, bold: true, size: 18, color: { argb: C.ink } }; c.fill = solid(C.midGreen); c.alignment = { vertical: 'middle', horizontal: 'center' }; rTitle.height = 32; }
+        borderRange(wsOv, rTitle.number, 1, rTitle.number, totalCols);
+        // Row2 副标题(居中、加边框)
         const metaStr = L('班级', 'Class', 'الصف') + ' ' + className + '     ·     ' + L('日期', 'Date', 'التاريخ') + ' ' + dateStr + '     ·     ' + L('学生', 'Students', 'الطلاب') + ' ' + activeStu.length + '     ·     ' + L('练习', 'Tasks', 'المهام') + ' ' + nTask + '     ·     ' + L('全班总平均', 'Class avg', 'المعدل') + ' ' + (grandAvg == null ? NA : grandAvg + '%');
         const rMeta = wsOv.addRow([metaStr]);
         wsOv.mergeCells(rMeta.number, 1, rMeta.number, totalCols);
-        { const c = rMeta.getCell(1); c.font = { color: { argb: C.ink } }; c.alignment = { vertical: 'middle', horizontal: 'left', indent: 1 }; rMeta.height = 18; }
+        { const c = rMeta.getCell(1); c.font = { name: FONT, color: { argb: C.ink } }; c.alignment = { vertical: 'middle', horizontal: 'center' }; rMeta.height = 20; }
+        borderRange(wsOv, rMeta.number, 1, rMeta.number, totalCols);
         wsOv.addRow([]);
         // Row4 成绩表表头
         const rHead = wsOv.addRow([L('序号', 'No.', 'م'), L('学生', 'Student', 'الطالب')].concat(taskIds.map(titleOf)).concat([L('总平均', 'Average', 'المعدل')]));
@@ -10306,7 +10306,7 @@ window.BL = (function () {
         wsOv.views = [{ state: 'frozen', xSplit: 2, ySplit: hdrRow }];
         wsOv.addRow([]);
 
-        // 📌 最难的字(跨练习合并,Top8)
+        // 📌 最难的字(跨练习合并,Top8)—— 任务列在前、字在后
         const charAgg = {};
         taskIds.forEach(tid => {
             const { done, charOrder } = tdata[tid];
@@ -10319,21 +10319,29 @@ window.BL = (function () {
         const hardest = Object.keys(charAgg).map(ch => ({ z: ch, p: Math.round(charAgg[ch].c / charAgg[ch].t * 100), tasks: charAgg[ch].tasks })).sort((a, b) => a.p - b.p).slice(0, 8);
         const rH1 = wsOv.addRow(['📌 ' + L('最难的字', 'Hardest characters', 'أصعب الحروف')]);
         wsOv.mergeCells(rH1.number, 1, rH1.number, 4); plain(rH1.getCell(1), { bold: true, color: C.ink, fill: C.section }); rH1.height = 20;
-        const rH2 = wsOv.addRow([L('排名', 'Rank', 'الترتيب'), L('字', 'Char', 'الحرف'), L('全班答对率', 'Class accuracy', 'الدقة'), L('所在练习', 'In tasks', 'المهام')]);
+        borderRange(wsOv, rH1.number, 1, rH1.number, 4);
+        const rH2 = wsOv.addRow([L('排名', 'Rank', 'الترتيب'), L('所在练习', 'In tasks', 'المهام'), L('字', 'Char', 'الحرف'), L('全班答对率', 'Class accuracy', 'الدقة')]);
         rH2.eachCell({ includeEmpty: false }, c => header(c));
         const hardStart = rH2.number + 1;
-        hardest.forEach((o, i) => { const row = wsOv.addRow([null, null, null, null]); plain(row.getCell(1), { align: 'center' }); row.getCell(1).value = i + 1; plain(row.getCell(2), { align: 'center', bold: true }); row.getCell(2).value = o.z; const c = row.getCell(3); pctBase(c); c.value = o.p; plain(row.getCell(4), {}); row.getCell(4).value = o.tasks.join(' · '); });
-        if (hardest.length) addCF(wsOv, 'C' + hardStart + ':C' + (rH2.number + hardest.length));
+        hardest.forEach((o, i) => { const row = wsOv.addRow([null, null, null, null]); plain(row.getCell(1), { align: 'center' }); row.getCell(1).value = i + 1; plain(row.getCell(2), {}); row.getCell(2).value = o.tasks.join(' · '); plain(row.getCell(3), { align: 'center', bold: true }); row.getCell(3).value = o.z; const c = row.getCell(4); pctBase(c); c.value = o.p; });
+        if (hardest.length) addCF(wsOv, 'D' + hardStart + ':D' + (rH2.number + hardest.length));
         wsOv.addRow([]);
 
-        // 👀 最需要关注的学生(Top5)
+        // 👀 最需要关注的学生(Top5)—— 保持原顺序:排名 · 学生 · 总平均 · 最弱的练习
         const watch = activeStu.map(s => { let wt = '', wp = null; taskIds.forEach(tid => { const a = stuAcc(s, tid); if (a != null && (wp == null || a < wp)) { wp = a; wt = titleOf(tid); } }); return { n: s.name || s.studentCode, p: stuTotal(s), wt, wp }; }).filter(o => o.p != null).sort((a, b) => a.p - b.p).slice(0, 5);
         const rW1 = wsOv.addRow(['👀 ' + L('最需要关注的学生', 'Students to watch', 'طلاب بحاجة لمتابعة')]);
         wsOv.mergeCells(rW1.number, 1, rW1.number, 4); plain(rW1.getCell(1), { bold: true, color: C.ink, fill: C.section }); rW1.height = 20;
+        borderRange(wsOv, rW1.number, 1, rW1.number, 4);
         const rW2 = wsOv.addRow([L('排名', 'Rank', 'الترتيب'), L('学生', 'Student', 'الطالب'), L('总平均', 'Average', 'المعدل'), L('最弱的练习', 'Weakest task', 'أضعف مهمة')]);
         rW2.eachCell({ includeEmpty: false }, c => header(c));
         const watchStart = rW2.number + 1;
-        watch.forEach((o, i) => { const row = wsOv.addRow([null, null, null, null]); plain(row.getCell(1), { align: 'center' }); row.getCell(1).value = i + 1; plain(row.getCell(2), { align: 'left' }); row.getCell(2).value = o.n; const c = row.getCell(3); pctBase(c); c.value = o.p; plain(row.getCell(4), {}); row.getCell(4).value = o.wp == null ? '' : (o.wt + ' ' + o.wp + '%'); });
+        watch.forEach((o, i) => {
+            const row = wsOv.addRow([null, null, null, null]);
+            plain(row.getCell(1), { align: 'center' }); row.getCell(1).value = i + 1;
+            plain(row.getCell(2), { align: 'left' }); row.getCell(2).value = o.n;
+            const c = row.getCell(3); pctBase(c); c.value = o.p;
+            plain(row.getCell(4), {}); row.getCell(4).value = (o.wp == null ? '' : (o.wt + ' ' + o.wp + '%'));
+        });
         if (watch.length) addCF(wsOv, 'C' + watchStart + ':C' + (rW2.number + watch.length));
 
         // 总览列宽
@@ -10342,7 +10350,6 @@ window.BL = (function () {
         wsOv.getColumn(oName).width = nameW;
         taskIds.forEach((tid, i) => { wsOv.getColumn(oTaskStart + i).width = Math.min(14, Math.max(9, String(titleOf(tid)).length + 3)); });
         wsOv.getColumn(oAvg).width = 10;
-        if ((wsOv.getColumn(4).width || 0) < 16) wsOv.getColumn(4).width = 16;
 
         // ═══ ② 每个练习一张网格 sheet ═══
         taskIds.forEach(tid => {
@@ -10362,8 +10369,10 @@ window.BL = (function () {
                 const cr = wsg.addRow(new Array(gCols).fill(null));
                 wsg.mergeCells(pr.number, gSerial, cr.number, gSerial);
                 plain(wsg.getCell(pr.number, gSerial), { align: 'center' }); wsg.getCell(pr.number, gSerial).value = idx + 1;
+                borderRange(wsg, pr.number, gSerial, cr.number, gSerial);
                 wsg.mergeCells(pr.number, gName, cr.number, gName);
                 plain(wsg.getCell(pr.number, gName), { align: 'left' }); wsg.getCell(pr.number, gName).value = nm;
+                borderRange(wsg, pr.number, gName, cr.number, gName);
                 plain(pr.getCell(gDim), { align: 'center', fill: C.band }); pr.getCell(gDim).value = L('拼音', 'Pinyin', 'بينيين');
                 plain(cr.getCell(gDim), { align: 'center', fill: C.band }); cr.getCell(gDim).value = L('部件', 'Parts', 'مكوّنات');
                 charOrder.forEach((ch, i) => { const r = chars[ch]; mark(pr.getCell(gCharStart + i), r ? r.py : undefined); mark(cr.getCell(gCharStart + i), r ? r.comp : undefined); });
@@ -10377,24 +10386,26 @@ window.BL = (function () {
                 { const c = wsg.getCell(pr.number, gAcc); pctBase(c);
                   const ok = 'COUNTIF(' + pyRange + ',"✓")+COUNTIF(' + compRange + ',"✓")';
                   const tot = 'COUNTIF(' + pyRange + ',"✓")+COUNTIF(' + pyRange + ',"✗")+COUNTIF(' + compRange + ',"✓")+COUNTIF(' + compRange + ',"✗")';
-                  const cc = pyC + compC, tt = pyT + compT;
-                  c.value = pf('IFERROR(ROUND((' + ok + ')/(' + tot + ')*100,0),"")', tt ? Math.round(cc / tt * 100) : null); }
+                  const cc = pyC + compC, den = pyT + compT;
+                  c.value = pf('IFERROR(ROUND((' + ok + ')/(' + tot + ')*100,0),"")', den ? Math.round(cc / den * 100) : null); }
+                borderRange(wsg, pr.number, gAcc, cr.number, gAcc);
             });
             const lastG = 1 + 2 * ordered.length;
             const fr = wsg.addRow(new Array(gCols).fill(null));
             wsg.mergeCells(fr.number, gSerial, fr.number, gDim);
             plain(wsg.getCell(fr.number, gSerial), { bold: true, fill: C.band }); wsg.getCell(fr.number, gSerial).value = L('每字答对率·全班', 'Per char · Class', 'لكل حرف · الصف');
+            borderRange(wsg, fr.number, gSerial, fr.number, gDim);
             charOrder.forEach((ch, i) => {
                 const cl = colL(gCharStart + i); const c = fr.getCell(gCharStart + i); pctBase(c);
                 const rng = cl + firstG + ':' + cl + lastG;
-                let cc = 0, tt = 0; done.forEach(s => { const r = s.taskResults[tid].chars[ch]; if (!r) return; if (r.py != null) { tt++; if (r.py) cc++; } if (r.comp != null) { tt++; if (r.comp) cc++; } });
-                c.value = pf('IFERROR(ROUND(COUNTIF(' + rng + ',"✓")/(COUNTIF(' + rng + ',"✓")+COUNTIF(' + rng + ',"✗"))*100,0),"")', tt ? Math.round(cc / tt * 100) : null);
+                let cc = 0, den = 0; done.forEach(s => { const r = s.taskResults[tid].chars[ch]; if (!r) return; if (r.py != null) { den++; if (r.py) cc++; } if (r.comp != null) { den++; if (r.comp) cc++; } });
+                c.value = pf('IFERROR(ROUND(COUNTIF(' + rng + ',"✓")/(COUNTIF(' + rng + ',"✓")+COUNTIF(' + rng + ',"✗"))*100,0),"")', den ? Math.round(cc / den * 100) : null);
             });
             plain(fr.getCell(gStu), { fill: C.band });
             { const c = fr.getCell(gAcc); pctBase(c);
               const blk = colL(gCharStart) + firstG + ':' + colL(gCharEnd) + lastG;
-              let cc = 0, tt = 0; done.forEach(s => charOrder.forEach(ch => { const r = s.taskResults[tid].chars[ch]; if (!r) return; if (r.py != null) { tt++; if (r.py) cc++; } if (r.comp != null) { tt++; if (r.comp) cc++; } }));
-              c.value = pf('IFERROR(ROUND(COUNTIF(' + blk + ',"✓")/(COUNTIF(' + blk + ',"✓")+COUNTIF(' + blk + ',"✗"))*100,0),"")', tt ? Math.round(cc / tt * 100) : null); }
+              let cc = 0, den = 0; done.forEach(s => charOrder.forEach(ch => { const r = s.taskResults[tid].chars[ch]; if (!r) return; if (r.py != null) { den++; if (r.py) cc++; } if (r.comp != null) { den++; if (r.comp) cc++; } }));
+              c.value = pf('IFERROR(ROUND(COUNTIF(' + blk + ',"✓")/(COUNTIF(' + blk + ',"✓")+COUNTIF(' + blk + ',"✗"))*100,0),"")', den ? Math.round(cc / den * 100) : null); }
             addCF(wsg, colL(gCharStart) + firstG + ':' + colL(gAcc) + fr.number);
 
             const gNameW = Math.min(32, Math.max(14, ...ordered.map(s => (s.name || s.studentCode || '').length + 6)));
