@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-110 (2026-07-01) — 清理任务卡编辑功能的死代码：编辑按钮早已移除，openTaskEditor/submitTask/updateSubmitButtonText/语言刷新函数/state 里所有 mode=edit 分支与 editingTaskId 全部删除。新建、复制两条流程不受影响（已 node 模拟真跑验证）。纯代码清理，无 UI 无数据可见变化。 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-111 (2026-07-01) — 阿语防移位:顶栏三按钮(我的班级/账号/新增班级)+ 名单折叠药丸(在读/待加入)+ 任务折叠药丸(任务/已归档)锁定英文态宽度,切英↔阿时框不再缩放。做法=给这几个元素加 min-width=英文实测宽(药丸补 box-sizing:border-box);纯 CSS 不动 HTML、无 @media 两端通用。Chrome 实测阿语态尺寸精确回到英文态。 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-110 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-111 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -790,6 +790,20 @@ console.log('%c[斑斓汉字] 汉字UI-110 已加载', 'color:#374a42;font-weigh
         #blTabs .bl-tab-cnt, #blTabs .bl-tab-deco {
             align-self: flex-start; font-size: 14px; margin: 0; opacity: 1; line-height: 1.3;
         }
+
+        /* 汉字-111:阿语防移位——顶栏三按钮 + 名单/任务折叠药丸,锁定英文态宽度,
+           切语言(英→阿)时框不再缩放。原理:min-width=英文态实测整框宽,阿语文字更短被下限撑住。
+           这些元素两端(手机/桌面)无 @media 差异、同尺寸,故一套值通用。
+           药丸(.bl-roster-section-title)是 content-box,先补 border-box 让 min-width=整框宽。 */
+        #blTabs .bl-tab[data-tab="classes"] { min-width: 135px; }   /* 我的班级 */
+        #blTabs .bl-tab[data-tab="account"] { min-width: 76px; }    /* 账号 */
+        #blTabs .bl-tab-add { min-width: 109px; }                   /* 新增班级 */
+        #bl-roster-title-active, #bl-roster-title-pending,
+        #bl-tasks-title-active, #bl-tasks-title-archived { box-sizing: border-box; }
+        #bl-roster-title-active { min-width: 98px; }                /* 在读 */
+        #bl-roster-title-pending { min-width: 111px; }              /* 待加入 */
+        #bl-tasks-title-active { min-width: 96px; }                 /* 任务 */
+        #bl-tasks-title-archived { min-width: 115px; }              /* 已归档 */
 
         /* 内容区 — ★ v2D.3: 缩小间距 */
         .bl-body {
