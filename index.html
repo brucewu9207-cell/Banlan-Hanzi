@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-103 (2026-07-01) — 任务内容输入框加一句简短占位提示：在此输入要练的汉字(空框时显示、打字即消失、不算真内容) -->
+<!-- 斑斓汉字(老师端) · 汉字UI-105 (2026-07-01) — 清掉背景水墨装饰SVG的24个控制台报错:删10个d坐标里硬写%的无效path(本来就没渲染)、剥离9个ellipse上失效的rotate百分比transform;背景视觉零变化只是控制台不再报错 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-103 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-105 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -4010,41 +4010,37 @@ console.log('%c[斑斓汉字] 汉字UI-103 已加载', 'color:#374a42;font-weigh
         <path d="M0,0 C80,20 120,0 140,60 C160,120 80,140 20,180 C-20,210 -10,260 0,280 Z" fill="rgba(20,26,22,0.13)" filter="url(#gInkTurb)"/>
         <path d="M30,40 C60,20 90,50 80,90 C70,130 30,120 20,150 Z" fill="rgba(20,26,22,0.10)" filter="url(#gInkBlur1)"/>
         <!-- 右上角墨迹 -->
-        <path d="M100%,0 C85%,30 90%,60 80%,80 C70%,100 75%,130 85%,160 C95%,190 100%,200 100%,220 Z" fill="rgba(20,26,22,0.11)" filter="url(#gInkTurb)"/>
-        <path d="M88%,20 C94%,40 98%,70 92%,100 Z" fill="rgba(20,26,22,0.09)" filter="url(#gInkBlur1)"/>
         <!-- 左下角墨迹 -->
-        <path d="M0,100% C40,90% 60,85% 80,88% C100,91% 90,95% 60,100% Z" fill="rgba(20,26,22,0.12)" filter="url(#gInkTurb)"/>
         <!-- 右下角墨迹 -->
-        <path d="M100%,100% C80%,92% 72%,88% 78%,80% C84%,72% 95%,78% 100%,72% Z" fill="rgba(20,26,22,0.11)" filter="url(#gInkTurb)"/>
         <!-- 散落墨点群 — 左侧 -->
-        <ellipse cx="3%" cy="32%" rx="28" ry="10" fill="rgba(20,26,22,0.22)" filter="url(#gInkBlur2)" transform="rotate(-30,3%,32%)"/>
-        <ellipse cx="2%" cy="34%" rx="8" ry="3" fill="rgba(20,26,22,0.28)" filter="url(#gInkBlur3)" transform="rotate(-20,2%,34%)"/>
+        <ellipse cx="3%" cy="32%" rx="28" ry="10" fill="rgba(20,26,22,0.22)" filter="url(#gInkBlur2)"/>
+        <ellipse cx="2%" cy="34%" rx="8" ry="3" fill="rgba(20,26,22,0.28)" filter="url(#gInkBlur3)"/>
         <circle cx="5%" cy="38%" r="5" fill="rgba(20,26,22,0.24)"/>
         <circle cx="3.5%" cy="41%" r="3" fill="rgba(20,26,22,0.20)"/>
         <circle cx="6%" cy="44%" r="2" fill="rgba(20,26,22,0.18)"/>
         <circle cx="2%" cy="46%" r="1.5" fill="rgba(20,26,22,0.22)"/>
         <!-- 散落墨点群 — 右侧 -->
-        <ellipse cx="97%" cy="48%" rx="24" ry="9" fill="rgba(20,26,22,0.20)" filter="url(#gInkBlur2)" transform="rotate(25,97%,48%)"/>
+        <ellipse cx="97%" cy="48%" rx="24" ry="9" fill="rgba(20,26,22,0.20)" filter="url(#gInkBlur2)"/>
         <ellipse cx="98%" cy="52%" rx="7" ry="2.5" fill="rgba(20,26,22,0.26)" filter="url(#gInkBlur3)"/>
         <circle cx="95%" cy="55%" r="4.5" fill="rgba(20,26,22,0.22)"/>
         <circle cx="97%" cy="58%" r="2.8" fill="rgba(20,26,22,0.18)"/>
         <circle cx="94%" cy="61%" r="2" fill="rgba(20,26,22,0.20)"/>
         <!-- 顶部散墨 -->
-        <ellipse cx="28%" cy="1%" rx="40" ry="12" fill="rgba(20,26,22,0.16)" filter="url(#gInkBlur2)" transform="rotate(-8,28%,1%)"/>
+        <ellipse cx="28%" cy="1%" rx="40" ry="12" fill="rgba(20,26,22,0.16)" filter="url(#gInkBlur2)"/>
         <ellipse cx="65%" cy="0.5%" rx="30" ry="8" fill="rgba(20,26,22,0.14)" filter="url(#gInkBlur2)"/>
         <circle cx="42%" cy="2%" r="6" fill="rgba(20,26,22,0.18)"/>
         <circle cx="55%" cy="1.5%" r="4" fill="rgba(20,26,22,0.15)"/>
         <circle cx="76%" cy="2.5%" r="3" fill="rgba(20,26,22,0.12)"/>
         <!-- 底部散墨 -->
-        <ellipse cx="35%" cy="99%" rx="45" ry="13" fill="rgba(20,26,22,0.16)" filter="url(#gInkBlur2)" transform="rotate(5,35%,99%)"/>
+        <ellipse cx="35%" cy="99%" rx="45" ry="13" fill="rgba(20,26,22,0.16)" filter="url(#gInkBlur2)"/>
         <ellipse cx="72%" cy="99.5%" rx="35" ry="9" fill="rgba(20,26,22,0.14)" filter="url(#gInkBlur2)"/>
         <circle cx="48%" cy="98.5%" r="5" fill="rgba(20,26,22,0.17)"/>
         <circle cx="60%" cy="99%" r="3.5" fill="rgba(20,26,22,0.14)"/>
         <!-- 中部随机飞溅 -->
-        <ellipse cx="8%" cy="62%" rx="20" ry="6" fill="rgba(20,26,22,0.16)" filter="url(#gInkBlur3)" transform="rotate(40,8%,62%)"/>
-        <ellipse cx="92%" cy="22%" rx="18" ry="5" fill="rgba(20,26,22,0.15)" filter="url(#gInkBlur3)" transform="rotate(-35,92%,22%)"/>
-        <ellipse cx="4%" cy="78%" rx="14" ry="4" fill="rgba(20,26,22,0.18)" transform="rotate(20,4%,78%)"/>
-        <ellipse cx="96%" cy="75%" rx="16" ry="5" fill="rgba(20,26,22,0.16)" transform="rotate(-15,96%,75%)"/>
+        <ellipse cx="8%" cy="62%" rx="20" ry="6" fill="rgba(20,26,22,0.16)" filter="url(#gInkBlur3)"/>
+        <ellipse cx="92%" cy="22%" rx="18" ry="5" fill="rgba(20,26,22,0.15)" filter="url(#gInkBlur3)"/>
+        <ellipse cx="4%" cy="78%" rx="14" ry="4" fill="rgba(20,26,22,0.18)"/>
+        <ellipse cx="96%" cy="75%" rx="16" ry="5" fill="rgba(20,26,22,0.16)"/>
         <!-- 朱砂点 -->
         <circle cx="91%" cy="8%" r="7" fill="rgba(179,57,57,0.22)" filter="url(#gInkBlur3)"/>
         <circle cx="89%" cy="10%" r="3.5" fill="rgba(179,57,57,0.30)"/>
@@ -4052,12 +4048,6 @@ console.log('%c[斑斓汉字] 汉字UI-103 已加载', 'color:#374a42;font-weigh
         <circle cx="7%" cy="91%" r="2.5" fill="rgba(179,57,57,0.28)"/>
         <circle cx="50%" cy="99%" r="4" fill="rgba(179,57,57,0.18)" filter="url(#gInkBlur3)"/>
         <!-- 笔划痕迹线条 -->
-        <path d="M0,18% Q3%,15% 6%,20% Q8%,24% 5%,28%" stroke="rgba(20,26,22,0.18)" stroke-width="2.5" fill="none" stroke-linecap="round" filter="url(#gInkBlur3)"/>
-        <path d="M0,22% Q2%,19% 4%,22%" stroke="rgba(20,26,22,0.14)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-        <path d="M94%,35% Q97%,32% 100%,36% Q101%,40% 98%,44%" stroke="rgba(20,26,22,0.16)" stroke-width="2" fill="none" stroke-linecap="round" filter="url(#gInkBlur3)"/>
-        <path d="M96%,40% Q99%,37% 100%,41%" stroke="rgba(20,26,22,0.13)" stroke-width="1.2" fill="none" stroke-linecap="round"/>
-        <path d="M15%,0 Q18%,3% 14%,6% Q10%,9% 12%,12%" stroke="rgba(20,26,22,0.15)" stroke-width="2" fill="none" stroke-linecap="round" filter="url(#gInkBlur3)"/>
-        <path d="M80%,96% Q84%,99% 80%,101%" stroke="rgba(20,26,22,0.16)" stroke-width="2.2" fill="none" stroke-linecap="round" filter="url(#gInkBlur3)"/>
     </svg>
     <!-- 朱砂红墨点(印章余痕) -->
     <div class="ink-dot-zhusha" style="top:14%; right:8%; width:14px; height:14px;"></div>
@@ -5187,8 +5177,8 @@ console.log('%c[斑斓汉字] 汉字UI-103 已加载', 'color:#374a42;font-weigh
                 ar: '如：HSK3 第 5 课字 / مثل: HSK3 الدرس 5'
             },
             blTaskContent: {
-                en: '如填字：你好世界\n如填词：今天 明天 昨天\n如填句：你叫什么名字？\n\nFor chars / words / sentences as content',
-                ar: '如填字：你好世界\n如填词：今天 明天 昨天\n如填句：你叫什么名字？\n\nمحتوى الحروف / الكلمات / الجمل'
+                en: '在此输入要练的汉字\nType the characters to practice',
+                ar: '在此输入要练的汉字\nاكتب الحروف التي تريد التدرب عليها'
             }
         };
         Object.keys(map).forEach(function(id) {
