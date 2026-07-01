@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-90 (2026-07-01) — 全班报告Excel三修:三个表格+网格加墨绿中粗外框;总览总平均/班级平均改回按字加权的真实答对率(与看板/副标题一致,修55%与38%不匹配,不再是平均的平均);信息栏副标题加浅绿底 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-91 (2026-07-01) — 全班报告Excel:副标题全班总平均改大号加粗醒目(富文本);Average总平均列整列放大加粗(班级总平均最大);每个练习sheet标签页用不同颜色区分(总览墨绿) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-90 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-91 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -10262,12 +10262,15 @@ window.BL = (function () {
         };
 
         const wb = new ExcelJS.Workbook();
+        // 每个练习 sheet 标签用不同颜色区分(总览=墨绿,练习循环取色)
+        const TAB_COLORS = ['FFB5763A', 'FFC84B2F', 'FF4F7A9A', 'FF7E6BA6', 'FF5E8C6A', 'FFA8894A', 'FF9A5B6B', 'FF4A7C7E'];
 
         // ═══ ① 总览 sheet ═══
         const nTask = taskIds.length;
         const oSerial = 1, oName = 2, oTaskStart = 3, oTaskEnd = 2 + nTask, oAvg = 3 + nTask;
         const totalCols = Math.max(oAvg, 6);
         const wsOv = wb.addWorksheet(sheetName('总览'));
+        wsOv.properties.tabColor = { argb: C.ink };
 
         let gC = 0, gT = 0;
         const taskClassAvg = taskIds.map(tid => {
@@ -10284,10 +10287,14 @@ window.BL = (function () {
         { const c = rTitle.getCell(1); c.font = { name: FONT, bold: true, size: 18, color: { argb: C.ink } }; c.fill = solid(C.midGreen); c.alignment = { vertical: 'middle', horizontal: 'center' }; rTitle.height = 32; }
         borderRange(wsOv, rTitle.number, 1, rTitle.number, totalCols);
         // Row2 副标题(居中、加边框)
-        const metaStr = L('班级', 'Class', 'الصف') + ' ' + className + '     ·     ' + L('日期', 'Date', 'التاريخ') + ' ' + dateStr + '     ·     ' + L('学生', 'Students', 'الطلاب') + ' ' + activeStu.length + '     ·     ' + L('练习', 'Tasks', 'المهام') + ' ' + nTask + '     ·     ' + L('全班总平均', 'Class avg', 'المعدل') + ' ' + (grandAvg == null ? NA : grandAvg + '%');
-        const rMeta = wsOv.addRow([metaStr]);
+        const metaLead = L('班级', 'Class', 'الصف') + ' ' + className + '     ·     ' + L('日期', 'Date', 'التاريخ') + ' ' + dateStr + '     ·     ' + L('学生', 'Students', 'الطلاب') + ' ' + activeStu.length + '     ·     ' + L('练习', 'Tasks', 'المهام') + ' ' + nTask + '     ·     ' + L('全班总平均', 'Class avg', 'المعدل') + '  ';
+        const metaGrand = (grandAvg == null ? NA : grandAvg + '%');
+        const gCol = grandAvg == null ? C.gray : (grandAvg >= 80 ? C.ink : (grandAvg >= 60 ? C.gold : C.zhu));
+        const rMeta = wsOv.addRow([null]);
         wsOv.mergeCells(rMeta.number, 1, rMeta.number, totalCols);
-        { const c = rMeta.getCell(1); c.font = { name: FONT, color: { argb: C.ink } }; c.fill = solid(C.metaBg); c.alignment = { vertical: 'middle', horizontal: 'center' }; rMeta.height = 20; }
+        { const c = rMeta.getCell(1);
+          c.value = { richText: [ { font: { name: FONT, size: 11, color: { argb: C.ink } }, text: metaLead }, { font: { name: FONT, size: 16, bold: true, color: { argb: gCol } }, text: metaGrand } ] };   // 全班总平均大号加粗醒目
+          c.fill = solid(C.metaBg); c.alignment = { vertical: 'middle', horizontal: 'center' }; rMeta.height = 24; }
         borderRange(wsOv, rMeta.number, 1, rMeta.number, totalCols);
         for (let c = 1; c <= totalCols; c++) wsOv.getCell(rMeta.number, c).fill = solid(C.metaBg);   // 信息栏整行浅绿底
         wsOv.addRow([]);
@@ -10301,6 +10308,7 @@ window.BL = (function () {
             plain(row.getCell(oName), { align: 'left' }); row.getCell(oName).value = s.name || s.studentCode;
             taskIds.forEach((tid, i) => { const c = row.getCell(oTaskStart + i); pctBase(c); const v = stuAcc(s, tid); c.value = (v == null ? '' : v); });
             const c = row.getCell(oAvg); pctBase(c);
+            c.font = { name: FONT, bold: true, size: 13, color: { argb: C.gray } };   // 总平均列放大加粗(颜色由条件格式覆盖)
             const tot = stuTotal(s); c.value = (tot == null ? '' : tot);   // 按字加权的真实总平均(与看板一致),非"平均的平均"
         });
         const lastData = hdrRow + activeStu.length;
@@ -10308,7 +10316,7 @@ window.BL = (function () {
         plain(rAvg.getCell(oSerial), { fill: C.band });
         plain(rAvg.getCell(oName), { bold: true, fill: C.band }); rAvg.getCell(oName).value = L('班级平均', 'Class avg', 'معدل الصف');
         taskIds.forEach((tid, i) => { const c = rAvg.getCell(oTaskStart + i); pctBase(c); c.value = (taskClassAvg[i] == null ? '' : taskClassAvg[i]); });   // 按字加权的真实班级答对率
-        { const c = rAvg.getCell(oAvg); pctBase(c); c.value = (grandAvg == null ? '' : grandAvg); }
+        { const c = rAvg.getCell(oAvg); pctBase(c); c.font = { name: FONT, bold: true, size: 15, color: { argb: C.gray } }; c.value = (grandAvg == null ? '' : grandAvg); }   // 班级总平均最醒目
         const classAvgRow = rAvg.number;
         if (activeStu.length) addCF(wsOv, colL(oTaskStart) + firstData + ':' + colL(oAvg) + classAvgRow);
         wsOv.views = [{ state: 'frozen', xSplit: 2, ySplit: hdrRow }];
@@ -10363,12 +10371,13 @@ window.BL = (function () {
         wsOv.getColumn(oAvg).width = 10;
 
         // ═══ ② 每个练习一张网格 sheet ═══
-        taskIds.forEach(tid => {
+        taskIds.forEach((tid, ti) => {
             const { done, charOrder } = tdata[tid];
             const n = charOrder.length;
             const gSerial = 1, gName = 2, gDim = 3, gCharStart = 4, gCharEnd = 3 + n, gStu = 4 + n, gAcc = 5 + n, gCols = 5 + n;
             const ordered = done.filter(x => !x.left).slice().sort(byName).concat(done.filter(x => x.left).slice().sort(byName));   // 姓名 A-Z
             const wsg = wb.addWorksheet(sheetName(titleOf(tid)));
+            wsg.properties.tabColor = { argb: TAB_COLORS[ti % TAB_COLORS.length] };   // 标签页彩色区分
 
             const rHd = wsg.addRow([L('序号', 'No.', 'م'), L('学生', 'Student', 'الطالب'), L('维度', 'Type', 'النوع')].concat(charOrder).concat([L('该生', 'Student', 'الطالب'), L('答对率', 'Accuracy', 'الدقة')]));
             rHd.eachCell({ includeEmpty: false }, c => header(c)); rHd.height = 20;
