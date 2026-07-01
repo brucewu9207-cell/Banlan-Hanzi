@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-101 (2026-07-01) — 任务编辑弹窗微调:①标题/内容的绿盒标签独占一行(block+fit-content),输入框换到下一行左对齐,不再挤在同一行;②去掉提示行里的必填二字只保留红星标记 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-102 (2026-07-01) — 任务编辑弹窗三处:①去掉标题和内容输入框下面的红星;②清空任务内容输入框的默认占位文字;③多班推送列表恢复原来的班级号绿药丸按钮、去掉多余的纯文本班级名(当前班级只留当前班级标注) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-101 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-102 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -8798,12 +8798,11 @@ console.log('%c[斑斓汉字] 汉字UI-101 已加载', 'color:#374a42;font-weigh
             <div class="bl-form-group">
                 <label class="bl-label">任务标题<span class="lang-en">Title</span><span class="lang-ar">العنوان</span></label>
                 <input type="text" class="bl-input" id="blTaskTitle" placeholder="如：HSK3 第 5 课字 / 周末作业" maxlength="100">
-                <p class="bl-hint"><span style="color:var(--zhusha)">*</span></p>
             </div>
             <div class="bl-form-group">
                 <label class="bl-label">任务内容<span class="lang-en">Content</span><span class="lang-ar">المحتوى</span></label>
-                <textarea class="bl-task-content-input" id="blTaskContent" placeholder="输入要练的汉字，如：你好世界 春夏秋冬" maxlength="5000"></textarea>
-                <p class="bl-hint"><span style="color:var(--zhusha)">*</span> 逐字练习你输入的每个汉字（按顺序）；空格、标点、英文会自动忽略。<span class="lang-en"><br>Each Chinese character is practiced one by one, in order. Spaces, punctuation and non-Chinese are ignored.</span><span class="lang-ar"><br>يُتدرَّب على كل حرف صيني على حدة بالترتيب؛ تُتجاهل المسافات وعلامات الترقيم وغير الصينية.</span></p>
+                <textarea class="bl-task-content-input" id="blTaskContent" placeholder="" maxlength="5000"></textarea>
+                <p class="bl-hint">逐字练习你输入的每个汉字（按顺序）；空格、标点、英文会自动忽略。<span class="lang-en"><br>Each Chinese character is practiced one by one, in order. Spaces, punctuation and non-Chinese are ignored.</span><span class="lang-ar"><br>يُتدرَّب على كل حرف صيني على حدة بالترتيب؛ تُتجاهل المسافات وعلامات الترقيم وغير الصينية.</span></p>
             </div>
             <!-- v2B-r2 多班推送(D3 升级版核心): 创建/复制模式显示,编辑模式隐藏 -->
             <div class="bl-form-group" id="blMultiClassGroup">
@@ -11346,7 +11345,8 @@ window.BL = (function () {
                 <div class="bl-multi-class-item${checked ? ' bl-checked' : ''}${isCurrent ? ' bl-current-class' : ''}"
                      onclick="BL.toggleClassSelect('${escapeAttr(c.classCode)}')">
                     <span class="bl-multi-class-checkbox"></span>
-                    <span class="bl-multi-class-name">${escapeHtml(c.name || c.classCode)}${isCurrent ? escapeHtml(currentLabel) : ''}</span>
+                    <span class="bl-multi-class-code">${escapeHtml(c.classCode)}</span>
+                    ${isCurrent ? `<span class="bl-multi-class-name">${escapeHtml(currentLabel)}</span>` : ''}
                 </div>
             `;
         }).join('');
