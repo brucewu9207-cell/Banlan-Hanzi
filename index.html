@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-96 (2026-07-01) — 布置作业页三处微调:①红chip改为11A1：5(只显任务总数=任务+已归档);②字/词/句类型徽章改白底(保留彩色字);③任务卡图标键默认就翻白(白图标+白边框,配灰绿/陶红底) -->
+<!-- 斑斓汉字(老师端) · 汉字UI-98 (2026-07-01) — 彻底去掉字/词/句任务类型(纯装饰标签、不影响任何功能):删建任务弹窗的类型选择器+提示、任务列表的类型徽章、selectTaskType逻辑与必选校验;payload仍带默认type=char保持接口不变 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-96 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-98 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -804,6 +804,8 @@ console.log('%c[斑斓汉字] 汉字UI-96 已加载', 'color:#374a42;font-weight
             display: block; font-size: 13px; color: var(--mo-dark);
             margin-bottom: 6px; letter-spacing: 0.5px;
         }
+        /* 汉字-97:任务编辑器里的标签(任务标题/类型/内容)改新建任务按钮的墨绿 */
+        #blTaskEditorOverlay .bl-label { color: var(--ink-green); }
         /* ★ 汉字-47/49:新建班级 + 登录表单 标签做深绿盒;标签与输入框左右并排、等高对齐 */
         #blClassEditorOverlay .bl-form-group,
         #blViewAuth .bl-form-group,
@@ -1726,7 +1728,7 @@ console.log('%c[斑斓汉字] 汉字UI-96 已加载', 'color:#374a42;font-weight
         }
         .bl-multi-class-divider {
             text-align: center;
-            color: var(--ink-gray);
+            color: var(--ink-green);   /* 汉字-97:同新建任务按钮的墨绿 */
             font-size: 12px;
             letter-spacing: 2px;
             margin-bottom: 8px;
@@ -8789,21 +8791,6 @@ console.log('%c[斑斓汉字] 汉字UI-96 已加载', 'color:#374a42;font-weight
                 <input type="text" class="bl-input" id="blTaskTitle" placeholder="如：HSK3 第 5 课字 / 周末作业" maxlength="100">
             </div>
             <div class="bl-form-group">
-                <label class="bl-label">任务类型<span class="lang-en">Type</span><span class="lang-ar">النوع</span> <span style="color:var(--zhusha)">*</span></label>
-                <div class="bl-radio-group" id="blTaskTypeGroup">
-                    <label data-type="char" onclick="BL.selectTaskType('char')">
-                        <input type="radio" name="blTaskType" value="char"><span>字<span class="lang-en">Char</span><span class="lang-ar">حرف</span></span>
-                    </label>
-                    <label data-type="word" onclick="BL.selectTaskType('word')">
-                        <input type="radio" name="blTaskType" value="word"><span>词<span class="lang-en">Word</span><span class="lang-ar">كلمة</span></span>
-                    </label>
-                    <label data-type="sentence" onclick="BL.selectTaskType('sentence')">
-                        <input type="radio" name="blTaskType" value="sentence"><span>句<span class="lang-en">Sentence</span><span class="lang-ar">جملة</span></span>
-                    </label>
-                </div>
-                <p class="bl-hint">学生端将按字/词/句的形式展示和练习<span class="lang-en"><br>Students will see and practice as Char/Word/Sentence</span><span class="lang-ar"><br>سيراها الطلاب ويتدربون كحرف/كلمة/جملة</span></p>
-            </div>
-            <div class="bl-form-group">
                 <label class="bl-label">任务内容<span class="lang-en">Content</span><span class="lang-ar">المحتوى</span> <span style="color:var(--zhusha)">*</span></label>
                 <textarea class="bl-task-content-input" id="blTaskContent" placeholder="如填字：你好世界&#10;如填词：今天 明天 昨天&#10;如填句：你叫什么名字？" maxlength="5000"></textarea>
                 <p class="bl-hint">最多 5000 字。空格、换行都可以用作分隔。<span class="lang-en"><br>Up to 5000 chars. Spaces and line breaks work as separators.</span><span class="lang-ar"><br>حتى 5000 حرف. المسافات والأسطر كفواصل.</span></p>
@@ -9098,14 +9085,14 @@ window.BL = (function () {
             if (taskEditorOpen) {
                 const mode = state.taskEditorMode;
                 if (mode === 'edit') {
-                    document.getElementById('blTaskEditorTitle').textContent = tt('编辑任务', 'Edit Task', 'تعديل المهمة');
+                    document.getElementById('blTaskEditorTitle').innerHTML = _editorTitleHTML('编辑任务', 'Edit Task', 'تعديل المهمة');
                     document.getElementById('blTaskSubmitBtn').textContent = tt('保存', 'Save', 'حفظ');
                 } else if (mode === 'duplicate') {
-                    document.getElementById('blTaskEditorTitle').textContent = tt('📑 复制任务', '📑 Duplicate Task', '📑 نسخ المهمة');
+                    document.getElementById('blTaskEditorTitle').innerHTML = _editorTitleHTML('📑 复制任务', '📑 Duplicate Task', '📑 نسخ المهمة');
                     updateSubmitButtonText();
                     renderMultiClassPicker();
                 } else {
-                    document.getElementById('blTaskEditorTitle').textContent = tt('+ 新建任务', '+ New Task', '+ مهمة جديدة');
+                    document.getElementById('blTaskEditorTitle').innerHTML = _editorTitleHTML('+ 新建任务', '+ New Task', '+ مهمة جديدة');
                     updateSubmitButtonText();
                     renderMultiClassPicker();
                 }
@@ -11213,12 +11200,7 @@ window.BL = (function () {
             return;
         }
 
-        // ★ v2D 双语化: 类型徽章 + 按钮 title + "已归档" 标签
-        const typeLabel = {
-            char: tt('字', 'Char', 'حرف'),
-            word: tt('词', 'Word', 'كلمة'),
-            sentence: tt('句', 'Sentence', 'جملة')
-        };
+        // ★ v2D 双语化: 按钮 title + "已归档" 标签
         const archivedTagLabel = tt('已归档', 'Archived', 'مؤرشف');
         const titleSelect = tt('选中', 'Select', 'تحديد');
         const titleEdit = tt('编辑', 'Edit', 'تعديل');
@@ -11230,7 +11212,6 @@ window.BL = (function () {
         const cardHtml = t => {
             const archivedClass = t.archived ? ' bl-archived' : '';
             const selectedClass = state.selectedTaskIds.includes(t.taskId) ? ' bl-selected' : '';
-            const typeBadge = `<span class="bl-type-badge bl-type-${t.type}">${escapeHtml(typeLabel[t.type] || t.type)}</span>`;
             const archiveTitle = t.archived ? titleUnarchive : titleArchive;
             const archiveIcon = t.archived ? '↺' : '📥';
             return `
@@ -11239,9 +11220,8 @@ window.BL = (function () {
                     <div class="bl-task-info">
                         <div class="bl-task-title">${escapeHtml(t.title)}</div>
                         <div class="bl-task-meta">
-                            ${typeBadge}
                             <span>${formatDateTime(t.createdAt)}</span>
-                            ${t.archived ? '<span style="color:var(--zhusha);">' + escapeHtml(archivedTagLabel) + '</span>' : ''}
+                            ${t.archived ? '<span>' + escapeHtml(archivedTagLabel) + '</span>' : ''}
                         </div>
                     </div>
                     <div class="bl-task-actions">
@@ -11302,30 +11282,28 @@ window.BL = (function () {
         // 标题和按钮文字
         let titleText, btnText;
         if (mode === 'edit') {
-            titleText = tt('编辑任务', 'Edit Task', 'تعديل المهمة');
+            titleText = _editorTitleHTML('编辑任务', 'Edit Task', 'تعديل المهمة');
             btnText = tt('保存', 'Save', 'حفظ');
         } else if (mode === 'duplicate') {
-            titleText = tt('📑 复制任务', '📑 Duplicate Task', '📑 نسخ المهمة');
+            titleText = _editorTitleHTML('📑 复制任务', '📑 Duplicate Task', '📑 نسخ المهمة');
             btnText = tt('发布', 'Publish', 'نشر');
         } else {
-            titleText = tt('+ 新建任务', '+ New Task', '+ مهمة جديدة');
+            titleText = _editorTitleHTML('+ 新建任务', '+ New Task', '+ مهمة جديدة');
             btnText = tt('发布', 'Publish', 'نشر');
         }
-        $('blTaskEditorTitle').textContent = titleText;
+        $('blTaskEditorTitle').innerHTML = titleText;   // 汉字-97:改 lang-span,译文比中文小(同其他大标题)
         $('blTaskSubmitBtn').textContent = btnText;
 
         // 填表单
         if (mode === 'create') {
             $('blTaskTitle').value = '';
             $('blTaskContent').value = '';
-            selectTaskType('char');
         } else {
             // edit 或 duplicate 都需要源任务数据
             const task = state.tasks.find(t => t.taskId === taskId);
             if (!task) { toast(tt('任务不存在', 'Task not found', 'المهمة غير موجودة'), 'error'); return; }
             $('blTaskTitle').value = task.title || '';
             $('blTaskContent').value = task.content || '';
-            selectTaskType(task.type || 'char');
         }
 
         // 多班勾选区: 编辑模式隐藏(只能改单条任务); 创建/复制模式显示
@@ -11398,18 +11376,9 @@ window.BL = (function () {
         state.editingTaskId = null;
     }
 
-    // 选中任务类型 (单选按钮的视觉切换)
-    function selectTaskType(type) {
-        if (!['char', 'word', 'sentence'].includes(type)) type = 'char';
-        state.taskEditorType = type;
-        // 视觉激活
-        document.querySelectorAll('#blTaskTypeGroup label').forEach(lab => {
-            lab.classList.toggle('bl-radio-active', lab.dataset.type === type);
-        });
-        // 同步 input radio
-        document.querySelectorAll('#blTaskTypeGroup input[type="radio"]').forEach(r => {
-            r.checked = (r.value === type);
-        });
+    // 汉字-97:任务编辑器标题用 lang-span(中文正常大、译文0.78em),不再用 tt 双语同大小
+    function _editorTitleHTML(zh, en, ar) {
+        return escapeHtml(zh) + '<span class="lang-en">' + escapeHtml(en) + '</span><span class="lang-ar">' + escapeHtml(ar) + '</span>';
     }
 
     // 提交任务 (创建 / 编辑 / 复制)
@@ -11417,14 +11386,11 @@ window.BL = (function () {
     async function submitTask() {
         const title = $('blTaskTitle').value.trim();
         const content = $('blTaskContent').value.trim();
-        const type = state.taskEditorType;
+        const type = 'char';   // 汉字-98:已去掉字/词/句选择(纯装饰标签),payload 仍带默认 type 保持接口不变
         const mode = state.taskEditorMode;
 
         if (!title) { toast(tt('请填写任务标题', 'Please fill in task title', 'الرجاء ملء عنوان المهمة'), 'error'); return; }
         if (!content) { toast(tt('请填写任务内容', 'Please fill in task content', 'الرجاء ملء محتوى المهمة'), 'error'); return; }
-        if (!['char', 'word', 'sentence'].includes(type)) {
-            toast(tt('请选择任务类型', 'Please select task type', 'الرجاء اختيار نوع المهمة'), 'error'); return;
-        }
 
         try {
             if (mode === 'edit') {
@@ -11666,7 +11632,7 @@ window.BL = (function () {
         toggleTaskGroup,
         // —— Phase 4-2 阶段③: 学生视角 ——
         toggleStudentDetail,
-        openTaskEditor, closeTaskEditor, selectTaskType, submitTask,
+        openTaskEditor, closeTaskEditor, submitTask,
         toggleArchiveTask, deleteTask,
         // —— Phase 2B 第 2 轮 (v2B-r2) ——
         toggleClassSelect,
