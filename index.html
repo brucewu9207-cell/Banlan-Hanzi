@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-106 (2026-07-01) — 布置作业页三处:①任务标题内容输入框加autocomplete off禁用浏览器历史记录下拉不再记录不默认展开;②多班推送列表项鼠标划过变深墨绿翻白同我的班级卡片;③任务卡4个图标恢复原色彩色emoji不再默认全白仅hover深绿时翻白 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-107 (2026-07-01) — 任务卡两处:①彻底去掉编辑按钮(建了就发没草稿箱概念,打错删了重发即可;编辑改内容还会弄乱已答成绩);②复制任务图标从📑换成更明显的⧉双方框(按钮+复制任务弹窗标题一致);归档按钮保留 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-106 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-107 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -9088,7 +9088,7 @@ window.BL = (function () {
                     document.getElementById('blTaskEditorTitle').innerHTML = _editorTitleHTML('编辑任务', 'Edit Task', 'تعديل المهمة');
                     document.getElementById('blTaskSubmitBtn').textContent = tt('保存', 'Save', 'حفظ');
                 } else if (mode === 'duplicate') {
-                    document.getElementById('blTaskEditorTitle').innerHTML = _editorTitleHTML('📑 复制任务', '📑 Duplicate Task', '📑 نسخ المهمة');
+                    document.getElementById('blTaskEditorTitle').innerHTML = _editorTitleHTML('⧉ 复制任务', '⧉ Duplicate Task', '⧉ نسخ المهمة');
                     updateSubmitButtonText();
                     renderMultiClassPicker();
                 } else {
@@ -11203,7 +11203,6 @@ window.BL = (function () {
         // ★ v2D 双语化: 按钮 title + "已归档" 标签
         const archivedTagLabel = tt('已归档', 'Archived', 'مؤرشف');
         const titleSelect = tt('选中', 'Select', 'تحديد');
-        const titleEdit = tt('编辑', 'Edit', 'تعديل');
         const titleDuplicate = tt('复制', 'Duplicate', 'نسخ');
         const titleArchive = tt('归档', 'Archive', 'أرشفة');
         const titleUnarchive = tt('取消归档', 'Unarchive', 'إلغاء الأرشفة');
@@ -11225,8 +11224,7 @@ window.BL = (function () {
                         </div>
                     </div>
                     <div class="bl-task-actions">
-                        <button class="bl-icon-btn" onclick="BL.openTaskEditor('${escapeAttr(t.taskId)}')" title="${escapeAttr(titleEdit)}"><span class="bl-ico">✎</span></button>
-                        <button class="bl-icon-btn" onclick="BL.duplicateTask('${escapeAttr(t.taskId)}')" title="${escapeAttr(titleDuplicate)}"><span class="bl-ico">📑</span></button>
+                        <button class="bl-icon-btn" onclick="BL.duplicateTask('${escapeAttr(t.taskId)}')" title="${escapeAttr(titleDuplicate)}"><span class="bl-ico">⧉</span></button>
                         <button class="bl-icon-btn" onclick="BL.toggleArchiveTask('${escapeAttr(t.taskId)}')" title="${escapeAttr(archiveTitle)}"><span class="bl-ico">${archiveIcon}</span></button>
                         <button class="bl-icon-btn bl-danger-icon" onclick="BL.deleteTask('${escapeAttr(t.taskId)}')" title="${escapeAttr(titleDelete)}"><span class="bl-ico">🗑</span></button>
                     </div>
@@ -11285,7 +11283,7 @@ window.BL = (function () {
             titleText = _editorTitleHTML('编辑任务', 'Edit Task', 'تعديل المهمة');
             btnText = tt('保存', 'Save', 'حفظ');
         } else if (mode === 'duplicate') {
-            titleText = _editorTitleHTML('📑 复制任务', '📑 Duplicate Task', '📑 نسخ المهمة');
+            titleText = _editorTitleHTML('⧉ 复制任务', '⧉ Duplicate Task', '⧉ نسخ المهمة');
             btnText = tt('发布', 'Publish', 'نشر');
         } else {
             titleText = _editorTitleHTML('+ 新建任务', '+ New Task', '+ مهمة جديدة');
