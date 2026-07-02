@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-117 (2026-07-02) — 任务编辑弹窗译文居中:任务标题/任务内容/同时推送/当前班级四处译文与中文同轴居中,取消/发布按钮本就居中,锁宽不变切换零移动 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-118 (2026-07-02) — 密码体系第一批(老师端):登录带记住密码与显示密码小眼睛,账号页可修改密码,名单页学生卡新增重置密码(指定或清空,重置后大字显示当场告知);配套 Worker pwd-2026-07-02 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-117 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-118 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -837,6 +837,17 @@ console.log('%c[斑斓汉字] 汉字UI-117 已加载', 'color:#374a42;font-weigh
         [id^="wk-card-c-"] .bl-wk-ctrl-label { min-width: 38px; }               /* 低于/Below/تحت */
         [id^="wk-card-s-"] .bl-wk-ctrl-label { min-width: 45px; }               /* 最弱/Lowest/الأضعف */
         .bl-wk-ctrl-tail { min-width: 24px; }                                   /* 人/طالب */
+
+        /* ★ pwd(汉字-118): 密码体系样式——👁小眼睛 / 记住密码行 / 账号页改密码分隔条 / 重置密码弹窗 */
+        .bl-pwd-wrap { position: relative; flex: 1 1 0; }
+        .bl-pwd-wrap .bl-input { width: 100%; padding-right: 40px; box-sizing: border-box; }
+        .bl-pwd-eye { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 17px; cursor: pointer; opacity: .45; padding: 4px; line-height: 1; }
+        .bl-pwd-eye.bl-eye-on { opacity: 1; }
+        .bl-remember-row { display: flex; align-items: center; gap: 8px; margin: 2px 0 12px; font-size: 13px; color: var(--mo-dark); cursor: pointer; user-select: none; }
+        .bl-remember-row input { width: 15px; height: 15px; accent-color: var(--ink-green); cursor: pointer; }
+        .bl-remember-row .lang-en, .bl-remember-row .lang-ar { color: var(--mo-mid); }
+        .bl-cp-divider { display: inline-block; background: var(--ink-green); color: #fff; padding: 7px 16px; border-radius: 4px; font-size: 14px; letter-spacing: 1px; margin: 18px 0 12px; white-space: pre-line; text-align: center; box-sizing: border-box; min-width: 132px; }
+        .bl-rs-shown { font-size: 26px; font-weight: 700; letter-spacing: 2px; text-align: center; font-family: monospace; color: var(--ink-green); background: #f0f4f1; border-radius: 8px; padding: 14px 10px; margin: 10px 0; user-select: all; }
         /* ★ 汉字-116:任务编辑弹窗五处锁宽(同 汉字-112 班级弹窗口径,min-width=两语实测较大值) */
         #blTaskEditorOverlay .bl-form-group > .bl-label,
         #blTaskEditorOverlay .bl-btn.bl-secondary,
@@ -1046,6 +1057,21 @@ console.log('%c[斑斓汉字] 汉字UI-117 已加载', 'color:#374a42;font-weigh
             font-size: 13px;
             color: var(--ink-gray);
         }
+        /* ★ pwd(汉字-118): 重置密码按钮(样式随查看作答,竹黄色区分) */
+        .bl-student-reset-btn {
+            background: none;
+            border: 1px solid #b5763a;
+            color: #b5763a;
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+            white-space: pre-line;
+            box-sizing: border-box;
+        }
+        .bl-student-reset-btn:hover { background: #b5763a; color: #fff; }
         .bl-student-kick-btn {
             background: none;
             border: 1px solid #dc3545;
@@ -8707,8 +8733,11 @@ console.log('%c[斑斓汉字] 汉字UI-117 已加载', 'color:#374a42;font-weigh
                 </div>
                 <div class="bl-form-group">
                     <label class="bl-label">密码<span class="lang-en">Password</span><span class="lang-ar">كلمة المرور</span></label>
-                    <input type="password" class="bl-input" id="blAuthPassword" placeholder="至少 6 位" autocomplete="current-password">
+                    <!-- ★ pwd(汉字-118): 密码框带 👁 显示/隐藏 -->
+                    <div class="bl-pwd-wrap"><input type="password" class="bl-input" id="blAuthPassword" placeholder="至少 6 位" autocomplete="current-password"><button type="button" class="bl-pwd-eye" data-for="blAuthPassword" aria-label="显示/隐藏密码">👁</button></div>
                 </div>
+                <!-- ★ pwd(汉字-118): 记住密码(勾=这台设备记住;不勾=关掉浏览器就要重新登录) -->
+                <label class="bl-remember-row"><input type="checkbox" id="blAuthRemember" checked>记住密码<span class="lang-en">Remember me</span><span class="lang-ar">تذكرني</span></label>
                 <div class="bl-form-group" id="blAuthDisplayNameGroup" style="display:none;">
                     <label class="bl-label">显示名（可选）<span class="lang-en">Display Name (Optional)</span><span class="lang-ar">الاسم المعروض (اختياري)</span></label>
                     <input type="text" class="bl-input" id="blAuthDisplayName" placeholder="如：墨舟老师">
@@ -8803,7 +8832,22 @@ console.log('%c[斑斓汉字] 汉字UI-117 已加载', 'color:#374a42;font-weigh
                     <label class="bl-label">注册时间<span class="lang-en">Registered</span><span class="lang-ar">تاريخ التسجيل</span></label>
                     <input type="text" class="bl-input" id="blAccountCreated" disabled style="background:#f0f4f1;">
                 </div>
+                <!-- ★ pwd(汉字-118): 修改密码(验旧换新) -->
+                <div class="bl-cp-divider">修改密码<span class="lang-en">Change password</span><span class="lang-ar">تغيير كلمة المرور</span></div>
+                <div class="bl-form-group">
+                    <label class="bl-label">旧密码<span class="lang-en">Old password</span><span class="lang-ar">القديمة</span></label>
+                    <div class="bl-pwd-wrap"><input type="password" class="bl-input" id="blCpOld" autocomplete="off"><button type="button" class="bl-pwd-eye" data-for="blCpOld" aria-label="显示/隐藏密码">👁</button></div>
+                </div>
+                <div class="bl-form-group">
+                    <label class="bl-label">新密码<span class="lang-en">New password</span><span class="lang-ar">الجديدة</span></label>
+                    <div class="bl-pwd-wrap"><input type="password" class="bl-input" id="blCpNew1" placeholder="至少 6 位" autocomplete="off"><button type="button" class="bl-pwd-eye" data-for="blCpNew1" aria-label="显示/隐藏密码">👁</button></div>
+                </div>
+                <div class="bl-form-group">
+                    <label class="bl-label">再输一遍<span class="lang-en">Repeat it</span><span class="lang-ar">أعد إدخالها</span></label>
+                    <div class="bl-pwd-wrap"><input type="password" class="bl-input" id="blCpNew2" autocomplete="off"><button type="button" class="bl-pwd-eye" data-for="blCpNew2" aria-label="显示/隐藏密码">👁</button></div>
+                </div>
                 <div class="bl-btn-row">
+                    <button class="bl-btn" onclick="BL.changeMyPassword()" id="blCpBtn">确认修改<span class="lang-en">Change</span><span class="lang-ar">تغيير</span></button>
                     <button class="bl-btn bl-danger" onclick="BL.logout()">退出登录<span class="lang-en">Logout</span><span class="lang-ar">تسجيل خروج</span></button>
                 </div>
             </div>
@@ -9116,6 +9160,9 @@ window.BL = (function () {
     async function init() {
         console.log('%c[斑斓联动] BL v2D 已加载 (Phase 2B 全量双语化)', 'color:#8f2727;font-weight:bold;');
 
+        // ★ pwd(汉字-118): 静态表单的 👁 小眼睛绑一次
+        bindPwdEyes();
+
         // ★ v2D 双语化: 监听语言切换事件,重渲染已展示的动态内容
         window.addEventListener('banlan-lang-changed', function() {
             // 已登录: 重渲染当前视图 (班级列表 / 任务列表 / 学生名单+明细表)
@@ -9200,7 +9247,7 @@ window.BL = (function () {
         const role = getTesterRole();
 
         // 3) 先尝试恢复登录（因为 BETA 阶段要看 betaAccess 字段）
-        const saved = localStorage.getItem(LS_TOKEN_KEY);
+        const saved = localStorage.getItem(LS_TOKEN_KEY) || sessionStorage.getItem(LS_TOKEN_KEY);   /* ★ pwd:「不记住」的 token 放 sessionStorage */
         if (saved) {
             state.token = saved;
             try {
@@ -9210,6 +9257,7 @@ window.BL = (function () {
             } catch (e) {
                 state.token = null;
                 localStorage.removeItem(LS_TOKEN_KEY);
+                try { sessionStorage.removeItem(LS_TOKEN_KEY); } catch (e2) {}
             }
         }
         const hasBetaAccess = !!(state.teacher && state.teacher.betaAccess === true);
@@ -9410,7 +9458,11 @@ window.BL = (function () {
             const data = await api('POST', endpoint, body);
             state.token = data.token;
             state.teacher = data.teacher;
-            localStorage.setItem(LS_TOKEN_KEY, data.token);
+            // ★ pwd(汉字-118): 记住密码勾上 → localStorage(常驻);不勾 → sessionStorage(关浏览器即忘)
+            const rememberEl = $('blAuthRemember');
+            const remember = rememberEl ? rememberEl.checked : true;
+            try { localStorage.removeItem(LS_TOKEN_KEY); sessionStorage.removeItem(LS_TOKEN_KEY); } catch (e2) {}
+            (remember ? localStorage : sessionStorage).setItem(LS_TOKEN_KEY, data.token);
 
             toast(state.authMode === 'register'
                 ? tt('注册成功 ✓', 'Registered ✓', 'تم التسجيل ✓')
@@ -9435,8 +9487,104 @@ window.BL = (function () {
         state.teacher = null;
         state.classes = [];
         localStorage.removeItem(LS_TOKEN_KEY);
+        try { sessionStorage.removeItem(LS_TOKEN_KEY); } catch (e) {}
         showAuthView();
         toast(tt('已退出登录', 'Logged out', 'تم تسجيل الخروج'));
+    }
+
+    // ═════════════════════════════════════════
+    // ★ pwd(汉字-118): 密码体系(老师改密码 / 重置学生密码 / 👁小眼睛)
+    // ═════════════════════════════════════════
+
+    // 给页面里所有 👁 绑定显示/隐藏切换(静态表单 init 时绑一次;动态弹窗渲染后再绑)
+    function bindPwdEyes(root) {
+        (root || document).querySelectorAll('.bl-pwd-eye').forEach(function (btn) {
+            btn.onclick = function () {
+                const inp = document.getElementById(btn.getAttribute('data-for'));
+                if (!inp) return;
+                const show = inp.type === 'password';
+                inp.type = show ? 'text' : 'password';
+                btn.classList.toggle('bl-eye-on', show);
+            };
+        });
+    }
+
+    // 账号页:老师改自己的密码(验旧换新)
+    async function changeMyPassword() {
+        const po = $('blCpOld').value, p1 = $('blCpNew1').value, p2 = $('blCpNew2').value;
+        if (!po || !p1) { toast(tt('请填写旧密码和新密码', 'Fill in old and new password', 'أدخل كلمة المرور القديمة والجديدة'), 'error'); return; }
+        if (p1.length < 6) { toast(tt('新密码至少 6 位', 'At least 6 characters', '٦ خانات على الأقل'), 'error'); return; }
+        if (p1 !== p2) { toast(tt('两次输入不一致', 'Passwords do not match', 'غير متطابقتين'), 'error'); return; }
+        try {
+            await api('POST', '/api/teacher/change-password', { oldPassword: po, newPassword: p1 });
+            toast(tt('密码已修改 ✓', 'Password changed ✓', 'تم تغيير كلمة المرور ✓'), 'success');
+            $('blCpOld').value = ''; $('blCpNew1').value = ''; $('blCpNew2').value = '';
+        } catch (e) {
+            toast(e.message || tt('修改失败', 'Failed', 'فشل'), 'error');
+        }
+    }
+
+    // 名单页:重置某个学生的密码(指定新密码 or 只清空;重置后屏幕显示,老师告诉孩子)
+    function openResetStudentPwd(studentCode, studentName) {
+        const overlay = document.createElement('div');
+        overlay.className = 'bl-overlay bl-show';
+        overlay.innerHTML = `
+          <div class="bl-modal bl-modal-w520">
+            <div class="bl-header">
+              <h3>🔑 ${_L34('重置密码', 'Reset password', 'إعادة تعيين كلمة المرور')}</h3>
+              <button class="bl-close" data-act="close">✕</button>
+            </div>
+            <div style="padding:14px 18px;">
+              <p style="font-size:14px;color:var(--mo-dark);margin:0 0 12px;">${escapeHtml(studentName || '')} · ${escapeHtml(studentCode)}</p>
+              <div class="bl-form-group" style="display:flex;gap:10px;align-items:center;">
+                <div class="bl-pwd-wrap"><input type="text" class="bl-input" id="blRsPwd" maxlength="32" autocomplete="off" placeholder="${escapeAttr(tt('输入新密码(留空=只清空)', 'New password (empty = just clear)', 'كلمة مرور جديدة (فارغ = مسح فقط)'))}"></div>
+                <button class="bl-btn bl-secondary" type="button" data-act="gen" style="white-space:pre-line;">🎲 ${_L34('随机', 'Random', 'عشوائي')}</button>
+              </div>
+              <p class="bl-hint" style="margin-top:10px;">${_L34('指定新密码 → 当场告诉学生;留空清空 → 学生下次进班自己重新设。学生之后随时可以自己再改。', 'Set one and tell the student now, or leave empty so they set their own next time.', 'حدد كلمة وأخبر الطالب، أو اتركه فارغاً ليعيّنها بنفسه لاحقاً.')}</p>
+            </div>
+            <div class="bl-roster-foot">
+              <button class="bl-btn-ghost" data-act="close">${_L34('取消', 'Cancel', 'إلغاء')}</button>
+              <button class="bl-btn-primary" data-act="do">${_L34('重置', 'Reset', 'إعادة تعيين')}</button>
+            </div>
+          </div>`;
+        document.body.appendChild(overlay);
+        const close = () => { if (overlay.parentNode) overlay.parentNode.removeChild(overlay); };
+        overlay.querySelectorAll('[data-act="close"]').forEach(b => b.onclick = close);
+        // 🎲 随机:2 个小写字母 + 4 位数字,孩子好抄好记
+        overlay.querySelector('[data-act="gen"]').onclick = () => {
+            const letters = 'abcdefghjkmnpqrstuvwxyz';
+            let p = letters[Math.floor(Math.random() * letters.length)] + letters[Math.floor(Math.random() * letters.length)];
+            for (let i = 0; i < 4; i++) p += Math.floor(Math.random() * 10);
+            overlay.querySelector('#blRsPwd').value = p;
+        };
+        overlay.querySelector('[data-act="do"]').onclick = async () => {
+            const val = overlay.querySelector('#blRsPwd').value.trim();
+            if (val && val.length < 4) { toast(tt('新密码至少 4 位', 'At least 4 characters', '٤ خانات على الأقل'), 'error'); return; }
+            try {
+                await api('POST',
+                    '/api/classes/' + encodeURIComponent(state.currentClassCode) +
+                    '/students/' + encodeURIComponent(studentCode) + '/reset-password',
+                    val ? { newPassword: val } : {});
+                if (val) {
+                    // 指定成功 → 大字显示,老师当场告诉孩子
+                    overlay.querySelector('.bl-modal').innerHTML = `
+                      <div class="bl-header"><h3>✅ ${_L34('已重置', 'Password reset', 'تمت إعادة التعيين')}</h3></div>
+                      <div style="padding:14px 18px;">
+                        <p style="font-size:14px;color:var(--mo-dark);margin:0;">${escapeHtml(studentName || '')} · ${escapeHtml(studentCode)} ${_L34('的新密码:', 'new password:', 'كلمة المرور الجديدة:')}</p>
+                        <div class="bl-rs-shown">${escapeHtml(val)}</div>
+                        <p class="bl-hint">${_L34('请当场告诉学生;学生之后可自己再改。此密码不会再显示。', 'Tell the student now — it will not be shown again.', 'أخبر الطالب الآن؛ لن تُعرض مرة أخرى.')}</p>
+                      </div>
+                      <div class="bl-roster-foot"><button class="bl-btn-primary" data-act="close2">${_L34('好,我已告诉学生', 'Done', 'حسناً')}</button></div>`;
+                    overlay.querySelector('[data-act="close2"]').onclick = close;
+                } else {
+                    close();
+                    toast(tt('已清空密码,学生下次进班自己重新设', 'Cleared — student sets a new one next time', 'تم المسح — سيعيّنها الطالب لاحقاً'), 'success');
+                }
+                loadStudents();   // 刷新名单(hasPassword 状态)
+            } catch (e) {
+                toast(e.message || tt('重置失败', 'Failed', 'فشل'), 'error');
+            }
+        };
     }
 
     // ─────────────────────────────────────────
@@ -9728,6 +9876,9 @@ window.BL = (function () {
                 `<div class="bl-student-meta">${escapeHtml(metaLabel + completed + '/' + taskTotal)}</div>`;
             const detailBtn = isPending ? '' :
                 `<button class="bl-student-detail-btn" onclick="BL.toggleStudentDetail(${idx})">${escapeHtml(txtDetail)}</button>`;
+            // ★ pwd(汉字-118): 重置密码按钮(孩子忘了 → 老师指定/清空)
+            const resetBtn =
+                `<button class="bl-student-reset-btn" onclick="BL.openResetStudentPwd('${escapeAttr(s.studentCode)}', '${escapeAttr(s.name || s.studentCode)}')">🔑 ${escapeHtml(tt('重置密码', 'Reset PW', 'إعادة تعيين'))}</button>`;
             const kickBtn =
                 `<button class="bl-student-kick-btn" onclick="BL.kickStudent('${escapeAttr(s.studentCode)}', '${escapeAttr(s.name || s.studentCode)}')" title="${escapeAttr(titleKick)}">✗ ${escapeHtml(txtKick)}</button>`;
             const detailBox = isPending ? '' : `<div class="bl-student-detail" id="bl-stu-detail-${idx}" style="display:none;"></div>`;
@@ -9743,6 +9894,7 @@ window.BL = (function () {
                 </div>
                 <div class="bl-student-actions">
                     ${detailBtn}
+                    ${resetBtn}
                     ${kickBtn}
                 </div>
               </div>
@@ -11652,6 +11804,8 @@ window.BL = (function () {
         openPanel, closePanel,
         switchTab,
         toggleAuthMode, submitAuth, logout,
+        // —— ★ pwd(汉字-118): 密码体系 ——
+        changeMyPassword, openResetStudentPwd,
         openClassEditor, closeClassEditor, submitClass, deleteClass,
         // —— Phase 2B 第 1 轮 ——
         openTasksView, backToClassList,
