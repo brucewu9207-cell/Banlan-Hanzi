@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-112 (2026-07-01) — 阿语防移位第二批:①新建班级弹窗三框(班级码/取消/创建)②弱项看板两药丸(最该重点讲的字/最需要关注的学生)锁定英文态宽度,切英↔阿不再缩放。给两个看板药丸各加区分 class(bl-wk-title-weak/stu)再分别锁宽;弹窗框按 id/scope 精确锁。Chrome 逐个实测阿语态精确回到英文尺寸。连同上一版顶栏三按钮+四折叠药丸,双语防移位已覆盖 11 个元素。 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-113 (2026-07-02) — 双语切换补漏:切语言时名单页与明细表实时重画,在读/待加入与最该重点回讲的字/最需要关注的学生两组药丸即时换语言,展开的练习面板保持展开 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-112 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-113 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -9083,10 +9083,24 @@ window.BL = (function () {
 
         // ★ v2D 双语化: 监听语言切换事件,重渲染已展示的动态内容
         window.addEventListener('banlan-lang-changed', function() {
-            // 已登录: 重渲染当前视图 (班级列表 / 任务列表)
+            // 已登录: 重渲染当前视图 (班级列表 / 任务列表 / 学生名单+明细表)
             if (state.token) {
                 if (state.currentClassCode) {
-                    renderTasks();
+                    // ★ 汉字-113:名单视图开着时,重画名单(在读/待加入)与明细表(回讲字/关注生),否则药丸文案停在旧语言
+                    const stuViewOpen = $('blViewStudents') && $('blViewStudents').style.display !== 'none';
+                    if (stuViewOpen) {
+                        renderStudents();
+                        const matrixOpen = $('blMatrix') && $('blMatrix').style.display !== 'none';
+                        if (matrixOpen) {
+                            // 记住当前展开的练习,重画后原样展开(不让切语言把面板折回去)
+                            const openPanel = document.querySelector('[id^="bl-matrix-panel-"]:not([style*="none"])');
+                            const openTaskId = openPanel ? openPanel.id.replace('bl-matrix-panel-', '') : null;
+                            renderMatrix();
+                            if (openTaskId) toggleTaskPanel('matrix', openTaskId);
+                        }
+                    } else {
+                        renderTasks();
+                    }
                 } else if (state.currentTab === 'classes') {
                     renderClasses();
                 }
