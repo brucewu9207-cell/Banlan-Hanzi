@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-116 (2026-07-02) — 任务编辑弹窗五处锁宽:任务标题/任务内容/同时推送到这些班级/取消/发布/当前班级,切英阿零移动 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-117 (2026-07-02) — 任务编辑弹窗译文居中:任务标题/任务内容/同时推送/当前班级四处译文与中文同轴居中,取消/发布按钮本就居中,锁宽不变切换零移动 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-116 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-117 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -842,11 +842,12 @@ console.log('%c[斑斓汉字] 汉字UI-116 已加载', 'color:#374a42;font-weigh
         #blTaskEditorOverlay .bl-btn.bl-secondary,
         #blTaskSubmitBtn,
         .bl-multi-class-divider, .bl-multi-class-name { box-sizing: border-box; }
-        #blTaskEditorOverlay .bl-form-group > .bl-label { min-width: 92px; }    /* 任务标题/任务内容 */
+        #blTaskEditorOverlay .bl-form-group > .bl-label { min-width: 92px; text-align: center; }    /* 任务标题/任务内容(汉字-117:译文与中文同轴居中) */
         #blTaskEditorOverlay .bl-btn.bl-secondary { min-width: 75px; }          /* 取消 */
         #blTaskSubmitBtn { min-width: 94px; }                                   /* 发布(英文 Publish 最宽) */
         .bl-multi-class-divider { min-width: 176px; }                           /* 同时推送到这些班级 */
-        .bl-multi-class-name { min-width: 99px; line-height: 1.3; }             /* (当前班级) */
+        .bl-multi-class-picker .bl-multi-class-divider { text-align: center; }  /* 汉字-117:译文居中(压过下方原 left 规则) */
+        .bl-multi-class-name { min-width: 99px; line-height: 1.3; display: inline-block; text-align: center; }   /* (当前班级) */
 
         /* 内容区 — ★ v2D.3: 缩小间距 */
         .bl-body {
