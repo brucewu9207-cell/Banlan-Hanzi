@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-123 (2026-07-02) — 账号页修改密码改按钮+弹窗(墨舟拍板):按钮放退出登录左边,点击弹窗填旧/新/再输一遍,成功后自动关窗 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-124 (2026-07-02) — 修改密码弹窗:三个标签做成深绿盒(白字·中上译下居中·统一定宽)、输入框与绿盒等高、取消/确认按钮锁宽切语言不移动;密码强度维持宽松好记 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-123">
+    <meta name="version" content="汉字UI-124">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-123 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-124 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -884,14 +884,17 @@ console.log('%c[斑斓汉字] 汉字UI-123 已加载', 'color:#374a42;font-weigh
             margin-bottom: 8px;
         }
         /* ★ 汉字-47/49:新建班级 + 登录表单 标签做深绿盒;标签与输入框左右并排、等高对齐 */
+        /* ★ 汉字-124:修改密码弹窗(.bl-cp-modal)标签复用同一套深绿盒 */
         #blClassEditorOverlay .bl-form-group,
         #blViewAuth .bl-form-group,
-        #blViewAccount .bl-form-group {
+        #blViewAccount .bl-form-group,
+        .bl-cp-modal .bl-form-group {
             display: flex; flex-wrap: wrap; align-items: stretch; gap: 12px;
         }
         #blClassEditorOverlay .bl-form-group > .bl-label,
         #blViewAuth .bl-form-group > .bl-label,
-        #blViewAccount .bl-form-group > .bl-label {
+        #blViewAccount .bl-form-group > .bl-label,
+        .bl-cp-modal .bl-form-group > .bl-label {
             display: flex; flex-direction: column; justify-content: center;
             width: fit-content; margin: 0;
             background: var(--ink-green); color: #fff;
@@ -903,9 +906,21 @@ console.log('%c[斑斓汉字] 汉字UI-123 已加载', 'color:#374a42;font-weigh
         #blViewAuth .bl-form-group > .bl-label .lang-en,
         #blViewAuth .bl-form-group > .bl-label .lang-ar,
         #blViewAccount .bl-form-group > .bl-label .lang-en,
-        #blViewAccount .bl-form-group > .bl-label .lang-ar {
+        #blViewAccount .bl-form-group > .bl-label .lang-ar,
+        .bl-cp-modal .bl-form-group > .bl-label .lang-en,
+        .bl-cp-modal .bl-form-group > .bl-label .lang-ar {
             color: rgba(255, 255, 255, 0.88);
         }
+        /* ★ 汉字-124:弹窗三个标签统一定宽居中,译文中上下居中,切英↔阿不移动;输入框占满余宽 */
+        .bl-cp-modal .bl-form-group > .bl-label {
+            width: 130px; box-sizing: border-box; text-align: center; align-items: center; flex-shrink: 0;
+        }
+        .bl-cp-modal .bl-form-group > .bl-pwd-wrap { flex: 1 1 0; }
+        /* ★ 汉字-124:输入框撑满整行高,与左边绿盒等高 */
+        .bl-cp-modal .bl-form-group > .bl-pwd-wrap .bl-input { height: 100%; box-sizing: border-box; }
+        /* ★ 汉字-124:底部取消/确认按钮锁宽,切英↔阿不移动(取两语较大值) */
+        .bl-cp-modal .bl-roster-foot .bl-btn-ghost { min-width: 86px; box-sizing: border-box; text-align: center; }
+        .bl-cp-modal .bl-roster-foot .bl-btn-primary { min-width: 104px; box-sizing: border-box; text-align: center; }
         /* 汉字-54/55:账号页几个绿盒(含墨舟)统一宽度 + 内容居中 */
         #blViewAccount .bl-form-group > .bl-label,
         .bl-user-name { width: 120px; box-sizing: border-box; text-align: center; }
@@ -9500,11 +9515,12 @@ window.BL = (function () {
     }
 
     // ★ 汉字-123:账号页「修改密码」改弹窗(墨舟拍板);点按钮弹出,三框在弹窗里
+    // ★ 汉字-124:根 div 加 bl-cp-modal → 三标签走深绿盒样式
     function openChangeMyPwd() {
         const overlay = document.createElement('div');
         overlay.className = 'bl-overlay bl-show';
         overlay.innerHTML = `
-          <div class="bl-modal bl-modal-w520">
+          <div class="bl-modal bl-modal-w520 bl-cp-modal">
             <div class="bl-header">
               <h3>🔑 ${_L34('修改密码', 'Change password', 'تغيير كلمة المرور')}</h3>
               <button class="bl-close" data-act="close">✕</button>
