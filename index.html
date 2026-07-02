@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-114 (2026-07-02) — 双语防移位第三批:名单页与明细表切语言零移动——药丸译文与中文同轴居中+人数钉中文行右侧,查看作答/移出按钮、明细表列宽、低于与最弱控件全部锁定,行高写死消除阿语行框累积下移 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-115 (2026-07-02) — 任务/已归档两药丸同款居中版式:任务数上移中文行右侧、译文与中文同轴居中,锁宽116/135,切英阿零移动 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-114 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-115 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -802,8 +802,8 @@ console.log('%c[斑斓汉字] 汉字UI-114 已加载', 'color:#374a42;font-weigh
         #bl-tasks-title-active, #bl-tasks-title-archived { box-sizing: border-box; }
         #bl-roster-title-active { min-width: 118px; }               /* 在读(汉字-114:数字上移中文行+居中版式后英文态实测) */
         #bl-roster-title-pending { min-width: 131px; }              /* 待加入(同上,兼容两位数人数) */
-        #bl-tasks-title-active { min-width: 96px; }                 /* 任务 */
-        #bl-tasks-title-archived { min-width: 115px; }              /* 已归档 */
+        #bl-tasks-title-active { min-width: 116px; }                /* 任务(汉字-115:居中版式后英文态实测) */
+        #bl-tasks-title-archived { min-width: 135px; }              /* 已归档(同上) */
         /* 汉字-112:再加「新建班级弹窗三框」+「弱项看板两药丸」同款锁定(补 border-box 免 content-box 偏差) */
         #blClassEditorOverlay .bl-form-group > .bl-label,
         #blClassEditorOverlay .bl-btn.bl-secondary,
@@ -818,9 +818,11 @@ console.log('%c[斑斓汉字] 汉字UI-114 已加载', 'color:#374a42;font-weigh
         /* ★ 汉字-114:双语切换防移位第三批——名单页+明细表(切语言实时重画后暴露的移位全部锁死)。
            口径:min-width/width=两种语言实测的较大值;行高一律写死(阿语行框天然比英文高约1px,
            不锁的话每行累积下移);药丸译文与中文同轴居中,数字/小三角绝对定位不参与占宽。 */
-        #bl-roster-title-active, #bl-roster-title-pending { position: relative; text-align: center; padding: 7px 44px 7px 32px; line-height: 1.4; }
-        #bl-roster-title-active .bl-roster-caret, #bl-roster-title-pending .bl-roster-caret { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); margin-right: 0; }
-        .bl-roster-cnt { position: absolute; right: 12px; top: 7px; font-weight: 600; white-space: nowrap; }   /* 在读/待加入的「· N」钉在中文行右侧 */
+        #bl-roster-title-active, #bl-roster-title-pending,
+        #bl-tasks-title-active, #bl-tasks-title-archived { position: relative; text-align: center; padding: 7px 44px 7px 32px; line-height: 1.4; }   /* 汉字-115:任务/已归档同款 */
+        #bl-roster-title-active .bl-roster-caret, #bl-roster-title-pending .bl-roster-caret,
+        #bl-tasks-title-active .bl-roster-caret, #bl-tasks-title-archived .bl-roster-caret { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); margin-right: 0; }
+        .bl-roster-cnt { position: absolute; right: 12px; top: 7px; font-weight: 600; white-space: nowrap; }   /* 在读/待加入/任务/已归档的「· N」钉在中文行右侧 */
         .bl-student-detail-btn, .bl-student-kick-btn { box-sizing: border-box; }
         .bl-student-detail-btn { min-width: 127px; }                            /* 查看作答 */
         .bl-student-kick-btn { min-width: 86px; }                               /* 移出 */
@@ -11294,7 +11296,8 @@ window.BL = (function () {
             if (arr.length === 0) return '';
             const caret = openDefault ? '▾' : '▸';
             const hideStyle = openDefault ? '' : ' style="display:none;"';
-            return `<div class="bl-roster-section-title bl-roster-toggle${openDefault ? ' is-open' : ''}" id="bl-tasks-title-${key}" onclick="BL.toggleTaskGroup('${key}')"><span class="bl-roster-caret">${caret}</span>${escapeHtml(title)} · ${arr.length}</div>`
+            // 汉字-115:任务数「· N」上移到中文行右侧(同名单页在读/待加入版式)
+            return `<div class="bl-roster-section-title bl-roster-toggle${openDefault ? ' is-open' : ''}" id="bl-tasks-title-${key}" onclick="BL.toggleTaskGroup('${key}')"><span class="bl-roster-caret">${caret}</span>${escapeHtml(title)}<span class="bl-roster-cnt">· ${arr.length}</span></div>`
                  + `<div class="bl-task-list" id="bl-tasks-cards-${key}"${hideStyle}>${arr.map(cardHtml).join('')}</div>`;
         };
 
