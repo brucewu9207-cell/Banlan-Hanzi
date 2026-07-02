@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-118 (2026-07-02) — 密码体系第一批(老师端):登录带记住密码与显示密码小眼睛,账号页可修改密码,名单页学生卡新增重置密码(指定或清空,重置后大字显示当场告知);配套 Worker pwd-2026-07-02 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-119 (2026-07-02) — 重置密码按钮由竹黄改黑色(墨舟指定) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-118 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-119 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1057,11 +1057,11 @@ console.log('%c[斑斓汉字] 汉字UI-118 已加载', 'color:#374a42;font-weigh
             font-size: 13px;
             color: var(--ink-gray);
         }
-        /* ★ pwd(汉字-118): 重置密码按钮(样式随查看作答,竹黄色区分) */
+        /* ★ pwd(汉字-119): 重置密码按钮改黑色(墨舟指定,原竹黄) */
         .bl-student-reset-btn {
             background: none;
-            border: 1px solid #b5763a;
-            color: #b5763a;
+            border: 1px solid #232a27;
+            color: #232a27;
             padding: 6px 14px;
             border-radius: 6px;
             cursor: pointer;
@@ -1071,7 +1071,7 @@ console.log('%c[斑斓汉字] 汉字UI-118 已加载', 'color:#374a42;font-weigh
             white-space: pre-line;
             box-sizing: border-box;
         }
-        .bl-student-reset-btn:hover { background: #b5763a; color: #fff; }
+        .bl-student-reset-btn:hover { background: #232a27; color: #fff; }
         .bl-student-kick-btn {
             background: none;
             border: 1px solid #dc3545;
