@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-113 (2026-07-02) — 双语切换补漏:切语言时名单页与明细表实时重画,在读/待加入与最该重点回讲的字/最需要关注的学生两组药丸即时换语言,展开的练习面板保持展开 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-114 (2026-07-02) — 双语防移位第三批:名单页与明细表切语言零移动——药丸译文与中文同轴居中+人数钉中文行右侧,查看作答/移出按钮、明细表列宽、低于与最弱控件全部锁定,行高写死消除阿语行框累积下移 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-113 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-114 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -800,8 +800,8 @@ console.log('%c[斑斓汉字] 汉字UI-113 已加载', 'color:#374a42;font-weigh
         #blTabs .bl-tab-add { min-width: 109px; }                   /* 新增班级 */
         #bl-roster-title-active, #bl-roster-title-pending,
         #bl-tasks-title-active, #bl-tasks-title-archived { box-sizing: border-box; }
-        #bl-roster-title-active { min-width: 98px; }                /* 在读 */
-        #bl-roster-title-pending { min-width: 111px; }              /* 待加入 */
+        #bl-roster-title-active { min-width: 118px; }               /* 在读(汉字-114:数字上移中文行+居中版式后英文态实测) */
+        #bl-roster-title-pending { min-width: 131px; }              /* 待加入(同上,兼容两位数人数) */
         #bl-tasks-title-active { min-width: 96px; }                 /* 任务 */
         #bl-tasks-title-archived { min-width: 115px; }              /* 已归档 */
         /* 汉字-112:再加「新建班级弹窗三框」+「弱项看板两药丸」同款锁定(补 border-box 免 content-box 偏差) */
@@ -812,8 +812,29 @@ console.log('%c[斑斓汉字] 汉字UI-113 已加载', 'color:#374a42;font-weigh
         #blClassEditorOverlay .bl-form-group > .bl-label { min-width: 91px; }   /* 班级码 */
         #blClassEditorOverlay .bl-btn.bl-secondary { min-width: 75px; }         /* 取消 */
         #blClassSubmitBtn { min-width: 88px; }                                  /* 创建 */
-        .bl-wk-title-weak { min-width: 202px; }                                 /* 最该重点讲的字 */
-        .bl-wk-title-stu { min-width: 196px; }                                  /* 最需要关注的学生 */
+        .bl-wk-title-weak { min-width: 214px; }                                 /* 最该重点讲的字(汉字-114:居中版式后英文态实测) */
+        .bl-wk-title-stu { min-width: 209px; }                                  /* 最需要关注的学生(同上) */
+
+        /* ★ 汉字-114:双语切换防移位第三批——名单页+明细表(切语言实时重画后暴露的移位全部锁死)。
+           口径:min-width/width=两种语言实测的较大值;行高一律写死(阿语行框天然比英文高约1px,
+           不锁的话每行累积下移);药丸译文与中文同轴居中,数字/小三角绝对定位不参与占宽。 */
+        #bl-roster-title-active, #bl-roster-title-pending { position: relative; text-align: center; padding: 7px 44px 7px 32px; line-height: 1.4; }
+        #bl-roster-title-active .bl-roster-caret, #bl-roster-title-pending .bl-roster-caret { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); margin-right: 0; }
+        .bl-roster-cnt { position: absolute; right: 12px; top: 7px; font-weight: 600; white-space: nowrap; }   /* 在读/待加入的「· N」钉在中文行右侧 */
+        .bl-student-detail-btn, .bl-student-kick-btn { box-sizing: border-box; }
+        .bl-student-detail-btn { min-width: 127px; }                            /* 查看作答 */
+        .bl-student-kick-btn { min-width: 86px; }                               /* 移出 */
+        .bl-student-subline, .bl-student-meta { line-height: 1.4; }             /* 学生卡两行小字锁行高 */
+        #blMatrix table th { box-sizing: border-box; line-height: 1.3; }
+        #blMatrix td.bl-matrix-name { line-height: 1.3; }                       /* 含「每字答对率·全班」行 */
+        th.bl-matrix-dim { width: 100px; }                                      /* 维度列(阿语态实测较宽) */
+        #blMatrix table th:nth-last-child(2) { width: 115px; }                  /* 该生列(英文态实测较宽) */
+        th.bl-matrix-acc { width: 130px; }                                      /* 答对率列(英文态实测较宽) */
+        [id^="wk-card-s-"] .bl-wk-ctrl { min-width: 162px; }                    /* 「最弱N人」控件组(阿语态较宽) */
+        .bl-wk-ctrl-label, .bl-wk-ctrl-tail { display: inline-block; text-align: center; white-space: pre-line; }
+        [id^="wk-card-c-"] .bl-wk-ctrl-label { min-width: 38px; }               /* 低于/Below/تحت */
+        [id^="wk-card-s-"] .bl-wk-ctrl-label { min-width: 45px; }               /* 最弱/Lowest/الأضعف */
+        .bl-wk-ctrl-tail { min-width: 24px; }                                   /* 人/طالب */
 
         /* 内容区 — ★ v2D.3: 缩小间距 */
         .bl-body {
@@ -1345,14 +1366,15 @@ console.log('%c[斑斓汉字] 汉字UI-113 已加载', 'color:#374a42;font-weigh
         .bl-wk-wrap { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
         .bl-wk-card { background: rgba(255,255,255,0.6); border: 1px solid rgba(55,74,66,0.22); border-radius: 12px; padding: 8px 14px 12px; }
         .bl-wk-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
-        .bl-wk-title { display: inline-flex; flex-direction: row; align-items: center; gap: 8px; background: var(--ink-green); color: #fff; border: none; border-radius: 8px; padding: 8px 16px; font-size: 15px; font-weight: 600; line-height: 1.2; cursor: pointer; text-align: left; font-family: inherit; white-space: pre-line; }
+        /* 汉字-114:药丸改居中版式——译文与中文同轴居中,小三角绝对定位钉在左侧不挤文字 */
+        .bl-wk-title { display: inline-block; position: relative; background: var(--ink-green); color: #fff; border: none; border-radius: 8px; padding: 8px 24px 8px 34px; font-size: 15px; font-weight: 600; line-height: 1.2; cursor: pointer; text-align: center; font-family: inherit; white-space: pre-line; }
         .bl-wk-ctrl { white-space: pre-line; }   /* 汉字-83:面板改normal后,标题/控件单独保中上译下 */
         .bl-wk-title:hover { background: #2c3a34; }
-        .bl-wk-car { font-size: 11px; }
+        .bl-wk-car { font-size: 11px; position: absolute; left: 14px; top: 50%; transform: translateY(-50%); }
         .bl-wk-body { margin-top: 12px; }
         .bl-wk-card.bl-wk-folded .bl-wk-body { display: none; }
         .bl-wk-card.bl-wk-folded .bl-wk-ctrl { display: none; }   /* 折叠时去掉下拉(图4) */
-        .bl-wk-ctrl { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: #5a655f; }
+        .bl-wk-ctrl { display: inline-flex; align-items: center; justify-content: flex-end; gap: 8px; font-size: 13px; color: #5a655f; min-width: 108px; line-height: 1.3; }   /* 汉字-114:右对齐+锁宽锁行高,切语言下拉不动 */
         .bl-wk-ctrl select { border: 1px solid rgba(55,74,66,0.3); border-radius: 6px; padding: 2px 6px; color: var(--ink-green); background: #fff; font-family: inherit; cursor: pointer; }
         .bl-wk-chars { display: flex; flex-wrap: wrap; gap: 10px; }
         .bl-wk-chip { display: inline-flex; align-items: center; gap: 8px; border-radius: 10px; padding: 6px 13px; }
@@ -9722,7 +9744,8 @@ window.BL = (function () {
             const cards = sortByName(arr).map((s, i) => card(s, i + 1, isPending)).join('');
             const caret = openDefault ? '▾' : '▸';
             const hideStyle = openDefault ? '' : ' style="display:none;"';
-            return `<div class="bl-roster-section-title bl-roster-toggle${openDefault ? ' is-open' : ''}" id="bl-roster-title-${key}" onclick="BL.toggleRosterSection('${key}')"><span class="bl-roster-caret">${caret}</span>${escapeHtml(title)} · ${arr.length}</div>`
+            // 汉字-114:人数「· N」上移到中文行右侧(绝对定位),译文与中文同轴居中
+            return `<div class="bl-roster-section-title bl-roster-toggle${openDefault ? ' is-open' : ''}" id="bl-roster-title-${key}" onclick="BL.toggleRosterSection('${key}')"><span class="bl-roster-caret">${caret}</span>${escapeHtml(title)}<span class="bl-roster-cnt">· ${arr.length}</span></div>`
                  + `<div class="bl-roster-cards" id="bl-roster-cards-${key}"${hideStyle}>${cards}</div>`;
         };
 
@@ -10935,7 +10958,7 @@ window.BL = (function () {
                 <div class="bl-wk-card" id="wk-card-c-${tid}">
                     <div class="bl-wk-head">
                         <button class="bl-wk-title bl-wk-title-weak" onclick="BL.toggleWeakBlock('wk-card-c-${tid}')"><span class="bl-wk-car">▾</span>📌 ${escapeHtml(tt('最该重点回讲的字', 'Hardest characters', 'أصعب الحروف'))}</button>
-                        <span class="bl-wk-ctrl">${escapeHtml(tt('低于', 'Below', 'تحت'))}
+                        <span class="bl-wk-ctrl"><span class="bl-wk-ctrl-label">${escapeHtml(tt('低于', 'Below', 'تحت'))}</span>
                             <select onchange="BL.refilterWeakChars('${tid}',this.value)">${[50,60,70,80,90].map(v => opt(v, 60)).join('')}</select>
                         </span>
                     </div>
@@ -10944,8 +10967,8 @@ window.BL = (function () {
                 <div class="bl-wk-card bl-wk-folded" id="wk-card-s-${tid}">
                     <div class="bl-wk-head">
                         <button class="bl-wk-title bl-wk-title-stu" onclick="BL.toggleWeakBlock('wk-card-s-${tid}')"><span class="bl-wk-car">▸</span>👀 ${escapeHtml(tt('最需要关注的学生', 'Students to watch', 'طلاب بحاجة لمتابعة'))}</button>
-                        <span class="bl-wk-ctrl">${escapeHtml(tt('最弱', 'Lowest', 'الأضعف'))}
-                            <select onchange="BL.refilterWeakStus('${tid}',this.value)">${[1,2,3,4,5,6,7,8,9,10,999].map(v => opt(v, 5)).join('')}</select> ${escapeHtml(tt('人', '', 'طالب'))}
+                        <span class="bl-wk-ctrl"><span class="bl-wk-ctrl-label">${escapeHtml(tt('最弱', 'Lowest', 'الأضعف'))}</span>
+                            <select onchange="BL.refilterWeakStus('${tid}',this.value)">${[1,2,3,4,5,6,7,8,9,10,999].map(v => opt(v, 5)).join('')}</select> <span class="bl-wk-ctrl-tail">${escapeHtml(tt('人', '', 'طالب'))}</span>
                         </span>
                     </div>
                     <div class="bl-wk-body"><div class="bl-wk-stus" id="wk-stus-${tid}">${_weakStusHtml(d.stus, 5)}</div></div>
