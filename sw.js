@@ -21,6 +21,7 @@ self.addEventListener('fetch', e => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   if (/workers\.dev$/i.test(url.hostname)) return;            // 后端接口直连不缓存
+  if (url.searchParams.has('upcheck')) return;                // 版本检测请求直连不缓存(汉字-121 新版本提醒用,防缓存越攒越大)
   const accept = req.headers.get('accept') || '';
   if (req.mode === 'navigate' || accept.includes('text/html')) {  // 网页本体:联网优先
     e.respondWith(
