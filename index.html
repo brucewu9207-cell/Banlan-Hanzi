@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-122 (2026-07-02) — 版本角标放大到 24px;账号页修改密码改手风琴,平时收起点标题展开,改成功自动收起(墨舟拍板) -->
+<!-- 斑斓汉字(老师端) · 汉字UI-123 (2026-07-02) — 账号页修改密码改按钮+弹窗(墨舟拍板):按钮放退出登录左边,点击弹窗填旧/新/再输一遍,成功后自动关窗 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-122">
+    <meta name="version" content="汉字UI-123">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-122 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-123 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -8835,26 +8835,9 @@ console.log('%c[斑斓汉字] 汉字UI-122 已加载', 'color:#374a42;font-weigh
                     <label class="bl-label">注册时间<span class="lang-en">Registered</span><span class="lang-ar">تاريخ التسجيل</span></label>
                     <input type="text" class="bl-input" id="blAccountCreated" disabled style="background:#f0f4f1;">
                 </div>
-                <!-- ★ pwd(汉字-118): 修改密码(验旧换新);汉字-122:改成手风琴,平时收起(墨舟拍板) -->
-                <div class="bl-cp-divider" id="blCpToggle" onclick="BL.toggleCpSection()" style="cursor:pointer;" role="button"><span id="blCpCaret">▸</span> 修改密码<span class="lang-en">Change password</span><span class="lang-ar">تغيير كلمة المرور</span></div>
-                <div id="blCpBody" style="display:none;">
-                    <div class="bl-form-group">
-                        <label class="bl-label">旧密码<span class="lang-en">Old password</span><span class="lang-ar">القديمة</span></label>
-                        <div class="bl-pwd-wrap"><input type="password" class="bl-input" id="blCpOld" autocomplete="off"><button type="button" class="bl-pwd-eye" data-for="blCpOld" aria-label="显示/隐藏密码">👁</button></div>
-                    </div>
-                    <div class="bl-form-group">
-                        <label class="bl-label">新密码<span class="lang-en">New password</span><span class="lang-ar">الجديدة</span></label>
-                        <div class="bl-pwd-wrap"><input type="password" class="bl-input" id="blCpNew1" placeholder="至少 6 位" autocomplete="off"><button type="button" class="bl-pwd-eye" data-for="blCpNew1" aria-label="显示/隐藏密码">👁</button></div>
-                    </div>
-                    <div class="bl-form-group">
-                        <label class="bl-label">再输一遍<span class="lang-en">Repeat it</span><span class="lang-ar">أعد إدخالها</span></label>
-                        <div class="bl-pwd-wrap"><input type="password" class="bl-input" id="blCpNew2" autocomplete="off"><button type="button" class="bl-pwd-eye" data-for="blCpNew2" aria-label="显示/隐藏密码">👁</button></div>
-                    </div>
-                    <div class="bl-btn-row" style="border-top:none;padding-top:0;">
-                        <button class="bl-btn" onclick="BL.changeMyPassword()" id="blCpBtn">确认修改<span class="lang-en">Change</span><span class="lang-ar">تغيير</span></button>
-                    </div>
-                </div>
+                <!-- ★ 汉字-123:修改密码改按钮+弹窗(墨舟拍板),放退出登录左边;三框移进弹窗 -->
                 <div class="bl-btn-row">
+                    <button class="bl-btn" onclick="BL.openChangeMyPwd()">修改密码<span class="lang-en">Change password</span><span class="lang-ar">تغيير كلمة المرور</span></button>
                     <button class="bl-btn bl-danger" onclick="BL.logout()">退出登录<span class="lang-en">Logout</span><span class="lang-ar">تسجيل خروج</span></button>
                 </div>
             </div>
@@ -9516,17 +9499,45 @@ window.BL = (function () {
         });
     }
 
-    // ★ 汉字-122:账号页「修改密码」手风琴(平时收起,点标题展开/收起)
-    function toggleCpSection() {
-        const body = $('blCpBody');
-        const caret = $('blCpCaret');
-        const open = body.style.display === 'none';
-        body.style.display = open ? '' : 'none';
-        if (caret) caret.textContent = open ? '▾' : '▸';
+    // ★ 汉字-123:账号页「修改密码」改弹窗(墨舟拍板);点按钮弹出,三框在弹窗里
+    function openChangeMyPwd() {
+        const overlay = document.createElement('div');
+        overlay.className = 'bl-overlay bl-show';
+        overlay.innerHTML = `
+          <div class="bl-modal bl-modal-w520">
+            <div class="bl-header">
+              <h3>🔑 ${_L34('修改密码', 'Change password', 'تغيير كلمة المرور')}</h3>
+              <button class="bl-close" data-act="close">✕</button>
+            </div>
+            <div style="padding:14px 18px;">
+              <div class="bl-form-group">
+                <label class="bl-label">旧密码<span class="lang-en">Old password</span><span class="lang-ar">القديمة</span></label>
+                <div class="bl-pwd-wrap"><input type="password" class="bl-input" id="blCpOld" autocomplete="off"><button type="button" class="bl-pwd-eye" data-for="blCpOld" aria-label="显示/隐藏密码">👁</button></div>
+              </div>
+              <div class="bl-form-group">
+                <label class="bl-label">新密码<span class="lang-en">New password</span><span class="lang-ar">الجديدة</span></label>
+                <div class="bl-pwd-wrap"><input type="password" class="bl-input" id="blCpNew1" placeholder="至少 6 位" autocomplete="off"><button type="button" class="bl-pwd-eye" data-for="blCpNew1" aria-label="显示/隐藏密码">👁</button></div>
+              </div>
+              <div class="bl-form-group">
+                <label class="bl-label">再输一遍<span class="lang-en">Repeat it</span><span class="lang-ar">أعد إدخالها</span></label>
+                <div class="bl-pwd-wrap"><input type="password" class="bl-input" id="blCpNew2" autocomplete="off"><button type="button" class="bl-pwd-eye" data-for="blCpNew2" aria-label="显示/隐藏密码">👁</button></div>
+              </div>
+            </div>
+            <div class="bl-roster-foot">
+              <button class="bl-btn-ghost" data-act="close">${_L34('取消', 'Cancel', 'إلغاء')}</button>
+              <button class="bl-btn-primary" data-act="do">${_L34('确认修改', 'Change', 'تغيير')}</button>
+            </div>
+          </div>`;
+        document.body.appendChild(overlay);
+        bindPwdEyes(overlay);
+        const close = () => { if (overlay.parentNode) overlay.parentNode.removeChild(overlay); };
+        overlay.querySelectorAll('[data-act="close"]').forEach(b => b.onclick = close);
+        overlay.querySelector('[data-act="do"]').onclick = () => changeMyPassword(close);
+        setTimeout(() => { const el = overlay.querySelector('#blCpOld'); if (el) el.focus(); }, 60);
     }
 
-    // 账号页:老师改自己的密码(验旧换新)
-    async function changeMyPassword() {
+    // 账号页:老师改自己的密码(验旧换新);done = 成功后回调(关弹窗)
+    async function changeMyPassword(done) {
         const po = $('blCpOld').value, p1 = $('blCpNew1').value, p2 = $('blCpNew2').value;
         if (!po || !p1) { toast(tt('请填写旧密码和新密码', 'Fill in old and new password', 'أدخل كلمة المرور القديمة والجديدة'), 'error'); return; }
         if (p1.length < 6) { toast(tt('新密码至少 6 位', 'At least 6 characters', '٦ خانات على الأقل'), 'error'); return; }
@@ -9534,10 +9545,7 @@ window.BL = (function () {
         try {
             await api('POST', '/api/teacher/change-password', { oldPassword: po, newPassword: p1 });
             toast(tt('密码已修改 ✓', 'Password changed ✓', 'تم تغيير كلمة المرور ✓'), 'success');
-            $('blCpOld').value = ''; $('blCpNew1').value = ''; $('blCpNew2').value = '';
-            // 汉字-122:改成功后自动收起
-            $('blCpBody').style.display = 'none';
-            if ($('blCpCaret')) $('blCpCaret').textContent = '▸';
+            if (typeof done === 'function') done();   // 关弹窗
         } catch (e) {
             toast(e.message || tt('修改失败', 'Failed', 'فشل'), 'error');
         }
@@ -11823,8 +11831,8 @@ window.BL = (function () {
         openPanel, closePanel,
         switchTab,
         toggleAuthMode, submitAuth, logout,
-        // —— ★ pwd(汉字-118): 密码体系;汉字-122 加折叠 ——
-        changeMyPassword, openResetStudentPwd, toggleCpSection,
+        // —— ★ pwd(汉字-118): 密码体系;汉字-123 改弹窗 ——
+        openChangeMyPwd, changeMyPassword, openResetStudentPwd,
         openClassEditor, closeClassEditor, submitClass, deleteClass,
         // —— Phase 2B 第 1 轮 ——
         openTasksView, backToClassList,
