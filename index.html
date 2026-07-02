@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-119 (2026-07-02) — 重置密码按钮由竹黄改黑色(墨舟指定) -->
+<!-- 斑斓汉字(老师端) · 汉字UI-120 (2026-07-02) — 移出按钮配色按墨舟选定:常态深砖红描边,悬停白底红字;重置密码按钮纳入卡片悬停白描边不再隐身 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +15,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-119 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-120 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1072,10 +1072,11 @@ console.log('%c[斑斓汉字] 汉字UI-119 已加载', 'color:#374a42;font-weigh
             box-sizing: border-box;
         }
         .bl-student-reset-btn:hover { background: #232a27; color: #fff; }
+        /* 汉字-120:移出按钮常态改深砖红描边(B),悬停白底红字(D)——墨舟选定 */
         .bl-student-kick-btn {
             background: none;
-            border: 1px solid #dc3545;
-            color: #dc3545;
+            border: 1px solid #8f2727;
+            color: #8f2727;
             padding: 6px 14px;
             border-radius: 6px;
             cursor: pointer;
@@ -1087,8 +1088,9 @@ console.log('%c[斑斓汉字] 汉字UI-119 已加载', 'color:#374a42;font-weigh
             flex-shrink: 0;
         }
         .bl-student-kick-btn:hover {
-            background: #dc3545;
-            color: white;
+            background: rgba(255,255,255,0.88);
+            border-color: #c0392b;
+            color: #c0392b;
         }
         /* ★ UI-31: 已离开学生灰显 + 「已离开」标记 */
         .bl-student-card.is-left {
@@ -11869,8 +11871,10 @@ if (document.readyState === 'loading') {
     .bl-student-card:hover .bl-pending-badge { background: rgba(255,255,255,0.92); color: var(--ink-green); }
     .bl-student-card:hover { background: var(--ink-green); border-color: var(--ink-green); border-left-color: var(--ink-green); }
     .bl-student-card:hover .bl-student-name, .bl-student-card:hover .bl-student-sid, .bl-student-card:hover .bl-student-meta, .bl-student-card:hover .bl-stu-seq { color: #fff !important; }  /* 汉字-60:压过图2基础色，hover全白 */
-    .bl-student-card:hover .bl-student-detail-btn, .bl-student-card:hover .bl-student-kick-btn { border-color: #fff; color: #fff; background: transparent; }
-    .bl-student-card:hover .bl-student-detail-btn:hover, .bl-student-card:hover .bl-student-kick-btn:hover { background: #fff; color: var(--ink-green); border-color: #fff; }
+    .bl-student-card:hover .bl-student-detail-btn, .bl-student-card:hover .bl-student-kick-btn, .bl-student-card:hover .bl-student-reset-btn { border-color: #fff; color: #fff; background: transparent; }   /* 汉字-120:重置按钮也纳入卡片悬停白描边,深底上不隐身 */
+    .bl-student-card:hover .bl-student-detail-btn:hover { background: #fff; color: var(--ink-green); border-color: #fff; }
+    .bl-student-card:hover .bl-student-kick-btn:hover { background: rgba(255,255,255,0.92); color: #c0392b; border-color: #c0392b; }   /* 汉字-120:移出悬停=白底红字(D) */
+    .bl-student-card:hover .bl-student-reset-btn:hover { background: #fff; color: #232a27; border-color: #fff; }
     .bl-stu-checkwrap { display: flex; align-items: center; flex-shrink: 0; cursor: pointer; }
     .bl-stu-check { width: 17px; height: 17px; cursor: pointer; accent-color: var(--ink-green); }
     .bl-batch-bar { position: sticky; top: 0; z-index: 6; display: flex; justify-content: space-between; align-items: center; background: var(--ink-green); color: #fff; padding: 9px 14px; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 2px 8px rgba(55,74,66,0.2); }
