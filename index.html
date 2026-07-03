@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-131 (2026-07-03) — 手机端顶栏重排:QR/语言钮缩0.5x、下移到四图标左右两边不挡标题、同高;二维码不悬浮(跟页面滚)+hover不放大+展开大图能扫,语言钮保持悬浮;音乐栏移到搜索框下方+播放键缩小+与按钮等高。桌面端不动 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-132 (2026-07-03) — 手机端修复批:二维码点击不再放大(scale加!important压过触屏button:hover);内容区6个方框与功能按钮等宽(两侧11px)、间距一致(8px);第6盒关于汉字(独立stroke-guide-panel)收进来对齐+一行显示;所有内容盒压矮、单行盒等高。桌面端不动 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-131">
+    <meta name="version" content="汉字UI-132">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-131 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-132 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -3285,9 +3285,14 @@ console.log('%c[斑斓汉字] 汉字UI-131 已加载', 'color:#374a42;font-weigh
             .header-title > h1 { font-size: 22px !important; letter-spacing: 3px !important; text-indent: 3px !important; }
             .title-icon { width: 40px !important; height: 36px !important; }
             .header-title .sub-title { font-size: 10px; letter-spacing: 2px; }
-            .acc-header { padding: 12px 14px; font-size: 13px; }
+            .acc-header { padding: 4px 14px; font-size: 13px; min-height: 0; }   /* 汉字-131: 压矮盒子(单行盒总高~52) */
             .acc-content.active { padding: 5px 0.5%; }
             .glass-panel { padding: 12px 10px; border-radius: 6px; }
+            /* 汉字-131: 手机端内容区方框与上方功能按钮等宽(两侧留11px)、间距一致(8px) */
+            .acc-container { padding-left: 11px; padding-right: 11px; gap: 8px; box-sizing: border-box; }
+            /* 汉字-131: 「6.关于汉字」(stroke-guide-panel)独立在 acc-container 外→单独收进来对齐(width:auto 缩到368、x11、间距8)+ 表头压到与其它单行盒等高(~52) */
+            .stroke-guide-panel { margin: 8px 11px 0; width: auto; box-sizing: border-box; }
+            .stroke-guide-header { padding: 4px 14px; font-size: 13px; min-height: 45px; display: flex; align-items: center; }   /* 汉字-131: 横向padding+字号与acc盒对齐一行放下;min-height补到与acc单行盒等高(~53) */
             input[type="text"] { font-size: 16px; letter-spacing: 2px; }
             button { font-size: 13px; padding: 8px 12px; }
             .controls-bar > button,
