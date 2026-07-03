@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-130 (2026-07-03) — owner 徽章统一固定为 OWNER(深红,三设备一致,不再受旧密语名影响);加核心团队 4 人专属 TEAM 徽章(朱砂红,区别普通 beta 老师的金黄内测 #N),进入通道不变仍走长按 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-131 (2026-07-03) — 手机端顶栏重排:QR/语言钮缩0.5x、下移到四图标左右两边不挡标题、同高;二维码不悬浮(跟页面滚)+hover不放大+展开大图能扫,语言钮保持悬浮;音乐栏移到搜索框下方+播放键缩小+与按钮等高。桌面端不动 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-130">
+    <meta name="version" content="汉字UI-131">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-130 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-131 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -2779,8 +2779,22 @@ console.log('%c[斑斓汉字] 汉字UI-130 已加载', 'color:#374a42;font-weigh
         .qr-link-text:hover { color: var(--zhusha); text-decoration: underline; }
         @media (max-width: 768px) {
             .qr-corner { left: 10px; }
-            .qr-corner-toggle { width: auto; height: 42px; padding: 0 16px; font-size: 14px; gap: 7px; }
+            /* 汉字-131: 手机端 QR 药丸高度=38，与右侧语言切换按钮外框(38)像素级一致 */
+            .qr-corner-toggle { width: auto; height: 38px; min-height: 38px; padding: 0 15px; font-size: 14px; gap: 6px; }
+            .qr-corner-toggle .qr-corner-label { font-size: 14px; }
+            .qr-corner-toggle .qr-corner-arrow { font-size: 13px; }
             .qr-corner-card { width: min(220px, 62vw); }
+        }
+
+        /* 汉字-131: 手机端把 QR / 语言切换钮下移到「四个图标」那行左右两边(不挡标题),整体缩到 0.5x。
+           用 absolute(跟页面一起滚、不悬浮),固定在四图标旁的位置。
+           关键:只 scale「按钮本身」(.qr-corner-toggle / .lang-switcher),不 scale 二维码卡片,展开的二维码图保持大图可扫。 */
+        @media (max-width: 600px) {
+            .qr-corner { position: absolute; top: 70px; left: 10px; }        /* 不悬浮:跟页面一起滚 */
+            .lang-switcher { top: 70px; right: 10px; transform: scale(0.5); transform-origin: right center; }   /* 保持悬浮(默认 fixed 不改) */
+            .qr-corner-toggle { transform: scale(0.5); transform-origin: left center; }
+            /* 汉字-131: 锁住 hover/focus/active 也保持 0.5x,防通用 button:hover 的 translateY 把 scale 顶掉→鼠标划过被放大 */
+            .qr-corner-toggle:hover, .qr-corner-toggle:focus, .qr-corner-toggle:active { transform: scale(0.5); transform-origin: left center; }
         }
 
         .seal-modal { padding: 0; text-align: left; }
@@ -4068,11 +4082,21 @@ console.log('%c[斑斓汉字] 汉字UI-130 已加载', 'color:#374a42;font-weigh
             .controls-bar > .bgm-controls {
                 grid-column: 1 / -1;
                 justify-content: center;
+                align-items: center;              /* 汉字-131: 内容垂直居中 */
                 width: 100%;
+                height: 53px;                     /* 汉字-131: 与下方「挥毫生成」等按钮等高(53) */
+                box-sizing: border-box;
                 border-left: none;
                 border-top: 1px dashed var(--border-light);
                 margin-left: 0;
-                padding-top: 10px;
+                padding-top: 0;
+                padding-bottom: 0;
+            }
+            /* 汉字-131: 手机端音乐播放键缩小，别把整行撑大 */
+            .bgm-controls .bgm-btn {
+                min-width: 32px; min-height: 32px; width: 32px; height: 32px;
+                padding: 0; font-size: 13px; line-height: 1; border-radius: 8px;
+                display: flex; align-items: center; justify-content: center;
             }
         }
 
@@ -7537,6 +7561,20 @@ console.log('%c[斑斓汉字] 汉字UI-130 已加载', 'color:#374a42;font-weigh
         tryAutoplayBgm();
     }
 
+    // 汉字-131: 手机端(≤600px)把音乐控件搬到搜索框「你好」正下方;桌面端留 body 顶部浮右上(fixed)。
+    //   桌面端 .glass-panel 有 backdrop-filter 会困住 fixed 定位,不能纯 CSS 搬,故用 JS 按视口切换。
+    function placeBgmResponsive() {
+        const bgm = document.getElementById('bgmControls');
+        if (!bgm) return;
+        const search = document.querySelector('.controls-bar .input-wrapper');
+        const isMobile = window.matchMedia('(max-width: 600px)').matches;
+        if (isMobile && search) {
+            if (search.nextElementSibling !== bgm) search.after(bgm);   // 搬到搜索框后
+        } else if (bgm !== document.body.firstElementChild) {
+            document.body.insertBefore(bgm, document.body.firstElementChild);   // 放回 body 顶部原位
+        }
+    }
+
     function tryAutoplayBgm() {
         var audio = document.getElementById('bgmAudio');
         if (!audio || audio.error) return;
@@ -7648,6 +7686,8 @@ console.log('%c[斑斓汉字] 汉字UI-130 已加载', 'color:#374a42;font-weigh
         }
         bindAccordionTouch();
         initBgmEngine();
+        placeBgmResponsive();                              // 汉字-131: 按视口放置音乐控件
+        window.addEventListener('resize', placeBgmResponsive);
         verifyDeployedAssets();
     });
 
