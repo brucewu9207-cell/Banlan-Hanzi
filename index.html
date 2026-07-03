@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-128 (2026-07-03) — 运营数据面板任务卡拆成进行中/已归档两张(后端逐个读任务按 archived 分组);配套新 Worker taskstat-2026-07-03 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-129 (2026-07-03) — 加隐蔽登录入口(长按 BASED ON HSK3.0 红字 2 秒弹登录框)破死锁;owner 或 beta 老师登录后立即显示布置作业(不靠密语、不用刷新),任何设备含 PWA 通用 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-128">
+    <meta name="version" content="汉字UI-129">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-128 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-129 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -4750,7 +4750,7 @@ console.log('%c[斑斓汉字] 汉字UI-128 已加载', 'color:#374a42;font-weigh
             <div class="header-title-sub">
             <div style="display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;">
                 <div class="sub-title" style="margin:0;">笔墨纸砚，传统人文雅致</div>
-                <div style="font-size:12px;font-weight:bold;letter-spacing:2px;-webkit-text-fill-color:var(--zhusha);color:var(--zhusha);">BASED ON HSK3.0</div>
+                <div id="blSecretEntry" style="font-size:12px;font-weight:bold;letter-spacing:2px;-webkit-text-fill-color:var(--zhusha);color:var(--zhusha);-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;cursor:default;">BASED ON HSK3.0</div>
             </div>
             <div class="credit-line">Created &amp; Designed ： Mozhou</div>
             </div>
@@ -9193,6 +9193,44 @@ window.BL = (function () {
         }
     }
 
+    // ★ 汉字-129: 缓存当前灰度阶段,供 showLoggedInView 判断 beta 老师该不该显示按钮(owner 不受此限、永久显示)。
+    let blLastLinkage = 'off';
+
+    // ★ 汉字-129: 长按红字 2 秒 → 弹登录框。触摸(手机/PWA)和鼠标(电脑)都支持。
+    //   移动/松手/超时前离开都取消,普通点一下不触发;阻止长按弹出的系统菜单。
+    function bindSecretEntry() {
+        const el = document.getElementById('blSecretEntry');
+        if (!el) return;
+        const HOLD_MS = 2000;
+        let timer = null;
+        const startX = { v: 0 }, startY = { v: 0 };
+        function start(x, y) {
+            startX.v = x; startY.v = y;
+            clearTimeout(timer);
+            timer = setTimeout(function () {
+                timer = null;
+                try { openPanel(); } catch (e) {}
+            }, HOLD_MS);
+        }
+        function cancel() { clearTimeout(timer); timer = null; }
+        function moved(x, y) {
+            // 手指/鼠标移动超过 10px 视为滑动,取消(防误触)
+            if (Math.abs(x - startX.v) > 10 || Math.abs(y - startY.v) > 10) cancel();
+        }
+        // 触摸
+        el.addEventListener('touchstart', function (e) { const t = e.touches[0]; start(t.clientX, t.clientY); }, { passive: true });
+        el.addEventListener('touchmove', function (e) { const t = e.touches[0]; moved(t.clientX, t.clientY); }, { passive: true });
+        el.addEventListener('touchend', cancel);
+        el.addEventListener('touchcancel', cancel);
+        // 鼠标
+        el.addEventListener('mousedown', function (e) { start(e.clientX, e.clientY); });
+        el.addEventListener('mousemove', function (e) { if (timer) moved(e.clientX, e.clientY); });
+        el.addEventListener('mouseup', cancel);
+        el.addEventListener('mouseleave', cancel);
+        // 阻止长按/右键弹出的系统菜单,避免打断手势
+        el.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+    }
+
     // ─────────────────────────────────────────
     // 初始化：处理解锁码 + 检查 flag + 决定是否可见
     // ─────────────────────────────────────────
@@ -9201,6 +9239,10 @@ window.BL = (function () {
 
         // ★ pwd(汉字-118): 静态表单的 👁 小眼睛绑一次
         bindPwdEyes();
+
+        // ★ 汉字-129: 隐蔽登录入口——长按红字「BASED ON HSK3.0」2 秒弹登录框。
+        //   破「登录框只能从隐藏的布置作业按钮点开」的死锁,让 owner / 灰度老师在任何设备(含 PWA)进得去。
+        bindSecretEntry();
 
         // ★ v2D 双语化: 监听语言切换事件,重渲染已展示的动态内容
         window.addEventListener('banlan-lang-changed', function() {
@@ -9282,6 +9324,7 @@ window.BL = (function () {
 
         // 2) 取全局开关状态
         const linkage = await checkFeatureFlag();
+        blLastLinkage = linkage;   // ★ 汉字-129: 缓存阶段,供 showLoggedInView 判断 beta 显示
         const testerOn = isTesterUnlocked();
         const role = getTesterRole();
 
@@ -9344,6 +9387,14 @@ window.BL = (function () {
                 badgeText = regSlot ? ('内测 #' + regSlot) : '内测';
                 badgeRole = 'beta';
             }
+        }
+
+        // ★ 汉字-129: owner(mozhou)账号已登录 → 永久显示,不受阶段/密语限制(含 off)。
+        //   应对刷新/恢复登录:load 时 state.teacher 已从本地 token 还原,任何设备(含 PWA)通用。
+        if (state.teacher && state.teacher.username === 'mozhou') {
+            shouldShow = true;
+            inTesterMode = true;
+            if (!badgeText) { badgeText = 'OWNER'; badgeRole = 'owner'; }
         }
 
         if (!shouldShow) {
@@ -9452,6 +9503,28 @@ window.BL = (function () {
         const isOwner = state.teacher && state.teacher.username === 'mozhou';
         $('blOwnerStats').style.display = isOwner ? '' : 'none';
         if (isOwner) refreshOwnerStats();
+
+        // ★ 汉字-129: owner 或 beta 老师登录/注册后立即显示「布置作业」(不靠密语、不用刷新)。
+        //   owner 永久;beta 老师(team 5 人 / 300 老师)前 N 名注册自动拿 betaAccess。任何设备(含 PWA)通用。
+        //   owner 永久显示;beta 老师则要阶段在 beta/on 才显示——这样墨舟按 off 急停时,beta 老师也会被撤下。
+        const stageOpenForBeta = (blLastLinkage === 'beta' || blLastLinkage === 'on');
+        const hasBetaAcc = state.teacher && state.teacher.betaAccess === true && stageOpenForBeta;
+        if (isOwner || hasBetaAcc) {
+            const lbtn = $('btnLinkage');
+            if (lbtn) lbtn.classList.add('bl-visible');
+            const lbadge = $('blTesterBadge');
+            if (lbadge) {
+                if (isOwner) {
+                    lbadge.textContent = (typeof getTesterName === 'function' && getTesterName()) || 'OWNER';
+                    lbadge.style.background = '#8f2727';   // 深红
+                } else {
+                    const slot = state.teacher.registrationSlot;
+                    lbadge.textContent = slot ? ('内测 #' + slot) : '内测';
+                    lbadge.style.background = '#c89c2e';    // 金黄
+                }
+                lbadge.style.display = '';
+            }
+        }
     }
 
     // ★ 汉字-127:拉运营数据(owner-only 接口),填进面板
