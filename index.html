@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-127 (2026-07-03) — 加 owner 运营数据面板(仅墨舟可见):账号页显示老师/班级/学生/任务总数+刷新;配套新 Worker stats-2026-07-03 加 owner-only 统计接口 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-128 (2026-07-03) — 运营数据面板任务卡拆成进行中/已归档两张(后端逐个读任务按 archived 分组);配套新 Worker taskstat-2026-07-03 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-127">
+    <meta name="version" content="汉字UI-128">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-127 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-128 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -926,7 +926,7 @@ console.log('%c[斑斓汉字] 汉字UI-127 已加载', 'color:#374a42;font-weigh
         .bl-user-name { width: 120px; box-sizing: border-box; text-align: center; }
         #blViewAccount .bl-form-group > .bl-label { align-items: center; }
         /* ★ 汉字-127:owner 运营数据面板 */
-        .bl-owner-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 10px 0; }
+        .bl-owner-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin: 10px 0; }
         .bl-owner-card { background: #f0f4f1; border: 1px solid #d8e0db; border-radius: 10px; padding: 14px 8px; text-align: center; }
         .bl-owner-num { font-size: 30px; font-weight: 700; color: var(--ink-green); font-family: monospace; line-height: 1.1; }
         .bl-owner-lbl { font-size: 13px; color: var(--mo-mid); margin-top: 4px; white-space: pre-line; }
@@ -8870,7 +8870,8 @@ console.log('%c[斑斓汉字] 汉字UI-127 已加载', 'color:#374a42;font-weigh
                         <div class="bl-owner-card"><div class="bl-owner-num" id="blOwnerTeachers">—</div><div class="bl-owner-lbl">老师<span class="lang-en">Teachers</span><span class="lang-ar">المعلمون</span></div></div>
                         <div class="bl-owner-card"><div class="bl-owner-num" id="blOwnerClasses">—</div><div class="bl-owner-lbl">班级<span class="lang-en">Classes</span><span class="lang-ar">الفصول</span></div></div>
                         <div class="bl-owner-card"><div class="bl-owner-num" id="blOwnerStudents">—</div><div class="bl-owner-lbl">学生<span class="lang-en">Students</span><span class="lang-ar">الطلاب</span></div></div>
-                        <div class="bl-owner-card"><div class="bl-owner-num" id="blOwnerTasks">—</div><div class="bl-owner-lbl">任务<span class="lang-en">Tasks</span><span class="lang-ar">المهام</span></div></div>
+                        <div class="bl-owner-card"><div class="bl-owner-num" id="blOwnerTasksActive">—</div><div class="bl-owner-lbl">进行中<span class="lang-en">Active</span><span class="lang-ar">قيد التنفيذ</span></div></div>
+                        <div class="bl-owner-card"><div class="bl-owner-num" id="blOwnerTasksArchived">—</div><div class="bl-owner-lbl">已归档<span class="lang-en">Archived</span><span class="lang-ar">مؤرشف</span></div></div>
                     </div>
                     <div style="display:flex; align-items:center; gap:10px; margin-top:8px;">
                         <button class="bl-btn bl-secondary" onclick="BL.refreshOwnerStats()" id="blOwnerRefreshBtn">🔄 刷新<span class="lang-en">Refresh</span><span class="lang-ar">تحديث</span></button>
@@ -9462,7 +9463,8 @@ window.BL = (function () {
             $('blOwnerTeachers').textContent = d.teachers != null ? d.teachers : '—';
             $('blOwnerClasses').textContent = d.classes != null ? d.classes : '—';
             $('blOwnerStudents').textContent = d.students != null ? d.students : '—';
-            $('blOwnerTasks').textContent = d.tasks != null ? d.tasks : '—';
+            $('blOwnerTasksActive').textContent = d.tasksActive != null ? d.tasksActive : '—';
+            $('blOwnerTasksArchived').textContent = d.tasksArchived != null ? d.tasksArchived : '—';
         } catch (e) {
             toast(e.message || tt('拉取数据失败', 'Failed to load stats', 'فشل تحميل البيانات'), 'error');
         } finally {
