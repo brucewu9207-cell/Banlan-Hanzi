@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-125 (2026-07-03) — 两处UI:任务药丸颜色改按序取色不撞车(头6个任务个个不同色);明细表/学生名单标签选中态改白底绿字带绿边(方案C),比原竹黄下边线明显 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-126 (2026-07-03) — 登录页加忘记密码占位链接(找回功能暂缓:执照后手机短信/域名后邮箱);点击弹即将上线提示,不接后端 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-125">
+    <meta name="version" content="汉字UI-126">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-125 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-126 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -8758,7 +8758,11 @@ console.log('%c[斑斓汉字] 汉字UI-125 已加载', 'color:#374a42;font-weigh
                     <div class="bl-pwd-wrap"><input type="password" class="bl-input" id="blAuthPassword" placeholder="至少 6 位" autocomplete="current-password"><button type="button" class="bl-pwd-eye" data-for="blAuthPassword" aria-label="显示/隐藏密码">👁</button></div>
                 </div>
                 <!-- ★ pwd(汉字-118): 记住密码(勾=这台设备记住;不勾=关掉浏览器就要重新登录) -->
-                <label class="bl-remember-row"><input type="checkbox" id="blAuthRemember" checked>记住密码<span class="lang-en">Remember me</span><span class="lang-ar">تذكرني</span></label>
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+                    <label class="bl-remember-row"><input type="checkbox" id="blAuthRemember" checked>记住密码<span class="lang-en">Remember me</span><span class="lang-ar">تذكرني</span></label>
+                    <!-- ★ 汉字-126:忘记密码占位(找回功能暂缓,执照后手机短信/域名后邮箱;先放按钮留记号) -->
+                    <a href="javascript:void(0)" onclick="BL.forgotPasswordPlaceholder()" style="font-size:12px; color:var(--mo-mid); text-decoration:underline; cursor:pointer; white-space:pre-line;">忘记密码?<span class="lang-en">Forgot password?</span><span class="lang-ar">نسيت كلمة المرور؟</span></a>
+                </div>
                 <div class="bl-form-group" id="blAuthDisplayNameGroup" style="display:none;">
                     <label class="bl-label">显示名（可选）<span class="lang-en">Display Name (Optional)</span><span class="lang-ar">الاسم المعروض (اختياري)</span></label>
                     <input type="text" class="bl-input" id="blAuthDisplayName" placeholder="如：墨舟老师">
@@ -9442,6 +9446,13 @@ window.BL = (function () {
     // ─────────────────────────────────────────
     // 登录 / 注册
     // ─────────────────────────────────────────
+    // ★ 汉字-126:忘记密码占位——找回功能暂缓(执照后手机短信 / 域名后邮箱),现只弹提示
+    function forgotPasswordPlaceholder() {
+        toast(tt('找回密码功能即将上线,暂请记牢密码;忘了可联系管理员',
+                 'Password recovery coming soon — please keep your password safe for now',
+                 'استعادة كلمة المرور قريباً — يُرجى حفظ كلمة المرور حالياً'));
+    }
+
     function toggleAuthMode() {
         state.authMode = state.authMode === 'login' ? 'register' : 'login';
         const isRegister = state.authMode === 'register';
@@ -11855,7 +11866,7 @@ window.BL = (function () {
         init,
         openPanel, closePanel,
         switchTab,
-        toggleAuthMode, submitAuth, logout,
+        toggleAuthMode, submitAuth, logout, forgotPasswordPlaceholder,
         // —— ★ pwd(汉字-118): 密码体系;汉字-123 改弹窗 ——
         openChangeMyPwd, changeMyPassword, openResetStudentPwd,
         openClassEditor, closeClassEditor, submitClass, deleteClass,
