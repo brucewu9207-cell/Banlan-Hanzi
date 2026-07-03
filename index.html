@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-129 (2026-07-03) — 加隐蔽登录入口(长按 BASED ON HSK3.0 红字 2 秒弹登录框)破死锁;owner 或 beta 老师登录后立即显示布置作业(不靠密语、不用刷新),任何设备含 PWA 通用 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-130 (2026-07-03) — owner 徽章统一固定为 OWNER(深红,三设备一致,不再受旧密语名影响);加核心团队 4 人专属 TEAM 徽章(朱砂红,区别普通 beta 老师的金黄内测 #N),进入通道不变仍走长按 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-129">
+    <meta name="version" content="汉字UI-130">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-129 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-130 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -9196,6 +9196,10 @@ window.BL = (function () {
     // ★ 汉字-129: 缓存当前灰度阶段,供 showLoggedInView 判断 beta 老师该不该显示按钮(owner 不受此限、永久显示)。
     let blLastLinkage = 'off';
 
+    // ★ 汉字-130: 核心团队成员用户名(除 owner 外的 4 人)。在此填他们注册后的用户名,
+    //   他们徽章显示朱砂红「TEAM」区别于普通 beta 老师的金黄「内测 #N」;进入通道不变(仍走长按注册)。
+    const TEAM_USERNAMES = [];   // 例:['li_laoshi', 'wang_laoshi', ...] —— 4 人注册后填入
+
     // ★ 汉字-129: 长按红字 2 秒 → 弹登录框。触摸(手机/PWA)和鼠标(电脑)都支持。
     //   移动/松手/超时前离开都取消,普通点一下不触发;阻止长按弹出的系统菜单。
     function bindSecretEntry() {
@@ -9384,8 +9388,14 @@ window.BL = (function () {
             } else if (hasBetaAccess) {
                 shouldShow = true;
                 inTesterMode = true;
-                badgeText = regSlot ? ('内测 #' + regSlot) : '内测';
-                badgeRole = 'beta';
+                // ★ 汉字-130: 核心团队 4 人显示朱砂红「TEAM」,其余 beta 老师金黄「内测 #N」
+                if (state.teacher && TEAM_USERNAMES.includes(state.teacher.username)) {
+                    badgeText = 'TEAM';
+                    badgeRole = 'team';
+                } else {
+                    badgeText = regSlot ? ('内测 #' + regSlot) : '内测';
+                    badgeRole = 'beta';
+                }
             }
         }
 
@@ -9394,7 +9404,9 @@ window.BL = (function () {
         if (state.teacher && state.teacher.username === 'mozhou') {
             shouldShow = true;
             inTesterMode = true;
-            if (!badgeText) { badgeText = 'OWNER'; badgeRole = 'owner'; }
+            // ★ 汉字-130: owner 徽章固定「OWNER」,强制覆盖(不再受旧密语名影响,三设备一致)
+            badgeText = 'OWNER';
+            badgeRole = 'owner';
         }
 
         if (!shouldShow) {
@@ -9515,8 +9527,11 @@ window.BL = (function () {
             const lbadge = $('blTesterBadge');
             if (lbadge) {
                 if (isOwner) {
-                    lbadge.textContent = (typeof getTesterName === 'function' && getTesterName()) || 'OWNER';
+                    lbadge.textContent = 'OWNER';           // ★ 汉字-130: 固定,三设备一致
                     lbadge.style.background = '#8f2727';   // 深红
+                } else if (TEAM_USERNAMES.includes(state.teacher.username)) {
+                    lbadge.textContent = 'TEAM';            // ★ 汉字-130: 核心团队 4 人
+                    lbadge.style.background = '#b33939';    // 朱砂红
                 } else {
                     const slot = state.teacher.registrationSlot;
                     lbadge.textContent = slot ? ('内测 #' + slot) : '内测';
