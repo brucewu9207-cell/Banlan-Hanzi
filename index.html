@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-132 (2026-07-03) — 手机端修复批:二维码点击不再放大(scale加!important压过触屏button:hover);内容区6个方框与功能按钮等宽(两侧11px)、间距一致(8px);第6盒关于汉字(独立stroke-guide-panel)收进来对齐+一行显示;所有内容盒压矮、单行盒等高。桌面端不动 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-133 (2026-07-03) — 手机端去掉标题背后最大那团半圆墨迹(ink-decorations第1个),其余小墨点/纹理保留。桌面端不动 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-132">
+    <meta name="version" content="汉字UI-133">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-132 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-133 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -3242,6 +3242,8 @@ console.log('%c[斑斓汉字] 汉字UI-132 已加载', 'color:#374a42;font-weigh
 
         /* ── 小平板 / 大手机（≤768px）── */
         @media (max-width: 768px) {
+            /* 汉字-133: 手机端去掉标题背后最大那团半圆墨迹(ink-decorations 第1个),其余小墨点/纹理保留 */
+            .ink-decorations > div:nth-child(1) { display: none; }
             body { padding: 14px 12px; }
             .header-title > h1 { font-size: 28px !important; letter-spacing: 5px !important; }
             .acc-content.active { padding: 7px 1%; }
