@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-124 (2026-07-02) — 修改密码弹窗:三个标签做成深绿盒(白字·中上译下居中·统一定宽)、输入框与绿盒等高、取消/确认按钮锁宽切语言不移动;密码强度维持宽松好记 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-125 (2026-07-03) — 两处UI:任务药丸颜色改按序取色不撞车(头6个任务个个不同色);明细表/学生名单标签选中态改白底绿字带绿边(方案C),比原竹黄下边线明显 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-124">
+    <meta name="version" content="汉字UI-125">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-124 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-125 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1215,12 +1215,15 @@ console.log('%c[斑斓汉字] 汉字UI-124 已加载', 'color:#374a42;font-weigh
             opacity: 1;            /* 汉字-59:全部满色深墨绿(同当前页) */
             transition: all 0.2s;
         }
-        .bl-stu-tab:hover { filter: brightness(1.12); color: #fff; }
+        .bl-stu-tab:not(.bl-stu-tab-active):hover { filter: brightness(1.12); color: #fff; }   /* 汉字-125:hover 排除选中态,免得白底绿字被刷成白字 */
+        /* 汉字-125:选中态改「白底 + 墨绿字 + 墨绿描边」(方案 C,墨舟选定),一眼看出选了哪个 */
         .bl-stu-tab-active {
-            color: #fff;
+            background: #fff;
+            color: var(--ink-green);
             font-weight: 700;
-            box-shadow: inset 0 -3px 0 0 #b5763a;  /* 当前页:竹黄下边线标识 */
+            box-shadow: inset 0 0 0 2px var(--ink-green);
         }
+        .bl-stu-tab-active:hover { background: #fff; color: var(--ink-green); filter: none; }
         /* ★ 汉字-62:答对率/明细表/看板 所有双语标签 中文在上、译文在下(tt 的\n换行) */
         #blAnswerRate, #blMatrix, #blDashboard { white-space: pre-line; }
         /* 这些标签原本带 nowrap,强制换行;明细表只放开表头/表尾标签,学生姓名与数据单元格仍 nowrap */
@@ -8980,12 +8983,18 @@ window.BL = (function () {
         return '已完成/' + (isAr ? 'مكتمل' : 'Completed') + '：' + doneN + '/' + totalN;
     }
     // ★ 汉字-70:任务按钮统一「任务名：完成/总」,每个任务一个颜色(按taskId哈希,跨视图一致)
-    const TASK_PALETTE = ['#2e6b4f', '#c0392b', '#b8841f', '#2c6e8f', '#b05a2f', '#7a4a8f'];
+    // 汉字-125:调色板重排——头几个颜色对比最大(绿/红/蓝/黄/紫/橙),任务少时最容易区分
+    const TASK_PALETTE = ['#2e6b4f', '#c0392b', '#2c6e8f', '#b8841f', '#7a4a8f', '#b05a2f'];
+    // 汉字-125:改成"按首次出现顺序依次取色、缓存"——头 6 个任务保证个个不同、不撞车,同 ID 返回同色(跨视图一致)
+    const _taskColorMap = {};
+    let _taskColorSeq = 0;
     function _taskColor(taskId) {
-        const s = String(taskId || '');
-        let h = 0;
-        for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
-        return TASK_PALETTE[h % TASK_PALETTE.length];
+        const key = String(taskId || '');
+        if (!(key in _taskColorMap)) {
+            _taskColorMap[key] = TASK_PALETTE[_taskColorSeq % TASK_PALETTE.length];
+            _taskColorSeq++;
+        }
+        return _taskColorMap[key];
     }
     function _taskPill(taskId, title, done, total) {
         return '<span class="bl-task-pill" style="background:' + _taskColor(taskId) + '">'
