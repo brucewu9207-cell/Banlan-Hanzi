@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-147 (2026-07-04) — 手机端弱项看板微调:低于/最弱两字恢复横排(上版压成0宽把汉字断成两行);最弱下拉框固定64px跟低于同宽(它含全部选项被自动撑宽) -->
+<!-- 斑斓汉字(老师端) · 汉字UI-148 (2026-07-04) — 切语言时名单不再折叠:记住在读/待加入各自展开态,重画后原样恢复(原重画默认待加入收起,把展开态冲掉了) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-147">
+    <meta name="version" content="汉字UI-148">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-147 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-148 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -9408,7 +9408,20 @@ window.BL = (function () {
                     // ★ 汉字-113:名单视图开着时,重画名单(在读/待加入)与明细表(回讲字/关注生),否则药丸文案停在旧语言
                     const stuViewOpen = $('blViewStudents') && $('blViewStudents').style.display !== 'none';
                     if (stuViewOpen) {
+                        // 汉字-148:切语言前记住「在读/待加入」各自的展开状态,重画后原样恢复
+                        // (renderStudents 默认在读展开、待加入收起;不记的话切语言会把待加入折回去)
+                        const rosterFold = {};
+                        ['active', 'pending'].forEach(k => {
+                            const c = document.getElementById('bl-roster-cards-' + k);
+                            if (c) rosterFold[k] = (c.style.display !== 'none');
+                        });
                         renderStudents();
+                        Object.keys(rosterFold).forEach(k => {
+                            const c = document.getElementById('bl-roster-cards-' + k);
+                            if (!c) return;
+                            const isOpen = (c.style.display !== 'none');
+                            if (isOpen !== rosterFold[k]) toggleRosterSection(k);
+                        });
                         const matrixOpen = $('blMatrix') && $('blMatrix').style.display !== 'none';
                         if (matrixOpen) {
                             // 记住当前展开的练习,重画后原样展开(不让切语言把面板折回去)
