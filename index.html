@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-175 (2026-07-04) — 音乐条真正收矮:元凶是写死的height 53px(173/174改的padding与按钮被此条更靠后更具体的规则覆盖没生效),改38px上下留白变小 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-176 (2026-07-04) — 音乐播放键回框内+搜索框变矮:①真凶是音量滑块min-height 44px比音乐盒38还高、把播放键顶出框外,压到22px播放键回框内居中②搜索框上下padding 12→7变矮(已用浏览器实测确认) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-175">
+    <meta name="version" content="汉字UI-176">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-175 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-176 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -531,7 +531,7 @@ console.log('%c[斑斓汉字] 汉字UI-175 已加载', 'color:#374a42;font-weigh
         .input-wrapper { position: relative; display: inline-flex; align-items: center; gap: 6px; }
         
         input[type="text"] {
-            padding: 12px 44px 12px 14px; width: min(200px, 46vw); border-radius: 4px;
+            padding: 7px 44px 7px 14px; width: min(200px, 46vw); border-radius: 4px;   /* 汉字-176:上下留白 12→7,搜索框变矮 */
             border: 1px solid var(--border); border-bottom: 2px solid var(--ink-green-light);
             background: rgba(255, 255, 255, 0.85); text-align: center; font-size: 20px;
             font-family: var(--font-main); color: var(--ink-green); outline: none; transition: all 0.3s;
@@ -4095,7 +4095,8 @@ console.log('%c[斑斓汉字] 汉字UI-175 已加载', 'color:#374a42;font-weigh
         }
         .bgm-volume-slider {
             width: min(88px, 28vw);
-            min-height: 44px;
+            min-height: 0;
+            height: 22px;               /* 汉字-176:音量滑块原 min-height:44px→比音乐盒(38)还高,把播放键顶出框外。压到 22px,播放键回到框内居中(桌面另有 24px 规则不受影响) */
             flex: 0 1 auto;
         }
         .bgm-error {
