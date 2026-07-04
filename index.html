@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-173 (2026-07-04) — 主页音乐方框收矮:手机端盒子上下内边距10→3、播放按钮min-height 44→36,上下留白变小 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-174 (2026-07-04) — 主页两处上下留白再收:①音乐播放按钮36→30+盒子内边距3→2,音乐条更矮②工作台glass-panel底部内边距12→8+外边距16→6、下方列表acc上边距10→4,两区间距从约38px收到约18px -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-173">
+    <meta name="version" content="汉字UI-174">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-173 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-174 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -3402,9 +3402,9 @@ console.log('%c[斑斓汉字] 汉字UI-173 已加载', 'color:#374a42;font-weigh
             .header-title .sub-title { font-size: 10px; letter-spacing: 2px; }
             .acc-header { padding: 4px 14px; font-size: 13px; min-height: 0; }   /* 汉字-131: 压矮盒子(单行盒总高~52) */
             .acc-content.active { padding: 5px 0.5%; }
-            .glass-panel { padding: 12px 10px; border-radius: 6px; }
+            .glass-panel { padding: 12px 10px 8px; border-radius: 6px; margin-bottom: 6px; }   /* 汉字-174:底部内边距+外边距收小,拉近工作台与下方列表 */
             /* 汉字-131: 手机端内容区方框与上方功能按钮等宽(两侧留11px)、间距一致(8px) */
-            .acc-container { padding-left: 11px; padding-right: 11px; gap: 8px; box-sizing: border-box; }
+            .acc-container { padding-left: 11px; padding-right: 11px; gap: 8px; box-sizing: border-box; margin-top: 4px; }   /* 汉字-174:上边距 10→4,再拉近 */
             /* 汉字-131: 「6.关于汉字」(stroke-guide-panel)独立在 acc-container 外→单独收进来对齐(width:auto 缩到368、x11、间距8)+ 表头压到与其它单行盒等高(~52) */
             .stroke-guide-panel { margin: 8px 11px 0; width: auto; box-sizing: border-box; }
             .stroke-guide-header { padding: 4px 14px; font-size: 13px; min-height: 45px; display: flex; align-items: center; }   /* 汉字-131: 横向padding+字号与acc盒对齐一行放下;min-height补到与acc单行盒等高(~53) */
@@ -4073,8 +4073,8 @@ console.log('%c[斑斓汉字] 汉字UI-173 已加载', 'color:#374a42;font-weigh
         }
         .bgm-btn {
             min-width: 44px;
-            min-height: 36px;                 /* 汉字-173:播放按钮收矮(44→36),音乐方框整体变矮 */
-            padding: 4px 14px !important;
+            min-height: 30px;                 /* 汉字-174:播放按钮再收矮(36→30),音乐方框上下留白更小 */
+            padding: 2px 14px !important;
             font-size: 18px;
             line-height: 1;
             background: var(--ink-gray);
@@ -4151,7 +4151,7 @@ console.log('%c[斑斓汉字] 汉字UI-173 已加载', 'color:#374a42;font-weigh
                 margin-left: 0;
                 border-left: none;
                 border-top: 1px dashed var(--border-light);
-                padding: 3px 12px;          /* 汉字-173:上下留白收紧(原 top:10/base 6→3),音乐方框变矮 */
+                padding: 2px 12px;          /* 汉字-173/174:上下留白收紧(10→3→2),音乐方框变矮 */
                 justify-content: center;
             }
             .modal {
