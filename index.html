@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-153 (2026-07-04) — 已完成徽章改小:字号/颜色/圆角/内边距全对齐待加入名单里的小黄徽章pending-badge(11px浅奶油底暗黄字),字小了不再顶到移出按钮;锁宽保留大小固定 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-154 (2026-07-04) — 已完成徽章两处修:①改用叠层锁宽(英文Completed与阿语مكتمل叠同格取最宽,不再靠估宽)彻底解决语言切换变大小 ②点卡片徽章反白(白底绿字)不再白字消失 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-153">
+    <meta name="version" content="汉字UI-154">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-153 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-154 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1089,8 +1089,12 @@ console.log('%c[斑斓汉字] 汉字UI-153 已加载', 'color:#374a42;font-weigh
             white-space: nowrap;
             box-sizing: border-box;
         }
-        /* 锁宽用 em(随字号缩放):英文 已完成/Completed： 约 9.1em,取 9.2em 保证英文不超出、阿语被撑到同宽 */
-        .bl-student-meta .bl-meta-label { display: inline-block; min-width: 9.2em; }
+        /* 汉字-154:标签译文叠层——英文 Completed 与阿语 مكتمل 叠在同一格,格宽=两者较宽者,只显示当前语言、另一个占位隐藏 → 徽章大小语言切换零变化(不靠估宽) */
+        .bl-student-meta .bl-meta-label { display: inline-block; }
+        .bl-meta-swap { display: inline-grid; vertical-align: baseline; }
+        .bl-meta-swap > span { grid-area: 1 / 1; text-align: left; white-space: nowrap; }
+        body.lang-mode-ar .bl-meta-swap .bl-ms-en { visibility: hidden; }
+        body:not(.lang-mode-ar) .bl-meta-swap .bl-ms-ar { visibility: hidden; }
         /* ★ pwd(汉字-119): 重置密码按钮改黑色(墨舟指定,原竹黄) */
         .bl-student-reset-btn {
             background: none;
@@ -10233,9 +10237,10 @@ window.BL = (function () {
         const txtPending = tt('待加入', 'Pending', 'بانتظار');
         const txtSid = tt('学号', 'ID', 'الرقم');
         // ★ 汉字-61:学号/已完成 改紧凑格式「中文/译文：值」
-        const isArRoster = document.body.classList.contains('lang-mode-ar');
         const sidLabel = '学号/ID：';   // 汉字-149:学号标签固定「学号/ID」,不跟语言切换(墨舟:ID 不换阿语)
-        const metaLabel = '已完成/' + (isArRoster ? 'مكتمل' : 'Completed') + '：';
+        // 汉字-154:已完成标签的译文用「叠层」——英文 Completed 与阿语 مكتمل 叠在同一格,格宽=两者较宽,
+        // 只显示当前语言(另一个 visibility:hidden 仍占位),数字接其后位置不动 → 徽章大小语言切换零变化。
+        const metaLabelHtml = '已完成/<span class="bl-meta-swap"><span class="bl-ms-en">Completed</span><span class="bl-ms-ar">مكتمل</span></span>：';
 
         const sortByName = arr => arr.slice().sort((a, b) =>
             rosterSortKey(a.name || a.studentCode).localeCompare(rosterSortKey(b.name || b.studentCode)));
@@ -10244,7 +10249,7 @@ window.BL = (function () {
             const idx = state.students.indexOf(s);
             const completed = (s.completedTasks || []).length;
             const metaLine = isPending ? '' :
-                `<div class="bl-student-meta" dir="ltr"><span class="bl-meta-label">${escapeHtml(metaLabel)}</span>${escapeHtml(completed + '/' + taskTotal)}</div>`;
+                `<div class="bl-student-meta" dir="ltr"><span class="bl-meta-label">${metaLabelHtml}</span>${escapeHtml(completed + '/' + taskTotal)}</div>`;
             const detailBtn = isPending ? '' :
                 `<button class="bl-student-detail-btn" onclick="BL.toggleStudentDetail(${idx})">${escapeHtml(txtDetail)}</button>`;
             // ★ pwd(汉字-118): 重置密码按钮(孩子忘了 → 老师指定/清空)
@@ -12247,6 +12252,8 @@ if (document.readyState === 'loading') {
     .bl-student-card:hover .bl-pending-badge { background: rgba(255,255,255,0.92); color: var(--ink-green); }
     .bl-student-card:hover { background: var(--ink-green); border-color: var(--ink-green); border-left-color: var(--ink-green); }
     .bl-student-card:hover .bl-student-name, .bl-student-card:hover .bl-student-sid, .bl-student-card:hover .bl-student-meta, .bl-student-card:hover .bl-stu-seq { color: #fff !important; }  /* 汉字-60:压过图2基础色，hover全白 */
+    /* 汉字-154:已完成徽章有自己的浅底,上面这条会把它文字也变白→浅底白字看不见(手机点触也触发)。改成 hover 时反白(白底绿字),跟待加入小徽章一致、始终可读 */
+    .bl-student-card:hover .bl-student-meta { background: rgba(255,255,255,0.92); color: var(--ink-green) !important; }
     .bl-student-card:hover .bl-student-detail-btn, .bl-student-card:hover .bl-student-kick-btn, .bl-student-card:hover .bl-student-reset-btn { border-color: #fff; color: #fff; background: transparent; }   /* 汉字-120:重置按钮也纳入卡片悬停白描边,深底上不隐身 */
     .bl-student-card:hover .bl-student-detail-btn:hover { background: #fff; color: var(--ink-green); border-color: #fff; }
     .bl-student-card:hover .bl-student-kick-btn:hover { background: rgba(255,255,255,0.92); color: #c0392b; border-color: #c0392b; }   /* 汉字-120:移出悬停=白底红字(D) */
