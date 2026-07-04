@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-151 (2026-07-04) — 已完成行中文译文数字锁同一行:撤回上版flex拆分(它把阿语译文挤到下一行),还原整串+white-space:nowrap,三样不再拆行 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-152 (2026-07-04) — 已完成做成固定大小胶囊(仿待加入陶红药丸):标签用em锁英文态宽度,阿语更短被撑到同宽,数字接其后位置不动,整颗胶囊语言切换零变化 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-151">
+    <meta name="version" content="汉字UI-152">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-151 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-152 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1075,11 +1075,22 @@ console.log('%c[斑斓汉字] 汉字UI-151 已加载', 'color:#374a42;font-weigh
             color: var(--ink-green);
             margin-bottom: 4px;
         }
+        /* 汉字-152:已完成做成胶囊(仿待加入药丸)。大小固定不随语言变——标签部分锁英文态宽度,
+           阿语(مكتمل)比英文(Completed)短,被 min-width 撑到同宽,数字接在其后位置不动,整颗胶囊语言切换零变化。 */
         .bl-student-meta {
+            display: inline-block;
             font-size: 13px;
-            color: var(--ink-gray);
-            white-space: nowrap;   /* 汉字-151:中文/译文/数字锁在同一行,切阿语时不再拆行(上版 flex 把译文挤下去了,撤回) */
+            font-weight: 600;
+            color: #4a2c20;
+            background: #d6b3a6;
+            border-radius: 999px;
+            padding: 2px 9px;
+            margin-top: 4px;
+            white-space: nowrap;
+            box-sizing: border-box;
         }
+        /* 锁宽用 em(随字号缩放):英文 已完成/Completed： 约 9.1em,取 9.2em 保证桌面 13px / 手机 12px 两种字号下英文都不超出、阿语被撑到同宽 */
+        .bl-student-meta .bl-meta-label { display: inline-block; min-width: 9.2em; }
         /* ★ pwd(汉字-119): 重置密码按钮改黑色(墨舟指定,原竹黄) */
         .bl-student-reset-btn {
             background: none;
@@ -10233,7 +10244,7 @@ window.BL = (function () {
             const idx = state.students.indexOf(s);
             const completed = (s.completedTasks || []).length;
             const metaLine = isPending ? '' :
-                `<div class="bl-student-meta" dir="ltr">${escapeHtml(metaLabel + completed + '/' + taskTotal)}</div>`;
+                `<div class="bl-student-meta" dir="ltr"><span class="bl-meta-label">${escapeHtml(metaLabel)}</span>${escapeHtml(completed + '/' + taskTotal)}</div>`;
             const detailBtn = isPending ? '' :
                 `<button class="bl-student-detail-btn" onclick="BL.toggleStudentDetail(${idx})">${escapeHtml(txtDetail)}</button>`;
             // ★ pwd(汉字-118): 重置密码按钮(孩子忘了 → 老师指定/清空)
