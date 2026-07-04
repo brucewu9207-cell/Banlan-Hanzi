@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-146 (2026-07-04) — 手机端弱项看板:标题与低于/最弱筛选控件同一行(原flex-wrap窄屏挤到下一行);压窄标题+筛选锁宽让其挤进一行,图标保留 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-147 (2026-07-04) — 手机端弱项看板微调:低于/最弱两字恢复横排(上版压成0宽把汉字断成两行);最弱下拉框固定64px跟低于同宽(它含全部选项被自动撑宽) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-146">
+    <meta name="version" content="汉字UI-147">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-146 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-147 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1468,10 +1468,9 @@ console.log('%c[斑斓汉字] 汉字UI-146 已加载', 'color:#374a42;font-weigh
             .bl-wk-title { padding: 6px 8px 6px 22px; font-size: 12.5px; flex: 0 1 auto; min-width: 0; }
             .bl-wk-ctrl { min-width: 0; gap: 5px; flex: 0 0 auto; }
             [id^="wk-card-s-"] .bl-wk-ctrl { min-width: 0; }
-            [id^="wk-card-c-"] .bl-wk-ctrl-label,
-            [id^="wk-card-s-"] .bl-wk-ctrl-label { min-width: 0; }
             .bl-wk-ctrl-tail { min-width: 0; }
-            .bl-wk-ctrl select { padding: 2px 4px; }
+            /* 汉字-147: ①「低于/最弱」保持横排——不再把标签压成 0 宽(会把两个汉字断成上下两行),留原 38/45px 锁宽(仍是 pre-line 做中上译下,不能 nowrap 否则中英挤一行)②两个下拉框同宽:最弱因含「全部」选项被自动撑宽,固定 64px 跟「低于」一致 */
+            .bl-wk-ctrl select { padding: 2px 4px; width: 64px; box-sizing: border-box; }
         }
         .bl-matrix-table {
             border-collapse: collapse;
