@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-179 (2026-07-04) — 音乐条与搜索框位置对换:CSS order实现(音乐order-2在上、搜索order-1在下),虚线分隔移到音乐下方;搜索框光晕保留。浏览器实测过 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-180 (2026-07-04) — 下载中心改弹窗:点击弹出弹窗(同音频生成那种)替代原页面内联展开;下载彩虹笔顺图英文去Rainbow改Download Stroke Order,与循环动画等高。浏览器实测过 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-179">
+    <meta name="version" content="汉字UI-180">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-179 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-180 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -4970,7 +4970,7 @@ console.log('%c[斑斓汉字] 汉字UI-179 已加载', 'color:#374a42;font-weigh
             <button class="btn-gen" onclick="initAll()">☯ 挥毫生成<span class="btn-en">Char Generation</span><span class="btn-ar">توليد الحروف</span></button>
             <button class="btn-tts-studio" onclick="openTtsStudio()">♪ 音频生成<span class="btn-en">Audio Generation</span><span class="btn-ar">توليد الصوت</span></button>
             <button class="btn-seal" onclick="openSealStudio()">❒ 印章生成<span class="btn-en">Seal Generation</span><span class="btn-ar">توليد الختم</span></button>
-            <button class="btn-toggle-dl" onclick="toggleDownloadMenu()" id="btnToggleDl">⬇ 下载中心<span class="btn-en">Download Center</span><span class="btn-ar">مركز التنزيل</span></button>
+            <button class="btn-toggle-dl" onclick="openDownloadCenter()" id="btnToggleDl">⬇ 下载中心<span class="btn-en">Download Center</span><span class="btn-ar">مركز التنزيل</span></button>
             <button class="btn-feedback" onclick="openFeedback()">💬 用户反馈<span class="btn-en">Feedback</span><span class="btn-ar">التغذية الراجعة</span></button>
             <button class="btn-linkage" id="btnLinkage" onclick="BL.openPanel()" style="position:relative;">📚 布置作业<span class="btn-en">Assign Homework</span><span class="btn-ar">تعيين الواجبات</span><span class="bl-tester-badge" id="blTesterBadge" style="display:none;">测试</span></button>
             
@@ -5006,15 +5006,7 @@ console.log('%c[斑斓汉字] 汉字UI-179 已加载', 'color:#374a42;font-weigh
         })();
         </script>
 
-        <!-- 展开的下载工具箱 (恢复为 30.html 的版本) -->
-        <div class="download-group" id="downloadGroup">
-            <button class="btn-anim-dl" onclick="showAnimDownloadModal()">🎬 1. 下载循环动画<span class="btn-en">Download: Loop Animation</span><span class="btn-ar">تنزيل: الرسوم المتحركة</span></button>
-            <button class="btn-dl-main" onclick="currentDownloadType='main'; executeDownload('full')">🖊 2. 下载彩虹笔顺图<span class="btn-en">Download: Rainbow Stroke Order</span><span class="btn-ar">تنزيل: ترتيب الفرشاة</span></button>
-            <button class="btn-dl-strokes" onclick="downloadAllStrokes()">🌈 3. 下载彩虹笔画<span class="btn-en">Download: Rainbow Strokes</span><span class="btn-ar">تنزيل: ضربات قوس قزح</span></button>
-            <button class="btn-dl-comp" onclick="downloadComponents()">🧩 4. 下载汉字部件<span class="btn-en">Download: Components</span><span class="btn-ar">تنزيل: المكونات</span></button>
-            <button class="btn-dl-worksheet" onclick="downloadUnifiedWorksheet()">✍ 5. 下载综合字帖<span class="btn-en">Download: Worksheet</span><span class="btn-ar">تنزيل: ورقة التدريب</span></button>
-            <button class="btn-anim-dl" onclick="downloadStrokeGuide()" style="background:#7a9e8e; border:1px solid #668a7a;">⚠️ 6. 下载关于汉字<span class="btn-en">Download: About Characters</span><span class="btn-ar">تنزيل: عن الحروف</span></button>
-        </div>
+        <!-- 汉字-180:下载工具箱改成弹窗(#downloadCenterModal,放在下方 body 层,因 glass-panel 的 backdrop-filter 会困住 fixed 弹窗);下载中心按钮点击弹出、不再内联展开 -->
     </div>
 
 
@@ -5376,6 +5368,24 @@ console.log('%c[斑斓汉字] 汉字UI-179 已加载', 'color:#374a42;font-weigh
             <button style="background:#4f6a5d; border:none;" onclick="downloadTtsStudio()">💾 保存 MP3<span class="btn-en">Save</span><span class="btn-ar">حفظ</span></button>
         </div>
         <button class="btn-cancel" style="width:100%; margin-top:10px; padding:10px;" onclick="closeTtsStudio()">关闭<span class="lang-en"> / Close</span><span class="lang-ar"> / إغلاق</span></button>
+    </div>
+</div>
+
+<!-- 汉字-180:下载中心弹窗(点「下载中心」弹出,替代原内联展开;放 body 层避开 glass-panel 的 backdrop-filter 困住 fixed) -->
+<div class="modal-overlay" id="downloadCenterModal">
+    <div class="modal" style="max-width:520px; width:92vw;">
+        <h3>⬇ 下载中心<span class="lang-en"> / Download Center</span><span class="lang-ar"> / مركز التنزيل</span></h3>
+        <div class="download-group show" style="margin-top:14px; border-top:none; background:transparent; padding:0; flex-wrap:wrap;">
+            <button class="btn-anim-dl" onclick="closeDownloadCenter(); showAnimDownloadModal()">🎬 1. 下载循环动画<span class="btn-en">Download: Loop Animation</span><span class="btn-ar">تنزيل: الرسوم المتحركة</span></button>
+            <button class="btn-dl-main" onclick="closeDownloadCenter(); currentDownloadType='main'; executeDownload('full')">🖊 2. 下载彩虹笔顺图<span class="btn-en">Download: Stroke Order</span><span class="btn-ar">تنزيل: ترتيب الفرشاة</span></button>
+            <button class="btn-dl-strokes" onclick="closeDownloadCenter(); downloadAllStrokes()">🌈 3. 下载彩虹笔画<span class="btn-en">Download: Rainbow Strokes</span><span class="btn-ar">تنزيل: ضربات قوس قزح</span></button>
+            <button class="btn-dl-comp" onclick="closeDownloadCenter(); downloadComponents()">🧩 4. 下载汉字部件<span class="btn-en">Download: Components</span><span class="btn-ar">تنزيل: المكونات</span></button>
+            <button class="btn-dl-worksheet" onclick="closeDownloadCenter(); downloadUnifiedWorksheet()">✍ 5. 下载综合字帖<span class="btn-en">Download: Worksheet</span><span class="btn-ar">تنزيل: ورقة التدريب</span></button>
+            <button class="btn-anim-dl" onclick="closeDownloadCenter(); downloadStrokeGuide()" style="background:#7a9e8e; border:1px solid #668a7a;">⚠️ 6. 下载关于汉字<span class="btn-en">Download: About Characters</span><span class="btn-ar">تنزيل: عن الحروف</span></button>
+        </div>
+        <div class="modal-btns" style="margin-top:14px;">
+            <button class="btn-cancel" onclick="closeDownloadCenter()">关闭<span class="lang-en"> / Close</span><span class="lang-ar"> / إغلاق</span></button>
+        </div>
     </div>
 </div>
 
@@ -5797,17 +5807,9 @@ console.log('%c[斑斓汉字] 汉字UI-179 已加载', 'color:#374a42;font-weigh
     }
 
     // --- UI 交互控制 ---
-    function toggleDownloadMenu() {
-        const group = document.getElementById('downloadGroup');
-        const btn = document.getElementById('btnToggleDl');
-        if (group.classList.contains('show')) {
-            group.classList.remove('show');
-            btn.innerHTML = '⬇ 下载中心<span class="btn-en">Download Center</span><span class="btn-ar">مركز التنزيل</span>';
-        } else {
-            group.classList.add('show');
-            btn.innerHTML = '▲ 收起下载中心<span class="btn-en">Collapse Download Center</span><span class="btn-ar">طي مركز التنزيل</span>';
-        }
-    }
+    // 汉字-180:下载中心改弹窗(替代原内联展开/收起)
+    function openDownloadCenter() { document.getElementById('downloadCenterModal').style.display = 'flex'; }
+    function closeDownloadCenter() { document.getElementById('downloadCenterModal').style.display = 'none'; }
 
     function toggleAcc(id) {
         const content = document.getElementById(id);
