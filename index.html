@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-178 (2026-07-04) — 新人引导:搜索框+挥毫生成加朱砂红呼吸光晕(一直显示、脉动)。只动box-shadow不缩放不位移,元素不抖;reduced-motion降级为静态柔光。浏览器实测过 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-179 (2026-07-04) — 音乐条与搜索框位置对换:CSS order实现(音乐order-2在上、搜索order-1在下),虚线分隔移到音乐下方;搜索框光晕保留。浏览器实测过 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-178">
+    <meta name="version" content="汉字UI-179">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-178 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-179 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -4242,13 +4242,14 @@ console.log('%c[斑斓汉字] 汉字UI-178 已加载', 'color:#374a42;font-weigh
         @media (max-width: 600px) {
             .controls-bar > .bgm-controls {
                 grid-column: 1 / -1;
+                order: -2;                        /* 汉字-179: 音乐条排到搜索框上面(与搜索框对换位置) */
                 justify-content: center;
                 align-items: center;              /* 汉字-131: 内容垂直居中 */
                 width: 100%;
                 height: 38px;                     /* 汉字-175: 音乐盒收矮(53→38),上下留白变小(这才是真正生效的高度;173/174 改的 padding/按钮被此条覆盖过) */
                 box-sizing: border-box;
                 border-left: none;
-                border-top: 1px dashed var(--border-light);
+                border-bottom: 1px dashed var(--border-light);   /* 汉字-179: 对换后分隔线移到音乐条下方(音乐↔搜索之间) */
                 margin-left: 0;
                 padding-top: 0;
                 padding-bottom: 0;
@@ -4259,6 +4260,8 @@ console.log('%c[斑斓汉字] 汉字UI-178 已加载', 'color:#374a42;font-weigh
                 padding: 0; font-size: 13px; line-height: 1; border-radius: 8px;
                 display: flex; align-items: center; justify-content: center;
             }
+            /* 汉字-179: 搜索框排在音乐条之下(order -1,在音乐 -2 与按钮 0 之间),完成两者位置对换 */
+            .controls-bar > .input-wrapper { order: -1; }
         }
 
     </style>
