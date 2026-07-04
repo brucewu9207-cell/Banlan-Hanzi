@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-140 (2026-07-04) — 修拼音自适应只对综合字帖生效、彩虹笔画没生效的bug(两个区块共用一个timer互相取消);现彩虹笔画/综合字帖/部件展示区拼音都统一字号 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-142 (2026-07-04) — 修阿语/语言切换时学生名字方框轻微上下移位:学生卡原align-items:center,切语言文字宽高变→卡片高度变→名字被重新居中而移位;手机端改顶对齐(flex-start)锚住不动 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-140">
+    <meta name="version" content="汉字UI-142">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-140 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-142 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1363,6 +1363,8 @@ console.log('%c[斑斓汉字] 汉字UI-140 已加载', 'color:#374a42;font-weigh
         @media (max-width: 768px) {
             .bl-student-actions { flex-direction: column; gap: 6px; }
             .bl-stu-detail-char { gap: 12px; }
+            /* 汉字-142: 学生卡改顶对齐——原 align-items:center,切中/英/阿时卡片高度变→名字被重新居中=轻微上下移位;锚在顶部就不动了 */
+            .bl-student-card { align-items: flex-start; }
         }
 
         /* ═══ Phase 4-2 阶段④: 明细表(矩阵) ═══ */
@@ -8957,9 +8959,9 @@ console.log('%c[斑斓汉字] 汉字UI-140 已加载', 'color:#374a42;font-weigh
                         <button class="bl-stu-tab" id="blStuTabMatrix" onclick="BL.switchStudentTab('matrix')">明细表<span class="lang-en">Table</span><span class="lang-ar">الجدول</span></button>
                     </div>
                     <div class="bl-roster-actions">
+                        <button class="bl-roster-import-btn" onclick="BL.exportClassReport()">📄 导出全班报告<span class="lang-en">Export Report</span><span class="lang-ar">تصدير التقرير</span></button>
                         <button class="bl-roster-import-btn" onclick="BL.openRosterImport()">⬆ 导入名单<span class="lang-en">Import</span><span class="lang-ar">استيراد</span></button>
                         <button class="bl-roster-import-btn bl-roster-manual-btn" onclick="BL.openManualEntry()">✎ 手动录入<span class="lang-en">Manual</span><span class="lang-ar">يدوي</span></button>
-                        <button class="bl-roster-import-btn" onclick="BL.exportClassReport()">📄 导出全班报告<span class="lang-en">Export Report</span><span class="lang-ar">تصدير التقرير</span></button>
                     </div>
                 </div>
                 <div class="bl-task-list" id="blStudentList">
@@ -12187,6 +12189,11 @@ if (document.readyState === 'loading') {
     /* ★ 汉字-57:头部删计数后，三个动作按钮整排居中 */
     #blViewStudents .bl-students-header { justify-content: center; align-items: flex-start; flex-wrap: wrap; gap: 8px; }
     .bl-roster-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; width: auto; align-items: stretch; }  /* 汉字-64:并入标签行右侧 */
+    /* 汉字-141: 手机端名单三按钮(导出全班报告|导入名单|手动录入)一行等宽排下,窄了缩字号 */
+    @media (max-width: 600px) {
+        .bl-roster-actions { flex-wrap: nowrap; justify-content: center; width: 100%; gap: 6px; }
+        .bl-roster-actions .bl-roster-import-btn { flex: 1 1 0; min-width: 0; padding: 8px 4px; font-size: 12px; }
+    }
     /* 手动录入 改成新增班级同款朱砂红(图3样式) */
     .bl-roster-manual-btn { background: var(--ink-green); color: #fff; border: none; }  /* 汉字-65:改绿、同导入名单 */
     .bl-roster-manual-btn:hover { background: #2c3a34; }
