@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-174 (2026-07-04) — 主页两处上下留白再收:①音乐播放按钮36→30+盒子内边距3→2,音乐条更矮②工作台glass-panel底部内边距12→8+外边距16→6、下方列表acc上边距10→4,两区间距从约38px收到约18px -->
+<!-- 斑斓汉字(老师端) · 汉字UI-175 (2026-07-04) — 音乐条真正收矮:元凶是写死的height 53px(173/174改的padding与按钮被此条更靠后更具体的规则覆盖没生效),改38px上下留白变小 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-174">
+    <meta name="version" content="汉字UI-175">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-174 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-175 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -4229,7 +4229,7 @@ console.log('%c[斑斓汉字] 汉字UI-174 已加载', 'color:#374a42;font-weigh
                 justify-content: center;
                 align-items: center;              /* 汉字-131: 内容垂直居中 */
                 width: 100%;
-                height: 53px;                     /* 汉字-131: 与下方「挥毫生成」等按钮等高(53) */
+                height: 38px;                     /* 汉字-175: 音乐盒收矮(53→38),上下留白变小(这才是真正生效的高度;173/174 改的 padding/按钮被此条覆盖过) */
                 box-sizing: border-box;
                 border-left: none;
                 border-top: 1px dashed var(--border-light);
