@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-176 (2026-07-04) — 音乐播放键回框内+搜索框变矮:①真凶是音量滑块min-height 44px比音乐盒38还高、把播放键顶出框外,压到22px播放键回框内居中②搜索框上下padding 12→7变矮(已用浏览器实测确认) -->
+<!-- 斑斓汉字(老师端) · 汉字UI-177 (2026-07-04) — 搜索框三调(浏览器实测过):①与标题留白缩小(glass-panel顶部内边距12→6,真凶是带!important的规则)②与音乐条留白缩小(网格行距8→6)③话筒按钮从椭圆改28px正圆、去掉min-height44、垂直居中在框内 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-176">
+    <meta name="version" content="汉字UI-177">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-176 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-177 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -541,6 +541,12 @@ console.log('%c[斑斓汉字] 汉字UI-176 已加载', 'color:#374a42;font-weigh
         input[type="text"]::placeholder { color: var(--mo-light); font-family: var(--font-main); font-size: 14px; font-weight: normal; letter-spacing: 1px; }
 
         .mic-btn { position: absolute; right: 10px; font-size: 18px; cursor: pointer; background: none; border: none; padding: 6px; color: var(--ink-green-light); transition: all 0.3s; border-radius: 50%; }
+        /* 汉字-177:话筒改正方形小圆(28px)、去掉 min-height:44(它把按钮撑成椭圆并顶出输入框)、垂直居中在输入框内 */
+        .input-wrapper .mic-btn {
+            width: 28px; height: 28px; min-width: 0; min-height: 0; padding: 0;
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 16px; top: 50%; transform: translateY(-50%);
+        }
         .mic-btn:hover { color: var(--zhusha); transform: scale(1.1); background: rgba(179, 57, 57, 0.1); }
 
         button, .btn-link {
@@ -3402,7 +3408,7 @@ console.log('%c[斑斓汉字] 汉字UI-176 已加载', 'color:#374a42;font-weigh
             .header-title .sub-title { font-size: 10px; letter-spacing: 2px; }
             .acc-header { padding: 4px 14px; font-size: 13px; min-height: 0; }   /* 汉字-131: 压矮盒子(单行盒总高~52) */
             .acc-content.active { padding: 5px 0.5%; }
-            .glass-panel { padding: 12px 10px 8px; border-radius: 6px; margin-bottom: 6px; }   /* 汉字-174:底部内边距+外边距收小,拉近工作台与下方列表 */
+            .glass-panel { padding: 6px 10px 8px; border-radius: 6px; margin-bottom: 6px; }   /* 汉字-174/177:顶部内边距 12→6 拉近输入框与标题;底部/外边距收小拉近下方列表 */
             /* 汉字-131: 手机端内容区方框与上方功能按钮等宽(两侧留11px)、间距一致(8px) */
             .acc-container { padding-left: 11px; padding-right: 11px; gap: 8px; box-sizing: border-box; margin-top: 4px; }   /* 汉字-174:上边距 10→4,再拉近 */
             /* 汉字-131: 「6.关于汉字」(stroke-guide-panel)独立在 acc-container 外→单独收进来对齐(width:auto 缩到368、x11、间距8)+ 表头压到与其它单行盒等高(~52) */
@@ -3878,7 +3884,7 @@ console.log('%c[斑斓汉字] 汉字UI-176 已加载', 'color:#374a42;font-weigh
             .controls-bar {
                 display: grid !important;
                 grid-template-columns: 1fr 1fr !important;
-                gap: 8px !important;
+                gap: 6px !important;          /* 汉字-177:行间距 8→6,拉近输入框↔音乐条(及各行) */
                 align-items: stretch;
             }
             /* 输入框和麦克风单独占满一行 */
@@ -3961,7 +3967,7 @@ console.log('%c[斑斓汉字] 汉字UI-176 已加载', 'color:#374a42;font-weigh
                 border-radius: 0 !important;
                 margin-left: 0 !important;
                 margin-right: 0 !important;
-                padding: 12px 10px !important;
+                padding: 6px 10px 8px !important;   /* 汉字-177:顶部内边距 12→6(真正生效的带!important规则),拉近输入框与标题 */
             }
             .app-wrapper {
                 padding: 0 !important;
