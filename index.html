@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-158 (2026-07-04) — 账号页:①去掉墨舟名按钮②新增班级改深墨绿(同账号/我的班级标签,不再红)③账号信息(用户名/账号ID/注册时间)套进同款淡绿方框,与运营数据分成两块 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-159 (2026-07-04) — 手机端布置作业所有面板固定94vh铺满屏幕(原随内容高,内容少就成屏中央小卡);面板flex列头部固定、body内容多时自身滚动 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-158">
+    <meta name="version" content="汉字UI-159">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-158 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-159 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1673,11 +1673,13 @@ console.log('%c[斑斓汉字] 汉字UI-158 已加载', 'color:#374a42;font-weigh
         /* 手机端适配 */
         @media (max-width: 600px) {
             /* ★ v2D.6: 手机端撤销三重锁定,改 100% 撑满 */
+            /* 汉字-159:手机端所有布置作业面板固定 94vh 铺满屏幕(原随内容高→内容少就成屏中央小卡)。
+               面板 flex 列:头部固定、.bl-body flex:1 内容多时自身滚动,不裁切。 */
             .bl-modal,
             .bl-modal-w520,
             .bl-modal-w560 {
                 min-width: 0; width: 100%; max-width: 100%;
-                max-height: 95vh; border-radius: 8px;
+                height: 94vh; max-height: 94vh; border-radius: 8px;
             }
             .bl-header { padding: 14px 16px 10px; }
             .bl-header h3 { font-size: 22.1px; letter-spacing: 2.6px; }
