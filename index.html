@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-159 (2026-07-04) — 手机端布置作业所有面板固定94vh铺满屏幕(原随内容高,内容少就成屏中央小卡);面板flex列头部固定、body内容多时自身滚动 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-160 (2026-07-04) — 二维码/语言切换按钮不再悬浮:position fixed改absolute(跟页面滚、留标题区域)+z-index 9000降到90(低于所有面板遮罩≥1000),打开任何页面都被盖在下面、不再置顶 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-159">
+    <meta name="version" content="汉字UI-160">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-159 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-160 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -2214,10 +2214,10 @@ console.log('%c[斑斓汉字] 汉字UI-159 已加载', 'color:#374a42;font-weigh
            - 选择存入 localStorage 'banlanLang'
            ==================================================== */
         .lang-switcher {
-            position: fixed;
+            position: absolute;             /* 汉字-160:不悬浮,跟页面一起滚、留在标题区域 */
             top: 12px;                      /* 与 BGM 容器 top:12px 对齐 */
             right: 18px;
-            z-index: 9000;
+            z-index: 90;                    /* 汉字-160:低于所有面板遮罩(≥1000),打开任何页面都被盖在下面 */
             display: flex;
             gap: 4px;
             background: rgba(255, 255, 255, 0.85);
@@ -2718,10 +2718,10 @@ console.log('%c[斑斓汉字] 汉字UI-159 已加载', 'color:#374a42;font-weigh
 
         /* 【v60】左上角二维码挂件：参考「斑斓部件」同款，与右上角语言按钮对称 */
         .qr-corner {
-            position: fixed;
+            position: absolute;             /* 汉字-160:不悬浮,跟页面一起滚、留在标题区域 */
             top: 12px;                      /* 与右上角 lang-switcher top:12px 对称 */
             left: 18px;                     /* 镜像 lang-switcher 的 right:18px */
-            z-index: 9000;
+            z-index: 90;                    /* 汉字-160:低于所有面板遮罩(≥1000),打开任何页面都被盖在下面 */
             display: flex;
             flex-direction: column;
             align-items: flex-start;
