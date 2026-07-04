@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-165 (2026-07-04) — 三键真正留白一致:改按内容宽(不再等分)+统一8px 14px左右留白+文字居中,整行space-between铺开;修正早先字号/内边距被后面@media覆盖的问题 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-166 (2026-07-04) — 工作台上下两行对齐成3列网格:11a1↔导出/学生名单↔导入/明细表↔手动 同列等宽(display:contents把两组按钮提成网格直接子项,列宽取每列较宽者) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-165">
+    <meta name="version" content="汉字UI-166">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-165 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-166 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1741,7 +1741,17 @@ console.log('%c[斑斓汉字] 汉字UI-165 已加载', 'color:#374a42;font-weigh
             margin: 10px 12px; padding: 8px 12px;
         }
         @media (max-width: 600px) {
-            #blHeadClassBtn { width: calc((100% - 12px) / 3); justify-content: center; box-sizing: border-box; }
+            /* 汉字-166:工作台上下两行对齐成 3 列网格——11A1/学生名单/明细表 分别与 导出/导入/手动 同列等宽。
+               用 display:contents 把 .bl-stu-tabs(学生名单/明细表)与 .bl-roster-actions(导出/导入/手动)的按钮
+               提成 .bl-stu-headrow 网格的直接子项,按 DOM 顺序自动排成 3 列×2 行;列宽取每列上下两者较宽者 → 同列等宽。 */
+            .bl-stu-headrow {
+                display: grid; grid-template-columns: auto auto auto;
+                justify-content: space-between; align-items: stretch; gap: 8px;
+            }
+            /* 提高优先级:.bl-roster-actions 的 display:flex 定义在更靠后处,需用后代选择器压过它 */
+            .bl-stu-headrow .bl-stu-tabs, .bl-stu-headrow .bl-roster-actions { display: contents; }
+            .bl-stu-headrow .bl-tab-classbtn { margin-right: 0; }   /* 网格里不再需要 margin 靠左推 */
+            #blHeadClassBtn { width: auto; justify-content: center; box-sizing: border-box; }
             /* 汉字-162:在读/待加入 与 任务/已归档 各自等宽——覆盖旧的不同 min-width(118/131、116/135),统一取 1/3 宽(与导出全班报告看齐)。
                药丸左有绝对定位小三角、右有绝对定位计数,故左右各留 ~22/30px 内边距(不能压到 8px,否则盖住三角/计数);缩到 11px 让双语标题塞进 1/3 宽不换行。 */
             #blStudentList .bl-roster-section-title,
