@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-133 (2026-07-03) — 手机端去掉标题背后最大那团半圆墨迹(ink-decorations第1个),其余小墨点/纹理保留。桌面端不动 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-134 (2026-07-04) — 手机端一批:去标题大墨迹留小点+触屏关滑动墨迹特效+标题缩34px+logo上对齐斑斓汉字行+6按钮改两列三行。桌面端不动 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-133">
+    <meta name="version" content="汉字UI-134">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-133 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-134 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -3242,8 +3242,9 @@ console.log('%c[斑斓汉字] 汉字UI-133 已加载', 'color:#374a42;font-weigh
 
         /* ── 小平板 / 大手机（≤768px）── */
         @media (max-width: 768px) {
-            /* 汉字-133: 手机端去掉标题背后最大那团半圆墨迹(ink-decorations 第1个),其余小墨点/纹理保留 */
-            .ink-decorations > div:nth-child(1) { display: none; }
+            /* 汉字-134: 手机端去掉标题背后所有大墨团(前6个div)+ 全屏SVG纹理,只保留小红点墨迹(.ink-dot-zhusha) */
+            .ink-decorations > div:nth-child(-n+6),
+            .ink-decorations > svg { display: none; }
             body { padding: 14px 12px; }
             .header-title > h1 { font-size: 28px !important; letter-spacing: 5px !important; }
             .acc-content.active { padding: 7px 1%; }
@@ -3284,7 +3285,11 @@ console.log('%c[斑斓汉字] 汉字UI-133 已加载', 'color:#374a42;font-weigh
         /* ── 手机（≤480px）── */
         @media (max-width: 480px) {
             body { padding: 10px 8px; }
-            .header-title > h1 { font-size: 22px !important; letter-spacing: 3px !important; text-indent: 3px !important; }
+            /* 汉字-134: 手机端缩小「斑斓汉字」标题,与左边 logo 视觉等高(原 .header-title > h1 选择器打不中嵌套的h1、一直失效=40px,改后代选择器) */
+            .header-title h1 { font-size: 34px !important; letter-spacing: 6px !important; text-indent: 6px !important; }
+            /* 汉字-134: logo 上移与「斑斓汉字」那行对齐(原本跟整块含 BRILLIANT HANZI 居中、显偏下) */
+            .header-title > div:first-child { align-items: flex-start !important; }
+            .header-title img { align-self: flex-start !important; margin-top: -8px !important; }
             .title-icon { width: 40px !important; height: 36px !important; }
             .header-title .sub-title { font-size: 10px; letter-spacing: 2px; }
             .acc-header { padding: 4px 14px; font-size: 13px; min-height: 0; }   /* 汉字-131: 压矮盒子(单行盒总高~52) */
@@ -4001,8 +4006,17 @@ console.log('%c[斑斓汉字] 汉字UI-133 已加载', 'color:#374a42;font-weigh
                 padding-left: 8px;
                 padding-right: 8px;
             }
+            /* 汉字-134: 手机端功能按钮改两列(6个→两列三行);搜索框、音乐栏跨整行 */
             .controls-bar {
-                grid-template-columns: 1fr !important;
+                grid-template-columns: 1fr 1fr !important;
+            }
+            .controls-bar > .input-wrapper,
+            .controls-bar > .bgm-controls {
+                grid-column: 1 / -1;
+            }
+            /* 挥毫生成也回归两列(解除旧的占满整行) */
+            .controls-bar > .btn-gen {
+                grid-column: auto !important;
             }
             .controls-bar > button,
             .controls-bar > .btn-link {
@@ -8208,6 +8222,8 @@ console.log('%c[斑斓汉字] 汉字UI-133 已加载', 'color:#374a42;font-weigh
     }
 
     function dropInkAt(cx, cy, isHeavy) {
+        // 汉字-134: 手机端(触屏)取消滑动墨迹渲染特效——触屏设备不滴墨,桌面鼠标保留
+        if (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) return;
         // 焦墨时单次滴落更多、更聚拢，淡墨时更散落飘逸
         const dropCount = Math.floor(Math.random() * 2) + (isHeavy ? 2 : 1); 
         for (let i = 0; i < dropCount; i++) {
