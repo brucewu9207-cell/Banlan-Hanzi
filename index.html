@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-164 (2026-07-04) — 导出/导入/手动三键恢复等宽+统一左右留白+文字居中(撤回163偏心分宽) -->
+<!-- 斑斓汉字(老师端) · 汉字UI-165 (2026-07-04) — 三键真正留白一致:改按内容宽(不再等分)+统一8px 14px左右留白+文字居中,整行space-between铺开;修正早先字号/内边距被后面@media覆盖的问题 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-164">
+    <meta name="version" content="汉字UI-165">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-164 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-165 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1749,8 +1749,7 @@ console.log('%c[斑斓汉字] 汉字UI-164 已加载', 'color:#374a42;font-weigh
                 width: calc((100% - 36px) / 3); min-width: 0; box-sizing: border-box;
                 font-size: 11px; padding: 6px 30px 6px 22px;
             }
-            /* 汉字-164:导出/导入/手动 三键等宽 + 统一左右留白 + 文字居中(撤回 163 偏心分宽,三者留白一致) */
-            .bl-roster-actions .bl-roster-import-btn { white-space: nowrap; font-size: 11px; padding: 8px 6px; justify-content: center; }
+            /* 汉字-165:三键留白/字号统一改到真正生效的那条(见下方 @media 里的 .bl-roster-actions,原这里会被它覆盖) */
         }
         .bl-tasks-class-tag {
             display: inline-block;
@@ -12296,8 +12295,9 @@ if (document.readyState === 'loading') {
     .bl-roster-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; width: auto; align-items: stretch; }  /* 汉字-64:并入标签行右侧 */
     /* 汉字-141: 手机端名单三按钮(导出全班报告|导入名单|手动录入)一行等宽排下,窄了缩字号 */
     @media (max-width: 600px) {
-        .bl-roster-actions { flex-wrap: nowrap; justify-content: center; width: 100%; gap: 6px; }
-        .bl-roster-actions .bl-roster-import-btn { flex: 1 1 0; min-width: 0; padding: 8px 4px; font-size: 12px; }
+        /* 汉字-165:三键按各自内容宽(不再等分)+ 统一 8px 14px 左右留白 + 文字居中 → 每个按钮文字到边的留白一致;整行 space-between 铺开撑满工作台宽 */
+        .bl-roster-actions { flex-wrap: nowrap; justify-content: space-between; width: 100%; gap: 6px; }
+        .bl-roster-actions .bl-roster-import-btn { flex: 0 0 auto; min-width: 0; padding: 8px 14px; font-size: 11px; white-space: nowrap; justify-content: center; }
     }
     /* 手动录入 改成新增班级同款朱砂红(图3样式) */
     .bl-roster-manual-btn { background: var(--ink-green); color: #fff; border: none; }  /* 汉字-65:改绿、同导入名单 */
