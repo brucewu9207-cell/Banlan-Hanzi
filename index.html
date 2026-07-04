@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-162 (2026-07-04) — 工作台微调:①在读/待加入②任务/已归档 覆盖旧的不同min-width统一1/3等宽(保留三角/计数空间、缩11px不换行)③导出全班报告nowrap缩字号一行④顶部tab栏(我的班级/新增班级/账号)也套同款方框 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-163 (2026-07-04) — 导出全班报告按钮多分宽+左右留白足(居中);导入名单/手动录入收窄留白,把空间让给导出 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-162">
+    <meta name="version" content="汉字UI-163">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-162 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-163 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1751,6 +1751,9 @@ console.log('%c[斑斓汉字] 汉字UI-162 已加载', 'color:#374a42;font-weigh
             }
             /* 汉字-162:导出全班报告等三键——套方框变窄后中文原会换两行,强制一行(缩字号 + nowrap) */
             .bl-roster-actions .bl-roster-import-btn { white-space: nowrap; font-size: 11px; }
+            /* 汉字-163:导出全班报告(文字最长)多分宽 + 左右留白足、居中;导入名单/手动录入收窄留白,把空间让给它 */
+            .bl-roster-actions .bl-roster-import-btn:first-child { flex-grow: 1.7; padding-left: 10px; padding-right: 10px; justify-content: center; }
+            .bl-roster-actions .bl-roster-import-btn:not(:first-child) { padding-left: 3px; padding-right: 3px; }
         }
         .bl-tasks-class-tag {
             display: inline-block;
