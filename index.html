@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-166 (2026-07-04) — 工作台上下两行对齐成3列网格:11a1↔导出/学生名单↔导入/明细表↔手动 同列等宽(display:contents把两组按钮提成网格直接子项,列宽取每列较宽者) -->
+<!-- 斑斓汉字(老师端) · 汉字UI-167 (2026-07-04) — 明细表切任务不再移位:表格width 100%改max-content(名字列恒等学生名宽)+每个字列固定42px,切换汉字/测试等任务时名字与字格位置不变 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-166">
+    <meta name="version" content="汉字UI-167">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-166 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-167 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1440,6 +1440,10 @@ console.log('%c[斑斓汉字] 汉字UI-166 已加载', 'color:#374a42;font-weigh
         @media (max-width: 600px) {
             .bl-task-pill { font-size: 12px; padding: 5px 9px; border-radius: 7px; }
             .bl-task-pillrow { gap: 6px; }
+            /* 汉字-167:明细表切任务不再移位——表格从 width:100%(字数少被拉伸、字数多又缩,名字列宽随任务变)改 max-content:
+               列按内容定宽、整体横向滚动;名字列恒等于学生名宽度(每个任务都是同一批学生),切任务名字/格子不再动。 */
+            #blMatrix .bl-matrix-table { width: max-content; }
+            #blMatrix th.bl-matrix-zi { width: 42px; }   /* 汉字-167:每个字列固定 42px,切任务时字格位置不变、不移位 */
             #blMatrix .bl-matrix-name { max-width: 170px; white-space: normal; line-height: 1.3; }
             /* 汉字-145: 名字只在「空格处」换行、排 2-3 行,不再逐字母断——去掉 word-break/overflow-wrap(它俩让 min-content=1字符、逐字母断),只留 white-space:normal + 合理最大宽 */
             #blMatrix .bl-stu-rankname { white-space: normal; align-items: flex-start; }
