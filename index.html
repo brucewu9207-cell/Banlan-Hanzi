@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-161 (2026-07-04) — 布置作业工作台:①手机端11a1/在读/待加入按钮取1/3宽与导出全班报告等宽②工作台头部(学生名单头+任务头)套账号页同款淡墨绿方框,与下方名单分开 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-162 (2026-07-04) — 工作台微调:①在读/待加入②任务/已归档 覆盖旧的不同min-width统一1/3等宽(保留三角/计数空间、缩11px不换行)③导出全班报告nowrap缩字号一行④顶部tab栏(我的班级/新增班级/账号)也套同款方框 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-161">
+    <meta name="version" content="汉字UI-162">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-161 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-162 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1730,16 +1730,27 @@ console.log('%c[斑斓汉字] 汉字UI-161 已加载', 'color:#374a42;font-weigh
         }
         /* UI-29: 学生详情头部的班级信息块水平居中(任务详情那边右侧有控件,保留原布局) */
         #blViewStudents .bl-tasks-header { justify-content: center; }
-        /* 汉字-161:布置作业「工作台头部」套淡墨绿方框(同账号页 .bl-acct-box),与下方名单/内容分开;
-           学生名单头(.bl-stu-headrow)+ 任务头(.bl-tasks-header)统一,适用于各子模块工作台 */
+        /* 汉字-161/162:布置作业「工作台头部」套淡墨绿方框(同账号页 .bl-acct-box),与下方名单/内容分开;
+           学生名单头 + 任务头 + 顶部 tab 栏(我的班级/新增班级/账号)统一套框 */
         .bl-stu-headrow, .bl-tasks-header {
             background: #eef3ef; border: 1px solid #d3ddd6; border-radius: 12px; padding: 12px;
         }
+        /* 汉字-162:顶部 tab 栏也套同款方框(墨舟:方框底色覆盖到 我的班级/新增班级/账号) */
+        #blTabs {
+            background: #eef3ef; border: 1px solid #d3ddd6; border-radius: 12px;
+            margin: 10px 12px; padding: 8px 12px;
+        }
         @media (max-width: 600px) {
-            /* 汉字-161:工作台四按钮等宽——11a1 / 在读 / 待加入 都取 1/3,与「导出全班报告」(actions 里 flex 1/3)精确看齐。
-               扣减量:11a1 在方框内,减 actions 两条间距 12px;在读/待加入在方框外(名单区),再多减方框左右内边距 24px。 */
             #blHeadClassBtn { width: calc((100% - 12px) / 3); justify-content: center; box-sizing: border-box; }
-            #blStudentList .bl-roster-section-title { width: calc((100% - 36px) / 3); box-sizing: border-box; padding-left: 8px; padding-right: 8px; }
+            /* 汉字-162:在读/待加入 与 任务/已归档 各自等宽——覆盖旧的不同 min-width(118/131、116/135),统一取 1/3 宽(与导出全班报告看齐)。
+               药丸左有绝对定位小三角、右有绝对定位计数,故左右各留 ~22/30px 内边距(不能压到 8px,否则盖住三角/计数);缩到 11px 让双语标题塞进 1/3 宽不换行。 */
+            #blStudentList .bl-roster-section-title,
+            #blTaskList .bl-roster-section-title {
+                width: calc((100% - 36px) / 3); min-width: 0; box-sizing: border-box;
+                font-size: 11px; padding: 6px 30px 6px 22px;
+            }
+            /* 汉字-162:导出全班报告等三键——套方框变窄后中文原会换两行,强制一行(缩字号 + nowrap) */
+            .bl-roster-actions .bl-roster-import-btn { white-space: nowrap; font-size: 11px; }
         }
         .bl-tasks-class-tag {
             display: inline-block;
