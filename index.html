@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-182 (2026-07-04) — 音频男女声修复:①重写识别(原规则按谷歌安卓语音名写、tingting匹配不到iPhone的Ting-Ting致误判,改成非男即女+容错横杠+覆盖iOS的Li-Mu)②朗读lang跟随所选语音(原写死zh-CN致iOS忽略所选语音用系统默认=男女同声)③下拉显示真实语音名。桌面实测女婷婷男Li-Mu两个不同语音 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-183 (2026-07-04) — 音频修两处:①男女声改成优先选确定性别的标准语音(婷婷语舒等女/Li-Mu云希等男),避开苹果角色音Eddy/Shelley(名字不含性别、原按顺序抓抓歪了)②文本框改成始终可编辑(原有内容时被display none藏了没法打字)+拼音行随输入实时更新。桌面实测:女声婷婷男声Li-Mu、文本框可编辑、打学生拼音变xue sheng。保存MP3浏览器TTS做不了另议 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-182">
+    <meta name="version" content="汉字UI-183">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-182 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-183 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -7451,18 +7451,27 @@ console.log('%c[斑斓汉字] 汉字UI-182 已加载', 'color:#374a42;font-weigh
         availableVoices = [];
         const voiceLabels = [];
         
-        // 汉字-182:重写男女声识别(原按谷歌/安卓语音名写、且 /tingting/ 匹配不到 iPhone 的 "Ting-Ting"(带横杠),导致误判成男声)
-        // 男声关键词:容错横杠/空格;覆盖 iOS 的 Li-mu、Windows/安卓的 Kangkang/Yunxi 等
-        const isMale = v => /(li[\s\-]?mu|kangkang|yunxi|yunye|yunjian|yun[\s\-]?jhi|male|\bman\b|男)/i.test(v.name);
-        // 显示用的干净名字:去掉 (…) 括注
+        // 汉字-183:改成「优先选确定性别的标准语音」——原来按顺序抓第一个非男声,iPhone 会抓到苹果角色音 Eddy/Shelley(名字不含性别),结果两个都是男声。
+        // 确定女声(婷婷/语舒/美嘉/善怡 等标准语音,容错横杠)
+        const femaleRe = /(婷婷|语舒|美嘉|善怡|ting.?ting|yu.?shu|mei.?jia|sin.?ji|xiaoxiao|xiaoyi|huihui|yaoyao)/i;
+        // 确定男声(Li-Mu/云希/康康 等)
+        const maleRe = /(li.?mu|云希|云健|云野|yunxi|yunjian|yunye|kangkang)/i;
+        // 苹果「角色音」——性别不明、发音偏戏谑,尽量避开做主选
+        const noveltyRe = /(eddy|flo|grandma|grandpa|reed|rocko|sandy|shelley|bubbles|bahh|boing|jester|organ|cellos|zarvox|trinoids|whisper|wobble|superstar|good news|bad news)/i;
         const cleanName = v => v.name.replace(/\s*[（(].*?[）)]\s*/g, '').replace(/\s+/g, ' ').trim();
-        // 女声 = 第一个「不是男声」的中文语音(大多数中文语音默认是女声)
-        const female = allVoices.find(v => !isMale(v));
+        // 女声:先确定女声 → 再挑非男且非角色音 → 再挑非男 → 兜底第一个
+        const female = allVoices.find(v => femaleRe.test(v.name))
+                    || allVoices.find(v => !maleRe.test(v.name) && !noveltyRe.test(v.name))
+                    || allVoices.find(v => !maleRe.test(v.name))
+                    || allVoices[0];
         if (female) { availableVoices.push(female); voiceLabels.push('👩 女声 · ' + cleanName(female)); }
-        // 男声 = 第一个「是男声」的中文语音;没有就在剩下的语音里挑一个不同的做替补
-        let male = allVoices.find(v => isMale(v));
+        // 男声:先确定男声 → 没有则从剩下挑一个不同的(优先非角色音)做替补
+        let male = allVoices.find(v => maleRe.test(v.name));
         let maleFallback = false;
-        if (!male) { male = allVoices.find(v => v !== female); maleFallback = true; }
+        if (!male) {
+            male = allVoices.find(v => v !== female && !noveltyRe.test(v.name)) || allVoices.find(v => v !== female);
+            maleFallback = true;
+        }
         if (male && male !== female) {
             availableVoices.push(male);
             voiceLabels.push('👨 男声' + (maleFallback ? '(替补)' : '') + ' · ' + cleanName(male));
@@ -7493,6 +7502,8 @@ console.log('%c[斑斓汉字] 汉字UI-182 已加载', 'color:#374a42;font-weigh
     document.getElementById('studioRate').addEventListener('input', function() {
         document.getElementById('valRate').textContent = parseFloat(this.value).toFixed(1);
     });
+    // 汉字-183:文本框输入时实时刷新上方拼音行
+    document.getElementById('ttsStudioText').addEventListener('input', updateTtsPinyin);
 
     // 输入框回车键触发挥毫生成
     document.getElementById('charInput').addEventListener('keydown', function(e) {
@@ -7637,24 +7648,30 @@ console.log('%c[斑斓汉字] 汉字UI-182 已加载', 'color:#374a42;font-weigh
         a.click();
     }
 
-    function openTtsStudio() {
-        const text = document.getElementById('charInput').value;
-        document.getElementById('ttsStudioText').value = text;
+    // \u6c49\u5b57-183:\u62fc\u97f3\u884c\u968f\u6587\u672c\u6846\u8f93\u5165\u5b9e\u65f6\u66f4\u65b0(\u7528\u6237\u81ea\u5df1\u6539\u5185\u5bb9\u4e5f\u80fd\u770b\u5230\u62fc\u97f3)
+    function updateTtsPinyin() {
+        const text = document.getElementById('ttsStudioText').value;
         const pinyinRow = document.getElementById('ttsPinyinRow');
         const pinyinLine = document.getElementById('ttsPinyinLine');
         const charLine = document.getElementById('ttsCharLine');
-        const textarea = document.getElementById('ttsStudioText');
         if (text && typeof pinyinPro !== 'undefined') {
             const chars = Array.from(text);
             const pinyinArr = chars.map(c => /[\u4e00-\u9fff\u3400-\u4dbf]/.test(c) ? pinyinPro.pinyin(c) : c);
             pinyinLine.textContent = pinyinArr.join('  ');
             charLine.textContent = chars.join('  ');
             pinyinRow.style.display = 'block';
-            textarea.style.display = 'none';
         } else {
             pinyinRow.style.display = 'none';
-            textarea.style.cssText = 'display:block; width:100%; padding:12px; background:#e8efeb; border:1px solid #aebfb6; border-radius:4px; font-size:18px; font-family:var(--font-main); box-sizing:border-box; margin-bottom:12px; text-align:center; letter-spacing:6px;';
         }
+    }
+
+    function openTtsStudio() {
+        const text = document.getElementById('charInput').value;
+        const textarea = document.getElementById('ttsStudioText');
+        textarea.value = text;
+        // \u6c49\u5b57-183:\u6587\u672c\u6846\u59cb\u7ec8\u53ef\u7f16\u8f91\u663e\u793a(\u539f\u6765\u6709\u5185\u5bb9\u65f6\u88ab display:none \u85cf\u4e86\u2192\u6ca1\u6cd5\u81ea\u5df1\u6253\u5b57)
+        textarea.style.cssText = 'display:block; width:100%; padding:12px; background:#fff; border:1px solid #c1d2c9; border-radius:4px; font-size:20px; font-family:var(--font-main); color:#222; box-sizing:border-box; margin-bottom:12px; text-align:center; letter-spacing:4px; resize:none;';
+        updateTtsPinyin();
         document.getElementById('ttsStudioModal').style.display = 'flex';
         loadVoices();
     }
