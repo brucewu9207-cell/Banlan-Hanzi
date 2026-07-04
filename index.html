@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-170 (2026-07-04) — 主页6个工具按钮切语言上下抖修复:英文/阿语副标统一固定行高14px+统一上边距2px,两语言占同样高度,切换按钮高度不变 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-171 (2026-07-04) — 手机端二维码/语言切换按钮放大1.2倍:scale从0.5改0.6(三处含hover态) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-170">
+    <meta name="version" content="汉字UI-171">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-170 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-171 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -2899,10 +2899,10 @@ console.log('%c[斑斓汉字] 汉字UI-170 已加载', 'color:#374a42;font-weigh
            关键:只 scale「按钮本身」(.qr-corner-toggle / .lang-switcher),不 scale 二维码卡片,展开的二维码图保持大图可扫。 */
         @media (max-width: 600px) {
             .qr-corner { position: absolute; top: 70px; left: 10px; }        /* 不悬浮:跟页面一起滚 */
-            .lang-switcher { top: 70px; right: 10px; transform: scale(0.5) !important; transform-origin: right center; }   /* 保持悬浮(默认 fixed 不改) */
-            .qr-corner-toggle { transform: scale(0.5) !important; transform-origin: left center; }
-            /* 汉字-131: 锁死 0.5x(带 !important)。防两处顶掉→被放大:① 通用 button:hover 的 translateY(鼠标);② 触屏 @media(hover:none) 的 button:hover{transform:none!important}(iOS 一点就触发) */
-            .qr-corner-toggle:hover, .qr-corner-toggle:focus, .qr-corner-toggle:active { transform: scale(0.5) !important; transform-origin: left center; }
+            .lang-switcher { top: 70px; right: 10px; transform: scale(0.6) !important; transform-origin: right center; }   /* 保持悬浮(默认 fixed 不改) */
+            .qr-corner-toggle { transform: scale(0.6) !important; transform-origin: left center; }
+            /* 汉字-131/171: 锁死 0.6x(带 !important;汉字-171 从 0.5x 放大 1.2 倍)。防两处顶掉→被放大:① 通用 button:hover 的 translateY(鼠标);② 触屏 @media(hover:none) 的 button:hover{transform:none!important}(iOS 一点就触发) */
+            .qr-corner-toggle:hover, .qr-corner-toggle:focus, .qr-corner-toggle:active { transform: scale(0.6) !important; transform-origin: left center; }
         }
 
         .seal-modal { padding: 0; text-align: left; }
