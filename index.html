@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-155 (2026-07-04) — 新建任务弹窗:任务内容提示译文英/阿行数不同致切语言上下抖,改用叠层(两条译文叠同格取最高、当前显示另一占位隐藏)锁定高度不抖 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-156 (2026-07-04) — 账号owner面板:①墨舟名+运营数据标题改朱砂红(同新增班级)②运营数据标题尺寸对齐三标签深绿盒同款③手机端5个统计格排一行④刷新按钮移到运营数据标题右边 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-155">
+    <meta name="version" content="汉字UI-156">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-155 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-156 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -926,11 +926,29 @@ console.log('%c[斑斓汉字] 汉字UI-155 已加载', 'color:#374a42;font-weigh
         .bl-user-name { width: 120px; box-sizing: border-box; text-align: center; }
         #blViewAccount .bl-form-group > .bl-label { align-items: center; }
         /* ★ 汉字-127:owner 运营数据面板 */
+        /* 汉字-156:标题行——运营数据标题(左)+ 刷新(右)同一行 */
+        .bl-owner-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin: 18px 0 12px; }
+        .bl-owner-head #blOwnerRefreshBtn { flex: none; }
+        /* 汉字-156:运营数据标题改朱砂红(同新增班级)+ 尺寸对齐账号页三标签(深绿盒同款:flex列/padding 8 16/圆角6/fit-content) */
+        #blOwnerStats .bl-cp-divider {
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            width: fit-content; min-width: 0; margin: 0;
+            background: var(--zhusha); color: #fff;
+            border: 1px solid #9e3232; border-radius: 6px;
+            padding: 8px 16px; box-shadow: 0 3px 8px rgba(55, 74, 66, 0.15);
+            font-size: 13px; letter-spacing: 0.5px;
+        }
         .bl-owner-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin: 10px 0; }
         .bl-owner-card { background: #f0f4f1; border: 1px solid #d8e0db; border-radius: 10px; padding: 14px 8px; text-align: center; }
         .bl-owner-num { font-size: 30px; font-weight: 700; color: var(--ink-green); font-family: monospace; line-height: 1.1; }
         .bl-owner-lbl { font-size: 13px; color: var(--mo-mid); margin-top: 4px; white-space: pre-line; }
-        @media (max-width: 640px) { .bl-owner-grid { grid-template-columns: repeat(2, 1fr); } }
+        /* 汉字-156:手机端 5 个统计格仍排一行(原 2 列),缩小内边距/字号让 5 格放得下 */
+        @media (max-width: 640px) {
+            .bl-owner-grid { grid-template-columns: repeat(5, 1fr); gap: 6px; }
+            .bl-owner-card { padding: 10px 3px; border-radius: 8px; }
+            .bl-owner-num { font-size: 21px; }
+            .bl-owner-lbl { font-size: 10px; letter-spacing: 0; }
+        }
         #blClassEditorOverlay .bl-form-group > .bl-input,
         #blViewAuth .bl-form-group > .bl-input,
         #blViewAccount .bl-form-group > .bl-input {
@@ -1629,9 +1647,9 @@ console.log('%c[斑斓汉字] 汉字UI-155 已加载', 'color:#374a42;font-weigh
         /* 汉字-53:墨舟名左对齐、尺寸同其他绿盒，人形图标翻白 */
         .bl-user-name {
             color: #fff; font-weight: 500;
-            background: var(--ink-green);
+            background: var(--zhusha);   /* 汉字-156:墨舟名改朱砂红,同新增班级 */
             padding: 8px 16px; border-radius: 6px;
-            border: 1px solid #2a3832;
+            border: 1px solid #9e3232;
             box-shadow: 0 3px 8px rgba(55, 74, 66, 0.15);
         }
         .bl-user-name::before { content: '👤 '; opacity: 1; filter: brightness(0) invert(1); }
@@ -9039,7 +9057,10 @@ console.log('%c[斑斓汉字] 汉字UI-155 已加载', 'color:#374a42;font-weigh
                 </div>
                 <!-- ★ 汉字-127:owner 运营数据面板(仅墨舟可见,别人整块隐藏) -->
                 <div id="blOwnerStats" style="display:none;">
-                    <div class="bl-cp-divider" style="cursor:default;">📊 运营数据<span class="lang-en">Ops Data</span><span class="lang-ar">بيانات التشغيل</span></div>
+                    <div class="bl-owner-head">
+                        <div class="bl-cp-divider" style="cursor:default;">📊 运营数据<span class="lang-en">Ops Data</span><span class="lang-ar">بيانات التشغيل</span></div>
+                        <button class="bl-btn bl-secondary" onclick="BL.refreshOwnerStats()" id="blOwnerRefreshBtn">🔄 刷新<span class="lang-en">Refresh</span><span class="lang-ar">تحديث</span></button>
+                    </div>
                     <div class="bl-owner-grid">
                         <div class="bl-owner-card"><div class="bl-owner-num" id="blOwnerTeachers">—</div><div class="bl-owner-lbl">老师<span class="lang-en">Teachers</span><span class="lang-ar">المعلمون</span></div></div>
                         <div class="bl-owner-card"><div class="bl-owner-num" id="blOwnerClasses">—</div><div class="bl-owner-lbl">班级<span class="lang-en">Classes</span><span class="lang-ar">الفصول</span></div></div>
@@ -9047,8 +9068,7 @@ console.log('%c[斑斓汉字] 汉字UI-155 已加载', 'color:#374a42;font-weigh
                         <div class="bl-owner-card"><div class="bl-owner-num" id="blOwnerTasksActive">—</div><div class="bl-owner-lbl">进行中<span class="lang-en">Active</span><span class="lang-ar">قيد التنفيذ</span></div></div>
                         <div class="bl-owner-card"><div class="bl-owner-num" id="blOwnerTasksArchived">—</div><div class="bl-owner-lbl">已归档<span class="lang-en">Archived</span><span class="lang-ar">مؤرشف</span></div></div>
                     </div>
-                    <div style="display:flex; align-items:center; gap:10px; margin-top:8px;">
-                        <button class="bl-btn bl-secondary" onclick="BL.refreshOwnerStats()" id="blOwnerRefreshBtn">🔄 刷新<span class="lang-en">Refresh</span><span class="lang-ar">تحديث</span></button>
+                    <div style="margin-top:8px;">
                         <span class="bl-hint" style="margin:0;">总量;活跃/账单以 Cloudflare 为准<span class="lang-en"><br>Totals; active/billing via Cloudflare</span><span class="lang-ar"><br>الإجمالي؛ النشاط/الفوترة عبر Cloudflare</span></span>
                     </div>
                 </div>
