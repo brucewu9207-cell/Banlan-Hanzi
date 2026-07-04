@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-177 (2026-07-04) — 搜索框三调(浏览器实测过):①与标题留白缩小(glass-panel顶部内边距12→6,真凶是带!important的规则)②与音乐条留白缩小(网格行距8→6)③话筒按钮从椭圆改28px正圆、去掉min-height44、垂直居中在框内 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-178 (2026-07-04) — 新人引导:搜索框+挥毫生成加朱砂红呼吸光晕(一直显示、脉动)。只动box-shadow不缩放不位移,元素不抖;reduced-motion降级为静态柔光。浏览器实测过 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-177">
+    <meta name="version" content="汉字UI-178">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-177 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-178 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -559,6 +559,15 @@ console.log('%c[斑斓汉字] 汉字UI-177 已加载', 'color:#374a42;font-weigh
         button:hover, .btn-link:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(55, 74, 66, 0.3); filter: brightness(1.1); }
 
         .btn-gen { background: var(--ink-green); border: 1px solid #2a3832; }
+        /* 汉字-178:新人引导——搜索框 + 挥毫生成 加朱砂红呼吸光晕(一直显示、只动 box-shadow 不缩放不位移,元素不抖) */
+        @keyframes blGlowPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(179, 57, 57, 0); }
+            50%      { box-shadow: 0 0 15px 3px rgba(179, 57, 57, 0.5); }
+        }
+        .input-wrapper, .btn-gen { animation: blGlowPulse 2.4s ease-in-out infinite; }
+        @media (prefers-reduced-motion: reduce) {
+            .input-wrapper, .btn-gen { animation: none; box-shadow: 0 0 12px 2px rgba(179, 57, 57, 0.4); }
+        }
         .btn-tts-studio { background: var(--ink-gray); border: 1px solid #667e74; }
         .btn-seal { background: #688275; border: 1px solid #556e62; }
         .btn-toggle-dl { background: var(--mo-mid); border: 1px solid var(--mo-dark); }
