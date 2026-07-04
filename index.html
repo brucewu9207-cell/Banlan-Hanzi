@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-185 (2026-07-04) — 音频还原有道发音接口:试听/保存MP3免密钥可用,去掉设备语音识别与男女声选择 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-186 (2026-07-04) — 下载中心手机弹窗电脑内联展开 + 彩虹笔顺图导出透明背景 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-185">
+    <meta name="version" content="汉字UI-186">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-185 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-186 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -4990,6 +4990,9 @@ console.log('%c[斑斓汉字] 汉字UI-185 已加载', 'color:#374a42;font-weigh
             </div>
         </div>
 
+        <!-- 汉字-186:下载中心电脑端在此内联展开(手机端仍走弹窗);按钮由弹窗克隆,避免两处维护 -->
+        <div id="downloadInline" style="display:none; margin-top:10px; padding:12px; border:1px solid #c1d2c9; border-radius:6px; background:rgba(255,255,255,0.35);"></div>
+
         <!-- ★ 汉字UI-3: 抢先显示「班级与任务」按钮 —— 该按钮默认 display:none, 原本要等 ?unlock 调后端 API
              验证后才显示, 导致它加载完才冒出来、把 flex 输入框挤窄(可见的"加载跳动")。
              这里在首屏绘制前、凭本地已存的解锁记录(bl_tester_unlocked)先把按钮+徽章显示出来;
@@ -5804,8 +5807,27 @@ console.log('%c[斑斓汉字] 汉字UI-185 已加载', 'color:#374a42;font-weigh
 
     // --- UI 交互控制 ---
     // 汉字-180:下载中心改弹窗(替代原内联展开/收起)
-    function openDownloadCenter() { document.getElementById('downloadCenterModal').style.display = 'flex'; }
-    function closeDownloadCenter() { document.getElementById('downloadCenterModal').style.display = 'none'; }
+    // 汉字-186:手机端(≤600)弹窗、电脑端在下载中心按钮下方内联展开(还原旧样式)
+    function openDownloadCenter() {
+        if (window.innerWidth <= 600) {
+            document.getElementById('downloadCenterModal').style.display = 'flex';
+            return;
+        }
+        const inline = document.getElementById('downloadInline');
+        if (!inline.dataset.filled) {
+            // 从弹窗克隆那组下载按钮,避免两处维护(onclick 里已带 closeDownloadCenter)
+            const group = document.querySelector('#downloadCenterModal .download-group').cloneNode(true);
+            group.style.marginTop = '0';
+            inline.appendChild(group);
+            inline.dataset.filled = '1';
+        }
+        inline.style.display = (inline.style.display === 'none') ? 'block' : 'none';
+    }
+    function closeDownloadCenter() {
+        document.getElementById('downloadCenterModal').style.display = 'none';
+        const inline = document.getElementById('downloadInline');
+        if (inline) inline.style.display = 'none';
+    }
 
     function toggleAcc(id) {
         const content = document.getElementById(id);
@@ -6894,7 +6916,8 @@ console.log('%c[斑斓汉字] 汉字UI-185 已加载', 'color:#374a42;font-weigh
         const count = charDataArray.length; const showPinyin = (mode === 'full' || mode === 'pinyin'); const showEnglish = (mode === 'full' || mode === 'english');
         const headerHeight = (showPinyin || showEnglish) ? 200 : 0;
         canvas.width = 1024 * count; canvas.height = 1024 + headerHeight;
-        ctx.fillStyle = "white"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+        // 汉字-186:彩虹笔顺图(main)导出透明背景,方便插进 PPT(符合「笔顺图必须透明」铁律);其他类型仍铺白底
+        if (currentDownloadType !== 'main') { ctx.fillStyle = "white"; ctx.fillRect(0, 0, canvas.width, canvas.height); }
         for(let i=0; i<count; i++) {
             const char = charDataArray[i].char; const data = charDataArray[i].data;
             if (showPinyin) {
