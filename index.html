@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-149 (2026-07-04) — 学号标签固定为学号/ID,不跟语言切换(阿语下不再把ID变成阿语词) -->
+<!-- 斑斓汉字(老师端) · 汉字UI-150 (2026-07-04) — 已完成数字贴最右不换行:切阿语时数字不再单独掉一行;meta改flex行,数字独立span dir=ltr推到最右且nowrap -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-149">
+    <meta name="version" content="汉字UI-150">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-149 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-150 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1078,7 +1078,12 @@ console.log('%c[斑斓汉字] 汉字UI-149 已加载', 'color:#374a42;font-weigh
         .bl-student-meta {
             font-size: 13px;
             color: var(--ink-gray);
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
         }
+        /* 汉字-150:已完成数字贴到最右、独立不换行(切阿语时不再单独掉到下一行);标签可自行换行,数字始终右侧一行 */
+        .bl-student-meta .bl-meta-num { margin-left: auto; white-space: nowrap; }
         /* ★ pwd(汉字-119): 重置密码按钮改黑色(墨舟指定,原竹黄) */
         .bl-student-reset-btn {
             background: none;
@@ -10232,7 +10237,7 @@ window.BL = (function () {
             const idx = state.students.indexOf(s);
             const completed = (s.completedTasks || []).length;
             const metaLine = isPending ? '' :
-                `<div class="bl-student-meta">${escapeHtml(metaLabel + completed + '/' + taskTotal)}</div>`;
+                `<div class="bl-student-meta"><span class="bl-meta-label">${escapeHtml(metaLabel)}</span><span class="bl-meta-num" dir="ltr">${escapeHtml(completed + '/' + taskTotal)}</span></div>`;
             const detailBtn = isPending ? '' :
                 `<button class="bl-student-detail-btn" onclick="BL.toggleStudentDetail(${idx})">${escapeHtml(txtDetail)}</button>`;
             // ★ pwd(汉字-118): 重置密码按钮(孩子忘了 → 老师指定/清空)
