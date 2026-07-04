@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-169 (2026-07-04) — 明细表切任务名字列移位根治:名字列从max-width上限改成钉死168px固定宽(min=max=width),字列也钉死42px,所有列定值→切汉字/测试等任务名字与表头纹丝不动 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-170 (2026-07-04) — 主页6个工具按钮切语言上下抖修复:英文/阿语副标统一固定行高14px+统一上边距2px,两语言占同样高度,切换按钮高度不变 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-169">
+    <meta name="version" content="汉字UI-170">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-169 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-170 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -547,8 +547,9 @@ console.log('%c[斑斓汉字] 汉字UI-169 已加载', 'color:#374a42;font-weigh
             padding: 10px 20px; border: 1px solid transparent; border-radius: 4px; cursor: pointer; color: #fff; font-weight: 500; font-family: var(--font-main); transition: all 0.3s ease; line-height: 1.4; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; letter-spacing: 1px; background: var(--ink-green); box-shadow: 0 4px 10px rgba(55, 74, 66, 0.2);
         }
         button span, .btn-link span { font-size: 10px; font-weight: normal; opacity: 0.8; margin-top: 3px; letter-spacing: 0.5px; }
-        button .btn-en { font-size: 10px; font-weight: normal; opacity: 0.85; margin-top: 2px; letter-spacing: 0.3px; display: block; text-align: center; }
-        button .btn-ar { font-size: 10px; font-weight: normal; opacity: 0.8; margin-top: 1px; letter-spacing: 0px; font-family: 'Tahoma','Arial',sans-serif; direction: rtl; display: block; text-align: center; }
+        /* 汉字-170:英文/阿语副标统一固定行高 14px + 统一上边距 2px,两语言占同样高度→切语言按钮不再上下抖(原阿语 Tahoma 默认行高更高、上边距也差 1px) */
+        button .btn-en { font-size: 10px; font-weight: normal; opacity: 0.85; margin-top: 2px; letter-spacing: 0.3px; display: block; text-align: center; line-height: 14px; }
+        button .btn-ar { font-size: 10px; font-weight: normal; opacity: 0.8; margin-top: 2px; letter-spacing: 0px; font-family: 'Tahoma','Arial',sans-serif; direction: rtl; display: block; text-align: center; line-height: 14px; }
         button:hover, .btn-link:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(55, 74, 66, 0.3); filter: brightness(1.1); }
 
         .btn-gen { background: var(--ink-green); border: 1px solid #2a3832; }
