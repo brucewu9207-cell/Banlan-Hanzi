@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-138 (2026-07-04) — 综合字帖格子拼音自动缩放:长拼音(如shuāng)自动缩到刚好放进窄格子、不再被挤出外面;短拼音保持大。桌面格子宽不受影响 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-139 (2026-07-04) — 综合字帖拼音自适应改成统一字号:整屏所有拼音用同一个字号(能放下最长拼音的那个),不再一行里大小不一;数字格(笔画序号)不受影响 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-138">
+    <meta name="version" content="汉字UI-139">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-138 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-139 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -6503,14 +6503,28 @@ console.log('%c[斑斓汉字] 汉字UI-138 已加载', 'color:#374a42;font-weigh
     (function () {
         function fitPinyinGrids(root) {
             if (!root) return;
-            root.querySelectorAll('.pinyin-grid').forEach(function (pg) {
-                if (!pg.textContent || !pg.textContent.trim()) return;
-                pg.style.fontSize = '';                                  // 先复位到 CSS 默认
-                var fs = parseFloat(getComputedStyle(pg).fontSize) || 14, guard = 0;
-                while (pg.scrollWidth > pg.clientWidth + 0.5 && fs > 7 && guard < 24) {
-                    fs -= 0.5; pg.style.fontSize = fs + 'px'; guard++;
+            // 只统一「拼音」(含字母的格子);纯数字格(笔画序号 1、2、3…)不动
+            var grids = Array.prototype.filter.call(
+                root.querySelectorAll('.pinyin-grid'),
+                function (pg) {
+                    var t = (pg.textContent || '').trim();
+                    return t && /[a-zà-ǿĀ-ſ]/i.test(t);
                 }
+            );
+            if (!grids.length) return;
+            grids.forEach(function (pg) { pg.style.fontSize = ''; });     // 先全部复位到 CSS 默认
+            var baseFs = parseFloat(getComputedStyle(grids[0]).fontSize) || 14;
+            // 汉字-139: 统一字号——找出「放下最长拼音」所需的最小字号,再统一套给所有格子,避免同一行大小不一
+            var minFs = baseFs;
+            grids.forEach(function (pg) {
+                var f = baseFs, guard = 0;
+                pg.style.fontSize = f + 'px';
+                while (pg.scrollWidth > pg.clientWidth + 0.5 && f > 7 && guard < 24) {
+                    f -= 0.5; pg.style.fontSize = f + 'px'; guard++;
+                }
+                if (f < minFs) minFs = f;
             });
+            grids.forEach(function (pg) { pg.style.fontSize = minFs + 'px'; });
         }
         var timer;
         function setup() {
