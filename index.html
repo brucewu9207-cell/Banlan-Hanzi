@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-180 (2026-07-04) — 下载中心改弹窗:点击弹出弹窗(同音频生成那种)替代原页面内联展开;下载彩虹笔顺图英文去Rainbow改Download Stroke Order,与循环动画等高。浏览器实测过 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-181 (2026-07-04) — 印章题刻手机端布局改竖排:预览在上、控件在下(原左右两栏在手机端挤到重叠);弹窗可滚动。桌面两栏不动。浏览器实测过 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-180">
+    <meta name="version" content="汉字UI-181">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-180 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-181 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -2932,6 +2932,12 @@ console.log('%c[斑斓汉字] 汉字UI-180 已加载', 'color:#374a42;font-weigh
         .seal-preview-wrap { background: radial-gradient(ellipse at center, rgba(0,0,0,0.02) 0%, transparent 70%), #fafafa; border: 1px solid var(--ink-green); padding: 12px; margin-bottom: 12px; display: flex; justify-content: center; align-items: center; min-height: 160px; border-radius: 4px; }
         .seal-actions { display: flex; gap: 8px; }
         .seal-actions button { flex: 1; padding: 8px; font-size: 13px; }
+        /* 汉字-181:手机端印章题刻改竖排——预览在上、控件在下(column-reverse:DOM里预览在后,反转后到顶);两栏满宽;弹窗可滚动免超屏 */
+        @media (max-width: 600px) {
+            .seal-two-col { flex-direction: column-reverse; align-items: stretch; }
+            .seal-two-col > div { flex: 0 0 auto !important; width: 100%; min-width: 0; }
+            #sealModal .modal { max-height: 92vh; overflow-y: auto; }
+        }
 
 
         /* ============================================================
@@ -5260,8 +5266,8 @@ console.log('%c[斑斓汉字] 汉字UI-180 已加载', 'color:#374a42;font-weigh
     <div class="modal seal-modal" style="max-width:720px; width:95vw;">
         <div class="seal-modal-inner">
             <h3 class="title-scaled"><span class="t-cn"><span class="t-ico">❒</span>印章题刻</span><span class="lang-en">Seal Carving</span><span class="lang-ar">نقش الختم</span></h3>
-            <!-- 横向两栏：左控制区 | 右预览区 -->
-            <div style="display:flex; gap:16px; align-items:stretch;">
+            <!-- 横向两栏：左控制区 | 右预览区(手机端改竖排,预览在上) -->
+            <div class="seal-two-col" style="display:flex; gap:16px; align-items:stretch;">
                 <!-- 左栏：输入控制 -->
                 <div style="flex:1; min-width:0; display:flex;">
                     <div class="seal-controls" style="flex:1; margin-bottom:0;">
