@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-137 (2026-07-04) — 拆字箭头改成向下的大箭头(手机端100×90,拼音在上半放得下);桌面端保持横向→。之前太小拼音被挤 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-138 (2026-07-04) — 综合字帖格子拼音自动缩放:长拼音(如shuāng)自动缩到刚好放进窄格子、不再被挤出外面;短拼音保持大。桌面格子宽不受影响 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-137">
+    <meta name="version" content="汉字UI-138">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-137 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-138 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -6498,6 +6498,34 @@ console.log('%c[斑斓汉字] 汉字UI-137 已加载', 'color:#374a42;font-weigh
         root.appendChild(card);
     }
 
+    // 汉字-138: 综合字帖格子拼音自动缩放——短拼音保持大,长拼音(如 shuāng)自动缩到刚好放进窄格子,不再被挤出外面。
+    //   纯按格子宽度自适应:桌面格子宽、不会缩;手机窄格子才缩。用 MutationObserver 覆盖所有渲染路径。
+    (function () {
+        function fitPinyinGrids(root) {
+            if (!root) return;
+            root.querySelectorAll('.pinyin-grid').forEach(function (pg) {
+                if (!pg.textContent || !pg.textContent.trim()) return;
+                pg.style.fontSize = '';                                  // 先复位到 CSS 默认
+                var fs = parseFloat(getComputedStyle(pg).fontSize) || 14, guard = 0;
+                while (pg.scrollWidth > pg.clientWidth + 0.5 && fs > 7 && guard < 24) {
+                    fs -= 0.5; pg.style.fontSize = fs + 'px'; guard++;
+                }
+            });
+        }
+        var timer;
+        function setup() {
+            ['unifiedWorksheetRoot', 'isolatedStrokesRoot'].forEach(function (id) {
+                var root = document.getElementById(id);
+                if (!root) return;
+                new MutationObserver(function () {
+                    clearTimeout(timer);
+                    timer = setTimeout(function () { fitPinyinGrids(root); }, 60);
+                }).observe(root, { childList: true, subtree: true });
+            });
+        }
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setup);
+        else setup();
+    })();
 
     function setStrokeMode(m) {
         currentStrokeMode = m;
