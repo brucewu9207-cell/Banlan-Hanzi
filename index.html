@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-187 (2026-07-04) — 彩虹笔顺图下载前弹窗选带数字/不带数字 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-188 (2026-07-05) — 下载循环动画弹窗加互动网页导出:自带下一笔按钮+半透明整字底样,离线可用 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-187">
+    <meta name="version" content="汉字UI-188">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-187 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-188 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -5425,8 +5425,10 @@ console.log('%c[斑斓汉字] 汉字UI-187 已加载', 'color:#374a42;font-weigh
             <div id="animProgressBar" style="height:100%; width:0%; background:linear-gradient(90deg, #6c3483, #a569bd); border-radius:8px; transition:0.2s;"></div>
         </div>
         <div id="animStatusText" style="font-size:13px; color:#888; margin-bottom:10px; min-height:18px;">准备就绪，点击开始录制。</div>
+        <!-- 汉字-188:互动网页导出 —— 自带「下一笔」按钮的独立 HTML,老师上课手动逐笔引导 -->
+        <button class="btn-gen" id="animInteractiveBtn" onclick="downloadInteractiveStroke()" style="width:100%; margin-bottom:10px; background:#2f4034; border-color:#243026;">🖐 下载互动网页(点下一笔)<span class="lang-en"> / Interactive HTML</span><span class="lang-ar"> / صفحة تفاعلية</span></button>
         <div class="modal-btns" style="flex-direction:row; gap:10px;">
-            <button class="btn-gen" id="animStartBtn" onclick="startAnimRecording()">▶ 开始录制并下载</button>
+            <button class="btn-gen" id="animStartBtn" onclick="startAnimRecording()">▶ 开始录制并下载 GIF</button>
             <button class="btn-cancel" id="animCancelBtn" onclick="closeAnimModal()">取消</button>
         </div>
     </div>
@@ -7346,6 +7348,80 @@ console.log('%c[斑斓汉字] 汉字UI-187 已加载', 'color:#374a42;font-weigh
     // 兼容旧代码：保留空函数，防止其它地方还在调用导致报错
     function setAnimLoopCount() {}
     function setAnimLayout() {}
+
+    // ─────────────────────────────────────────────────────────────
+    // 汉字-188：导出「互动笔顺」独立 HTML —— 自带「下一笔」按钮，老师上课手动逐笔引导
+    //   · 每个字生成一个自包含 .html（笔画/序号数据内嵌，纯 SVG，无任何 CDN 依赖，离线可用）
+    //   · 半透明整字底样 + 米字格 + 彩色笔画 + 序号 + 上一笔/下一笔/重来
+    // ─────────────────────────────────────────────────────────────
+    function buildInteractiveHtml(char, py, strokes, medians, colors, transform) {
+        const payload = JSON.stringify({ char, py, strokes, medians, colors, transform });
+        // 说明：导出文件内嵌一段小 JS，逻辑与老师端「下一笔」一致（累计显示 strokes[0..k-1]）
+        return [
+'<!doctype html><html lang="zh"><head><meta charset="utf-8">',
+'<meta name="viewport" content="width=device-width,initial-scale=1">',
+'<title>' + char + ' · 互动笔顺</title>',
+'<style>',
+'*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}',
+'body{margin:0;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#f4f6f4;color:#2f4034;display:flex;flex-direction:column;align-items:center;min-height:100vh;justify-content:center;padding:16px}',
+'.title{font-size:22px;font-weight:bold;margin-bottom:2px}.py{font-size:16px;color:#c84b2f;margin-bottom:10px}',
+'.stage{width:min(78vw,78vh,520px);aspect-ratio:1/1;background:#fff;border:1px solid #c1d2c9;border-radius:14px;padding:10px}',
+'svg{width:100%;height:100%;display:block}',
+'.bar{display:flex;gap:8px;margin-top:14px;width:min(78vw,78vh,520px);align-items:center}',
+'button{border:1px solid #243026;border-radius:12px;color:#fff;font-size:16px;padding:14px 12px;cursor:pointer;font-family:inherit}',
+'.side{background:#4a5c53;flex:0 0 auto}.main{background:#374a42;flex:1;font-size:19px}',
+'.count{text-align:center;font-size:14px;color:#5f6f66;margin-top:10px;min-height:18px}',
+'</style></head><body>',
+'<div class="title" id="ttl"></div><div class="py" id="py"></div>',
+'<div class="stage"><svg viewBox="0 0 1024 1024">',
+'<path d="M512,0 V1024 M0,512 H1024" stroke="#e6e6e6" stroke-dasharray="30,15" stroke-width="6" fill="none"/>',
+'<g id="ghost" fill="#1a1a1a"></g><g id="ink"></g></svg></div>',
+'<div class="bar"><button class="side" id="prev">上一笔</button>',
+'<button class="main" id="next">下一笔 ▶</button>',
+'<button class="side" id="reset">重来</button></div>',
+'<div class="count" id="cnt"></div>',
+'<script>',
+'var D=' + payload + ';',
+'var G="scale(0.8,-0.8) translate(128,-980)";D.transform=D.transform||G;',
+'document.getElementById("ttl").textContent=D.char;document.getElementById("py").textContent=D.py||"";',
+'var SVGNS="http://www.w3.org/2000/svg";',
+'var ghost=document.getElementById("ghost"),ink=document.getElementById("ink"),cnt=document.getElementById("cnt");',
+'ghost.setAttribute("transform",D.transform);ink.setAttribute("transform",D.transform);',
+// 半透明整字底样
+'D.strokes.forEach(function(d){var p=document.createElementNS(SVGNS,"path");p.setAttribute("d",d);p.setAttribute("opacity","0.12");ghost.appendChild(p);});',
+'var k=0,N=D.strokes.length;',
+'function draw(){while(ink.firstChild)ink.removeChild(ink.firstChild);for(var i=0;i<k;i++){',
+'var c=D.colors[i%D.colors.length];var p=document.createElementNS(SVGNS,"path");p.setAttribute("d",D.strokes[i]);p.setAttribute("fill",c);ink.appendChild(p);',
+// 序号（与老师端一致：medians 中点 + scale(1,-1) 翻正）
+'var m=D.medians&&D.medians[i];if(m&&m.length){var mp=m[Math.floor(m.length/2)];var t=document.createElementNS(SVGNS,"text");',
+'t.setAttribute("x",mp[0]-30);t.setAttribute("y",mp[1]+30);t.setAttribute("transform","scale(1,-1) translate(0,"+(-mp[1]*2)+")");',
+'t.setAttribute("fill",c);t.setAttribute("font-size","72");t.setAttribute("font-weight","bold");t.setAttribute("stroke","#fff");t.setAttribute("stroke-width","6");t.setAttribute("paint-order","stroke");t.textContent=(i+1);ink.appendChild(t);}}',
+'cnt.textContent=k===0?"点「下一笔」开始":("第 "+k+" / "+N+" 笔");}',
+'document.getElementById("next").onclick=function(){if(k<N)k++;draw();};',
+'document.getElementById("prev").onclick=function(){if(k>0)k--;draw();};',
+'document.getElementById("reset").onclick=function(){k=0;draw();};',
+'draw();',
+'<\/script></body></html>'
+        ].join('');
+    }
+
+    function downloadInteractiveStroke() {
+        if (!charDataArray || charDataArray.length === 0) return alert('请先生成汉字！');
+        charDataArray.forEach((item, ci) => {
+            const char = item.char || ('字' + (ci + 1));
+            let py = '';
+            try { py = pinyinPro.pinyin(char); } catch (e) {}
+            const html = buildInteractiveHtml(char, py, item.data.strokes, item.data.medians, COLORS, (typeof TRANSFORM !== 'undefined' ? TRANSFORM : ''));
+            const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = char + '_互动笔顺.html';
+            document.body.appendChild(a); a.click(); a.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+        });
+        const statusEl = document.getElementById('animStatusText');
+        if (statusEl) statusEl.textContent = '✅ 已导出 ' + charDataArray.length + ' 个互动网页(点下一笔)。';
+    }
 
     /**
      * 录制并下载动画 GIF
