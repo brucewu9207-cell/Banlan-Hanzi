@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-156 (2026-07-04) — 账号owner面板:①墨舟名+运营数据标题改朱砂红(同新增班级)②运营数据标题尺寸对齐三标签深绿盒同款③手机端5个统计格排一行④刷新按钮移到运营数据标题右边 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-157 (2026-07-04) — 账号owner面板:①墨舟/三标签/运营数据统一min-width 130四者等宽②运营数据整块套淡绿方框(边框+浅底+圆角),与上方账号信息分成两块 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-156">
+    <meta name="version" content="汉字UI-157">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-156 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-157 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -923,16 +923,20 @@ console.log('%c[斑斓汉字] 汉字UI-156 已加载', 'color:#374a42;font-weigh
         .bl-cp-modal .bl-roster-foot .bl-btn-primary { min-width: 104px; box-sizing: border-box; text-align: center; }
         /* 汉字-54/55:账号页几个绿盒(含墨舟)统一宽度 + 内容居中 */
         #blViewAccount .bl-form-group > .bl-label,
-        .bl-user-name { width: 120px; box-sizing: border-box; text-align: center; }
+        .bl-user-name { width: 130px; box-sizing: border-box; text-align: center; }   /* 汉字-157:墨舟名同三标签/运营数据统一 130 等宽 */
         #blViewAccount .bl-form-group > .bl-label { align-items: center; }
         /* ★ 汉字-127:owner 运营数据面板 */
+        /* 汉字-157:运营数据整块套一个淡绿方框(边框+浅底),与上方账号信息区分成两块 */
+        #blOwnerStats { background: #eef3ef; border: 1px solid #d3ddd6; border-radius: 12px; padding: 14px; margin-top: 20px; }
+        /* 汉字-157:账号页三标签(用户名/账号ID/注册时间)与运营数据标题统一 min-width,四者等宽 */
+        #blViewAccount .bl-form-group > .bl-label { min-width: 130px; }
         /* 汉字-156:标题行——运营数据标题(左)+ 刷新(右)同一行 */
-        .bl-owner-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin: 18px 0 12px; }
+        .bl-owner-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin: 0 0 12px; }
         .bl-owner-head #blOwnerRefreshBtn { flex: none; }
-        /* 汉字-156:运营数据标题改朱砂红(同新增班级)+ 尺寸对齐账号页三标签(深绿盒同款:flex列/padding 8 16/圆角6/fit-content) */
+        /* 汉字-156/157:运营数据标题改朱砂红(同新增班级)+ 尺寸对齐账号页三标签(深绿盒同款:flex列/padding 8 16/圆角6),min-width 130 与三标签等宽 */
         #blOwnerStats .bl-cp-divider {
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            width: fit-content; min-width: 0; margin: 0;
+            width: fit-content; min-width: 130px; margin: 0;
             background: var(--zhusha); color: #fff;
             border: 1px solid #9e3232; border-radius: 6px;
             padding: 8px 16px; box-shadow: 0 3px 8px rgba(55, 74, 66, 0.15);
