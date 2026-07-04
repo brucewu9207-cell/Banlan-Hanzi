@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-181 (2026-07-04) — 印章题刻手机端布局改竖排:预览在上、控件在下(原左右两栏在手机端挤到重叠);弹窗可滚动。桌面两栏不动。浏览器实测过 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-182 (2026-07-04) — 音频男女声修复:①重写识别(原规则按谷歌安卓语音名写、tingting匹配不到iPhone的Ting-Ting致误判,改成非男即女+容错横杠+覆盖iOS的Li-Mu)②朗读lang跟随所选语音(原写死zh-CN致iOS忽略所选语音用系统默认=男女同声)③下拉显示真实语音名。桌面实测女婷婷男Li-Mu两个不同语音 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-181">
+    <meta name="version" content="汉字UI-182">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-181 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-182 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -7451,41 +7451,21 @@ console.log('%c[斑斓汉字] 汉字UI-181 已加载', 'color:#374a42;font-weigh
         availableVoices = [];
         const voiceLabels = [];
         
-        let foundFemale = false;
-        let foundMale = false;
-
-        // 严格筛选目标语音：放宽对 Google 的匹配 (可能叫 Google Mandarin, Google zh-CN 等)
-        allVoices.forEach(voice => {
-            // 匹配 Google、普通话、Mandarin，或其他常见系统默认女声 (屏蔽男声关键词)
-            if (/(google|mandarin|普通话|xiaoxiao|huihui|tingting)/i.test(voice.name) && !/(li-mu|limu|kangkang|yunxi)/i.test(voice.name)) {
-                if (!foundFemale) { // 只保留第一个匹配的最优女声
-                    availableVoices.push(voice);
-                    voiceLabels.push('👩 女声');
-                    foundFemale = true;
-                }
-            } else if (/(li-mu|limu)/i.test(voice.name)) {
-                if (!foundMale) {
-                    availableVoices.push(voice);
-                    voiceLabels.push('👨 男声');
-                    foundMale = true;
-                }
-            }
-        });
-
-        // 终极兜底保护：如果系统里没有命中上面的女声规则，强制分配第一个中文发音人为女声
-        if (!foundFemale && allVoices.length > 0) {
-            const fallbackFemale = allVoices.find(v => !availableVoices.includes(v)) || allVoices[0];
-            availableVoices.unshift(fallbackFemale);
-            voiceLabels.unshift('👩 女声');
-        }
-        
-        // 如果没有找到指定的男声，尝试从剩下的语音里挑一个分配作为替补男声
-        if (!foundMale && allVoices.length > 1) {
-            const fallbackMale = allVoices.find(v => !availableVoices.includes(v));
-            if (fallbackMale) {
-                availableVoices.push(fallbackMale);
-                voiceLabels.push('👨 男声 (替补)');
-            }
+        // 汉字-182:重写男女声识别(原按谷歌/安卓语音名写、且 /tingting/ 匹配不到 iPhone 的 "Ting-Ting"(带横杠),导致误判成男声)
+        // 男声关键词:容错横杠/空格;覆盖 iOS 的 Li-mu、Windows/安卓的 Kangkang/Yunxi 等
+        const isMale = v => /(li[\s\-]?mu|kangkang|yunxi|yunye|yunjian|yun[\s\-]?jhi|male|\bman\b|男)/i.test(v.name);
+        // 显示用的干净名字:去掉 (…) 括注
+        const cleanName = v => v.name.replace(/\s*[（(].*?[）)]\s*/g, '').replace(/\s+/g, ' ').trim();
+        // 女声 = 第一个「不是男声」的中文语音(大多数中文语音默认是女声)
+        const female = allVoices.find(v => !isMale(v));
+        if (female) { availableVoices.push(female); voiceLabels.push('👩 女声 · ' + cleanName(female)); }
+        // 男声 = 第一个「是男声」的中文语音;没有就在剩下的语音里挑一个不同的做替补
+        let male = allVoices.find(v => isMale(v));
+        let maleFallback = false;
+        if (!male) { male = allVoices.find(v => v !== female); maleFallback = true; }
+        if (male && male !== female) {
+            availableVoices.push(male);
+            voiceLabels.push('👨 男声' + (maleFallback ? '(替补)' : '') + ' · ' + cleanName(male));
         }
 
         const select = document.getElementById('studioVoiceSelect');
@@ -7699,8 +7679,9 @@ console.log('%c[斑斓汉字] 汉字UI-181 已加载', 'color:#374a42;font-weigh
         const select = document.getElementById('studioVoiceSelect');
         if (select.value !== "" && availableVoices[select.value]) {
             u.voice = availableVoices[select.value];
+            u.lang = u.voice.lang || 'zh-CN';   // 汉字-182:lang 跟随所选语音——否则 iOS 会忽略 u.voice、改用系统默认(男女都变同一个声音)
         }
-        
+
         window.speechSynthesis.speak(u);
     }
     
