@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-134 (2026-07-04) — 手机端一批:去标题大墨迹留小点+触屏关滑动墨迹特效+标题缩34px+logo上对齐斑斓汉字行+6按钮改两列三行。桌面端不动 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-135 (2026-07-04) — 手机端:①拆字箭头改成小的向下箭头(部件视图竖排)②彩虹笔顺内容加白框卡片、去掉内层card自带边框那条横线。桌面端不动 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-134">
+    <meta name="version" content="汉字UI-135">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-134 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-135 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -3824,6 +3824,22 @@ console.log('%c[斑斓汉字] 汉字UI-134 已加载', 'color:#374a42;font-weigh
                 padding: 12px 0% !important;
                 overflow: visible !important;
             }
+            /* 汉字-135: #1(彩虹笔顺)内容区加白色边框卡片,与 #3 彩虹笔画一致——边框可见、左右内缩、不被挤出去 */
+            .canvas-area {
+                border: 1.5px solid #b0b8b3;
+                border-radius: 10px;
+                background: rgba(255, 255, 255, 0.55);
+                padding: 14px 10px;
+                margin: 0 6px;
+                box-sizing: border-box;
+                width: calc(100% - 12px);
+            }
+            /* 汉字-135: 去掉内层 .card 自带的边框(HSK 方框上面那条长横线)——只留外层 canvas-area 一个盒子 */
+            .canvas-area .card {
+                border-color: transparent !important;
+                background: transparent !important;
+                box-shadow: none !important;
+            }
             .card {
                 border-radius: 0 !important;
                 border-left: none !important;
@@ -6430,28 +6446,36 @@ console.log('%c[斑斓汉字] 汉字UI-134 已加载', 'color:#374a42;font-weigh
         // - 拼音用 HTML <div> 绝对定位覆盖，不受 SVG text 渲染影响
         const arr = document.createElement('div');
         arr.className = 'component-flow-arrow-pinyin';
-        arr.style.cssText = 'flex-shrink:0; position:relative; display:inline-block; width:140px; height:70px;';
+        // 汉字-135: 手机端(竖排)用更小的「向下」箭头,拼音在上半;桌面端保持横向 → 大箭头
+        const mArrow = window.matchMedia && window.matchMedia('(max-width: 600px)').matches;
+        const aW = mArrow ? 40 : 140, aH = mArrow ? 54 : 70;
+        arr.style.cssText = 'flex-shrink:0; position:relative; display:inline-block; width:' + aW + 'px; height:' + aH + 'px;';
         try {
             const NS = 'http://www.w3.org/2000/svg';
             const svg = document.createElementNS(NS, 'svg');
-            svg.setAttribute('width',   '140');
-            svg.setAttribute('height',  '70');
-            svg.setAttribute('viewBox', '0 0 140 70');
+            svg.setAttribute('width',   String(aW));
+            svg.setAttribute('height',  String(aH));
+            svg.setAttribute('viewBox', '0 0 ' + aW + ' ' + aH);
             svg.style.cssText = 'display:block; position:absolute; top:0; left:0;';
             const path = document.createElementNS(NS, 'path');
-            path.setAttribute('d', 'M0 18 L90 18 L90 0 L140 35 L90 70 L90 52 L0 52 Z');
+            // 手机=向下箭头(拼音矩形在上、尖头朝下);桌面=向右箭头
+            path.setAttribute('d', mArrow
+                ? 'M9 0 L31 0 L31 29 L40 29 L20 54 L0 29 L9 29 Z'
+                : 'M0 18 L90 18 L90 0 L140 35 L90 70 L90 52 L0 52 Z');
             path.setAttribute('fill',   '#52635b');   /* 墨绿，= var(--mo-mid)，同 ⏸ 按钮 */
             path.setAttribute('stroke', '#232a27');   /* 浓墨描边，= var(--mo-dark) */
             path.setAttribute('stroke-width',   '2');
             path.setAttribute('stroke-linejoin','round');
             svg.appendChild(path);
             arr.appendChild(svg);
-            // 拼音文字层（覆盖在矩形腰部，HTML 渲染不受 SVG / mobile CSS 影响）
+            // 拼音文字层（覆盖在矩形上，HTML 渲染不受 SVG / mobile CSS 影响）
             const pyLabel = document.createElement('div');
             pyLabel.style.cssText =
-                'position:absolute; top:0; left:0; width:90px; height:70px;' +
+                (mArrow
+                    ? 'position:absolute; top:0; left:0; width:40px; height:29px; font-size:12px;'
+                    : 'position:absolute; top:0; left:0; width:90px; height:70px; font-size:20px;') +
                 'display:flex; align-items:center; justify-content:center;' +
-                'color:#fff; font-weight:bold; font-size:20px; line-height:1;' +
+                'color:#fff; font-weight:bold; line-height:1;' +
                 'font-family:var(--font-main),Arial,sans-serif; pointer-events:none;';
             pyLabel.textContent = py;
             arr.appendChild(pyLabel);
