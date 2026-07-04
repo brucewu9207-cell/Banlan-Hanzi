@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-139 (2026-07-04) — 综合字帖拼音自适应改成统一字号:整屏所有拼音用同一个字号(能放下最长拼音的那个),不再一行里大小不一;数字格(笔画序号)不受影响 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-140 (2026-07-04) — 修拼音自适应只对综合字帖生效、彩虹笔画没生效的bug(两个区块共用一个timer互相取消);现彩虹笔画/综合字帖/部件展示区拼音都统一字号 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-139">
+    <meta name="version" content="汉字UI-140">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-139 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-140 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -6526,14 +6526,15 @@ console.log('%c[斑斓汉字] 汉字UI-139 已加载', 'color:#374a42;font-weigh
             });
             grids.forEach(function (pg) { pg.style.fontSize = minFs + 'px'; });
         }
-        var timer;
         function setup() {
-            ['unifiedWorksheetRoot', 'isolatedStrokesRoot'].forEach(function (id) {
+            // 汉字-140: 每个 root 独立 timer(原共用一个→多区块同时渲染时互相取消,彩虹笔画没生效);并覆盖部件展示区
+            ['unifiedWorksheetRoot', 'isolatedStrokesRoot', 'compDisplayRoot'].forEach(function (id) {
                 var root = document.getElementById(id);
                 if (!root) return;
+                var t;
                 new MutationObserver(function () {
-                    clearTimeout(timer);
-                    timer = setTimeout(function () { fitPinyinGrids(root); }, 60);
+                    clearTimeout(t);
+                    t = setTimeout(function () { fitPinyinGrids(root); }, 60);
                 }).observe(root, { childList: true, subtree: true });
             });
         }
