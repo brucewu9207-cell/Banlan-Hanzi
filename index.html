@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-186 (2026-07-04) — 下载中心手机弹窗电脑内联展开 + 彩虹笔顺图导出透明背景 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-187 (2026-07-04) — 彩虹笔顺图下载前弹窗选带数字/不带数字 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-186">
+    <meta name="version" content="汉字UI-187">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-186 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-187 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -5376,7 +5376,7 @@ console.log('%c[斑斓汉字] 汉字UI-186 已加载', 'color:#374a42;font-weigh
         <h3>⬇ 下载中心<span class="lang-en"> / Download Center</span><span class="lang-ar"> / مركز التنزيل</span></h3>
         <div class="download-group show" style="margin-top:14px; border-top:none; background:transparent; padding:0; flex-wrap:wrap;">
             <button class="btn-anim-dl" onclick="closeDownloadCenter(); showAnimDownloadModal()">🎬 1. 下载循环动画<span class="btn-en">Download: Loop Animation</span><span class="btn-ar">تنزيل: الرسوم المتحركة</span></button>
-            <button class="btn-dl-main" onclick="closeDownloadCenter(); currentDownloadType='main'; executeDownload('full')">🖊 2. 下载彩虹笔顺图<span class="btn-en">Download: Stroke Order</span><span class="btn-ar">تنزيل: ترتيب الفرشاة</span></button>
+            <button class="btn-dl-main" onclick="closeDownloadCenter(); openStrokeNumChoice()">🖊 2. 下载彩虹笔顺图<span class="btn-en">Download: Stroke Order</span><span class="btn-ar">تنزيل: ترتيب الفرشاة</span></button>
             <button class="btn-dl-strokes" onclick="closeDownloadCenter(); downloadAllStrokes()">🌈 3. 下载彩虹笔画<span class="btn-en">Download: Rainbow Strokes</span><span class="btn-ar">تنزيل: ضربات قوس قزح</span></button>
             <button class="btn-dl-comp" onclick="closeDownloadCenter(); downloadComponents()">🧩 4. 下载汉字部件<span class="btn-en">Download: Components</span><span class="btn-ar">تنزيل: المكونات</span></button>
             <button class="btn-dl-worksheet" onclick="closeDownloadCenter(); downloadUnifiedWorksheet()">✍ 5. 下载综合字帖<span class="btn-en">Download: Worksheet</span><span class="btn-ar">تنزيل: ورقة التدريب</span></button>
@@ -5384,6 +5384,20 @@ console.log('%c[斑斓汉字] 汉字UI-186 已加载', 'color:#374a42;font-weigh
         </div>
         <div class="modal-btns" style="margin-top:14px;">
             <button class="btn-cancel" onclick="closeDownloadCenter()">关闭<span class="lang-en"> / Close</span><span class="lang-ar"> / إغلاق</span></button>
+        </div>
+    </div>
+</div>
+
+<!-- 汉字-187:彩虹笔顺图下载前选「带数字/不带数字」小弹窗(body 层,避开 glass-panel 的 backdrop-filter) -->
+<div class="modal-overlay" id="strokeNumChoiceModal">
+    <div class="modal" style="max-width:340px; width:88vw; text-align:center;">
+        <h3>🖊 笔顺图要数字吗?<span class="lang-en"> / Numbers?</span><span class="lang-ar"> / أرقام؟</span></h3>
+        <div style="display:flex; gap:12px; margin-top:18px;">
+            <button class="btn-dl-main" style="flex:1;" onclick="currentDownloadType='main'; mainShowNumber=true; closeStrokeNumChoice(); executeDownload('full')">带数字<span class="btn-en">With Numbers</span><span class="btn-ar">مع الأرقام</span></button>
+            <button class="btn-dl-strokes" style="flex:1;" onclick="currentDownloadType='main'; mainShowNumber=false; closeStrokeNumChoice(); executeDownload('full')">不带数字<span class="btn-en">No Numbers</span><span class="btn-ar">بدون أرقام</span></button>
+        </div>
+        <div class="modal-btns" style="margin-top:16px;">
+            <button class="btn-cancel" onclick="closeStrokeNumChoice()">取消<span class="lang-en"> / Cancel</span><span class="lang-ar"> / إلغاء</span></button>
         </div>
     </div>
 </div>
@@ -5726,6 +5740,7 @@ console.log('%c[斑斓汉字] 汉字UI-186 已加载', 'color:#374a42;font-weigh
     let charDataArray = [];
     let isLooping = false;
     let currentDownloadType = '';
+    let mainShowNumber = true;   // 汉字-187:彩虹笔顺图导出是否带笔画序号(下载前弹窗选)
     let currentStrokeMode = 'rainbow';
     let availableVoices = [];
 
@@ -5828,6 +5843,9 @@ console.log('%c[斑斓汉字] 汉字UI-186 已加载', 'color:#374a42;font-weigh
         const inline = document.getElementById('downloadInline');
         if (inline) inline.style.display = 'none';
     }
+    // 汉字-187:彩虹笔顺图下载前选带/不带数字
+    function openStrokeNumChoice() { document.getElementById('strokeNumChoiceModal').style.display = 'flex'; }
+    function closeStrokeNumChoice() { document.getElementById('strokeNumChoiceModal').style.display = 'none'; }
 
     function toggleAcc(id) {
         const content = document.getElementById(id);
@@ -6924,10 +6942,11 @@ console.log('%c[斑斓汉字] 汉字UI-186 已加载', 'color:#374a42;font-weigh
                 const py = mode === 'english' ? pinyinPro.pinyin(char, {toneType: 'none'}) : pinyinPro.pinyin(char);
                 ctx.fillStyle = "#FF8C42"; ctx.font = "bold 80px 'PingFang SC'"; ctx.textAlign = "center"; ctx.fillText(py, (i * 1024) + 512, 90);
             }
-            let svg = currentDownloadType === 'main' ? generateSvgGroup(data.strokes, data.medians, true) : generateSvgGroup(data.strokes, null, false, null, true);
+            let svg = currentDownloadType === 'main' ? generateSvgGroup(data.strokes, data.medians, mainShowNumber) : generateSvgGroup(data.strokes, null, false, null, true);
             await drawSvgToCanvas(svg, ctx, i * 1024, headerHeight, 1024);
         }
-        const link = document.createElement("a"); link.href = canvas.toDataURL("image/png"); link.download = `${inputText}_${currentDownloadType}.png`; link.click();
+        const fileSuffix = currentDownloadType === 'main' ? (mainShowNumber ? '笔顺带数字' : '笔顺无数字') : currentDownloadType;
+        const link = document.createElement("a"); link.href = canvas.toDataURL("image/png"); link.download = `${inputText}_${fileSuffix}.png`; link.click();
     }
     
     function drawSvgToCanvas(svg, ctx, x, y, size) {
