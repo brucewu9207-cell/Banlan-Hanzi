@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-145 (2026-07-04) — 矩阵长名换行修正:去掉逐字母断行(word-break/overflow-wrap让min-content=1字符),只在空格处换行、排2-3行,名字span最大宽132px -->
+<!-- 斑斓汉字(老师端) · 汉字UI-146 (2026-07-04) — 手机端弱项看板:标题与低于/最弱筛选控件同一行(原flex-wrap窄屏挤到下一行);压窄标题+筛选锁宽让其挤进一行,图标保留 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-145">
+    <meta name="version" content="汉字UI-146">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-145 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-146 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1461,6 +1461,18 @@ console.log('%c[斑斓汉字] 汉字UI-145 已加载', 'color:#374a42;font-weigh
         .bl-wk-name { flex: 1; color: #22312b; padding-right: 10px; }
         .bl-wk-empty { color: var(--ink-gray); font-size: 13px; }
         @media (max-width: 700px) { .bl-wk-wrap { grid-template-columns: 1fr; } }
+        /* 汉字-146: 手机端「最该重点回讲的字 / 最需要关注的学生」标题与其「低于 / 最弱」筛选控件同一行(原 flex-wrap:wrap 窄屏会把控件挤到下一行)。空间不够就压窄标题(去 214px 死宽、缩 padding/字号),再不够压筛选控件的锁宽 */
+        @media (max-width: 600px) {
+            .bl-wk-head { flex-wrap: nowrap; gap: 8px; }
+            .bl-wk-title-weak, .bl-wk-title-stu { min-width: 0; }
+            .bl-wk-title { padding: 6px 8px 6px 22px; font-size: 12.5px; flex: 0 1 auto; min-width: 0; }
+            .bl-wk-ctrl { min-width: 0; gap: 5px; flex: 0 0 auto; }
+            [id^="wk-card-s-"] .bl-wk-ctrl { min-width: 0; }
+            [id^="wk-card-c-"] .bl-wk-ctrl-label,
+            [id^="wk-card-s-"] .bl-wk-ctrl-label { min-width: 0; }
+            .bl-wk-ctrl-tail { min-width: 0; }
+            .bl-wk-ctrl select { padding: 2px 4px; }
+        }
         .bl-matrix-table {
             border-collapse: collapse;
             width: 100%;
