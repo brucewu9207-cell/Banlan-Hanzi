@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-184 (2026-07-04) — 音频两处:①男女声都限普通话(zh-CN)池挑,男声不再跑去粤语②内容框只留一个可编辑文本框(去掉上面的拼音展示框)。桌面实测:女声婷婷/男声Li-Mu都zh-CN、单框、无报错。保存MP3查了全历史一直是占位、非本版能修 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-185 (2026-07-04) — 音频还原有道发音接口:试听/保存MP3免密钥可用,去掉设备语音识别与男女声选择 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-184">
+    <meta name="version" content="汉字UI-185">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-184 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-185 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -5358,17 +5358,7 @@ console.log('%c[斑斓汉字] 汉字UI-184 已加载', 'color:#374a42;font-weigh
             <div id="ttsCharLine" style="letter-spacing:12px; font-size:28px; color:#222; font-weight:bold; font-family:'KaiTi','STKaiti','楷体',serif;"></div>
         </div>
         <textarea id="ttsStudioText" rows="2" style="display:none;" placeholder="输入文本..."></textarea>
-        <div style="background:#dfe8e3; border:1px solid #c1d2c9; padding:12px; border-radius:4px; text-align:left; margin-bottom:16px;">
-            <label style="font-size:12px; color:var(--ink-green); font-weight:bold; display:block; margin-bottom:6px;">
-                发音人 <span class="lang-en">Voice</span><span class="lang-ar" style="font-family:'Tahoma','Arial',sans-serif;">الصوت</span>：
-            </label>
-            <select id="studioVoiceSelect" class="voice-select" style="width:100%; margin-bottom:12px;"></select>
-            <label style="font-size:12px; color:var(--ink-green); font-weight:bold; display:flex; justify-content:space-between; margin-bottom:4px;">
-                <span>语速 <span class="lang-en">Speed</span><span class="lang-ar" style="font-family:'Tahoma','Arial',sans-serif;">السرعة</span>：</span>
-                <span id="valRate">1.0</span>
-            </label>
-            <input type="range" id="studioRate" min="0.5" max="2" step="0.1" value="1.0" style="width:100%; accent-color:var(--ink-green);">
-        </div>
+        <!-- 汉字-185:改用有道发音接口(单一中文女声),原「发音人下拉 + 语速」不再适用,已去掉 -->
         <div class="modal-btns" style="flex-direction:row; gap:10px;">
             <button style="background:var(--ink-gray); border:none;" onclick="previewTtsStudio()">▶ 试听<span class="btn-en">Play</span><span class="btn-ar">تشغيل</span></button>
             <button style="background:#4f6a5d; border:none;" onclick="downloadTtsStudio()">💾 保存 MP3<span class="btn-en">Save</span><span class="btn-ar">حفظ</span></button>
@@ -7445,66 +7435,8 @@ console.log('%c[斑斓汉字] 汉字UI-184 已加载', 'color:#374a42;font-weigh
     // ==========================================
     // 语音配音工作室 (恢复男女声与语速控制)
     // ==========================================
-    function loadVoices() {
-        // 获取系统支持的中文语音
-        const allVoices = window.speechSynthesis.getVoices().filter(v => v.lang.includes('zh'));
-        availableVoices = [];
-        const voiceLabels = [];
-        
-        // 汉字-183:改成「优先选确定性别的标准语音」——原来按顺序抓第一个非男声,iPhone 会抓到苹果角色音 Eddy/Shelley(名字不含性别),结果两个都是男声。
-        // 确定女声(婷婷/语舒/美嘉/善怡 等标准语音,容错横杠)
-        const femaleRe = /(婷婷|语舒|美嘉|善怡|ting.?ting|yu.?shu|mei.?jia|sin.?ji|xiaoxiao|xiaoyi|huihui|yaoyao)/i;
-        // 确定男声(Li-Mu/云希/康康 等)
-        const maleRe = /(li.?mu|云希|云健|云野|yunxi|yunjian|yunye|kangkang)/i;
-        // 苹果「角色音」——性别不明、发音偏戏谑,尽量避开做主选
-        const noveltyRe = /(eddy|flo|grandma|grandpa|reed|rocko|sandy|shelley|bubbles|bahh|boing|jester|organ|cellos|zarvox|trinoids|whisper|wobble|superstar|good news|bad news)/i;
-        const cleanName = v => v.name.replace(/\s*[（(].*?[）)]\s*/g, '').replace(/\s+/g, ' ').trim();
-        // 汉字-184:只在「普通话(zh-CN)」里挑男女声,避免男声跑去粤语(zh-HK)/台湾(zh-TW);没有普通话才退回全部
-        const isMandarin = v => /zh[-_](cn|hans)/i.test(v.lang) || /(普通话|中国大陆|mandarin|简体)/i.test(v.name);
-        const pool = allVoices.filter(isMandarin).length ? allVoices.filter(isMandarin) : allVoices;
-        // 女声:先确定女声 → 再挑非男且非角色音 → 再挑非男 → 兜底第一个(均限普通话池)
-        const female = pool.find(v => femaleRe.test(v.name))
-                    || pool.find(v => !maleRe.test(v.name) && !noveltyRe.test(v.name))
-                    || pool.find(v => !maleRe.test(v.name))
-                    || pool[0];
-        if (female) { availableVoices.push(female); voiceLabels.push('👩 女声 · ' + cleanName(female)); }
-        // 男声:先确定男声 → 没有则从剩下挑一个不同的(优先非角色音)做替补(均限普通话池)
-        let male = pool.find(v => maleRe.test(v.name));
-        let maleFallback = false;
-        if (!male) {
-            male = pool.find(v => v !== female && !noveltyRe.test(v.name)) || pool.find(v => v !== female);
-            maleFallback = true;
-        }
-        if (male && male !== female) {
-            availableVoices.push(male);
-            voiceLabels.push('👨 男声' + (maleFallback ? '(替补)' : '') + ' · ' + cleanName(male));
-        }
-
-        const select = document.getElementById('studioVoiceSelect');
-        select.innerHTML = '';
-        
-        if(availableVoices.length === 0) {
-            select.innerHTML = '<option value="">默认语音 (依赖系统分配)</option>';
-            return;
-        }
-        
-        availableVoices.forEach((voice, i) => {
-            const option = document.createElement('option');
-            option.value = i;
-            option.textContent = voiceLabels[i];
-            select.appendChild(option);
-        });
-    }
-    
-    // 当浏览器语音库加载就绪时触发
-    if (window.speechSynthesis.onvoiceschanged !== undefined) {
-        window.speechSynthesis.onvoiceschanged = loadVoices;
-    }
-
-    // 监听语速滑动条的数值变化并显示
-    document.getElementById('studioRate').addEventListener('input', function() {
-        document.getElementById('valRate').textContent = parseFloat(this.value).toFixed(1);
-    });
+    // 汉字-185:音频改用「有道发音接口」,不再依赖设备浏览器语音(speechSynthesis)。
+    // 原 loadVoices 设备语音识别 + 发音人下拉 + 语速滑条已随之去掉(有道中文只有一个女声、且不支持调速)。
 
     // 输入框回车键触发挥毫生成
     document.getElementById('charInput').addEventListener('keydown', function(e) {
@@ -7657,36 +7589,39 @@ console.log('%c[斑斓汉字] 汉字UI-184 已加载', 'color:#374a42;font-weigh
         document.getElementById('ttsPinyinRow').style.display = 'none';
         textarea.style.cssText = 'display:block; width:100%; padding:14px; background:#fff; border:1px solid #c1d2c9; border-radius:4px; font-size:26px; font-family:var(--font-main); color:#222; box-sizing:border-box; margin-bottom:14px; text-align:center; letter-spacing:6px; resize:none;';
         document.getElementById('ttsStudioModal').style.display = 'flex';
-        loadVoices();
     }
-    
-    function closeTtsStudio() { 
-        window.speechSynthesis.cancel(); 
-        document.getElementById('ttsStudioModal').style.display='none'; 
-    }
-    
-    function previewTtsStudio() {
-        const t = document.getElementById('ttsStudioText').value; 
-        if(!t) return;
-        
-        window.speechSynthesis.cancel();
-        const u = new SpeechSynthesisUtterance(t); 
-        u.lang = 'zh-CN'; 
-        
-        // 读取设置的语速
-        u.rate = parseFloat(document.getElementById('studioRate').value);
-        
-        // 读取并应用选择的发音人
-        const select = document.getElementById('studioVoiceSelect');
-        if (select.value !== "" && availableVoices[select.value]) {
-            u.voice = availableVoices[select.value];
-            u.lang = u.voice.lang || 'zh-CN';   // 汉字-182:lang 跟随所选语音——否则 iOS 会忽略 u.voice、改用系统默认(男女都变同一个声音)
-        }
 
-        window.speechSynthesis.speak(u);
+    // 汉字-185:有道发音接口——免费、无密钥、无后端,所有设备发音一致(中文女声)。
+    // 有道对长文/标点会 500,课堂只用短词,先只保留中文/字母/数字。
+    let _ttsAudio = null;
+    function buildYoudaoUrl(raw) {
+        const text = (raw || '').replace(/[^一-鿿a-zA-Z0-9]/g, '');
+        if (!text) return '';
+        return 'https://dict.youdao.com/dictvoice?le=zh&type=0&audio=' + encodeURIComponent(text);
     }
-    
-    function downloadTtsStudio() { alert("下载 MP3 功能已触发。"); }
+
+    function closeTtsStudio() {
+        if (_ttsAudio) { try { _ttsAudio.pause(); } catch(e){} }
+        document.getElementById('ttsStudioModal').style.display='none';
+    }
+
+    function previewTtsStudio() {
+        const url = buildYoudaoUrl(document.getElementById('ttsStudioText').value);
+        if (!url) { alert('请先输入要配音的文字'); return; }
+        if (_ttsAudio) { try { _ttsAudio.pause(); } catch(e){} }
+        // new Audio 加载音频不需要 CORS,有道跨域可直接播
+        _ttsAudio = new Audio(url);
+        _ttsAudio.play().catch(() => alert('试听失败,请检查网络后重试'));
+    }
+
+    function downloadTtsStudio() {
+        const url = buildYoudaoUrl(document.getElementById('ttsStudioText').value);
+        if (!url) { alert('请先输入要配音的文字'); return; }
+        // <a download> 触发下载/在新页打开,同样不需要 CORS
+        const a = document.createElement('a');
+        a.href = url; a.download = '配音.mp3'; a.target = '_blank';
+        document.body.appendChild(a); a.click(); a.remove();
+    }
 
     // ==========================================
     // 背景音乐引擎 — 外部 URL · HTML5 Audio
