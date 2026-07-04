@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-183 (2026-07-04) — 音频修两处:①男女声改成优先选确定性别的标准语音(婷婷语舒等女/Li-Mu云希等男),避开苹果角色音Eddy/Shelley(名字不含性别、原按顺序抓抓歪了)②文本框改成始终可编辑(原有内容时被display none藏了没法打字)+拼音行随输入实时更新。桌面实测:女声婷婷男声Li-Mu、文本框可编辑、打学生拼音变xue sheng。保存MP3浏览器TTS做不了另议 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-184 (2026-07-04) — 音频两处:①男女声都限普通话(zh-CN)池挑,男声不再跑去粤语②内容框只留一个可编辑文本框(去掉上面的拼音展示框)。桌面实测:女声婷婷/男声Li-Mu都zh-CN、单框、无报错。保存MP3查了全历史一直是占位、非本版能修 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-183">
+    <meta name="version" content="汉字UI-184">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-183 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-184 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -7459,17 +7459,20 @@ console.log('%c[斑斓汉字] 汉字UI-183 已加载', 'color:#374a42;font-weigh
         // 苹果「角色音」——性别不明、发音偏戏谑,尽量避开做主选
         const noveltyRe = /(eddy|flo|grandma|grandpa|reed|rocko|sandy|shelley|bubbles|bahh|boing|jester|organ|cellos|zarvox|trinoids|whisper|wobble|superstar|good news|bad news)/i;
         const cleanName = v => v.name.replace(/\s*[（(].*?[）)]\s*/g, '').replace(/\s+/g, ' ').trim();
-        // 女声:先确定女声 → 再挑非男且非角色音 → 再挑非男 → 兜底第一个
-        const female = allVoices.find(v => femaleRe.test(v.name))
-                    || allVoices.find(v => !maleRe.test(v.name) && !noveltyRe.test(v.name))
-                    || allVoices.find(v => !maleRe.test(v.name))
-                    || allVoices[0];
+        // 汉字-184:只在「普通话(zh-CN)」里挑男女声,避免男声跑去粤语(zh-HK)/台湾(zh-TW);没有普通话才退回全部
+        const isMandarin = v => /zh[-_](cn|hans)/i.test(v.lang) || /(普通话|中国大陆|mandarin|简体)/i.test(v.name);
+        const pool = allVoices.filter(isMandarin).length ? allVoices.filter(isMandarin) : allVoices;
+        // 女声:先确定女声 → 再挑非男且非角色音 → 再挑非男 → 兜底第一个(均限普通话池)
+        const female = pool.find(v => femaleRe.test(v.name))
+                    || pool.find(v => !maleRe.test(v.name) && !noveltyRe.test(v.name))
+                    || pool.find(v => !maleRe.test(v.name))
+                    || pool[0];
         if (female) { availableVoices.push(female); voiceLabels.push('👩 女声 · ' + cleanName(female)); }
-        // 男声:先确定男声 → 没有则从剩下挑一个不同的(优先非角色音)做替补
-        let male = allVoices.find(v => maleRe.test(v.name));
+        // 男声:先确定男声 → 没有则从剩下挑一个不同的(优先非角色音)做替补(均限普通话池)
+        let male = pool.find(v => maleRe.test(v.name));
         let maleFallback = false;
         if (!male) {
-            male = allVoices.find(v => v !== female && !noveltyRe.test(v.name)) || allVoices.find(v => v !== female);
+            male = pool.find(v => v !== female && !noveltyRe.test(v.name)) || pool.find(v => v !== female);
             maleFallback = true;
         }
         if (male && male !== female) {
@@ -7502,8 +7505,6 @@ console.log('%c[斑斓汉字] 汉字UI-183 已加载', 'color:#374a42;font-weigh
     document.getElementById('studioRate').addEventListener('input', function() {
         document.getElementById('valRate').textContent = parseFloat(this.value).toFixed(1);
     });
-    // 汉字-183:文本框输入时实时刷新上方拼音行
-    document.getElementById('ttsStudioText').addEventListener('input', updateTtsPinyin);
 
     // 输入框回车键触发挥毫生成
     document.getElementById('charInput').addEventListener('keydown', function(e) {
@@ -7648,30 +7649,13 @@ console.log('%c[斑斓汉字] 汉字UI-183 已加载', 'color:#374a42;font-weigh
         a.click();
     }
 
-    // \u6c49\u5b57-183:\u62fc\u97f3\u884c\u968f\u6587\u672c\u6846\u8f93\u5165\u5b9e\u65f6\u66f4\u65b0(\u7528\u6237\u81ea\u5df1\u6539\u5185\u5bb9\u4e5f\u80fd\u770b\u5230\u62fc\u97f3)
-    function updateTtsPinyin() {
-        const text = document.getElementById('ttsStudioText').value;
-        const pinyinRow = document.getElementById('ttsPinyinRow');
-        const pinyinLine = document.getElementById('ttsPinyinLine');
-        const charLine = document.getElementById('ttsCharLine');
-        if (text && typeof pinyinPro !== 'undefined') {
-            const chars = Array.from(text);
-            const pinyinArr = chars.map(c => /[\u4e00-\u9fff\u3400-\u4dbf]/.test(c) ? pinyinPro.pinyin(c) : c);
-            pinyinLine.textContent = pinyinArr.join('  ');
-            charLine.textContent = chars.join('  ');
-            pinyinRow.style.display = 'block';
-        } else {
-            pinyinRow.style.display = 'none';
-        }
-    }
-
     function openTtsStudio() {
         const text = document.getElementById('charInput').value;
         const textarea = document.getElementById('ttsStudioText');
         textarea.value = text;
-        // \u6c49\u5b57-183:\u6587\u672c\u6846\u59cb\u7ec8\u53ef\u7f16\u8f91\u663e\u793a(\u539f\u6765\u6709\u5185\u5bb9\u65f6\u88ab display:none \u85cf\u4e86\u2192\u6ca1\u6cd5\u81ea\u5df1\u6253\u5b57)
-        textarea.style.cssText = 'display:block; width:100%; padding:12px; background:#fff; border:1px solid #c1d2c9; border-radius:4px; font-size:20px; font-family:var(--font-main); color:#222; box-sizing:border-box; margin-bottom:12px; text-align:center; letter-spacing:4px; resize:none;';
-        updateTtsPinyin();
+        // \u6c49\u5b57-184:\u53ea\u7559\u4e00\u4e2a\u53ef\u7f16\u8f91\u6587\u672c\u6846\u2014\u2014\u9690\u85cf\u4e0a\u65b9\u7684\u62fc\u97f3\u5c55\u793a\u6846(\u58a8\u821f:\u5185\u5bb9\u6846\u4e00\u4e2a\u5c31\u597d)
+        document.getElementById('ttsPinyinRow').style.display = 'none';
+        textarea.style.cssText = 'display:block; width:100%; padding:14px; background:#fff; border:1px solid #c1d2c9; border-radius:4px; font-size:26px; font-family:var(--font-main); color:#222; box-sizing:border-box; margin-bottom:14px; text-align:center; letter-spacing:6px; resize:none;';
         document.getElementById('ttsStudioModal').style.display = 'flex';
         loadVoices();
     }
