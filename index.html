@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-148 (2026-07-04) — 切语言时名单不再折叠:记住在读/待加入各自展开态,重画后原样恢复(原重画默认待加入收起,把展开态冲掉了) -->
+<!-- 斑斓汉字(老师端) · 汉字UI-149 (2026-07-04) — 学号标签固定为学号/ID,不跟语言切换(阿语下不再把ID变成阿语词) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-148">
+    <meta name="version" content="汉字UI-149">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-148 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-149 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -10222,7 +10222,7 @@ window.BL = (function () {
         const txtSid = tt('学号', 'ID', 'الرقم');
         // ★ 汉字-61:学号/已完成 改紧凑格式「中文/译文：值」
         const isArRoster = document.body.classList.contains('lang-mode-ar');
-        const sidLabel = '学号/' + (isArRoster ? 'الرقم' : 'ID') + '：';
+        const sidLabel = '学号/ID：';   // 汉字-149:学号标签固定「学号/ID」,不跟语言切换(墨舟:ID 不换阿语)
         const metaLabel = '已完成/' + (isArRoster ? 'مكتمل' : 'Completed') + '：';
 
         const sortByName = arr => arr.slice().sort((a, b) =>
