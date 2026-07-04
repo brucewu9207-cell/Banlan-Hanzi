@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-172 (2026-07-04) — 二维码/语言切换按钮再放大1.1倍:scale从0.6改0.66(三处含hover态) -->
+<!-- 斑斓汉字(老师端) · 汉字UI-173 (2026-07-04) — 主页音乐方框收矮:手机端盒子上下内边距10→3、播放按钮min-height 44→36,上下留白变小 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-172">
+    <meta name="version" content="汉字UI-173">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-172 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-173 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -4073,8 +4073,8 @@ console.log('%c[斑斓汉字] 汉字UI-172 已加载', 'color:#374a42;font-weigh
         }
         .bgm-btn {
             min-width: 44px;
-            min-height: 44px;
-            padding: 8px 14px !important;
+            min-height: 36px;                 /* 汉字-173:播放按钮收矮(44→36),音乐方框整体变矮 */
+            padding: 4px 14px !important;
             font-size: 18px;
             line-height: 1;
             background: var(--ink-gray);
@@ -4151,7 +4151,7 @@ console.log('%c[斑斓汉字] 汉字UI-172 已加载', 'color:#374a42;font-weigh
                 margin-left: 0;
                 border-left: none;
                 border-top: 1px dashed var(--border-light);
-                padding-top: 10px;
+                padding: 3px 12px;          /* 汉字-173:上下留白收紧(原 top:10/base 6→3),音乐方框变矮 */
                 justify-content: center;
             }
             .modal {
