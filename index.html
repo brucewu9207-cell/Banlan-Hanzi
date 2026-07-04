@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-154 (2026-07-04) — 已完成徽章两处修:①改用叠层锁宽(英文Completed与阿语مكتمل叠同格取最宽,不再靠估宽)彻底解决语言切换变大小 ②点卡片徽章反白(白底绿字)不再白字消失 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-155 (2026-07-04) — 新建任务弹窗:任务内容提示译文英/阿行数不同致切语言上下抖,改用叠层(两条译文叠同格取最高、当前显示另一占位隐藏)锁定高度不抖 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-154">
+    <meta name="version" content="汉字UI-155">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-154 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-155 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -978,6 +978,12 @@ console.log('%c[斑斓汉字] 汉字UI-154 已加载', 'color:#374a42;font-weigh
             font-size: 11px; color: var(--ink-gray);
             margin-top: 4px; letter-spacing: 0.3px;
         }
+        /* 汉字-155:任务内容提示的译文(英/阿)行数不同(英文常换两行)→ 提示高度随语言变、切换时上下抖。
+           把英文/阿语两条译文叠在同一格,格高取两者较高者,只显示当前语言、另一条占位隐藏(visibility)→ 三语高度恒定不抖。 */
+        .bl-hint-tr { display: grid; }
+        .bl-hint-tr > span { grid-area: 1 / 1; }
+        body.lang-mode-ar .bl-hint-tr .bl-htr-en { visibility: hidden; }
+        body:not(.lang-mode-ar) .bl-hint-tr .bl-htr-ar { visibility: hidden; }
 
         /* 按钮 */
         .bl-btn {
@@ -9100,7 +9106,7 @@ console.log('%c[斑斓汉字] 汉字UI-154 已加载', 'color:#374a42;font-weigh
             <div class="bl-form-group">
                 <label class="bl-label">任务内容<span class="lang-en">Content</span><span class="lang-ar">المحتوى</span></label>
                 <textarea class="bl-task-content-input" id="blTaskContent" placeholder="在此输入要练的汉字" maxlength="5000" autocomplete="off"></textarea>
-                <p class="bl-hint">逐字练习你输入的每个汉字（按顺序）；空格、标点、英文会自动忽略。<span class="lang-en"><br>Each Chinese character is practiced one by one, in order. Spaces, punctuation and non-Chinese are ignored.</span><span class="lang-ar"><br>يُتدرَّب على كل حرف صيني على حدة بالترتيب؛ تُتجاهل المسافات وعلامات الترقيم وغير الصينية.</span></p>
+                <p class="bl-hint">逐字练习你输入的每个汉字（按顺序）；空格、标点、英文会自动忽略。<span class="bl-hint-tr"><span class="bl-htr-en">Each Chinese character is practiced one by one, in order. Spaces, punctuation and non-Chinese are ignored.</span><span class="bl-htr-ar">يُتدرَّب على كل حرف صيني على حدة بالترتيب؛ تُتجاهل المسافات وعلامات الترقيم وغير الصينية.</span></span></p>
             </div>
             <!-- v2B-r2 多班推送(D3 升级版核心): 创建/复制模式显示,编辑模式隐藏 -->
             <div class="bl-form-group" id="blMultiClassGroup">
