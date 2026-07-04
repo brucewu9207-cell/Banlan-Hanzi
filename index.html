@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-142 (2026-07-04) — 修阿语/语言切换时学生名字方框轻微上下移位:学生卡原align-items:center,切语言文字宽高变→卡片高度变→名字被重新居中而移位;手机端改顶对齐(flex-start)锚住不动 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-143 (2026-07-04) — 手机端明细表:①任务按钮(反弹/汉字/测试)缩小、一行排下多了自动换行 ②展开后全班结果矩阵学生名字列限宽108px+换行,不再挤掉右边结果 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-142">
+    <meta name="version" content="汉字UI-143">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-142 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-143 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -1390,6 +1390,15 @@ console.log('%c[斑斓汉字] 汉字UI-142 已加载', 'color:#374a42;font-weigh
         }
         /* ★ 汉字-75:看板4模块按钮(墨绿药丸、中上译下),跟明细表任务按钮同形式 */
         .bl-dash-pill { white-space: pre-line; text-align: center; line-height: 1.25; }
+        /* 汉字-143: 手机端 —— ①明细表任务按钮缩小,一行排下、多了自动换行 ②矩阵学生名字列限宽+换行,别挤掉右边结果 */
+        @media (max-width: 600px) {
+            .bl-task-pill { font-size: 12px; padding: 5px 9px; border-radius: 7px; }
+            .bl-task-pillrow { gap: 6px; }
+            #blMatrix .bl-matrix-name {
+                max-width: 108px; white-space: normal;
+                word-break: break-word; overflow-wrap: anywhere; line-height: 1.25;
+            }
+        }
         /* ★ 汉字-73:方案B——选中任务保持原色,同行其余按钮灰掉 */
         .bl-task-pill-btn { transition: filter .15s, opacity .15s; }
         .bl-task-pill-btn:hover { opacity: .92; }
