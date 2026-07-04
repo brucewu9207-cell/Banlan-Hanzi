@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-167 (2026-07-04) — 明细表切任务不再移位:表格width 100%改max-content(名字列恒等学生名宽)+每个字列固定42px,切换汉字/测试等任务时名字与字格位置不变 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-168 (2026-07-04) — 明细表切任务左右移位再修:①面板加scrollbar-gutter stable永久预留竖直滚动条宽(切任务内容高变、滚动条忽有忽无不再左右推整块)②表格max-content提到全局(覆盖电脑端,名字列恒等学生名宽不随字数重算) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-167">
+    <meta name="version" content="汉字UI-168">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-167 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-168 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -866,6 +866,7 @@ console.log('%c[斑斓汉字] 汉字UI-167 已加载', 'color:#374a42;font-weigh
             padding: 12px 20px 14px;
             overflow-y: auto;
             flex: 1;
+            scrollbar-gutter: stable;   /* 汉字-168:永久预留竖直滚动条宽度→切任务时滚动条忽有忽无也不会把整块内容左右推移 */
         }
 
         /* 表单 */
@@ -1524,7 +1525,7 @@ console.log('%c[斑斓汉字] 汉字UI-167 已加载', 'color:#374a42;font-weigh
         }
         .bl-matrix-table {
             border-collapse: collapse;
-            width: 100%;
+            width: max-content;         /* 汉字-168:原 100% 自动布局会随任务字数重算列宽→切任务名字列移位;改按内容定宽、整体横滚,名字列恒等学生名宽(全端) */
             font-size: 13px;
             white-space: nowrap;
         }
