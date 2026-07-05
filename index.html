@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-190 (2026-07-05) — 页面顶部logo还原为带框原样(撤回误改);app图标192/512/180改为去方框、居中放大版 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-191 (2026-07-05) — 循环动画下载弹窗按钮重排:第1排HTML与GIF并排(去图标),第2排取消整条(双语随语言切换器,不再三语全堆) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-190">
+    <meta name="version" content="汉字UI-191">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-190 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-191 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -5432,11 +5432,13 @@ console.log('%c[斑斓汉字] 汉字UI-190 已加载', 'color:#374a42;font-weigh
             <div id="animProgressBar" style="height:100%; width:0%; background:linear-gradient(90deg, #6c3483, #a569bd); border-radius:8px; transition:0.2s;"></div>
         </div>
         <div id="animStatusText" style="font-size:13px; color:#888; margin-bottom:10px; min-height:18px;">准备就绪，点击开始录制。</div>
-        <!-- 汉字-188:互动网页导出 —— 自带「下一笔」按钮的独立 HTML,老师上课手动逐笔引导 -->
-        <button class="btn-gen" id="animInteractiveBtn" onclick="downloadInteractiveStroke()" style="width:100%; margin-bottom:10px; background:#2f4034; border-color:#243026;">🖐 下载互动网页(点下一笔)<span class="lang-en"> / Interactive HTML</span><span class="lang-ar"> / صفحة تفاعلية</span></button>
+        <!-- 汉字-191:循环动画下载按钮重排 —— 第1排 HTML|GIF 并排(HTML=互动网页/点下一笔,GIF=录制),第2排 取消(双语随切换器) -->
         <div class="modal-btns" style="flex-direction:row; gap:10px;">
-            <button class="btn-gen" id="animStartBtn" onclick="startAnimRecording()">▶ 开始录制并下载 GIF</button>
-            <button class="btn-cancel" id="animCancelBtn" onclick="closeAnimModal()">取消</button>
+            <button class="btn-gen" id="animInteractiveBtn" onclick="downloadInteractiveStroke()">HTML</button>
+            <button class="btn-gen" id="animStartBtn" onclick="startAnimRecording()">GIF</button>
+        </div>
+        <div class="modal-btns" style="margin-top:10px;">
+            <button class="btn-cancel" id="animCancelBtn" onclick="closeAnimModal()">取消<span class="lang-en"> / Cancel</span><span class="lang-ar"> / إلغاء</span></button>
         </div>
     </div>
 </div>
