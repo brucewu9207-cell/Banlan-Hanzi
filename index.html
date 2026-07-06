@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-192 (2026-07-05) — 循环动画弹窗:HTML/GIF按钮去掉呼吸光晕;取消去掉斜杠(取消 Cancel);手机端v1右边距6px→32px往左移不贴屏幕边 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-193 (2026-07-06) — 布置作业:班级卡片加「分享给学生」按钮,弹二维码(带班级码)+链接+一键复制,学生扫码即下载斑斓部件并自动进班 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-192">
+    <meta name="version" content="汉字UI-193">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-192 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-193 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -5221,6 +5221,27 @@ console.log('%c[斑斓汉字] 汉字UI-192 已加载', 'color:#374a42;font-weigh
     </div>
 </div>
 
+<!-- 汉字-193:分享给学生 —— 二维码/链接指向学生端并带上班级码,学生扫码即装 App 并自动进班 -->
+<div class="modal-overlay" id="shareStudentModal">
+    <div class="modal" style="max-width:380px; width:90vw;">
+        <h3>分享给学生
+            <span class="lang-en" style="font-size:18px; font-weight:bold; color:var(--ink-green); margin-left:8px;">Share</span>
+            <span class="lang-ar" style="font-size:18px; font-weight:bold; color:var(--ink-green); margin-left:8px; font-family:'Tahoma','Arial',sans-serif;">مشاركة</span>
+        </h3>
+        <p style="font-size:13px; color:var(--mo-light); text-align:center; margin:-4px 0 12px;">学生扫码 → 下载「斑斓部件」→ 自动进班<span class="lang-en"><br>Scan → get 斑斓部件 → auto-join</span><span class="lang-ar" style="font-family:'Tahoma','Arial',sans-serif;"><br>امسح → حمّل التطبيق → انضمّ تلقائياً</span></p>
+        <div class="qr-image-box">
+            <img id="shareStudentQr" src="" alt="学生端下载二维码" crossorigin="anonymous">
+            <img class="qr-center-logo" alt="" aria-hidden="true">
+        </div>
+        <a class="qr-link-text" id="shareStudentLink" target="_blank" rel="noopener"></a>
+        <div style="display:flex; gap:10px; margin-top:4px;">
+            <button class="btn-gen" style="flex:1; animation:none; box-shadow:none;" onclick="BL.copyShareLink()">📋 复制链接<span class="lang-en"> / Copy</span><span class="lang-ar"> / نسخ</span></button>
+            <button class="btn-cancel" style="flex:1;" onclick="BL.closeShareStudent()">关闭<span class="lang-en"> / Close</span><span class="lang-ar"> / إغلاق</span></button>
+        </div>
+        <p style="font-size:12px; color:var(--mo-light); text-align:center; margin-top:12px; line-height:1.6;">把二维码或链接发给学生,扫码就能装 App 并自动填好班级码,只需再输学号。<span class="lang-en"><br>Send it to students — they scan to install the app with the class code pre-filled; they just enter their student ID.</span><span class="lang-ar" style="font-family:'Tahoma','Arial',sans-serif;"><br>أرسله للطلاب — يمسحون لتثبيت التطبيق مع رمز الفصل معبّأً مسبقاً، ويُدخلون رقم الطالب فقط.</span></p>
+    </div>
+</div>
+
 <!-- 用户反馈弹窗（Office Forms 嵌入） -->
 <div class="modal-overlay" id="feedbackModal">
     <div class="modal" style="max-width:720px; width:95vw;">
@@ -10156,6 +10177,7 @@ window.BL = (function () {
                     <div class="bl-class-meta">${escapeHtml(metaText)}${escapeHtml(descLine)}</div>
                 </div>
                 <div class="bl-class-actions">
+                    <button class="bl-icon-btn" style="background:var(--ink-green);color:#fff;border-color:#2a3832;" onclick="BL.openShareStudent('${escapeAttr(c.classCode)}')" title="${escapeAttr(tt('分享给学生：发下载码+班级码', 'Share: student download + class code', 'مشاركة مع الطلاب'))}"><span class="bl-ico">📤</span> 分享<span class="lang-en"> · Share</span><span class="lang-ar"> · مشاركة</span></button>
                     <button class="bl-icon-btn" onclick="BL.openStudentsView('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleStudents)}"><span class="bl-ico">👥</span> ${(c.studentCount || 0)}/${(c.studentCount || 0) + (c.pendingCount || 0)}</button>
                     <button class="bl-icon-btn" onclick="BL.openTasksView('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleTasks)}"><span class="bl-ico">📋</span> ${c.taskCount || 0}</button>
                     <button class="bl-icon-btn bl-danger-icon" onclick="BL.deleteClass('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleDelete)}"><span class="bl-ico">🗑</span></button>
@@ -12317,8 +12339,37 @@ window.BL = (function () {
     // ─────────────────────────────────────────
     // 导出公共接口
     // ─────────────────────────────────────────
+    // 汉字-193:分享给学生 —— 二维码/链接指向学生端并带上班级码,学生扫码即装 App 并自动进班
+    const STUDENT_APP_URL = 'https://banlan-bujian.vercel.app/';
+    function openShareStudent(classCode) {
+        const url = STUDENT_APP_URL + '?class=' + encodeURIComponent(classCode);
+        state._shareUrl = url;
+        const qrImg = document.getElementById('shareStudentQr');
+        const linkEl = document.getElementById('shareStudentLink');
+        if (qrImg) qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=360x360&margin=20&ecc=H&data=' + encodeURIComponent(url);
+        if (linkEl) { linkEl.textContent = url.replace(/^https?:\/\//, ''); linkEl.href = url; }
+        // 二维码中央注入产品 logo（复用头部 base64，同 initQrCorner）
+        const brandLogo = document.querySelector('.header-title img[alt="斑斓汉字图标"]');
+        if (brandLogo) document.querySelectorAll('#shareStudentModal .qr-center-logo').forEach(el => { el.src = brandLogo.src; });
+        document.getElementById('shareStudentModal').style.display = 'flex';
+    }
+    function closeShareStudent() {
+        document.getElementById('shareStudentModal').style.display = 'none';
+    }
+    function copyShareLink() {
+        const url = state._shareUrl || '';
+        const done = () => toast(tt('链接已复制 ✓', 'Link copied ✓', 'تم نسخ الرابط ✓'), 'success');
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).then(done).catch(() => _copyFallback(url, done));
+        } else { _copyFallback(url, done); }
+    }
+    function _copyFallback(text, cb) {
+        try { const ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); if (cb) cb(); } catch (e) {}
+    }
+
     return {
         init,
+        openShareStudent, closeShareStudent, copyShareLink,
         openPanel, closePanel,
         switchTab,
         toggleAuthMode, submitAuth, logout, forgotPasswordPlaceholder,
