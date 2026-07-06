@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-195 (2026-07-06) — 分享给学生弹窗改成学生端卡片同款:纸色+竹黄描边、大标题左对齐、二维码左下角(中央嵌斑斓汉字logo)、小标题在右、链接下划线可点、复制关闭按钮双语切换 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-196 (2026-07-06) — 班级卡片分享按钮挪到最右边,去掉绿色强调、改成和其他图标按钮一致的灰色样式 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-195">
+    <meta name="version" content="汉字UI-196">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-195 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-196 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -10188,10 +10188,10 @@ window.BL = (function () {
                     <div class="bl-class-meta">${escapeHtml(metaText)}${escapeHtml(descLine)}</div>
                 </div>
                 <div class="bl-class-actions">
-                    <button class="bl-icon-btn" style="background:var(--ink-green);color:#fff;border-color:#2a3832;" onclick="BL.openShareStudent('${escapeAttr(c.classCode)}')" title="${escapeAttr(tt('分享给学生：发下载码+班级码', 'Share: student download + class code', 'مشاركة مع الطلاب'))}"><span class="bl-ico">📤</span> 分享<span class="lang-en"> · Share</span><span class="lang-ar"> · مشاركة</span></button>
                     <button class="bl-icon-btn" onclick="BL.openStudentsView('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleStudents)}"><span class="bl-ico">👥</span> ${(c.studentCount || 0)}/${(c.studentCount || 0) + (c.pendingCount || 0)}</button>
                     <button class="bl-icon-btn" onclick="BL.openTasksView('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleTasks)}"><span class="bl-ico">📋</span> ${c.taskCount || 0}</button>
                     <button class="bl-icon-btn bl-danger-icon" onclick="BL.deleteClass('${escapeAttr(c.classCode)}')" title="${escapeAttr(titleDelete)}"><span class="bl-ico">🗑</span></button>
+                    <button class="bl-icon-btn" onclick="BL.openShareStudent('${escapeAttr(c.classCode)}')" title="${escapeAttr(tt('分享给学生：发下载码+班级码', 'Share: student download + class code', 'مشاركة مع الطلاب'))}"><span class="bl-ico">📤</span> 分享<span class="lang-en"> · Share</span><span class="lang-ar"> · مشاركة</span></button>
                 </div>
             </div>
         `;}).join('');
