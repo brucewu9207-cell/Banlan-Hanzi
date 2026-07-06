@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-193 (2026-07-06) — 布置作业:班级卡片加「分享给学生」按钮,弹二维码(带班级码)+链接+一键复制,学生扫码即下载斑斓部件并自动进班 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-194 (2026-07-06) — PWA安装横幅做成三语切换(译文另起一行):桌面/iOS/电脑Chrome兜底提示+安装按钮全覆盖,跟语言切换器走 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-193">
+    <meta name="version" content="汉字UI-194">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-193 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-194 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -12524,6 +12524,8 @@ if (document.readyState === 'loading') {
   function isIOS(){ return /iphone|ipad|ipod/i.test(navigator.userAgent); }
   function dismiss(el){ try{ localStorage.setItem(LS_KEY, Date.now()); }catch(e){} if(el&&el.remove) el.remove(); }
   var deferredPrompt = null;
+  // 汉字-194/部件-187:安装横幅三语,译文另起一行(跟语言切换器走)
+  function tri(zh,en,ar){ return zh+'<span class="lang-en" style="display:block;opacity:.9;margin-top:2px;">'+en+'</span><span class="lang-ar" dir="rtl" style="display:block;opacity:.9;margin-top:2px;">'+ar+'</span>'; }
   window.addEventListener('beforeinstallprompt', function(e){ e.preventDefault(); deferredPrompt = e; });
 
   window.addEventListener('load', function(){
@@ -12543,15 +12545,15 @@ if (document.readyState === 'loading') {
     var txt=document.createElement('div'); txt.style.cssText='flex:1;';
     var btns=document.createElement('div'); btns.style.cssText='display:flex;gap:8px;align-items:center;flex-shrink:0;';
     if (isIOS()) {
-      txt.innerHTML='把<b>'+APP+'</b>装到主屏:点屏幕底部 <b>分享</b> <span style="display:inline-block;border:1.5px solid #f0e6cf;border-radius:4px;padding:0 5px;">⤴</span> → 选 <b>「添加到主屏幕」</b>。';
+      txt.innerHTML=tri('把<b>'+APP+'</b>装到主屏:点屏幕底部 <b>分享</b> <span style="display:inline-block;border:1.5px solid #f0e6cf;border-radius:4px;padding:0 5px;">⤴</span> → 选 <b>「添加到主屏幕」</b>。', 'Add <b>'+APP+'</b> to your home screen: tap <b>Share</b> ⤴ at the bottom → <b>"Add to Home Screen"</b>.', 'أضف <b>'+APP+'</b> إلى الشاشة الرئيسية: اضغط <b>مشاركة</b> ⤴ في الأسفل ← <b>«إضافة إلى الشاشة الرئيسية»</b>.');
       btns.appendChild(closeBtn(w));
     } else {
-      txt.innerHTML='把<b>'+APP+'</b>装到桌面/主屏,像 App 一样用,断网也能开。';
-      var install=document.createElement('button'); install.textContent='安装';
+      txt.innerHTML=tri('把<b>'+APP+'</b>装到桌面/主屏,像 App 一样用,断网也能开。', 'Add <b>'+APP+'</b> to your home screen — use it like an app, works offline.', 'أضف <b>'+APP+'</b> إلى الشاشة الرئيسية — استخدمه كتطبيق، ويعمل دون إنترنت.');
+      var install=document.createElement('button'); install.innerHTML='安装<span class="lang-en" style="display:block;font-size:12px;font-weight:600;opacity:.92;">Install</span><span class="lang-ar" dir="rtl" style="display:block;font-size:12px;font-weight:600;opacity:.92;">تثبيت</span>';
       install.style.cssText='background:#b5763a;border:none;color:#fff;font-weight:700;border-radius:9px;padding:9px 16px;font-size:14px;cursor:pointer;white-space:nowrap;';
       install.onclick=function(){
         if (deferredPrompt){ deferredPrompt.prompt(); deferredPrompt.userChoice.finally(function(){ deferredPrompt=null; dismiss(w); }); return; }
-        txt.innerHTML='在电脑 Chrome:点<b>地址栏右侧的安装图标</b>,或 <b>⋮ 菜单 → 安装'+APP+'</b>。';
+        txt.innerHTML=tri('在电脑 Chrome:点<b>地址栏右侧的安装图标</b>,或 <b>⋮ 菜单 → 安装'+APP+'</b>。', 'On desktop Chrome: click the <b>install icon in the address bar</b>, or <b>⋮ menu → Install '+APP+'</b>.', 'في Chrome على الكمبيوتر: اضغط <b>أيقونة التثبيت في شريط العنوان</b>، أو <b>القائمة ⋮ ← تثبيت '+APP+'</b>.');
         if (install.parentNode) install.parentNode.removeChild(install);
       };
       btns.appendChild(install); btns.appendChild(closeBtn(w));
