@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-198 (2026-07-06) — 分享弹窗二维码中央改嵌斑斓部件App图标(扫码到达的是学生端,原来错嵌了斑斓汉字logo);二维码白框放宽112→132px -->
+<!-- 斑斓汉字(老师端) · 汉字UI-199 (2026-07-06) — 修分享弹窗:①中央部件图标被撑满盖住二维码→限成30%露出二维码 ②背景改浅米色#faf5e9(参考头部二维码卡) ③弹窗放宽到500px让链接一行不折 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-198">
+    <meta name="version" content="汉字UI-199">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-198 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-199 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -2909,12 +2909,13 @@ console.log('%c[斑斓汉字] 汉字UI-198 已加载', 'color:#374a42;font-weigh
         .qr-link-text:hover { color: var(--zhusha); text-decoration: underline; }
         /* 汉字-195:分享弹窗改成学生端卡片同款(纸色#f5edd8+竹黄#b5763a、大标题左对齐、二维码左下角、小标题在右、链接下划线);仅作用于本弹窗,不影响别处 */
         #shareStudentModal { z-index: 1400; }   /* 汉字-197:分享弹窗从布置作业面板(bl-overlay z1100)里点开,必须比面板高,否则开在面板背后=点了没反应 */
-        #shareStudentModal .modal { background: #f5edd8; border: 2px solid #b5763a; text-align: left; }
+        #shareStudentModal .modal { background: #faf5e9; border: 2px solid #b5763a; text-align: left; }
         #shareStudentModal .modal::before { display: none; }
         #shareStudentModal .share-title { font-size: 19px; font-weight: 700; color: #5a4326; text-align: left; line-height: 1.3; margin: 0 0 10px; }
         #shareStudentModal .share-title .lang-en, #shareStudentModal .share-title .lang-ar { font-size: 14px; font-weight: 600; }
         #shareStudentModal .share-row { display: flex; gap: 16px; align-items: flex-end; text-align: left; }
         #shareStudentModal .qr-image-box { width: 132px; height: 132px; aspect-ratio: auto; margin: 0; padding: 10px; flex-shrink: 0; border-color: #e6dcc2; }
+        #shareStudentModal .qr-image-box .qr-center-logo { width: 30%; height: auto; }   /* 汉字-199:修中央图标被 .qr-image-box img{width/height:100%} 撑满盖住二维码 */
         #shareStudentModal .share-side { flex: 1; min-width: 0; }
         #shareStudentModal .share-desc { font-size: 13px; color: #4a3f2f; line-height: 1.5; }
         #shareStudentModal .share-desc .lang-en, #shareStudentModal .share-desc .lang-ar { display: block; opacity: 0.9; }
@@ -5235,7 +5236,7 @@ console.log('%c[斑斓汉字] 汉字UI-198 已加载', 'color:#374a42;font-weigh
 
 <!-- 汉字-193:分享给学生 —— 二维码/链接指向学生端并带上班级码,学生扫码即装 App 并自动进班 -->
 <div class="modal-overlay" id="shareStudentModal">
-    <div class="modal" style="max-width:400px; width:90vw;">
+    <div class="modal" style="max-width:500px; width:90vw;">
         <div class="share-title">分享给学生<span class="lang-en"> · Share</span><span class="lang-ar" style="font-family:'Tahoma','Arial',sans-serif;"> · مشاركة</span></div>
         <div class="share-row">
             <div class="qr-image-box">
