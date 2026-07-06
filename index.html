@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-197 (2026-07-06) — 修分享弹窗点了没反应:分享弹窗z-index 1000→1400,盖过布置作业面板(bl-overlay 1100),之前被面板盖住看不见 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-198 (2026-07-06) — 分享弹窗二维码中央改嵌斑斓部件App图标(扫码到达的是学生端,原来错嵌了斑斓汉字logo);二维码白框放宽112→132px -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-197">
+    <meta name="version" content="汉字UI-198">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-197 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-198 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -2913,8 +2913,8 @@ console.log('%c[斑斓汉字] 汉字UI-197 已加载', 'color:#374a42;font-weigh
         #shareStudentModal .modal::before { display: none; }
         #shareStudentModal .share-title { font-size: 19px; font-weight: 700; color: #5a4326; text-align: left; line-height: 1.3; margin: 0 0 10px; }
         #shareStudentModal .share-title .lang-en, #shareStudentModal .share-title .lang-ar { font-size: 14px; font-weight: 600; }
-        #shareStudentModal .share-row { display: flex; gap: 14px; align-items: flex-end; text-align: left; }
-        #shareStudentModal .qr-image-box { width: 112px; height: 112px; aspect-ratio: auto; margin: 0; padding: 6px; flex-shrink: 0; box-shadow: none; border-color: #e6dcc2; }
+        #shareStudentModal .share-row { display: flex; gap: 16px; align-items: flex-end; text-align: left; }
+        #shareStudentModal .qr-image-box { width: 132px; height: 132px; aspect-ratio: auto; margin: 0; padding: 10px; flex-shrink: 0; border-color: #e6dcc2; }
         #shareStudentModal .share-side { flex: 1; min-width: 0; }
         #shareStudentModal .share-desc { font-size: 13px; color: #4a3f2f; line-height: 1.5; }
         #shareStudentModal .share-desc .lang-en, #shareStudentModal .share-desc .lang-ar { display: block; opacity: 0.9; }
@@ -12353,6 +12353,7 @@ window.BL = (function () {
     // ─────────────────────────────────────────
     // 汉字-193:分享给学生 —— 二维码/链接指向学生端并带上班级码,学生扫码即装 App 并自动进班
     const STUDENT_APP_URL = 'https://banlan-bujian.vercel.app/';
+    const BUJIAN_ICON = 'data:image/png;base64,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';   // 汉字-198:二维码中央嵌斑斓部件App图标(扫码到达的是学生端)
     function openShareStudent(classCode) {
         const url = STUDENT_APP_URL + '?class=' + encodeURIComponent(classCode);
         state._shareUrl = url;
@@ -12360,9 +12361,8 @@ window.BL = (function () {
         const linkEl = document.getElementById('shareStudentLink');
         if (qrImg) qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=360x360&margin=20&ecc=H&data=' + encodeURIComponent(url);
         if (linkEl) { linkEl.textContent = url.replace(/^https?:\/\//, ''); linkEl.href = url; }
-        // 二维码中央注入产品 logo（复用头部 base64，同 initQrCorner）
-        const brandLogo = document.querySelector('.header-title img[alt="斑斓汉字图标"]');
-        if (brandLogo) document.querySelectorAll('#shareStudentModal .qr-center-logo').forEach(el => { el.src = brandLogo.src; });
+        // 二维码中央嵌「斑斓部件」App 图标（扫码到达的就是学生端,故用学生端图标,不是斑斓汉字）
+        document.querySelectorAll('#shareStudentModal .qr-center-logo').forEach(el => { el.src = BUJIAN_ICON; });
         document.getElementById('shareStudentModal').style.display = 'flex';
     }
     function closeShareStudent() {
