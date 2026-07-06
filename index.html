@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-196 (2026-07-06) — 班级卡片分享按钮挪到最右边,去掉绿色强调、改成和其他图标按钮一致的灰色样式 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-197 (2026-07-06) — 修分享弹窗点了没反应:分享弹窗z-index 1000→1400,盖过布置作业面板(bl-overlay 1100),之前被面板盖住看不见 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-196">
+    <meta name="version" content="汉字UI-197">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-196 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-197 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -2908,6 +2908,7 @@ console.log('%c[斑斓汉字] 汉字UI-196 已加载', 'color:#374a42;font-weigh
         }
         .qr-link-text:hover { color: var(--zhusha); text-decoration: underline; }
         /* 汉字-195:分享弹窗改成学生端卡片同款(纸色#f5edd8+竹黄#b5763a、大标题左对齐、二维码左下角、小标题在右、链接下划线);仅作用于本弹窗,不影响别处 */
+        #shareStudentModal { z-index: 1400; }   /* 汉字-197:分享弹窗从布置作业面板(bl-overlay z1100)里点开,必须比面板高,否则开在面板背后=点了没反应 */
         #shareStudentModal .modal { background: #f5edd8; border: 2px solid #b5763a; text-align: left; }
         #shareStudentModal .modal::before { display: none; }
         #shareStudentModal .share-title { font-size: 19px; font-weight: 700; color: #5a4326; text-align: left; line-height: 1.3; margin: 0 0 10px; }
