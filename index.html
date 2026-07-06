@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-200 (2026-07-06) — 分享弹窗:左右顶部对齐+放宽600px+译文一行+按钮去斜杠(复制链接Copy 关闭Close);头部二维码卡加复制链接+取消按钮(配色同分享弹窗:竹黄+米色) -->
+<!-- 斑斓汉字(老师端) · 汉字UI-201 (2026-07-06) — 分享弹窗:QR行左右居中对齐、改窄到540px(小标题仍一行、去掉多余留白);分享弹窗和头部二维码卡的按钮统一成深墨绿#374a42+灰#c8d0cc配色 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-200">
+    <meta name="version" content="汉字UI-201">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-200 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-201 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -2839,8 +2839,8 @@ console.log('%c[斑斓汉字] 汉字UI-200 已加载', 'color:#374a42;font-weigh
         .qr-corner.open .qr-corner-card { display: block; }
         .qr-corner-btns { display: flex; gap: 8px; margin-top: 12px; }
         .qr-corner-btns button { flex: 1; border: none; border-radius: 9px; padding: 9px 6px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; }
-        .qr-corner-copy { background: #b5763a; color: #fff; }        /* 汉字-200:配色参考分享弹窗 */
-        .qr-corner-cancel { background: #e8dcc0; color: #5a4326; }
+        .qr-corner-copy { background: #374a42; color: #fff; }
+        .qr-corner-cancel { background: #c8d0cc; color: #374a42; }
         .qr-corner.open .qr-corner-arrow { transform: rotate(180deg); }
         .qr-corner-title {
             color: var(--zhusha);           /* 猪肝红标题，同参考样式 */
@@ -2917,7 +2917,7 @@ console.log('%c[斑斓汉字] 汉字UI-200 已加载', 'color:#374a42;font-weigh
         #shareStudentModal .modal::before { display: none; }
         #shareStudentModal .share-title { font-size: 19px; font-weight: 700; color: #5a4326; text-align: left; line-height: 1.3; margin: 0 0 10px; }
         #shareStudentModal .share-title .lang-en, #shareStudentModal .share-title .lang-ar { font-size: 14px; font-weight: 600; }
-        #shareStudentModal .share-row { display: flex; gap: 16px; align-items: flex-start; text-align: left; }
+        #shareStudentModal .share-row { display: flex; gap: 16px; align-items: center; text-align: left; }
         #shareStudentModal .qr-image-box { width: 132px; height: 132px; aspect-ratio: auto; margin: 0; padding: 10px; flex-shrink: 0; border-color: #e6dcc2; }
         #shareStudentModal .qr-image-box .qr-center-logo { width: 30%; height: auto; }   /* 汉字-199:修中央图标被 .qr-image-box img{width/height:100%} 撑满盖住二维码 */
         #shareStudentModal .share-side { flex: 1; min-width: 0; }
@@ -5244,7 +5244,7 @@ console.log('%c[斑斓汉字] 汉字UI-200 已加载', 'color:#374a42;font-weigh
 
 <!-- 汉字-193:分享给学生 —— 二维码/链接指向学生端并带上班级码,学生扫码即装 App 并自动进班 -->
 <div class="modal-overlay" id="shareStudentModal">
-    <div class="modal" style="max-width:600px; width:90vw;">
+    <div class="modal" style="max-width:540px; width:90vw;">
         <div class="share-title">分享给学生<span class="lang-en"> · Share</span><span class="lang-ar" style="font-family:'Tahoma','Arial',sans-serif;"> · مشاركة</span></div>
         <div class="share-row">
             <div class="qr-image-box">
@@ -5257,8 +5257,8 @@ console.log('%c[斑斓汉字] 汉字UI-200 已加载', 'color:#374a42;font-weigh
             </div>
         </div>
         <div style="display:flex; gap:10px; margin-top:14px;">
-            <button style="flex:1; background:#b5763a; border:none; color:#fff; font-weight:700; border-radius:10px; padding:11px 8px; font-size:14px; cursor:pointer; line-height:1.3;" onclick="BL.copyShareLink()">📋 复制链接<span class="lang-en"> Copy</span><span class="lang-ar"> نسخ</span></button>
-            <button style="flex:1; background:#e8dcc0; border:none; color:#5a4326; font-weight:600; border-radius:10px; padding:11px 8px; font-size:14px; cursor:pointer; line-height:1.3;" onclick="BL.closeShareStudent()">关闭<span class="lang-en"> Close</span><span class="lang-ar"> إغلاق</span></button>
+            <button style="flex:1; background:#374a42; border:none; color:#fff; font-weight:700; border-radius:10px; padding:11px 8px; font-size:14px; cursor:pointer; line-height:1.3;" onclick="BL.copyShareLink()">📋 复制链接<span class="lang-en"> Copy</span><span class="lang-ar"> نسخ</span></button>
+            <button style="flex:1; background:#c8d0cc; border:none; color:#374a42; font-weight:600; border-radius:10px; padding:11px 8px; font-size:14px; cursor:pointer; line-height:1.3;" onclick="BL.closeShareStudent()">关闭<span class="lang-en"> Close</span><span class="lang-ar"> إغلاق</span></button>
         </div>
     </div>
 </div>
