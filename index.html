@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-202 (2026-07-07) — 电脑端下载中心6按钮加整体色块:淡墨绿底加墨绿描边圆角10px,墨舟从三方案预览选定;手机端弹窗不动 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-203 (2026-07-08) — HSK方框只留循环动画彩虹笔顺主视图,综合字帖、汉字部件、独立笔顺三个视图的HSK徽章全部去掉 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-202">
+    <meta name="version" content="汉字UI-203">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-202 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-203 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -6542,7 +6542,7 @@ console.log('%c[斑斓汉字] 汉字UI-202 已加载', 'color:#374a42;font-weigh
             const wrapper = document.createElement('div');
             wrapper.className = 'worksheet-char-block';
             wrapper.style.cssText = 'background:#fff;padding:16px 12px;border:1.5px solid #b0b8b3;margin-bottom:15px;border-radius:4px;width:100%;max-width:100%;box-sizing:border-box;display:flex;flex-direction:column;align-items:stretch;overflow:visible;';
-            wrapper.innerHTML = '<div style="text-align:center;margin-bottom:8px;">' + getHskBadgeHtml(item.char) + '</div>';
+            wrapper.innerHTML = '';   /* 汉字-203:去掉 HSK 徽章(墨舟定:HSK方框只留循环动画/彩虹笔顺主视图) */
 
             const totalStrokeCells = 1 + item.data.strokes.length;
             const targetCols = worksheetGridColumns(totalStrokeCells);
@@ -6605,17 +6605,7 @@ console.log('%c[斑斓汉字] 汉字UI-202 已加载', 'color:#374a42;font-weigh
         const py = charPinyinState[charIdx]
             ? charPinyinState[charIdx].current
             : (typeof pinyinPro !== 'undefined' ? pinyinPro.pinyin(char) : char);
-        const metaRow = document.createElement('div');
-        metaRow.className = 'meta-info-row';
-        metaRow.style.cssText = 'margin-bottom:14px;width:100%;';
-        // 【部件视图】拼音框搬到下方箭头里，metaRow 仅保留 HSK 徽章
-        const hskHtml = getHskBadgeHtml(char);
-        if (hskHtml) {
-            const hskTpl = document.createElement('template');
-            hskTpl.innerHTML = hskHtml.trim();
-            metaRow.appendChild(hskTpl.content.firstChild);
-        }
-        card.appendChild(metaRow);
+        /* 汉字-203:部件视图去掉 HSK 徽章(墨舟定:HSK方框只留循环动画/彩虹笔顺主视图);metaRow 只装它,连行一起省了 */
 
         // ── 格子行：完整字 → 各部件 ──
         const row = document.createElement('div');
@@ -6906,10 +6896,8 @@ console.log('%c[斑斓汉字] 汉字UI-202 已加载', 'color:#374a42;font-weigh
             wrapper.className = 'worksheet-char-block';
             wrapper.style.cssText = 'margin-bottom:25px;width:100%;max-width:100%;box-sizing:border-box;background:#fff;border:1.5px solid #b0b8b3;border-radius:2px;box-shadow:0 2px 10px rgba(55,74,66,0.04);padding:16px 12px;display:flex;flex-direction:column;align-items:stretch;overflow:visible;';
             // 【v30】移除小拼音 + 英文 + 阿语三语标注行（每个格子已有拼音，无需重复）
-            // 仅保留 HSK 徽章
-            wrapper.innerHTML = `
-                <div style="text-align:center;margin-bottom:6px;">${getHskBadgeHtml(item.char)}</div>
-            `;
+            /* 汉字-203:HSK 徽章也去掉(墨舟定:HSK方框只留循环动画/彩虹笔顺主视图) */
+            wrapper.innerHTML = '';
 
             // 笔顺内容行（去掉拼音方框）
             const wsRow = document.createElement('div');
