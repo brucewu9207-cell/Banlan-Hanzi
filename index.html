@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-203 (2026-07-08) — HSK方框只留循环动画彩虹笔顺主视图,综合字帖、汉字部件、独立笔顺三个视图的HSK徽章全部去掉 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-204 (2026-07-08) — 四个视图(循环动画彩虹笔顺、独立笔顺、汉字部件、综合字帖)各自所有内容装进一个大方框不按字拆开,照综合字帖下载版观感;根容器变唯一白框、逐字小卡剥掉边框底色 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-203">
+    <meta name="version" content="汉字UI-204">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-203 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-204 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -4293,6 +4293,19 @@ console.log('%c[斑斓汉字] 汉字UI-203 已加载', 'color:#374a42;font-weigh
             /* 汉字-179: 搜索框排在音乐条之下(order -1,在音乐 -2 与按钮 0 之间),完成两者位置对换 */
             .controls-bar > .input-wrapper { order: -1; }
         }
+
+        /* ★ 汉字-204:四个视图各自「所有内容装一个大方框、不按字拆开」(墨舟指定,照综合字帖下载版的观感)——
+           根容器变唯一白框卡,内部逐字小卡剥掉白底/边框/阴影;:not(:empty) 防空视图显示空框;
+           下载/打印走独立构建的文档,不吃这里的页面 CSS,出图不变 */
+        .word-row-container { background: #fff; border: 1.5px solid #b0b8b3; border-radius: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); padding: 12px 20px; box-sizing: border-box; }
+        .word-row-container > .card { background: transparent !important; border: none !important; box-shadow: none !important; }
+        #isolatedStrokesRoot:not(:empty) { background: #fff; border: 1.5px solid #b0b8b3; border-radius: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); padding: 16px; box-sizing: border-box; }
+        #isolatedStrokesRoot .worksheet-char-block { background: transparent !important; border: none !important; }
+        #unifiedWorksheetRoot:not(:empty) { background: #fff; border: 1.5px solid #b0b8b3; border-radius: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); padding: 16px; box-sizing: border-box; }
+        #unifiedWorksheetRoot .worksheet-char-block { background: transparent !important; border: none !important; }
+        #unifiedWorksheetRoot .sentence-display-card { background: transparent !important; border: none !important; }
+        #compDisplayRoot:not(:empty) { background: #fff; border: 1.5px solid #b0b8b3; border-radius: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); padding: 16px; box-sizing: border-box; }
+        #compDisplayRoot > div { background: transparent !important; border: none !important; }
 
     </style>
 </head>
