@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-201 (2026-07-06) — 分享弹窗:QR行左右居中对齐、改窄到540px(小标题仍一行、去掉多余留白);分享弹窗和头部二维码卡的按钮统一成深墨绿#374a42+灰#c8d0cc配色 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-202 (2026-07-07) — 电脑端下载中心6按钮加整体色块:淡墨绿底加墨绿描边圆角10px,墨舟从三方案预览选定;手机端弹窗不动 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-201">
+    <meta name="version" content="汉字UI-202">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-201 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-202 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -5019,7 +5019,8 @@ console.log('%c[斑斓汉字] 汉字UI-201 已加载', 'color:#374a42;font-weigh
         </div>
 
         <!-- 汉字-186:下载中心电脑端在此内联展开(手机端仍走弹窗);按钮由弹窗克隆,避免两处维护 -->
-        <div id="downloadInline" style="display:none; margin-top:10px; padding:12px; border:1px solid #c1d2c9; border-radius:6px; background:rgba(255,255,255,0.35);"></div>
+        <!-- 汉字-202:整体色块改淡墨绿(墨舟从三方案预览中选定①):淡墨绿底+墨绿描边,框感清晰不抢彩色按钮 -->
+        <div id="downloadInline" style="display:none; margin-top:10px; padding:14px; border:1.5px solid rgba(55,74,66,0.35); border-radius:10px; background:rgba(55,74,66,0.12);"></div>
 
         <!-- ★ 汉字UI-3: 抢先显示「班级与任务」按钮 —— 该按钮默认 display:none, 原本要等 ?unlock 调后端 API
              验证后才显示, 导致它加载完才冒出来、把 flex 输入框挤窄(可见的"加载跳动")。
