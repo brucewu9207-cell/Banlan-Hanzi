@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-210 (2026-07-08) — 209换新画法后三处衔接修:综合字帖你好头行左边框回来(去旧版-1px左移被裁)；彩虹笔画外框补上内边距不再与首行叠双线；彩虹笔画两字行10px缝改-1px连成一张连续表(参考综合字帖，205版留缝作废)；纯屏显CSS下载出图不变 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-211 (2026-07-08) — 下载中心展开时按钮下移并与面板焊成一整块(竹褐#8a6d4b同色、一条深褐外框框住整体、接缝无缝),下移后与上排按钮拉开距离;6个下载项改透明描边按钮、鼠标划过变墨绿#4a5c53;去按钮投影与蓝色选中框;纯屏显CSS仅桌面,手机端弹窗与下载出图不受影响 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-210">
+    <meta name="version" content="汉字UI-211">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-210 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-211 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -4367,6 +4367,29 @@ console.log('%c[斑斓汉字] 汉字UI-210 已加载', 'color:#374a42;font-weigh
         #isolatedStrokesRoot .worksheet-char-block { margin-bottom: -1px !important; }
         #isolatedStrokesRoot .worksheet-char-block:last-child { margin-bottom: 0 !important; }
 
+        /* ★ 汉字-211:下载中心「按钮 + 面板」= 一个整体区域·一条外框框住全部(墨舟第3轮定稿:竹褐同色连体;连接机制仅桌面)。
+           配色:竹褐 #8a6d4b / 描边深一档 #5f4a31(墨舟从4方案预览里选定,暖色、与墨绿主题相衬)。
+           收起:普通圆角独立竹褐按钮(与邻座按钮分开);
+           展开(桌面):按钮与面板同色 #8a6d4b + 同宽同色边框 1.5px #5f4a31;按钮去下边框、底角变方、::after 下探 3px 盖住面板顶边线那一段 →
+             边框从面板一路连上按钮当「凸出的标签」,整体只剩一条外轮廓(墨舟要的「一条线框住所有」)。
+           去按钮聚焦描边 + 去按钮投影(box-shadow 打在面板上会成一条分隔线)。
+           关键:展开态**面板去掉顶边框**(border-top:none)—— 按钮底边框也去掉、两者同色 #8a6d4b,按钮底与面板顶之间再无任何线,连成一整片;
+             外框由按钮的上/左/右 + 面板的左/右/下 拼成一条外轮廓(按钮当探出的标签)。
+           下载项去自身填充色,做成透明描边按钮(参考图1):透明底 + 浅白描边 + 浅字,浮在竹褐面板上、统一清爽。
+           第4/5轮(墨舟):① 「下载中心」按钮和面板必须「长在一起」= 一整块、接缝焊死看不见。做法:展开时按钮 position:relative top:14px **整体下移**,
+             底部**重叠 1px 焊进面板**(去下边框、底角变方、同色 #8a6d4b、面板 border-top:none)→ 按钮与面板连成一整块;按钮下移后又与上排其它 5 个按钮拉开约 13px、不贴合。
+                        ② 下载项鼠标划过变墨绿 #4a5c53(墨舟从4方案选定)+ 0.15s 过渡。
+           注:202 版面板本是淡墨绿,本次按墨舟指定改竹褐一体。手机端(≤600)走全屏弹窗、连接机制不生效(按钮色随之统一竹褐)。纯屏显 CSS,下载出图不变。 */
+        .btn-toggle-dl { background: #8a6d4b !important; border: 1.5px solid #5f4a31 !important; }
+        @media (min-width: 601px) {
+            .btn-toggle-dl.dl-open { border-bottom: none !important; border-bottom-left-radius: 0 !important; border-bottom-right-radius: 0 !important; box-shadow: none !important; position: relative !important; top: 14px !important; z-index: 4 !important; }
+            .btn-toggle-dl.dl-open:focus, .btn-toggle-dl.dl-open:focus-visible { outline: none !important; box-shadow: none !important; }
+            #downloadInline { margin-top: 13px !important; background: #8a6d4b !important; border: 1.5px solid #5f4a31 !important; border-top: none !important; }
+            #downloadInline .download-group button { background: transparent !important; border: 1px solid rgba(255, 255, 255, 0.5) !important; color: #f2ede4 !important; box-shadow: none !important; transition: background .15s ease !important; }
+            #downloadInline .download-group button:hover { background: #4a5c53 !important; }
+            #downloadInline .download-group button * { color: #f2ede4 !important; }
+        }
+
     </style>
 </head>
 <body>
@@ -5964,11 +5987,16 @@ console.log('%c[斑斓汉字] 汉字UI-210 已加载', 'color:#374a42;font-weigh
             inline.dataset.filled = '1';
         }
         inline.style.display = (inline.style.display === 'none') ? 'block' : 'none';
+        // 汉字-211:展开时按钮加 .dl-open(与面板连成一体),收起去掉
+        document.getElementById('btnToggleDl').classList.toggle('dl-open', inline.style.display === 'block');
     }
     function closeDownloadCenter() {
         document.getElementById('downloadCenterModal').style.display = 'none';
         const inline = document.getElementById('downloadInline');
         if (inline) inline.style.display = 'none';
+        // 汉字-211:收起时移除按钮连体态
+        const _btnDl = document.getElementById('btnToggleDl');
+        if (_btnDl) _btnDl.classList.remove('dl-open');
     }
     // 汉字-187:彩虹笔顺图下载前选带/不带数字
     function openStrokeNumChoice() { document.getElementById('strokeNumChoiceModal').style.display = 'flex'; }
