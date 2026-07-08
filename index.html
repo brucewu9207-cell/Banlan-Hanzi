@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-207 (2026-07-08) — 米字格虚线防摩尔纹:1px粗4,4间隔细虚线在非整数屏幕缩放下被吃掉一半、残段拼成跨格大X;虚线加粗1.5间隔5,4,纯CSS只改屏显,下载出图不变 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-208 (2026-07-08) — 字帖格子边框两处修:每格底边被滚动容器裁掉致缺底、补1px底内边距使格子闭合成完整方框;头行你好卡自身边框和内部格子最外圈叠成双线、去卡边框改由翻译行补单线框接格子行下、消除重叠且翻译仍框在句子里;纯CSS只改屏显下载出图不变 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-207">
+    <meta name="version" content="汉字UI-208">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-207 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-208 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -4329,6 +4329,17 @@ console.log('%c[斑斓汉字] 汉字UI-207 已加载', 'color:#374a42;font-weigh
            解药:虚线加粗 1→1.5、间隔 4,4→5,4(墨舟机器上实测摩尔纹消失、每格米字格清晰)。
            只用 CSS 盖屏显(CSS 样式优先于 SVG 标签属性);下载/打印走独立文档不吃页面 CSS,出图不变 */
         svg path[stroke-dasharray="4,4"] { stroke-width: 1.5; stroke-dasharray: 5,4; }
+
+        /* ★ 汉字-208:字帖格子边框两处硬伤(墨舟报「方框重叠 / 米字格不完整」,在墨舟浏览器实地定位):
+           ① 每格底边 1px border 正好压在滚动容器(overflow-y:hidden)最底边被裁掉→格子成「冂」缺底;
+              给滚动条留 1px 底内边距,底边就露出来、格子闭合成完整「口」。
+           ② 头行「你好」卡自身有边框,和它内部格子最外圈边框在四条边处叠成双线(还异色)→「重叠」;
+              去掉卡边框,改让「翻译行」补一条同款单线框接在格子行下(顶边共用格子行底边),
+              既消双线、翻译又仍框在句子框里。下载/打印走独立文档不吃页面 CSS,出图不变。 */
+        #unifiedWorksheetRoot .worksheet-scroll-strip,
+        #isolatedStrokesRoot .worksheet-scroll-strip { padding-bottom: 1px !important; }
+        #unifiedWorksheetRoot .sentence-display-card { border: none !important; }
+        #unifiedWorksheetRoot .sentence-translation-block { border: 1px solid #b0b8b3 !important; border-top: none !important; margin-top: -1px !important; box-sizing: border-box !important; }
 
     </style>
 </head>
