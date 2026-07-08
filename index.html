@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-208 (2026-07-08) — 字帖格子边框两处修:每格底边被滚动容器裁掉致缺底、补1px底内边距使格子闭合成完整方框;头行你好卡自身边框和内部格子最外圈叠成双线、去卡边框改由翻译行补单线框接格子行下、消除重叠且翻译仍框在句子里;纯CSS只改屏显下载出图不变 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-209 (2026-07-08) — 字帖格子边框细线掉段根治:综合字帖/彩虹笔画的米字格改用容器铺底色+1px缝隙画法(弃1px细边框叠边),非整数缩放下不再掉段致方框/外框缺；翻译框边线加粗到1.5px保命；纯屏显CSS下载出图不变 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-208">
+    <meta name="version" content="汉字UI-209">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-208 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-209 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -4340,6 +4340,19 @@ console.log('%c[斑斓汉字] 汉字UI-208 已加载', 'color:#374a42;font-weigh
         #isolatedStrokesRoot .worksheet-scroll-strip { padding-bottom: 1px !important; }
         #unifiedWorksheetRoot .sentence-display-card { border: none !important; }
         #unifiedWorksheetRoot .sentence-translation-block { border: 1px solid #b0b8b3 !important; border-top: none !important; margin-top: -1px !important; box-sizing: border-box !important; }
+
+        /* ★ 汉字-209:字帖方框「细线掉段」根治(墨舟报208后仍「米字格方框/边框不完整」——已在本地复现定位:
+           综合字帖/彩虹笔画两块的格子线全靠 .sentence-cell-box 的 1px border + margin:-1px 叠出来,
+           非整数缩放(浏览器缩放 / Windows 125% 那类)下 1px 实线落在半个设备像素上被抹掉→格子与外框整段缺失。
+           解药:弃「细线叠边框」,改「容器铺底色 + 1px 缝隙 + 四周 1px 内边距」透出线条(本文件 .worksheet-cell 早在用、从不掉线):
+           格子去掉自身 border/负边距,由 .worksheet-grid-row 铺底色 #b0b8b3、gap:1px、padding:1px 透出均匀实心线——
+           填色带在任何缩放都≥1设备像素、绝不整段消失,外框也由四周内边距连成完整一圈。翻译框那条单独边线一并加粗 1→1.5px 保命。
+           纯屏显 CSS(优先于内联 gap:0/transparent);下载/打印走独立文档不吃页面 CSS,出图不变。 */
+        #unifiedWorksheetRoot .worksheet-grid-row,
+        #isolatedStrokesRoot .worksheet-grid-row { gap: 1px !important; background: #b0b8b3 !important; padding: 1px !important; }
+        #unifiedWorksheetRoot .worksheet-grid-row .sentence-cell-box,
+        #isolatedStrokesRoot .worksheet-grid-row .sentence-cell-box { border: 0 !important; margin: 0 !important; }
+        #unifiedWorksheetRoot .sentence-translation-block { border-width: 1.5px !important; }
 
     </style>
 </head>
