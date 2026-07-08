@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-209 (2026-07-08) — 字帖格子边框细线掉段根治:综合字帖/彩虹笔画的米字格改用容器铺底色+1px缝隙画法(弃1px细边框叠边),非整数缩放下不再掉段致方框/外框缺；翻译框边线加粗到1.5px保命；纯屏显CSS下载出图不变 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-210 (2026-07-08) — 209换新画法后三处衔接修:综合字帖你好头行左边框回来(去旧版-1px左移被裁)；彩虹笔画外框补上内边距不再与首行叠双线；彩虹笔画两字行10px缝改-1px连成一张连续表(参考综合字帖，205版留缝作废)；纯屏显CSS下载出图不变 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-209">
+    <meta name="version" content="汉字UI-210">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-209 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-210 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -4353,6 +4353,19 @@ console.log('%c[斑斓汉字] 汉字UI-209 已加载', 'color:#374a42;font-weigh
         #unifiedWorksheetRoot .worksheet-grid-row .sentence-cell-box,
         #isolatedStrokesRoot .worksheet-grid-row .sentence-cell-box { border: 0 !important; margin: 0 !important; }
         #unifiedWorksheetRoot .sentence-translation-block { border-width: 1.5px !important; }
+
+        /* ★ 汉字-210:209 换新画法后带出三处衔接问题,墨舟实地报,逐条修:
+           A. 综合字帖「你好」头行左边框丢——该行有旧版遗留的 margin-left:-1px,把 1px 左边线顶到
+              滚动容器(overflow-x:auto)外被裁掉;去掉左移,左边线回到框内、与下面各行/翻译框左边对齐。
+           B. 彩虹笔画外框上内边距为 0,第一行顶边线贴住外框 1.5px 线叠成双线;补回 padding-top:16px
+              (与其它三边一致),外框与第一行之间留 16px 空隙、不再重叠。
+           C. 彩虹笔画上下两字行原留 10px 缝(205 版墨舟要过,今墨舟改要「连成一张连续表·参考综合字帖」),
+              把 char-block 间距由 10px 改 -1px 叠边,两行边框合一、连续不分开;末行归 0 不外溢。
+           纯屏显 CSS;下载/打印走独立文档不吃页面 CSS,出图不变。 */
+        #unifiedWorksheetRoot .sentence-display-card .worksheet-grid-row { margin-left: 0 !important; }
+        #isolatedStrokesRoot:not(:empty) { padding-top: 16px !important; }
+        #isolatedStrokesRoot .worksheet-char-block { margin-bottom: -1px !important; }
+        #isolatedStrokesRoot .worksheet-char-block:last-child { margin-bottom: 0 !important; }
 
     </style>
 </head>
