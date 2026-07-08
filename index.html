@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-211 (2026-07-08) — 下载中心展开时按钮下移并与面板焊成一整块(竹褐#8a6d4b同色、一条深褐外框框住整体、接缝无缝),下移后与上排按钮拉开距离;6个下载项改透明描边按钮、鼠标划过变墨绿#4a5c53;去按钮投影与蓝色选中框;纯屏显CSS仅桌面,手机端弹窗与下载出图不受影响 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-212 (2026-07-08) — 下载中心展开态改真文件夹标签(长在一起):面板保留顶边框、把面板层级压到按钮排controls-bar(z-index:1)之下,按钮下移后盖掉面板顶边线正下方那段、两侧接到剩下顶边线上,从面板顶边咬出缺口长出来成一条连续外轮廓(不再是悬浮压着的两层);竹褐同色、下载项透明描边+划过墨绿保留;纯屏显CSS仅桌面,手机端弹窗与下载出图不受影响 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-211">
+    <meta name="version" content="汉字UI-212">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-211 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-212 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -4382,9 +4382,11 @@ console.log('%c[斑斓汉字] 汉字UI-211 已加载', 'color:#374a42;font-weigh
            注:202 版面板本是淡墨绿,本次按墨舟指定改竹褐一体。手机端(≤600)走全屏弹窗、连接机制不生效(按钮色随之统一竹褐)。纯屏显 CSS,下载出图不变。 */
         .btn-toggle-dl { background: #8a6d4b !important; border: 1.5px solid #5f4a31 !important; }
         @media (min-width: 601px) {
-            .btn-toggle-dl.dl-open { border-bottom: none !important; border-bottom-left-radius: 0 !important; border-bottom-right-radius: 0 !important; box-shadow: none !important; position: relative !important; top: 14px !important; z-index: 4 !important; }
+            .btn-toggle-dl.dl-open { border-bottom: none !important; border-bottom-left-radius: 0 !important; border-bottom-right-radius: 0 !important; box-shadow: none !important; position: relative !important; top: 15px !important; z-index: 4 !important; }
             .btn-toggle-dl.dl-open:focus, .btn-toggle-dl.dl-open:focus-visible { outline: none !important; box-shadow: none !important; }
-            #downloadInline { margin-top: 13px !important; background: #8a6d4b !important; border: 1.5px solid #5f4a31 !important; border-top: none !important; }
+            /* 汉字-211(第6轮):面板保留顶边框(与三边同),按钮下探盖住它正下方那段、两侧接到剩下的顶边线上 → 标签从面板顶边「咬」出缺口/长出来、一条连续外轮廓(而非悬浮压在面板上)。
+               🔴 关键:`.controls-bar` 本身是 position:relative + z-index:1,按钮被关在这个层级里,默认盖不到面板;必须把面板 z-index 压到 1 以下(此处 0),controls-bar(连按钮)才会画在面板之上、按钮的填充色盖掉面板顶边线那一段 → 出缺口。 */
+            #downloadInline { margin-top: 13px !important; background: #8a6d4b !important; border: 1.5px solid #5f4a31 !important; position: relative !important; z-index: 0 !important; }
             #downloadInline .download-group button { background: transparent !important; border: 1px solid rgba(255, 255, 255, 0.5) !important; color: #f2ede4 !important; box-shadow: none !important; transition: background .15s ease !important; }
             #downloadInline .download-group button:hover { background: #4a5c53 !important; }
             #downloadInline .download-group button * { color: #f2ede4 !important; }
