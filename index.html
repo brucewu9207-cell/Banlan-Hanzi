@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-212 (2026-07-08) — 下载中心展开态改真文件夹标签(长在一起):面板保留顶边框、把面板层级压到按钮排controls-bar(z-index:1)之下,按钮下移后盖掉面板顶边线正下方那段、两侧接到剩下顶边线上,从面板顶边咬出缺口长出来成一条连续外轮廓(不再是悬浮压着的两层);竹褐同色、下载项透明描边+划过墨绿保留;纯屏显CSS仅桌面,手机端弹窗与下载出图不受影响 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-213 (2026-07-08) — 彩虹笔画改名单个笔画(分区标题+下载中心项,中英阿三语,图标改铅笔;彩虹笔顺是另一功能未动;下载文件名不含旧名不用改);下载中心展开项默认改纯白字+纯白框,鼠标划过效果改为白底深字#374a42(替换原墨绿);纯屏显CSS仅桌面,手机端弹窗与下载出图不受影响 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-212">
+    <meta name="version" content="汉字UI-213">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-212 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-213 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -4387,9 +4387,11 @@ console.log('%c[斑斓汉字] 汉字UI-212 已加载', 'color:#374a42;font-weigh
             /* 汉字-211(第6轮):面板保留顶边框(与三边同),按钮下探盖住它正下方那段、两侧接到剩下的顶边线上 → 标签从面板顶边「咬」出缺口/长出来、一条连续外轮廓(而非悬浮压在面板上)。
                🔴 关键:`.controls-bar` 本身是 position:relative + z-index:1,按钮被关在这个层级里,默认盖不到面板;必须把面板 z-index 压到 1 以下(此处 0),controls-bar(连按钮)才会画在面板之上、按钮的填充色盖掉面板顶边线那一段 → 出缺口。 */
             #downloadInline { margin-top: 13px !important; background: #8a6d4b !important; border: 1.5px solid #5f4a31 !important; position: relative !important; z-index: 0 !important; }
-            #downloadInline .download-group button { background: transparent !important; border: 1px solid rgba(255, 255, 255, 0.5) !important; color: #f2ede4 !important; box-shadow: none !important; transition: background .15s ease !important; }
-            #downloadInline .download-group button:hover { background: #4a5c53 !important; }
-            #downloadInline .download-group button * { color: #f2ede4 !important; }
+            /* 汉字-212(第7轮):下载项默认纯白字+纯白框;鼠标划过 = 白底+深字(墨舟指定图3效果,替换原墨绿) */
+            #downloadInline .download-group button { background: transparent !important; border: 1px solid #fff !important; color: #fff !important; box-shadow: none !important; transition: background .15s ease, color .15s ease !important; }
+            #downloadInline .download-group button * { color: #fff !important; }
+            #downloadInline .download-group button:hover { background: #fff !important; border-color: #fff !important; color: #374a42 !important; }
+            #downloadInline .download-group button:hover * { color: #374a42 !important; }
         }
 
     </style>
@@ -5174,8 +5176,8 @@ console.log('%c[斑斓汉字] 汉字UI-212 已加载', 'color:#374a42;font-weigh
         <div class="acc-item">
             <div class="acc-header" data-acc-id="acc-isolated-strokes">
                 <div class="acc-inline-title" style="flex:1;">
-                    <span class="acc-inline-zh">🌈 3. 彩虹笔画</span>
-                    <span class="acc-inline-sub lang-en">Rainbow Strokes</span><span class="acc-inline-sub lang-ar">ضربات قوس قزح</span>
+                    <span class="acc-inline-zh">✏️ 3. 单个笔画</span>
+                    <span class="acc-inline-sub lang-en">Single Strokes</span><span class="acc-inline-sub lang-ar">الضربات المفردة</span>
                 </div>
             </div>
             <div class="acc-content" id="acc-isolated-strokes">
@@ -5525,7 +5527,7 @@ console.log('%c[斑斓汉字] 汉字UI-212 已加载', 'color:#374a42;font-weigh
         <div class="download-group show" style="margin-top:14px; border-top:none; background:transparent; padding:0; flex-wrap:wrap;">
             <button class="btn-anim-dl" onclick="closeDownloadCenter(); showAnimDownloadModal()">🎬 1. 下载循环动画<span class="btn-en">Download: Loop Animation</span><span class="btn-ar">تنزيل: الرسوم المتحركة</span></button>
             <button class="btn-dl-main" onclick="closeDownloadCenter(); openStrokeNumChoice()">🖊 2. 下载彩虹笔顺图<span class="btn-en">Download: Stroke Order</span><span class="btn-ar">تنزيل: ترتيب الفرشاة</span></button>
-            <button class="btn-dl-strokes" onclick="closeDownloadCenter(); downloadAllStrokes()">🌈 3. 下载彩虹笔画<span class="btn-en">Download: Rainbow Strokes</span><span class="btn-ar">تنزيل: ضربات قوس قزح</span></button>
+            <button class="btn-dl-strokes" onclick="closeDownloadCenter(); downloadAllStrokes()">✏️ 3. 下载单个笔画<span class="btn-en">Download: Single Strokes</span><span class="btn-ar">تنزيل: الضربات المفردة</span></button>
             <button class="btn-dl-comp" onclick="closeDownloadCenter(); downloadComponents()">🧩 4. 下载汉字部件<span class="btn-en">Download: Components</span><span class="btn-ar">تنزيل: المكونات</span></button>
             <button class="btn-dl-worksheet" onclick="closeDownloadCenter(); downloadUnifiedWorksheet()">✍ 5. 下载综合字帖<span class="btn-en">Download: Worksheet</span><span class="btn-ar">تنزيل: ورقة التدريب</span></button>
             <button class="btn-anim-dl" onclick="closeDownloadCenter(); downloadStrokeGuide()" style="background:#7a9e8e; border:1px solid #668a7a;">⚠️ 6. 下载关于汉字<span class="btn-en">Download: About Characters</span><span class="btn-ar">تنزيل: عن الحروف</span></button>
