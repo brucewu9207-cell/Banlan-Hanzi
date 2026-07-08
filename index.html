@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-205 (2026-07-08) — 独立笔顺与综合字帖排成一张连续字帖:书写行贴合成一张表、米字格竖线跨行全对齐、翻译归进句子方框、彩虹笔画行间留10px缝防边框重叠;顺带修行居中溢出把第一列裁死的隐患 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-206 (2026-07-08) — 独立笔顺与综合字帖内容在大框里水平居中:行改自动居中且互相对齐,米字格外框任何屏宽都压不到外面的边框(窄屏自动退回靠左留边距) -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-205">
+    <meta name="version" content="汉字UI-206">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-205 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-206 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -4304,7 +4304,7 @@ console.log('%c[斑斓汉字] 汉字UI-205 已加载', 'color:#374a42;font-weigh
         #unifiedWorksheetRoot:not(:empty) { background: #fff; border: 1.5px solid #b0b8b3; border-radius: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); padding: 16px; box-sizing: border-box; }
         #unifiedWorksheetRoot .worksheet-char-block { background: transparent !important; border: none !important; }
         /* 汉字-205:句子卡恢复边框——翻译行归进句子方框里(墨舟指定);格子行 -1px 补偿边框、竖线与下方书写行对齐 */
-        #unifiedWorksheetRoot .sentence-display-card { background: #fff !important; border: 1px solid #cfd6d1 !important; width: max-content !important; margin: 0 !important; padding: 0 !important; }
+        #unifiedWorksheetRoot .sentence-display-card { background: #fff !important; border: 1px solid #cfd6d1 !important; width: max-content !important; margin: 0 auto !important; padding: 0 !important; }   /* 汉字-206:margin auto→随行居中 */
         #unifiedWorksheetRoot .sentence-display-card .worksheet-grid-row { margin-left: -1px !important; }
         #compDisplayRoot:not(:empty) { background: #fff; border: 1.5px solid #b0b8b3; border-radius: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); padding: 16px; box-sizing: border-box; }
         #compDisplayRoot > div { background: transparent !important; border: none !important; }
@@ -4319,7 +4319,9 @@ console.log('%c[斑斓汉字] 汉字UI-205 已加载', 'color:#374a42;font-weigh
         #unifiedWorksheetRoot .worksheet-char-block .worksheet-row-wrapper, #isolatedStrokesRoot .worksheet-char-block .worksheet-row-wrapper { margin-top: 0 !important; }
         #unifiedWorksheetRoot .worksheet-char-block .worksheet-row-wrapper + .worksheet-row-wrapper { margin-top: -1px !important; }
         #unifiedWorksheetRoot .worksheet-row-wrapper, #isolatedStrokesRoot .worksheet-row-wrapper { padding-bottom: 0 !important; justify-content: flex-start !important; }
-        #unifiedWorksheetRoot .worksheet-grid-row, #isolatedStrokesRoot .worksheet-grid-row { width: max-content !important; justify-content: flex-start !important; margin: 0 !important; }
+        /* 汉字-206:行改「自动居中」(margin auto)——等宽行居中后互相对齐;窄屏溢出时自动退回靠左可滚,不会把第一列裁掉;
+           大框自带 16px 内边距,米字格外框永远压不到外框边线 */
+        #unifiedWorksheetRoot .worksheet-grid-row, #isolatedStrokesRoot .worksheet-grid-row { width: max-content !important; justify-content: flex-start !important; margin: 0 auto !important; }
         #unifiedWorksheetRoot .sentence-display-card .worksheet-row-wrapper { padding-left: 0 !important; padding-right: 0 !important; }
 
     </style>
