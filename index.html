@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-214 (2026-07-09) — 注册加邮箱必填并唯一(存 teacher_email 索引);账号页加老账号补填邮箱入口;后端新增 set-email 端点,登录逻辑不动 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-215 (2026-07-09) — 运营面板加账号名单:owner 专属端点列出所有老师(剥密码),弹窗预览+搜索+按有无邮箱筛选+导出Excel -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-214">
+    <meta name="version" content="汉字UI-215">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-214 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-215 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -954,6 +954,17 @@ console.log('%c[斑斓汉字] 汉字UI-214 已加载', 'color:#374a42;font-weigh
         .bl-acct-box, #blOwnerStats { background: #eef3ef; border: 1px solid #d3ddd6; border-radius: 12px; padding: 14px; }
         .bl-acct-box { margin-top: 4px; }
         #blOwnerStats { margin-top: 16px; }
+        /* 汉字-215:注册账号名单弹窗 */
+        .bl-tl-modal { width: 720px; max-width: 92vw; }
+        .bl-tl-toolbar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .bl-tl-filters { display: flex; gap: 6px; }
+        .bl-tl-fbtn { border: 1px solid #cfd8d2; background: #fff; color: #374a42; border-radius: 8px; padding: 6px 12px; font-size: 13px; cursor: pointer; white-space: nowrap; }
+        .bl-tl-fbtn.is-on { background: #374a42; color: #fff; border-color: #374a42; }
+        .bl-tl-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .bl-tl-table th, .bl-tl-table td { text-align: left; padding: 7px 10px; border-bottom: 1px solid #eef1ef; white-space: nowrap; }
+        .bl-tl-table th { position: sticky; top: 0; background: #eef3ef; color: #374a42; font-weight: 700; z-index: 1; }
+        .bl-tl-table td { color: #333; }
+        .bl-tl-beta { background: #c8a24b; color: #fff; font-size: 10px; padding: 1px 5px; border-radius: 4px; margin-left: 5px; }
         /* 汉字-157:账号页三标签(用户名/账号ID/注册时间)与运营数据标题统一 min-width,四者等宽 */
         #blViewAccount .bl-form-group > .bl-label { min-width: 130px; }
         /* 汉字-156:标题行——运营数据标题(左)+ 刷新(右)同一行 */
@@ -9338,7 +9349,10 @@ console.log('%c[斑斓汉字] 汉字UI-214 已加载', 'color:#374a42;font-weigh
                 <div id="blOwnerStats" style="display:none;">
                     <div class="bl-owner-head">
                         <div class="bl-cp-divider" style="cursor:default;">📊 运营数据<span class="lang-en">Ops Data</span><span class="lang-ar">بيانات التشغيل</span></div>
-                        <button class="bl-btn bl-secondary" onclick="BL.refreshOwnerStats()" id="blOwnerRefreshBtn">🔄 刷新<span class="lang-en">Refresh</span><span class="lang-ar">تحديث</span></button>
+                        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                            <button class="bl-btn bl-secondary" onclick="BL.openTeacherList()" id="blOwnerListBtn">📋 账号名单<span class="lang-en">Accounts</span><span class="lang-ar">الحسابات</span></button>
+                            <button class="bl-btn bl-secondary" onclick="BL.refreshOwnerStats()" id="blOwnerRefreshBtn">🔄 刷新<span class="lang-en">Refresh</span><span class="lang-ar">تحديث</span></button>
+                        </div>
                     </div>
                     <div class="bl-owner-grid">
                         <div class="bl-owner-card"><div class="bl-owner-num" id="blOwnerTeachers">—</div><div class="bl-owner-lbl">老师<span class="lang-en">Teachers</span><span class="lang-ar">المعلمون</span></div></div>
@@ -10047,6 +10061,122 @@ window.BL = (function () {
             toast(e.message || tt('拉取数据失败', 'Failed to load stats', 'فشل تحميل البيانات'), 'error');
         } finally {
             if (btn) btn.disabled = false;
+        }
+    }
+
+    // ────────── 汉字-215:注册账号名单(owner 专属)—— 预览 / 搜索筛选 / 导出 Excel ──────────
+    let _teacherListData = [];   // 缓存本次拉到的全部老师,供搜索/筛选/导出复用
+
+    // 按关键词 + 有无邮箱筛选
+    function _tlFilter(kw, flt) {
+        kw = (kw || '').trim().toLowerCase();
+        return _teacherListData.filter(function (t) {
+            if (flt === 'has' && !t.email) return false;
+            if (flt === 'no' && t.email) return false;
+            if (kw && !((t.username || '').toLowerCase().includes(kw) || (t.email || '').toLowerCase().includes(kw))) return false;
+            return true;
+        });
+    }
+    // 从弹窗 DOM 读当前搜索词 + 选中的筛选
+    function _tlState(root) {
+        const se = root.querySelector('#blTlSearch');
+        const kw = se ? se.value : '';
+        const onBtn = root.querySelector('.bl-tl-fbtn.is-on');
+        const flt = onBtn ? onBtn.getAttribute('data-flt') : 'all';
+        return { kw: kw, flt: flt };
+    }
+    function renderTeacherList(root) {
+        const st = _tlState(root);
+        const rows = _tlFilter(st.kw, st.flt);
+        const wrap = root.querySelector('#blTlTableWrap');
+        const cnt = root.querySelector('#blTlCount');
+        if (cnt) cnt.textContent = tt('显示', 'Showing', 'عرض') + ' ' + rows.length + ' / ' + _teacherListData.length;
+        if (!rows.length) { wrap.innerHTML = '<div class="bl-hint">' + tt('无匹配账号', 'No match', 'لا نتائج') + '</div>'; return; }
+        const head = '<tr><th>#</th><th>' + tt('用户名', 'User', 'المستخدم') + '</th><th>' + tt('邮箱', 'Email', 'البريد') + '</th><th>' + tt('显示名', 'Name', 'الاسم') + '</th><th>' + tt('注册时间', 'Registered', 'التسجيل') + '</th></tr>';
+        const body = rows.map(function (t) {
+            const emailCell = t.email
+                ? escapeHtml(t.email)
+                : '<span style="color:#b33939;">' + tt('未补填', '(none)', '(لا)') + '</span>';
+            const beta = t.betaAccess ? '<span class="bl-tl-beta">beta</span>' : '';
+            return '<tr>' +
+                '<td>' + (t.registrationSlot != null ? t.registrationSlot : '·') + '</td>' +
+                '<td>' + escapeHtml(t.username) + beta + '</td>' +
+                '<td>' + emailCell + '</td>' +
+                '<td>' + escapeHtml(t.displayName) + '</td>' +
+                '<td>' + escapeHtml(formatDateTime(t.createdAt)) + '</td>' +
+                '</tr>';
+        }).join('');
+        wrap.innerHTML = '<table class="bl-tl-table">' + head + body + '</table>';
+    }
+    // 导出当前筛选后的名单为 Excel(SheetJS —— 是 XLSX.writeFile,不是 utils.writeFile)
+    function exportTeacherList(root) {
+        if (!window.XLSX) { toast(tt('导出组件未加载', 'Export lib not loaded', 'مكتبة التصدير غير محملة'), 'error'); return; }
+        const st = _tlState(root);
+        const rows = _tlFilter(st.kw, st.flt);
+        if (!rows.length) { toast(tt('没有可导出的账号', 'Nothing to export', 'لا شيء للتصدير'), 'error'); return; }
+        const aoa = [['#', '用户名 Username', '邮箱 Email', '显示名 Name', '注册时间 Registered', '内测 Beta']];
+        rows.forEach(function (t) {
+            aoa.push([
+                t.registrationSlot != null ? t.registrationSlot : '',
+                t.username || '',
+                t.email || '',
+                t.displayName || '',
+                formatDateTime(t.createdAt) || '',
+                t.betaAccess ? 'Y' : ''
+            ]);
+        });
+        const ws = XLSX.utils.aoa_to_sheet(aoa);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, '注册账号');
+        const d = new Date();
+        const stamp = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        XLSX.writeFile(wb, '斑斓汉字_注册账号_' + stamp + '.xlsx');
+        toast(tt('已导出 ✓', 'Exported ✓', 'تم التصدير ✓'), 'success');
+    }
+    // 打开「注册账号名单」弹窗(owner 专属;面板本就仅 owner 显示)
+    async function openTeacherList() {
+        const overlay = document.createElement('div');
+        overlay.className = 'bl-overlay bl-show';
+        overlay.innerHTML =
+          '<div class="bl-modal bl-tl-modal">' +
+            '<div class="bl-header">' +
+              '<h3>📋 ' + _L34('注册账号名单', 'Registered Accounts', 'الحسابات المسجلة') + '</h3>' +
+              '<button class="bl-close" data-act="close">✕</button>' +
+            '</div>' +
+            '<div style="padding:12px 18px;">' +
+              '<div class="bl-tl-toolbar">' +
+                '<input type="text" class="bl-input" id="blTlSearch" placeholder="搜用户名 / 邮箱  Search" style="flex:1; min-width:150px;">' +
+                '<div class="bl-tl-filters">' +
+                  '<button class="bl-tl-fbtn is-on" data-flt="all">' + _L34('全部', 'All', 'الكل') + '</button>' +
+                  '<button class="bl-tl-fbtn" data-flt="has">' + _L34('有邮箱', 'Email', 'ببريد') + '</button>' +
+                  '<button class="bl-tl-fbtn" data-flt="no">' + _L34('没邮箱', 'No email', 'بلا') + '</button>' +
+                '</div>' +
+              '</div>' +
+              '<div id="blTlCount" class="bl-hint" style="margin:8px 0;"></div>' +
+              '<div id="blTlTableWrap" style="max-height:52vh; overflow:auto;"><div class="bl-hint">' + tt('加载中…', 'Loading…', 'جارٍ التحميل…') + '</div></div>' +
+            '</div>' +
+            '<div class="bl-roster-foot">' +
+              '<button class="bl-btn-ghost" data-act="close">' + _L34('关闭', 'Close', 'إغلاق') + '</button>' +
+              '<button class="bl-btn-primary" data-act="export">⬇ ' + _L34('导出 Excel', 'Export', 'تصدير') + '</button>' +
+            '</div>' +
+          '</div>';
+        document.body.appendChild(overlay);
+        const close = function () { if (overlay.parentNode) overlay.parentNode.removeChild(overlay); };
+        overlay.querySelectorAll('[data-act="close"]').forEach(function (b) { b.onclick = close; });
+        overlay.querySelector('[data-act="export"]').onclick = function () { exportTeacherList(overlay); };
+        overlay.querySelector('#blTlSearch').oninput = function () { renderTeacherList(overlay); };
+        overlay.querySelectorAll('.bl-tl-fbtn').forEach(function (b) {
+            b.onclick = function () {
+                overlay.querySelectorAll('.bl-tl-fbtn').forEach(function (x) { x.classList.toggle('is-on', x === b); });
+                renderTeacherList(overlay);
+            };
+        });
+        try {
+            const d = await api('GET', '/api/admin/teachers');
+            _teacherListData = Array.isArray(d.teachers) ? d.teachers : [];
+            renderTeacherList(overlay);
+        } catch (e) {
+            overlay.querySelector('#blTlTableWrap').innerHTML = '<div class="bl-hint" style="color:#b33939;">' + escapeHtml(e.message || tt('拉取失败', 'Failed', 'فشل')) + '</div>';
         }
     }
 
@@ -12551,7 +12681,7 @@ window.BL = (function () {
         // ★ 汉字-127:owner 运营数据面板
         refreshOwnerStats,
         // —— ★ pwd(汉字-118): 密码体系;汉字-123 改弹窗 ——
-        openChangeMyPwd, changeMyPassword, openResetStudentPwd,
+        openChangeMyPwd, changeMyPassword, openResetStudentPwd, openTeacherList,
         openClassEditor, closeClassEditor, submitClass, deleteClass,
         // —— Phase 2B 第 1 轮 ——
         openTasksView, backToClassList,
