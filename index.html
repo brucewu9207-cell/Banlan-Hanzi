@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-213 (2026-07-08) — 彩虹笔画改名单个笔画(分区标题+下载中心项,中英阿三语,图标改铅笔;彩虹笔顺是另一功能未动;下载文件名不含旧名不用改);下载中心展开项默认改纯白字+纯白框,鼠标划过效果改为白底深字#374a42(替换原墨绿);纯屏显CSS仅桌面,手机端弹窗与下载出图不受影响 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-214 (2026-07-09) — 注册加邮箱必填并唯一(存 teacher_email 索引);账号页加老账号补填邮箱入口;后端新增 set-email 端点,登录逻辑不动 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-213">
+    <meta name="version" content="汉字UI-214">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-213 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-214 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -9211,6 +9211,11 @@ console.log('%c[斑斓汉字] 汉字UI-213 已加载', 'color:#374a42;font-weigh
                     <label class="bl-label">用户名<span class="lang-en">Username</span><span class="lang-ar">اسم المستخدم</span></label>
                     <input type="text" class="bl-input" id="blAuthUsername" placeholder="3-32 位字母数字下划线" autocomplete="username">
                 </div>
+                <!-- 汉字-214:注册专属邮箱框(必填);登录模式隐藏,toggleAuthMode 控制显隐 -->
+                <div class="bl-form-group" id="blAuthEmailGroup" style="display:none;">
+                    <label class="bl-label">邮箱<span class="lang-en">Email</span><span class="lang-ar">البريد الإلكتروني</span></label>
+                    <input type="email" class="bl-input" id="blAuthEmail" placeholder="用于账号找回,如 name@example.com" autocomplete="email" autocapitalize="off" spellcheck="false">
+                </div>
                 <div class="bl-form-group">
                     <label class="bl-label">密码<span class="lang-en">Password</span><span class="lang-ar">كلمة المرور</span></label>
                     <!-- ★ pwd(汉字-118): 密码框带 👁 显示/隐藏 -->
@@ -9227,7 +9232,7 @@ console.log('%c[斑斓汉字] 汉字UI-213 已加载', 'color:#374a42;font-weigh
                     <input type="text" class="bl-input" id="blAuthDisplayName" placeholder="如：墨舟老师">
                 </div>
                 <p class="bl-hint" style="margin-top:14px;">
-                    ⓘ 账号信息仅用于身份识别，不收集隐私数据<span class="lang-en"><br>ⓘ Account info is for identification only, no privacy data collected</span><span class="lang-ar"><br>ⓘ معلومات الحساب لتحديد الهوية فقط، لا تُجمع بيانات خاصة</span>
+                    ⓘ 账号信息仅用于身份识别与账号找回，不收集其他隐私数据<span class="lang-en"><br>ⓘ Account info is only for identification & account recovery, no other privacy data collected</span><span class="lang-ar"><br>ⓘ معلومات الحساب لتحديد الهوية واستعادة الحساب فقط، دون جمع بيانات خاصة أخرى</span>
                 </p>
                 <div class="bl-btn-row">
                     <button class="bl-btn bl-secondary" onclick="BL.toggleAuthMode()" id="blAuthToggleBtn">注册新账号<span class="lang-en">Sign Up</span><span class="lang-ar">تسجيل جديد</span></button>
@@ -9311,10 +9316,23 @@ console.log('%c[斑斓汉字] 汉字UI-213 已加载', 'color:#374a42;font-weigh
                     <label class="bl-label">账号 ID<span class="lang-en">Account ID</span><span class="lang-ar">معرف الحساب</span></label>
                     <input type="text" class="bl-input" id="blAccountId" disabled style="background:#f0f4f1; font-family:monospace; font-size:12px;">
                 </div>
+                <!-- 汉字-214:邮箱展示行(有邮箱才显示;老账号无邮箱时整行隐藏,靠盒外补填块引导) -->
+                <div class="bl-form-group" id="blAccountEmailGroup">
+                    <label class="bl-label">邮箱<span class="lang-en">Email</span><span class="lang-ar">البريد الإلكتروني</span></label>
+                    <input type="email" class="bl-input" id="blAccountEmail" disabled style="background:#f0f4f1;">
+                </div>
                 <div class="bl-form-group" style="margin-bottom:0;">
                     <label class="bl-label">注册时间<span class="lang-en">Registered</span><span class="lang-ar">تاريخ التسجيل</span></label>
                     <input type="text" class="bl-input" id="blAccountCreated" disabled style="background:#f0f4f1;">
                 </div>
+                </div>
+                <!-- 汉字-214:老账号(注册时没邮箱)补填邮箱入口;有邮箱则隐藏。不锁死,填了更安全 -->
+                <div id="blAccountEmailFill" style="display:none; margin-top:10px; padding:10px 12px; background:#faf5e9; border:1px solid #e6d5a8; border-radius:8px;">
+                    <div class="bl-hint" style="margin:0 0 6px;">你的账号还没绑定邮箱,补填后可用于账号找回<span class="lang-en"><br>No email on your account yet — add one for account recovery</span><span class="lang-ar"><br>لا يوجد بريد بحسابك — أضف واحداً لاستعادة الحساب</span></div>
+                    <div style="display:flex; gap:8px;">
+                        <input type="email" class="bl-input" id="blAccountEmailInput" placeholder="name@example.com" style="flex:1;" autocomplete="email" autocapitalize="off" spellcheck="false">
+                        <button class="bl-btn" style="flex:none; width:auto; padding:9px 18px;" onclick="BL.saveMyEmail()">保存<span class="lang-en">Save</span><span class="lang-ar">حفظ</span></button>
+                    </div>
                 </div>
                 <!-- ★ 汉字-127:owner 运营数据面板(仅墨舟可见,别人整块隐藏) -->
                 <div id="blOwnerStats" style="display:none;">
@@ -9978,6 +9996,11 @@ window.BL = (function () {
         $('blAccountUsername').value = state.teacher.username || '';
         $('blAccountId').value = state.teacher.id || '';
         $('blAccountCreated').value = formatDateTime(state.teacher.createdAt);
+        // 汉字-214:邮箱——有则展示行显示,老账号无邮箱则显示盒外补填块
+        const _email = (state.teacher && state.teacher.email) || '';
+        $('blAccountEmail').value = _email;
+        $('blAccountEmailGroup').style.display = _email ? '' : 'none';
+        $('blAccountEmailFill').style.display = _email ? 'none' : '';
         // ★ 汉字-127:只有 owner(墨舟)显示运营数据面板,进账号页自动拉一次
         const isOwner = state.teacher && state.teacher.username === 'mozhou';
         $('blOwnerStats').style.display = isOwner ? '' : 'none';
@@ -10051,9 +10074,30 @@ window.BL = (function () {
                  'استعادة كلمة المرور قريباً — يُرجى حفظ كلمة المرور حالياً'));
     }
 
+    // 汉字-214:老账号补填/修改邮箱 → 调 set-email;成功后就地刷新账号页显示(不跳 Tab)
+    async function saveMyEmail() {
+        const email = $('blAccountEmailInput').value.trim();
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            toast(tt('请填写有效的邮箱地址', 'Please enter a valid email', 'يرجى إدخال بريد إلكتروني صحيح'), 'error');
+            return;
+        }
+        try {
+            const data = await api('POST', '/api/teacher/set-email', { email });
+            if (data && data.teacher) state.teacher = data.teacher;
+            else if (state.teacher) state.teacher.email = email;
+            toast(tt('邮箱已保存 ✓', 'Email saved ✓', 'تم حفظ البريد ✓'), 'success');
+            $('blAccountEmail').value = email;
+            $('blAccountEmailGroup').style.display = '';
+            $('blAccountEmailFill').style.display = 'none';
+        } catch (e) {
+            toast(e.message || tt('保存失败', 'Save failed', 'فشل الحفظ'), 'error');
+        }
+    }
+
     function toggleAuthMode() {
         state.authMode = state.authMode === 'login' ? 'register' : 'login';
         const isRegister = state.authMode === 'register';
+        $('blAuthEmailGroup').style.display = isRegister ? '' : 'none';
         $('blAuthDisplayNameGroup').style.display = isRegister ? '' : 'none';
         $('blAuthSubmitBtn').textContent = isRegister
             ? tt('注册并登录', 'Sign Up & Login', 'تسجيل ودخول')
@@ -10074,6 +10118,13 @@ window.BL = (function () {
         const endpoint = state.authMode === 'register' ? '/api/teacher/register' : '/api/teacher/login';
         const body = { username, password };
         if (state.authMode === 'register') {
+            const email = $('blAuthEmail').value.trim();
+            // 汉字-214:邮箱必填 + 基础格式校验(与后端 EMAIL_REGEX 一致)
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                toast(tt('请填写有效的邮箱地址', 'Please enter a valid email', 'يرجى إدخال بريد إلكتروني صحيح'), 'error');
+                return;
+            }
+            body.email = email;
             body.displayName = $('blAuthDisplayName').value.trim() || username;
         }
 
@@ -10094,6 +10145,7 @@ window.BL = (function () {
             // 清空表单
             $('blAuthUsername').value = '';
             $('blAuthPassword').value = '';
+            $('blAuthEmail').value = '';
             $('blAuthDisplayName').value = '';
 
             showLoggedInView();
@@ -12495,7 +12547,7 @@ window.BL = (function () {
         openShareStudent, closeShareStudent, copyShareLink,
         openPanel, closePanel,
         switchTab,
-        toggleAuthMode, submitAuth, logout, forgotPasswordPlaceholder,
+        toggleAuthMode, submitAuth, saveMyEmail, logout, forgotPasswordPlaceholder,
         // ★ 汉字-127:owner 运营数据面板
         refreshOwnerStats,
         // —— ★ pwd(汉字-118): 密码体系;汉字-123 改弹窗 ——
