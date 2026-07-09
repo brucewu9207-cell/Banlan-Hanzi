@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-215 (2026-07-09) — 运营面板加账号名单:owner 专属端点列出所有老师(剥密码),弹窗预览+搜索+按有无邮箱筛选+导出Excel -->
+<!-- 斑斓汉字(老师端) · 汉字UI-216 (2026-07-09) — 运营卡片与账号方框提亮(白底墨绿边);账号名单弹窗放大到1080+字15+表格区固定高不跳+筛选按钮尺寸稳 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-215">
+    <meta name="version" content="汉字UI-216">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-215 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-216 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -955,13 +955,13 @@ console.log('%c[斑斓汉字] 汉字UI-215 已加载', 'color:#374a42;font-weigh
         .bl-acct-box { margin-top: 4px; }
         #blOwnerStats { margin-top: 16px; }
         /* 汉字-215:注册账号名单弹窗 */
-        .bl-tl-modal { width: 720px; max-width: 92vw; }
+        .bl-tl-modal { width: min(1080px, 95vw); max-width: 95vw; }
         .bl-tl-toolbar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
         .bl-tl-filters { display: flex; gap: 6px; }
-        .bl-tl-fbtn { border: 1px solid #cfd8d2; background: #fff; color: #374a42; border-radius: 8px; padding: 6px 12px; font-size: 13px; cursor: pointer; white-space: nowrap; }
+        .bl-tl-fbtn { border: 1px solid #cfd8d2; background: #fff; color: #374a42; border-radius: 8px; padding: 6px 12px; font-size: 13px; cursor: pointer; white-space: nowrap; min-width: 76px; text-align: center; }
         .bl-tl-fbtn.is-on { background: #374a42; color: #fff; border-color: #374a42; }
-        .bl-tl-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        .bl-tl-table th, .bl-tl-table td { text-align: left; padding: 7px 10px; border-bottom: 1px solid #eef1ef; white-space: nowrap; }
+        .bl-tl-table { width: 100%; border-collapse: collapse; font-size: 15px; }
+        .bl-tl-table th, .bl-tl-table td { text-align: left; padding: 10px 14px; border-bottom: 1px solid #eef1ef; white-space: nowrap; }
         .bl-tl-table th { position: sticky; top: 0; background: #eef3ef; color: #374a42; font-weight: 700; z-index: 1; }
         .bl-tl-table td { color: #333; }
         .bl-tl-beta { background: #c8a24b; color: #fff; font-size: 10px; padding: 1px 5px; border-radius: 4px; margin-left: 5px; }
@@ -980,7 +980,7 @@ console.log('%c[斑斓汉字] 汉字UI-215 已加载', 'color:#374a42;font-weigh
             font-size: 13px; letter-spacing: 0.5px;
         }
         .bl-owner-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin: 10px 0; }
-        .bl-owner-card { background: #f0f4f1; border: 1px solid #d8e0db; border-radius: 10px; padding: 14px 8px; text-align: center; }
+        .bl-owner-card { background: #fff; border: 1.5px solid #5c7569; border-radius: 10px; padding: 14px 8px; text-align: center; }
         .bl-owner-num { font-size: 30px; font-weight: 700; color: var(--ink-green); font-family: monospace; line-height: 1.1; }
         .bl-owner-lbl { font-size: 13px; color: var(--mo-mid); margin-top: 4px; white-space: pre-line; }
         /* 汉字-156:手机端 5 个统计格仍排一行(原 2 列),缩小内边距/字号让 5 格放得下 */
@@ -9321,20 +9321,20 @@ console.log('%c[斑斓汉字] 汉字UI-215 已加载', 'color:#374a42;font-weigh
                 <div class="bl-acct-box">
                 <div class="bl-form-group">
                     <label class="bl-label">用户名<span class="lang-en">Username</span><span class="lang-ar">اسم المستخدم</span></label>
-                    <input type="text" class="bl-input" id="blAccountUsername" disabled style="background:#f0f4f1;">
+                    <input type="text" class="bl-input" id="blAccountUsername" disabled style="background:#fff; border-color:#5c7569;">
                 </div>
                 <div class="bl-form-group">
                     <label class="bl-label">账号 ID<span class="lang-en">Account ID</span><span class="lang-ar">معرف الحساب</span></label>
-                    <input type="text" class="bl-input" id="blAccountId" disabled style="background:#f0f4f1; font-family:monospace; font-size:12px;">
+                    <input type="text" class="bl-input" id="blAccountId" disabled style="background:#fff; border-color:#5c7569; font-family:monospace; font-size:12px;">
                 </div>
                 <!-- 汉字-214:邮箱展示行(有邮箱才显示;老账号无邮箱时整行隐藏,靠盒外补填块引导) -->
                 <div class="bl-form-group" id="blAccountEmailGroup">
                     <label class="bl-label">邮箱<span class="lang-en">Email</span><span class="lang-ar">البريد الإلكتروني</span></label>
-                    <input type="email" class="bl-input" id="blAccountEmail" disabled style="background:#f0f4f1;">
+                    <input type="email" class="bl-input" id="blAccountEmail" disabled style="background:#fff; border-color:#5c7569;">
                 </div>
                 <div class="bl-form-group" style="margin-bottom:0;">
                     <label class="bl-label">注册时间<span class="lang-en">Registered</span><span class="lang-ar">تاريخ التسجيل</span></label>
-                    <input type="text" class="bl-input" id="blAccountCreated" disabled style="background:#f0f4f1;">
+                    <input type="text" class="bl-input" id="blAccountCreated" disabled style="background:#fff; border-color:#5c7569;">
                 </div>
                 </div>
                 <!-- 汉字-214:老账号(注册时没邮箱)补填邮箱入口;有邮箱则隐藏。不锁死,填了更安全 -->
@@ -10153,7 +10153,7 @@ window.BL = (function () {
                 '</div>' +
               '</div>' +
               '<div id="blTlCount" class="bl-hint" style="margin:8px 0;"></div>' +
-              '<div id="blTlTableWrap" style="max-height:52vh; overflow:auto;"><div class="bl-hint">' + tt('加载中…', 'Loading…', 'جارٍ التحميل…') + '</div></div>' +
+              '<div id="blTlTableWrap" style="height:56vh; overflow:auto;"><div class="bl-hint">' + tt('加载中…', 'Loading…', 'جارٍ التحميل…') + '</div></div>' +
             '</div>' +
             '<div class="bl-roster-foot">' +
               '<button class="bl-btn-ghost" data-act="close">' + _L34('关闭', 'Close', 'إغلاق') + '</button>' +
