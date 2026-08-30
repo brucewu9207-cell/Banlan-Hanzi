@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-218 (2026-08-30) — 正式全量开放布置作业入口 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-219 (2026-08-30) — 布置作业按钮增加呼吸闪烁 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-218">
+    <meta name="version" content="汉字UI-219">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-218 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-219 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -571,9 +571,9 @@ console.log('%c[斑斓汉字] 汉字UI-218 已加载', 'color:#374a42;font-weigh
             0%, 100% { box-shadow: 0 0 0 0 rgba(179, 57, 57, 0); }
             50%      { box-shadow: 0 0 15px 3px rgba(179, 57, 57, 0.5); }
         }
-        .input-wrapper, .btn-gen { animation: blGlowPulse 2.4s ease-in-out infinite; }
+        .input-wrapper, .btn-gen, .btn-linkage { animation: blGlowPulse 2.4s ease-in-out infinite; }
         @media (prefers-reduced-motion: reduce) {
-            .input-wrapper, .btn-gen { animation: none; box-shadow: 0 0 12px 2px rgba(179, 57, 57, 0.4); }
+            .input-wrapper, .btn-gen, .btn-linkage { animation: none; box-shadow: 0 0 12px 2px rgba(179, 57, 57, 0.4); }
         }
         /* 汉字-217:标题「BASED ON HSK3.0」隐蔽登录入口——朱砂红「文字本身」红光呼吸(text-shadow,非 box-shadow;不加边框/背景/padding,位置不动) */
         @keyframes blSecretBreath {
