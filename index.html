@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 斑斓汉字(老师端) · 汉字UI-217 (2026-07-12) — 标题红字加朱砂红文字呼吸光晕 -->
+<!-- 斑斓汉字(老师端) · 汉字UI-218 (2026-08-30) — 正式全量开放布置作业入口 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <title>斑斓汉字 - 笔墨纸砚</title>
-    <meta name="version" content="汉字UI-217">
+    <meta name="version" content="汉字UI-218">
     <meta name="theme-color" content="#374a42">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="apple-touch-icon-180.png">
@@ -16,7 +16,7 @@
 
     <!-- ====== 📱 手机端调试浮层：任何JS报错都会在屏幕底部红条显示 ====== -->
     <script>
-console.log('%c[斑斓汉字] 汉字UI-217 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
+console.log('%c[斑斓汉字] 汉字UI-218 已加载', 'color:#374a42;font-weight:bold;font-size:13px;');
     (function() {
         // 创建错误显示条
         function showError(msg) {
@@ -591,12 +591,12 @@ console.log('%c[斑斓汉字] 汉字UI-217 已加载', 'color:#374a42;font-weigh
 
         /* ====================================================
            【联动模块 / Banlan Linkage】v2B 新增/扩展
-           ---- "📚 班级与任务" 按钮（默认隐藏，feature flag 控制显示）
+           ---- "📚 布置作业" 按钮（汉字-218 起正式全量开放）
            ==================================================== */
         .btn-linkage {
             background: #5a7d8c;
             border: 1px solid #486674;
-            display: none; /* 默认隐藏，feature flag 控制显示 */
+            display: inline-flex; /* 正式释放：所有老师默认可见 */
         }
         .btn-linkage.bl-visible { display: inline-flex; }
 
@@ -9835,8 +9835,8 @@ window.BL = (function () {
         // 1) 先处理 URL 解锁参数
         await handleUnlockUrl();
 
-        // 2) 取全局开关状态
-        const linkage = await checkFeatureFlag();
+        // 2) 汉字-218：布置作业正式全量开放。原灰度开关代码保留，便于未来需要时恢复分阶段发布。
+        const linkage = 'on';
         blLastLinkage = linkage;   // ★ 汉字-129: 缓存阶段,供 showLoggedInView 判断 beta 显示
         const testerOn = isTesterUnlocked();
         const role = getTesterRole();
